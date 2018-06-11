@@ -41,10 +41,11 @@ clone 你自己的 github 代码仓库到本地。
 **注意**合并时添加 --no-ff 参数，目的是保留分支历史。
 
 ### 5 把代码 push 到自己的 github 的开发分支
+首先从原仓库develop 分支 更新合并本地develop分支，然后再推送到自己的github库
 
         git push origin develop
 
-### 6 向原仓库管理源提交 pull request 合并申请。
+### 6 向原仓库管理员提交 pull request 合并申请。
 （以下步骤简略）
 管理员收到代码 申请后 review 代码，合并到 原仓库 develop 分支。
 测试人员 拉取 最新develop 代码，合并到本地，进行测试。
