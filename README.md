@@ -30,7 +30,7 @@ clone 你自己的 github 代码仓库到本地。
 以后所有的常规修改提交都在自己的分支进行。
 随时可以push代码到自己的github 上，自己的分支。
 
-### 4 把自己开发的功能合并到 develop 分支
+### 4 把自己开发的功能合并到 本地 develop 分支
 
 在自己的分支某功能开发测试完毕（注意合并前进行必要的测试）然后合并到 本地 develop
 注意合并时用下面的方式：
@@ -40,11 +40,22 @@ clone 你自己的 github 代码仓库到本地。
 ```
 **注意**合并时添加 --no-ff 参数，目的是保留分支历史。
 
-### 5 把代码 push 到自己的 github 的开发分支
+### 5 从源仓库同步最新代码 合并到自己的 develop分支
+当自己的功能开发完毕后，原仓库的开发分支很可能已经更新。因此为保证自己的代码是最新的。
+首先要和源仓库develop 分支进行合并。
+
+        git remote add upstream 源仓库地址      # 添加源仓库地址
+        git fetch upstream develop              # 拉去源仓库最新代码
+        git merge upstream/develop              # 合并到自己的 develop
+
+### 6 把代码 push 到自己的 github 的开发分支
+注意 提交到自己的 开发分支之前，最好按照上面的步骤先拉去合并最新代码。避免时间太久
+造成比较大的差异。也可以几次提交后，再和源分支进行合并。
 
         git push origin develop
 
-### 6 向原仓库管理源提交 pull request 合并申请。
+### 7 向原仓库管理员提交 pull request 合并申请。
+保证你和源仓库的最新代码刚刚进行过合并。然后再提交 pull request
 （以下步骤简略）
 管理员收到代码 申请后 review 代码，合并到 原仓库 develop 分支。
 测试人员 拉取 最新develop 代码，合并到本地，进行测试。
