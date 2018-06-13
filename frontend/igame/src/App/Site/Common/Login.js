@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 //import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 //import 'antd/dist/antd.css'; // 这一句是从哪里引入的？
 import { Toast, Modal, Button } from 'antd-mobile';
+import Models from '../Models/Models'
 
 /**
  * use to handle session
@@ -56,35 +57,62 @@ class SiteLogin {
         );
     }
     // 用户名密码由 prompt 调用时提供。
+
+    
     handleLogin = (login, password) => {
+
         //alert(test);
         console.log(`login: ${login}, password: ${password}`)
-        const json1 = {
+        const json = {
             'user': login,  //1174809@qq.com
             'password': password,//09090909
         }
-        fetch("http://192.168.0.11:8069/jsonrpc/login", {
-            method: 'POST', // or 'PUT'
-            body: JSON.stringify(json1), // data can be `string` or {object}!
-            headers: new Headers({
-                'Content-Type': 'application/json'
-            })
-        }).then(res => res.json())
-            .catch(error => console.error('Error:', error))
-            .then(data => {
-                console.log(data)
-                if (data.result.sid) {
-                    //this.hasLogin = true; // 貌似没用，可以去掉这个属性。有了回调函数就可以了。
-                    session.set_sid(data.result.sid)
-                    Toast.success("登录成功！", 1);
-                    this.callback();   // 调用外部传进来的 callback() 用于登录成功后修改 navbar 的样式。
-                } else {
-                    //this.hasLogin = false;
-                    Toast.fail("登录失败，请检查后重试！", 1);
-                }
-            });
+
+        const cb = (data)=>{
+            if (data.sid){
+                session.set_sid(data.sid)
+                Toast.success("登录成功！", 1);
+                this.callback();   // 调用外部传进来的 callback() 用于登录成功后修改 navbar 的样式。
+            }else{
+                //this.hasLogin = false;
+                Toast.fail("登录失败，请检查后重试！", 1);
+            }
+        }
+
+        const m = Models.create();
+        m.query('login',json,cb) // 执行 exec 发送 json 获取数据后 执行回调 cb
 
     }
+
+    // handleLogin = (login, password) => {
+    //     //alert(test);
+    //     console.log(`login: ${login}, password: ${password}`)
+    //     const json1 = {
+    //         'user': login,  //1174809@qq.com
+    //         'password': password,//09090909
+    //     }
+    //     fetch("http://192.168.0.11:8069/jsonrpc/login", {
+    //         method: 'POST', // or 'PUT'
+    //         body: JSON.stringify(json1), // data can be `string` or {object}!
+    //         headers: new Headers({
+    //             'Content-Type': 'application/json'
+    //         })
+    //     }).then(res => res.json())
+    //         .catch(error => console.error('Error:', error))
+    //         .then(data => {
+    //             console.log(data)
+    //             if (data.result.sid) {
+    //                 //this.hasLogin = true; // 貌似没用，可以去掉这个属性。有了回调函数就可以了。
+    //                 session.set_sid(data.result.sid)
+    //                 Toast.success("登录成功！", 1);
+    //                 this.callback();   // 调用外部传进来的 callback() 用于登录成功后修改 navbar 的样式。
+    //             } else {
+    //                 //this.hasLogin = false;
+    //                 Toast.fail("登录失败，请检查后重试！", 1);
+    //             }
+    //         });
+
+    // }
 
 }
 

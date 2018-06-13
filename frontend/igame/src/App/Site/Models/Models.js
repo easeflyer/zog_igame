@@ -17,7 +17,8 @@
  *      如果后期代码逐步扩大，可以增加 子模型代码，然后在这里引入。扩展 Models 的功能。
  * 
  */
-import { session } from '../Common/Login'
+import { session } from '../Common/Login';
+// import { Toast, Modal, Button } from 'antd-mobile';
 
 class Models {
 
@@ -78,17 +79,9 @@ class Models {
         })
         .then(res => res.json())
         .catch(error => console.error('Error:', error))
-        .then(data => {
-            console.log(data)
-            if (data.result.sid) {
-                //this.hasLogin = true; // 貌似没用，可以去掉这个属性。有了回调函数就可以了。
-                session.set_sid(data.result.sid)/////session??????
-                Toast.success("登录成功！", 1);//////Toast?????
-                this.callback();   // 调用外部传进来的 callback() 用于登录成功后修改 navbar 的样式。
-            } else {
-                //this.hasLogin = false;
-                Toast.fail("登录失败，请检查后重试！", 1);
-            }
+        .then(response => {
+            const body = response.result // 注意这里如果数据库没有链接将报错。
+            callback(body);
         })
 
     }
