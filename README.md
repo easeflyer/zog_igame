@@ -59,4 +59,4 @@ clone 你自己的 github 代码仓库到本地。
 （以下步骤简略）
 管理员收到代码 申请后 review 代码，合并到 原仓库 develop 分支。
 测试人员 拉取 最新develop 代码，合并到本地，进行测试。
-测试完毕，提交到 master 
+测试完毕，提交到 master 。
