@@ -66,6 +66,33 @@ class Models {
 
     }
 
+    login(json, callback) {
+        const url = Models.types['login']
+
+        fetch(url,{
+            method:'POST', // or 'PUT'
+            body:JSON.stringify(json), // data can be `string` or {object}!
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            })
+        })
+        .then(res => res.json())
+        .catch(error => console.error('Error:', error))
+        .then(data => {
+            console.log(data)
+            if (data.result.sid) {
+                //this.hasLogin = true; // 貌似没用，可以去掉这个属性。有了回调函数就可以了。
+                session.set_sid(data.result.sid)/////session??????
+                Toast.success("登录成功！", 1);//////Toast?????
+                this.callback();   // 调用外部传进来的 callback() 用于登录成功后修改 navbar 的样式。
+            } else {
+                //this.hasLogin = false;
+                Toast.fail("登录失败，请检查后重试！", 1);
+            }
+        })
+
+    }
+
 }
 // 静态属性。ES6 
 Models.models = null;
