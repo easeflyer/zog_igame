@@ -17,10 +17,14 @@
  *      如果后期代码逐步扩大，可以增加 子模型代码，然后在这里引入。扩展 Models 的功能。
  * 
  */
-// import { session } from '../Common/Login';
-// import { Toast, Modal, Button } from 'antd-mobile';
 
-
+/**
+ * use to handle session
+ * localstorage is a html5 local storage solution
+ * set_sid(sid) set sid into localstorage
+ * get_sid()    get sid from the local or return false if no.
+ * destroy()    remove sid from localstorage
+ */
 const session = {
     sid: null,
     set_sid: function (sid) {
@@ -39,7 +43,7 @@ const session = {
     }
 };
 
-
+const HOST = 'http://192.168.0.115:8069'
 class Models {
 
     /**
@@ -62,6 +66,10 @@ class Models {
             case 'login':
                 this.login(json,callback);
                 break;
+            case 'register':
+                this.register(json,callback);
+                break;
+                
         }
     }
     /**
@@ -102,12 +110,31 @@ class Models {
                 });
     }
 
+    register(json, callback) {
+        const url = Models.types['register']
+        console.log(url)
+        fetch(url,{
+                method:'POST',
+                body:JSON.stringify(json),
+                headers:new Headers({
+                    'Content-Type':'application/json'
+                })
+            }).then(res=>res.json())
+                .catch(error=>console.error('Error:',error))
+                .then(response => {
+                    const body = response.result  // 注意这里如果数据库没有链接将报错。
+                    // const body = response  // 注意这里如果数据库没有链接将报错。
+                    callback(body);
+                });
+    }
+
 }
 // 静态属性。ES6 
 Models.models = null;
 Models.types = {
-    'exec': 'http://192.168.0.11:8069/jsonrpc/exec',
-    'login': 'http://192.168.0.115:8069/json/user/login'
+    'exec': HOST+'/jsonrpc/exec',
+    'login': HOST+'/json/user/login',
+    'register': HOST+'/json/user/register'
 }
 
 export { Models,session };
