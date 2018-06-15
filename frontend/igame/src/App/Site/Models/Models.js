@@ -37,10 +37,10 @@ class Models {
     query(type = 'exec', json = {}, callback) {
         switch (type) {
             case 'exec':
-                this.exec(json, callback);
+                this.exec(json,callback);
                 break;
             case 'login':
-                this.login(json.callback);
+                this.login(json,callback);
                 break;
         }
     }
@@ -64,26 +64,22 @@ class Models {
                 const body = response.result  // 注意这里如果数据库没有链接将报错。
                 callback(body);
             });
-
     }
 
     login(json, callback) {
         const url = Models.types['login']
-
         fetch(url,{
-            method:'POST', // or 'PUT'
-            body:JSON.stringify(json), // data can be `string` or {object}!
-            headers: new Headers({
-                'Content-Type': 'application/json'
-            })
-        })
-        .then(res => res.json())
-        .catch(error => console.error('Error:', error))
-        .then(response => {
-            const body = response.result // 注意这里如果数据库没有链接将报错。
-            callback(body);
-        })
-
+                method:'POST',
+                body:JSON.stringify(json),
+                headers:new Headers({
+                    'Content-Type':'application/json'
+                })
+            }).then(res=>res.json())
+                .catch(error=>console.error('Error:',error))
+                .then(response => {
+                    const body = response.result  // 注意这里如果数据库没有链接将报错。
+                    callback(body);
+                });
     }
 
 }
@@ -91,7 +87,7 @@ class Models {
 Models.models = null;
 Models.types = {
     'exec': 'http://192.168.0.11:8069/jsonrpc/exec',
-    'login': 'http://192.168.0.11:8069/jsonrpc/login'
+    'login': 'http://192.168.0.115:8069/json/user/login'
 }
 
 export default Models;
