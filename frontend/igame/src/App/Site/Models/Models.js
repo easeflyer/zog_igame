@@ -17,8 +17,28 @@
  *      如果后期代码逐步扩大，可以增加 子模型代码，然后在这里引入。扩展 Models 的功能。
  * 
  */
-import { session } from '../Common/Login';
+// import { session } from '../Common/Login';
 // import { Toast, Modal, Button } from 'antd-mobile';
+
+
+const session = {
+    sid: null,
+    set_sid: function (sid) {
+        localStorage.sid = sid;
+        this.sid = sid;
+    },
+    get_sid: function () {
+        if (localStorage && localStorage.sid) {
+            return localStorage.sid;
+        } else {
+            return false;
+        }
+    },
+    destroy: function(){
+        if (localStorage && localStorage.sid) localStorage.removeItem('sid');
+    }
+};
+
 
 class Models {
 
@@ -90,4 +110,4 @@ Models.types = {
     'login': 'http://192.168.0.115:8069/json/user/login'
 }
 
-export default Models;
+export { Models,session };

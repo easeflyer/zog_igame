@@ -1,7 +1,8 @@
 import React from 'react';
 import { NavBar } from 'antd-mobile';
 import { Icon } from 'antd';
-import {session, SiteLogin} from './Common/Login'
+import { SiteLogin} from './Common/Login';
+import { session } from './Models/Models'
 //import Menu from './Menu'
 
 class Navbar extends React.Component {

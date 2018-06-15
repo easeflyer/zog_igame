@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 //import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 //import 'antd/dist/antd.css'; // 这一句是从哪里引入的？
 import { Toast, Modal, Button } from 'antd-mobile';
-import Models from '../Models/Models'
+import { Models,session } from '../Models/Models'
 
 /**
  * use to handle session
@@ -12,23 +12,23 @@ import Models from '../Models/Models'
  * get_sid()    get sid from the local or return false if no.
  * destroy()    remove sid from localstorage
  */
-const session = {
-    sid: null,
-    set_sid: function (sid) {
-        localStorage.sid = sid;
-        this.sid = sid;
-    },
-    get_sid: function () {
-        if (localStorage && localStorage.sid) {
-            return localStorage.sid;
-        } else {
-            return false;
-        }
-    },
-    destroy: function(){
-        if (localStorage && localStorage.sid) localStorage.removeItem('sid');
-    }
-};
+// const session = {
+//     sid: null,
+//     set_sid: function (sid) {
+//         localStorage.sid = sid;
+//         this.sid = sid;
+//     },
+//     get_sid: function () {
+//         if (localStorage && localStorage.sid) {
+//             return localStorage.sid;
+//         } else {
+//             return false;
+//         }
+//     },
+//     destroy: function(){
+//         if (localStorage && localStorage.sid) localStorage.removeItem('sid');
+//     }
+// };
 /**
  * 
  */
@@ -84,4 +84,4 @@ class SiteLogin {
 
 //export default login;
 
-export { session, SiteLogin }
+export { SiteLogin }
