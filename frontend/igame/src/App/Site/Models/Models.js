@@ -17,7 +17,8 @@
  *      如果后期代码逐步扩大，可以增加 子模型代码，然后在这里引入。扩展 Models 的功能。
  * 
  */
-import { session } from '../Common/Login'
+import { session } from '../Common/Login';
+// import { Toast, Modal, Button } from 'antd-mobile';
 
 class Models {
 
@@ -36,10 +37,10 @@ class Models {
     query(type = 'exec', json = {}, callback) {
         switch (type) {
             case 'exec':
-                this.exec(json, callback);
+                this.exec(json,callback);
                 break;
             case 'login':
-                this.login(json.callback);
+                this.login(json,callback);
                 break;
         }
     }
@@ -63,7 +64,22 @@ class Models {
                 const body = response.result  // 注意这里如果数据库没有链接将报错。
                 callback(body);
             });
+    }
 
+    login(json, callback) {
+        const url = Models.types['login']
+        fetch(url,{
+                method:'POST',
+                body:JSON.stringify(json),
+                headers:new Headers({
+                    'Content-Type':'application/json'
+                })
+            }).then(res=>res.json())
+                .catch(error=>console.error('Error:',error))
+                .then(response => {
+                    const body = response.result  // 注意这里如果数据库没有链接将报错。
+                    callback(body);
+                });
     }
 
 }
@@ -71,7 +87,7 @@ class Models {
 Models.models = null;
 Models.types = {
     'exec': 'http://192.168.0.11:8069/jsonrpc/exec',
-    'login': 'http://192.168.0.11:8069/jsonrpc/login'
+    'login': 'http://192.168.0.115:8069/json/user/login'
 }
 
 export default Models;
