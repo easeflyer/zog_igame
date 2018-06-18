@@ -7,7 +7,8 @@ import Test from './Test/Index2'
 import Navbar from './Navbar'
 
 import { Drawer, List } from 'antd-mobile';
-import { Icon } from 'antd'
+import { Icon } from 'antd';
+import Safety from './Safety/Index';
 
 /**
  * BodyDrawer 是整个网站的外层包裹。
@@ -47,6 +48,7 @@ class BodyDrawer extends React.Component {
             { text: '俱乐部',   icon: <Icon type="usergroup-add" />,    page:<h1>page4</h1> },
             { text: '学习资料', icon: <Icon type="solution" />,         page:<h1>page5</h1> },
             { text: '测试页',   icon: <Icon type="solution" />,         page:<Test /> },
+            { text: '安全管理',   icon: <Icon type="solution" />,         page:<Safety /> },
         ]
         //if(!this.props.open) return null; // 如果 open=false 不渲染任何东西（没用了）
         // fix in codepen 这里定义了列表的内容。 注意下面的语法。List 标签之间就是一个数组。 数组又 map 构造。
