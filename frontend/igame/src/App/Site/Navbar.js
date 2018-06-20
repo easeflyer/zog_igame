@@ -8,19 +8,20 @@ import { SiteRegister } from './Common/Register';
 
 class Navbar extends React.Component {
     
-    state={
-        hasLogin:false
-    }
-    constructor(){
-        super();
-        if(session.get_sid()) this.state.hasLogin = true;
-    }
+    // state={
+    //     hasLogin:this.props.zt
+    // }
+    // constructor(){
+    //     super();
+    //     if(session.get_sid()) this.state.hasLogin = true;
+    // }
     handleLogout = () => {
         session.destroy();
-        this.setState({hasLogin:false})
+        this.props.toggleHasLogin();
+        // this.setState({hasLogin:false})
     }
     handleLogin = () => {
-        const login = new SiteLogin( ()=>this.setState({hasLogin:true}) );  // 注册进来一个 callback 函数，下面登录后会调用这个回调函数。
+        const login = new SiteLogin( this.props.toggleHasLogin );  // 注册进来一个 callback 函数，下面登录后会调用这个回调函数。
         login.login();
         //console.log('login1111:'+JSON.stringify(l))
     }
@@ -31,8 +32,9 @@ class Navbar extends React.Component {
     }
     rightContent(){
         console.log('haslogin2.............')
-        console.log(this.state.hasLogin)
-        return this.state.hasLogin ? 
+        // console.log(this.state.hasLogin)
+        return this.props.hasLogin ? 
+        // return this.state.hasLogin ? 
             <span key="2" style={{ fontSize: '12px' }}><Icon onClick={this.handleLogout} type="logout" style={{ margin: '5px' }} />退出</span> :
         [
             <span key="1" style={{ fontSize: '12px' }}><Icon onClick={this.handleLogin} type="login" style={{ margin: '5px' }} />登录</span>,
