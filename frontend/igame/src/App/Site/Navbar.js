@@ -1,7 +1,9 @@
 import React from 'react';
 import { NavBar } from 'antd-mobile';
 import { Icon } from 'antd';
-import {session, SiteLogin} from './Common/Login'
+import { SiteLogin} from './Common/Login';
+import { session } from './Models/Models'
+import { SiteRegister } from './Common/Register';
 //import Menu from './Menu'
 
 class Navbar extends React.Component {
@@ -22,6 +24,11 @@ class Navbar extends React.Component {
         login.login();
         //console.log('login1111:'+JSON.stringify(l))
     }
+    handleRegister = ()=>{
+        // const register = new SiteRegister( ()=>this.setState({hasLogin:true}) ); //注册进来一个 callback ，注册成功后调用
+        const register = new SiteRegister( ()=>{console.log('这是一个回调 ^_^ ')} ); //     *******这里还要在做处理********
+        register.register();
+    }
     rightContent(){
         console.log('haslogin2.............')
         console.log(this.state.hasLogin)
@@ -29,7 +36,7 @@ class Navbar extends React.Component {
             <span key="2" style={{ fontSize: '12px' }}><Icon onClick={this.handleLogout} type="logout" style={{ margin: '5px' }} />退出</span> :
         [
             <span key="1" style={{ fontSize: '12px' }}><Icon onClick={this.handleLogin} type="login" style={{ margin: '5px' }} />登录</span>,
-            <span key="2" style={{ fontSize: '12px' }}><Icon type="logout" style={{ margin: '5px' }} />注册</span>
+            <span key="3" style={{ fontSize: '12px' }}><Icon onClick={this.handleRegister} type="logout" style={{ margin: '5px' }} />注册</span>
         ]
     }
     render() {
