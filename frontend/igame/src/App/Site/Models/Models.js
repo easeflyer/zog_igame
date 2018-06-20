@@ -18,6 +18,9 @@
  * 
  */
 
+// import { Toast, Modal, Button } from 'antd-mobile';
+
+
 /**
  * use to handle session
  * localstorage is a html5 local storage solution
@@ -127,6 +130,7 @@ class Models {
                     callback(body);
                 });
     }
+
 
 }
 // 静态属性。ES6 

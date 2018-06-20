@@ -5,7 +5,6 @@ import ReactDOM from 'react-dom';
 import { Toast, Modal, Button } from 'antd-mobile';
 import { Models,session } from '../Models/Models'
 
-
 class SiteLogin {
     // 注册 callback 登录成功后调用外部的 callback 函数
     constructor(callback) {
