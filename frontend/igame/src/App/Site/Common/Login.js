@@ -3,12 +3,7 @@ import ReactDOM from 'react-dom';
 //import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 //import 'antd/dist/antd.css'; // 这一句是从哪里引入的？
 import { Toast, Modal, Button } from 'antd-mobile';
-<<<<<<< HEAD
 import { Models,session } from '../Models/Models'
-
-=======
-import Models from '../Models/Models'
->>>>>>> upstream/develop
 
 class SiteLogin {
     // 注册 callback 登录成功后调用外部的 callback 函数
