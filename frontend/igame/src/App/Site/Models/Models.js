@@ -17,11 +17,6 @@
  *      如果后期代码逐步扩大，可以增加 子模型代码，然后在这里引入。扩展 Models 的功能。
  * 
  */
-<<<<<<< HEAD
-=======
-import { session } from '../Common/Login';
-// import { Toast, Modal, Button } from 'antd-mobile';
->>>>>>> upstream/develop
 
 /**
  * use to handle session
@@ -70,12 +65,9 @@ class Models {
                 break;
             case 'login':
                 this.login(json,callback);
-<<<<<<< HEAD
                 break;
             case 'register':
                 this.register(json,callback);
-=======
->>>>>>> upstream/develop
                 break;
                 
         }
@@ -101,7 +93,6 @@ class Models {
                 callback(body);
             });
     }
-<<<<<<< HEAD
 
     login(json, callback) {
         const url = Models.types['login']
@@ -122,11 +113,6 @@ class Models {
     register(json, callback) {
         const url = Models.types['register']
         console.log(url)
-=======
-
-    login(json, callback) {
-        const url = Models.types['login']
->>>>>>> upstream/develop
         fetch(url,{
                 method:'POST',
                 body:JSON.stringify(json),
@@ -137,10 +123,7 @@ class Models {
                 .catch(error=>console.error('Error:',error))
                 .then(response => {
                     const body = response.result  // 注意这里如果数据库没有链接将报错。
-<<<<<<< HEAD
                     // const body = response  // 注意这里如果数据库没有链接将报错。
-=======
->>>>>>> upstream/develop
                     callback(body);
                 });
     }
@@ -149,14 +132,9 @@ class Models {
 // 静态属性。ES6 
 Models.models = null;
 Models.types = {
-<<<<<<< HEAD
     'exec': HOST+'/jsonrpc/exec',
     'login': HOST+'/json/user/login',
     'register': HOST+'/json/user/register'
-=======
-    'exec': 'http://192.168.0.11:8069/jsonrpc/exec',
-    'login': 'http://192.168.0.115:8069/json/user/login'
->>>>>>> upstream/develop
 }
 
 export { Models,session };
