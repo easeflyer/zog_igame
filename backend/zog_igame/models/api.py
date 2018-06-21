@@ -87,4 +87,5 @@ class BoardApi(models.AbstractModel):
             return board.create(vals)
 
         board.write(vals)
+	print 'iiii'
         return board.id

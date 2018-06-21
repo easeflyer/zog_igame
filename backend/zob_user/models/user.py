@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
+
 from odoo import api, fields, models
 
 import logging
@@ -9,7 +10,7 @@ _logger = logging.getLogger(__name__)
 
 class User(models.Model):
     _inherit = "res.users"
-
+    
     @api.model
     def register(self,login,password,name=None,email=None, partner_id=None):
         if not name:  name=login
@@ -24,6 +25,12 @@ class User(models.Model):
         if partner_id:
             vals['partner_id'] = partner_id
 
+        # vv = self.create(vals)
+        # print type(vv)
+        # print '---------------------------'
+        # return vv
+        # print type(self.create(vals))
+        # print '---------------------------'
         return self.create(vals)
 
     @api.model
@@ -45,6 +52,7 @@ class User(models.Model):
 
     @api.model
     def create_org(self, org_name):
+        # 创建用户名
         org = self.env.user.parent_id
         if org:
             org.name = org_name
@@ -56,6 +64,7 @@ class User(models.Model):
 
     @api.model
     def join_org(self, org_id, partner_id=None):
+        # 添加用户名
         if not partner_id:
             partner = self.env.user.partner_id
         else:
@@ -63,3 +72,5 @@ class User(models.Model):
 
         org = self.env['res.partner'].browse(org_id)
         partner.parent_id = org
+
+
