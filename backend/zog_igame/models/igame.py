@@ -54,7 +54,7 @@ class IntelligentGame(models.Model):
         ('MP', 'MP'),
         ('VP', 'VP'),
         ('BAM','BAM'),
-    ], compute='_compute_score_uom', inverse='_inverse_score_uom')
+    ], compute='_compute_score_uom', inverse='_inverse_score_uom',default='VP' )
 
     @api.multi
     def _inverse_score_uom(self):

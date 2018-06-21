@@ -31,6 +31,8 @@
                     <field name="name"/>
                     <field name="host_partner_id"/>
                     <field name="guest_partner_id"/>
+                    <field name="open_table_id"/>
+                    <field name="close_table_id"/>
                     <field name="deal_count"/>
                     <field name="host_imp"/>
                     <field name="guest_imp"/>

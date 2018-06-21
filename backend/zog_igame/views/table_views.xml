@@ -28,6 +28,7 @@
             <field name="model">og.table</field>
             <field name="arch" type="xml">
                 <tree string="Table">
+                    <field name="name"/>
                     <field name="number"/>
                     <field name="ns_partner_id"/>
                     <field name="ew_partner_id"/>

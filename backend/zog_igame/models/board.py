@@ -20,7 +20,8 @@ class Board(models.Model):
     _name = "og.board"
     _description = "Board"
     _rec_name = 'number'
-    _order = 'number'
+    _order = 'number'   #_order: 定义search()和read()方法的结果记录的排序规则，
+    # 和SQL语句中的order 类似，缺省值是id,即按id升序排序
 
     table_id = fields.Many2one('og.table')
     deal_id = fields.Many2one('og.deal')

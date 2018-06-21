@@ -43,6 +43,7 @@ class GameBrg(http.Controller):
         password = json['password']
         #uid = SUPERUSER_ID
         with registry(db).cursor() as cr:
+            # 文件管理
             env = api.Environment(cr, SUPERUSER_ID, {})
             return env['res.users'].register(user,password)
 
