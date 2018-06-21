@@ -23,6 +23,11 @@ def imp2vp(imp,deal_count):
     M = abs(imp)
     N = deal_count
 
+    if not M:
+        return 10
+    if not N:
+        return 10
+
     B = math.sqrt( N ) * 15
     tau = (math.sqrt(5) - 1) / 2
     x = tau ** min( [ (3*M / B),3 ] )
