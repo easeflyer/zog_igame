@@ -132,7 +132,8 @@ class Models {
 // 静态属性。ES6 
 Models.models = null;
 Models.types = {
-    'exec': HOST+'/jsonrpc/exec',
+    'exec': HOST+'/json/api',
+    // 'exec': HOST+'/jsonrpc/exec',
     'login': HOST+'/json/user/login',
     'register': HOST+'/json/user/register'
 }
