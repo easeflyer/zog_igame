@@ -1,18 +1,16 @@
 import React from 'react';
 
-import EventListPanel from './EventListPanel'
 import EventList from './EventList'
 import List from './DealList'
 import EventDetails from './EventDetails'
+import SignEvent from './SignEvent'
 
 export default class ListApp extends React.Component{
-    constructor(){
-	    super();
-		this.state = {
-            list : new List(),
-            openDetail: false,
-            listPage: 0
-		};
+
+    state={
+        list : new List(),
+        open: 0, //0: list, 1: detail, 2: sign
+        listPage: 0
     }
 
     handlerSearch=(word)=>{
@@ -23,23 +21,35 @@ export default class ListApp extends React.Component{
 
     handlerDetail=(key)=>{
         this.setState({
-            openDetail:true,
+            open: 1,
             listPage: key
         });
     }
-
+    
     backToList=()=>{
         this.setState({
-            openDetail:false
-        })
+            open:0
+        });
+    }
+    
+    backToDetail=()=>{
+        this.setState({
+            open:1
+        });
+    }
+
+    signMatch=()=>{
+        this.setState({
+            open:2
+        });
     }
 
     render(){
         return(
             <div>  
-                { !this.state.openDetail ? <EventListPanel handlerSearch={this.handlerSearch}/> : null}
-                { !this.state.openDetail ? <EventList list={this.state.list.list} handlerDetail={this.handlerDetail}/> : null}                
-                { this.state.openDetail ? <EventDetails list={this.state.list.list} page={this.state.listPage} backToList={this.backToList}/> : null}
+                { this.state.open == 0 ? <EventList list={this.state.list.list}  handlerDetail={this.handlerDetail} handlerSearch={this.handlerSearch}/> : null}                
+                { this.state.open == 1 ? <EventDetails list={this.state.list.list} page={this.state.listPage} backToList={this.backToList} signMatch={this.signMatch} /> : null}
+                { this.state.open == 2 ? <SignEvent list={this.state.list.list} page={this.state.listPage} backToDetail={this.backToDetail}/> : null}
             </div>
         )
     }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { SearchBar} from 'antd-mobile'
+import EventNavBar from './EventNavBar'
 
 export default class EventListPanel extends React.Component{
 
@@ -9,7 +10,7 @@ export default class EventListPanel extends React.Component{
     render(){
         return(
             <div>
-                <h2 style={{textAlign:'center'}}>比赛列表</h2>
+                <EventNavBar  left="" eventName="比赛列表" />
                 <SearchBar
                 ref='eventSearchBar'
                 placeholder="Search"

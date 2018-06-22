@@ -1,12 +1,13 @@
 import React from 'react';
 import {List} from 'antd-mobile'
-import EventDetails from './EventDetails'
+import EventListPanel from './EventListPanel'
 
 export default class Event extends React.Component{  
 
     handlerClick=(key)=>{
         this.props.handlerDetail(key);
     }
+
     render(){
         let items = [];
 		
@@ -28,8 +29,9 @@ export default class Event extends React.Component{
 		}
         
         return (
-            <div>               
-                 <List>{items}</List>
+            <div>  
+                <EventListPanel handlerSearch={this.props.handlerSearch}/>             
+                <List>{items}</List>
             </div>
         );
     }

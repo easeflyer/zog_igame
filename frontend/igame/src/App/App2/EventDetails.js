@@ -1,25 +1,23 @@
 import React from 'react'
-import { WingBlank, NavBar, Icon } from 'antd-mobile';
+import { WingBlank, Button } from 'antd-mobile';
+import EventNavBar from './EventNavBar'
 
 export default class EventDetails extends React.Component{
     backSpace=()=>{
         this.props.backToList();
     }
 
+    handlerSign=()=>{
+        this.props.signMatch();
+    }
     render(){
         let list=this.props.list;
         let page=this.props.page-1;
         let listItemDetails= list[page].info;
         return(
-            <WingBlank>
-                <NavBar
-                mode="light"
-                icon={<Icon type="left" />}
-                onLeftClick={this.backSpace}
-                >
-                    {listItemDetails.eventName}
-                </NavBar>
-                <img src="http://p2.so.qhimgs1.com/bdr/_240_/t01d5f9d7ac8f536b6e.jpg" style={{display:'block', margin:'0 auto', marginBottom:30}}/>
+            <WingBlank>              
+                <EventNavBar left="left" eventName={listItemDetails.eventName} clickArrow={this.backSpace}/>
+                <img src={listItemDetails.thumb} style={{display:'block', margin:'0 auto', marginBottom:15, width:'100%'}}/>
                 <p>{listItemDetails.eventName}</p>
                 <p>比赛时间：</p>
                 <p style={{marginLeft:30}}>{listItemDetails.eventTime}</p>
@@ -33,6 +31,7 @@ export default class EventDetails extends React.Component{
                 <p style={{marginLeft:30}}>{listItemDetails.arbitration}</p>
                 <p>报名时间：</p>
                 <p style={{marginLeft:30}}>{listItemDetails.signingTime}</p>
+                <Button type="primary" size="small" onClick={this.handlerSign}>我要报名</Button>
             </WingBlank>
         )
     }
