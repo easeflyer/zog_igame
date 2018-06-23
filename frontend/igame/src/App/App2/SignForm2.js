@@ -1,7 +1,6 @@
 import React from 'react'
 import DealUser from './DealUser'
-import { Form, Select, Button, Row, Col  } from 'antd';
-
+import { Form, Input, Select, Button  } from 'antd';
 const FormItem = Form.Item;
 const Option = Select.Option;
 
@@ -40,48 +39,58 @@ class FormForSign extends React.Component{
 
         return(
             <Form layout="vertical" onSubmit={this.onSubmit}>
-                    <FormItem  style={{marginBottom:0}} >
-                        <span>项目：</span>
+                    <FormItem label="项目"  style={{marginBottom:0}} >
                         <Select placeholder="选择参赛项目" style={{ width: 120 }} {...getFieldProps('eventName')}>
                             <Option value="团体公开赛">团体公开赛</Option>
                             <Option value="青年赛">青年赛</Option>
                             <Option value="中年赛">中年赛</Option>
                         </Select>
                     </FormItem>
-                    <FormItem style={{marginBottom:0}} >
-                        <span>赛队：</span>
+                    <FormItem label="队伍名称" style={{marginBottom:0}} >
                         <Select placeholder="选择队伍名称" style={{ width: 120 }} {...getFieldProps('teamName')} onSelect={this.handlerTeamSelect}>
                             {allUserList.teamList.map((item,index) =>
                                 <Option key={index} value={item.teamName}>{item.teamName}</Option>
                             )}
                         </Select>
                     </FormItem>
-                    <FormItem  style={{marginBottom:0}} >   
-                        <Row>
-                            <Col span={4}>
-                                <span>领队</span>
-                            </Col>
-                            <Col span={5}>
-                                <span>赛事证号</span>
-                            </Col>
-                            <Col span={5}>
-                                <span>{allUserList.teamList[0].leaderName}</span>
-                            </Col>
-                            <Col span={5}>
-                                <span>姓名</span>
-                            </Col>
-                            <Col span={5}>
-                                <span>{allUserList.teamList[0].leaderName}</span>
-                            </Col>
-                        </Row>                        
+                    <FormItem label="领队"  style={{marginBottom:0}} >   
+                        <Select placeholder="赛事证号" style={{ width: 120 }} {...getFieldProps('leaderId')} disabled={this.state.selectDisable}>
+                            { allUserList.friendList.map((item,index) =>
+                                <Option key={index} value={item.eventId}>{item.eventId}</Option>)
+                            }
+                            
+                        </Select>
+                        <Select placeholder="姓名" style={{ width: 120 }} {...getFieldProps('leaderName')} disabled={this.state.selectDisable}>
+                            {allUserList.friendList.map((item,index) =>
+                                <Option key={index} value={item.name}>{item.name}</Option>
+                            )}
+                        </Select>    
                     </FormItem>
                     <FormItem label="教练"  style={{marginBottom:0}} >   
-                       
+                        <Select placeholder="赛事证号" style={{ width: 120 }} {...getFieldProps('coachId')} disabled={this.state.selectDisable}>
+                            {allUserList.friendList.map((item,index) =>
+                                <Option key={index} value={item.eventId}>{item.eventId}</Option>
+                            )}
+                        </Select>
+                        <Select placeholder="姓名" style={{ width: 120 }} {...getFieldProps('coachName')} disabled={this.state.selectDisable}>
+                            {allUserList.friendList.map((item,index) =>
+                                <Option key={index} value={item.name}>{item.name}</Option>
+                            )}
+                        </Select>    
                     </FormItem>
                     <FormItem label="队员"  style={{marginBottom:0}} >   
-                       
+                        <Select placeholder="赛事证号" style={{ width: 120 }} {...getFieldProps('playerId')} disabled={this.state.selectDisable}>
+                            {allUserList.friendList.map((item,index) =>
+                                <Option key={index} value={item.eventId}>{item.eventId}</Option>
+                            )}
+                        </Select>
+                        <Select placeholder="姓名" style={{ width: 120 }} {...getFieldProps('playerName')} disabled={this.state.selectDisable}>
+                            {allUserList.friendList.map((item,index) =>
+                                <Option key={index} value={item.name}>{item.name}</Option>
+                            )}
+                        </Select>    
                     </FormItem>
-                    <FormItem style={{marginTop:20, marginBottom:0}} >
+                    <FormItem style={{marginTop:20, marginBottom:0}}>
                         <p>联系人：{allUserList.name}</p>
                         <p>电话：{allUserList.tel}</p>
                         <p> Email：{allUserList.email}</p>   

@@ -43,7 +43,7 @@ export default class List {
     } 
 }
 
-// 模拟数据库
+// 模拟赛事数据库
 List.eventList = [
     {   thumb: 'http://pic2.ooopic.com/10/55/23/14b1OOOPIC34.jpg',
         eventName : '石家庄宏鸿杯桥牌赛', 
