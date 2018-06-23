@@ -1,28 +1,26 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { Flex, WhiteSpace, List, InputItem, Toast, Button  } from 'antd-mobile';
+import { Flex, WhiteSpace, InputItem, Toast, Button, NavBar, Icon } from 'antd-mobile';
 import './Login.css'
 import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
-
 import { createForm } from 'rc-form';
+import Models from '../Models/Models';
+import session from './session';
 
-const Item = List.Item;
-
-
-export default class FlexExample extends React.Component{
+export default class LoginPage extends React.Component{
    render () {
        return(
         <div className="flex-container">
-
-
+            <NavBar
+                mode="light"
+                icon={<Icon type="left" />}
+                onLeftClick={this.props.goHome}
+                >
+            </NavBar>
             <Flex direction='column'>
-
-                <img src={require("./963065731.jpg")} style={{width:360}}/>
-
+                <img src={require("./963065731.jpg")} style={{width:360,marginTop:-30}}/>
                 <WhiteSpace size="lg" />
 
-                <BasicInputExampleWrapper toggleLogin={this.props.toggleLogin} />
-
+                <LoginForm toggleLoginState={this.props.toggleLoginState} />
                 <WhiteSpace size="sm" />
 
                 <p className='p'>登录即代表您已同意<a href='#'>《智赛桥牌隐私政策》</a></p>
@@ -35,7 +33,6 @@ export default class FlexExample extends React.Component{
                     <p className='p1'>|</p>
                     <button className='btn1'>忘记密码</button>
                 </Flex>
-
                 <WhiteSpace size="lg" />
             </Flex>
         </div>
@@ -43,33 +40,46 @@ export default class FlexExample extends React.Component{
    } 
 }
 
-
-class BasicInputExample extends React.Component {
+class BasicInput extends React.Component {   //输入组件，经过下面的createForm()变成可提交的组件
     componentDidMount() {
     //   this.autoFocusInst.focus();
     }
-
-    state = {
-        // hasError: false,
-        value: '',
-    }
-    onSubmit = () => {
-        this.props.form.validateFields({ force: true }, (error) => {
-            // console.log(this.props.form.getFieldsValue());//表单数据
-            // this.props.toggleLogin()
+    onSubmit = () => {   //表单提交方法
+        this.props.form.validateFields({ force: true }, (error) => {  //输入验证，符合规则才向后后端交数据
             if (!error) {
-                this.props.toggleLogin()
-                console.log(this.props.form.getFieldsValue());//表单数据
-                alert(888888)
+                var formData = this.props.form.getFieldsValue();  //表单数据
+                const json = {  //向后端提交的数据
+                    'server':'TT',
+                    'user': formData.phone,  
+                    'password': formData.password,
+                }
+                console.log(json)
+                const cb = (data)=>{
+                    console.log(data)
+                    if (data.sid){
+                        session.set_sid(data.sid)
+                        Toast.success("登录成功！",1);
+                        // this.callback();
+                        this.props.toggleLoginState()   //修改最外层的组件的登录状态（此方法经App.js-->User/Index.js-->到本组件）
+                    }else{
+                        Toast.fail('登录失败，请稍后重试！',1);
+                    }
+                }
+                const m = Models.create();
+                m.query('login',json,cb);
+
+
+
+
+                // this.props.toggleLoginState()   //修改最外层的组件的登录状态（此方法经App.js-->User/Index.js-->到本组件）
+
             } else {
                 Toast.info('您的输入不完整！');
-                alert('555555');
-                this.props.toggleLogin()
             }
         });
       }
     
-    validateAccount = (rule, value, callback) => {
+    validateAccount = (rule, value, callback) => {  //输入验证规则
         if (value && value.replace(/\s/g, '').length < 11) {
           callback(new Error('Please enter 11 digits'));
         } else {
@@ -80,7 +90,6 @@ class BasicInputExample extends React.Component {
         const { getFieldProps, getFieldError } = this.props.form;
         return (
             <form>
-            {/* <List > */}
                 <InputItem
                     {...getFieldProps('phone',{
                         rules: [
@@ -96,29 +105,23 @@ class BasicInputExample extends React.Component {
                     type="phone"
                     placeholder="enter your phone"
                 >手机号</InputItem>
-
                 <InputItem
                     {...getFieldProps('password',{
-                        
+                        rules: [
+                            { required: true, message: '密码不能为空！' },
+                        ],
                     })}
                     type="password"
                     placeholder="******"
                 >  密码</InputItem>
-
                 <WhiteSpace size="xl" />
                 <WhiteSpace size="xl" />
-
-                <Item>
-                    <button className='btn' onClick={this.onSubmit}>登录</button>
-                </Item>
-                {/* <Button type="ghost" inline style={{ marginLeft: '100px' }} className="am-button-borderfix">inline ghost</Button> */}
-            {/* </List> */}
+                <Button type=""  onClick={this.onSubmit} className='btn'>登录</Button>
             </form>
         );
     }
   }
-  
-  const BasicInputExampleWrapper = createForm()(BasicInputExample);
+  const LoginForm = createForm()(BasicInput);  //表单组件
 
 
 

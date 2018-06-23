@@ -7,7 +7,7 @@ import { TabBar } from 'antd-mobile';
 import { Site,App2,My } from './App/Loadable';
 import { Icon } from 'antd'
 import session from './App/User/session';
-import FlexExample from './App/User/Login';
+import User from './App/User/Index';
 /**
  * 本页面是将来程序的入口，功能包括：
  * １）加载　loadable.js 也就是需要动态载入的所有　子程序。
@@ -15,9 +15,6 @@ import FlexExample from './App/User/Login';
  * ３）框架由　TabBar 来搭建。注意　state 设置。
  * ４）State: 当前子程序，上一级页面等。
  */
-
-
-
 
 class TabBarExample extends React.Component {
   constructor(props) {
@@ -33,7 +30,13 @@ class TabBarExample extends React.Component {
     }
   }
 
-  toggleLogin = ()=>{
+  goHome=()=>{
+    this.setState({
+      selectedTab: 'blueTab',
+      hidden: false,
+    });
+  }
+  toggleLoginState = ()=>{
     this.setState({
       haslogin:!this.state.haslogin,
     })
@@ -111,10 +114,12 @@ class TabBarExample extends React.Component {
             onPress={() => {
               this.setState({
                 selectedTab: 'yellowTab',
+                hidden: true
               });
             }}
           >
-             {this.state.selectedTab=='yellowTab'?this.renderContent(this.state.haslogin?<My />:<FlexExample toggleLogin={this.toggleLogin} />):null}
+             {this.state.selectedTab=='yellowTab'?this.renderContent(this.state.haslogin?<My />:<User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />):null}
+             {/* {this.state.selectedTab=='yellowTab'?this.renderContent(this.state.haslogin?<My />:<FlexExample toggleLogin={this.toggleLogin} />):null} */}
           </TabBar.Item>
         </TabBar>
       </div>
