@@ -29,7 +29,7 @@ export default class LoginPage extends React.Component{
                 <WhiteSpace size="xl" />
 
                 <Flex align="baseline">
-                    <button className='btn1'>点击注册</button>
+                    <button className='btn1' onClick={this.props.toRegisterpage} >点击注册</button>
                     <p className='p1'>|</p>
                     <button className='btn1'>忘记密码</button>
                 </Flex>
@@ -74,7 +74,7 @@ class BasicInput extends React.Component {   //输入组件，经过下面的cre
                 // this.props.toggleLoginState()   //修改最外层的组件的登录状态（此方法经App.js-->User/Index.js-->到本组件）
 
             } else {
-                Toast.info('您的输入不完整！');
+                Toast.fail('您的输入不完整！');
             }
         });
       }
