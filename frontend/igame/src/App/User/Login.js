@@ -23,15 +23,15 @@ export default class LoginPage extends React.Component{
                 <LoginForm toggleLoginState={this.props.toggleLoginState} />
                 <WhiteSpace size="sm" />
 
-                <p className='p'>登录即代表您已同意<a href='#'>《智赛桥牌隐私政策》</a></p>
+                <p className='text'>登录即代表您已同意<a href='#'>《智赛桥牌隐私政策》</a></p>
                 <WhiteSpace size="xl" />
                 <WhiteSpace size="xl" />
                 <WhiteSpace size="xl" />
 
                 <Flex align="baseline">
                     <button className='btn1' onClick={this.props.toRegisterpage} >点击注册</button>
-                    <p className='p1'>|</p>
-                    <button className='btn1'>忘记密码</button>
+                    <p className='login-p'>|</p>
+                    <button className='btn1' onClick={this.props.toFindPwdpage} >忘记密码</button>
                 </Flex>
                 <WhiteSpace size="lg" />
             </Flex>
@@ -116,7 +116,7 @@ class BasicInput extends React.Component {   //输入组件，经过下面的cre
                 >  密码</InputItem>
                 <WhiteSpace size="xl" />
                 <WhiteSpace size="xl" />
-                <Button type=""  onClick={this.onSubmit} className='btn'>登录</Button>
+                <Button type=""  onClick={this.onSubmit} className='login-btn'>登录</Button>
             </form>
         );
     }

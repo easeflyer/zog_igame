@@ -24,15 +24,10 @@
 }
 
 
-.btn{
-    background-color: #e8e8e8;
+.login-btn{
     margin-left: 20%;
-    width: 198px;
-    height: 38px;
-    line-height: 38px;
-
 }
-.registerbtn{
+.login-btn,.register-btn,.next-btn{
   background-color: #e8e8e8;
   width: 198px;
   height: 38px;
@@ -46,9 +41,16 @@
     font-weight: lighter;
     font-size: 16px;
 }
-.p{
+.text{
     font-size: 14px;
 }
-.p1{
+.login-p{
     font-size: 28px;
+}
+.find-p{
+  margin: 0px 5px;
+  font-size: 26px
+}
+.code-btn{
+  width: 130px;
 }
