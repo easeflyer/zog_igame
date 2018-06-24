@@ -11,6 +11,7 @@ class ListItem {
 		this.info.arbitration = item.arbitration;
 		this.info.signingTime = item.signingTime;
 		this.info.descrip = item.descrip;
+		this.info.isSign = item.isSign;
 	}
 }
 
@@ -53,7 +54,8 @@ List.eventList = [
         referee:'张江川',
         arbitration:'马强',
         signingTime: '2018/07/05 - 2018/07/20',
-        descrip: 'Double round robin, 12 per game board, arranged in a cumulative VP'
+        descrip: 'Double round robin, 12 per game board, arranged in a cumulative VP',
+        isSign: true
     },
     {   thumb: 'http://pic2.ooopic.com/10/52/30/34b1OOOPIC21.jpg',
         eventName : '石家庄桥协城际桥牌赛', 
@@ -63,7 +65,8 @@ List.eventList = [
         referee:'张江川',
         arbitration:'马强',
         signingTime: '2018/07/05 - 2018/07/20',
-        descrip: 'Double round robin, 12 per game board, arranged in a cumulative VP'
+        descrip: 'Double round robin, 12 per game board, arranged in a cumulative VP',
+        isSign: false
     },
     {   thumb: 'http://pic32.nipic.com/20130829/13536465_000509793000_2.jpg',
         eventName : '北京市桥牌赛', 
@@ -73,7 +76,8 @@ List.eventList = [
         referee:'张江川',
         arbitration:'马强',
         signingTime: '2018/07/05 - 2018/07/20',
-        descrip: 'Double round robin, 12 per game board, arranged in a cumulative VP'
+        descrip: 'Double round robin, 12 per game board, arranged in a cumulative VP',
+        isSign: false
     },
     {   thumb:'http://pic31.nipic.com/20130705/13181524_151216468000_2.jpg',
         eventName : '杭州千岛湖桥牌赛', 
@@ -83,7 +87,8 @@ List.eventList = [
         referee:'张江川',
         arbitration:'马强',
         signingTime: '2018/07/05 - 2018/07/20',
-        descrip: 'Double round robin, 12 per game board, arranged in a cumulative VP'
+        descrip: 'Double round robin, 12 per game board, arranged in a cumulative VP',
+        isSign: false
     },
     {   thumb:'http://img.hb.aicdn.com/a6f3a898884233b5f9ae0d8f6ea58019ad618f8012d94-A4GGwI_fw658',
         eventName : '重庆三家坝桥牌赛', 
@@ -93,6 +98,7 @@ List.eventList = [
         referee:'张江川',
         arbitration:'马强',
         signingTime: '2018/07/05 - 2018/07/20',
-        descrip: 'Double round robin, 12 per game board, arranged in a cumulative VP'
+        descrip: 'Double round robin, 12 per game board, arranged in a cumulative VP',
+        isSign: false
     }
 ];

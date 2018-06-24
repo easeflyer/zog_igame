@@ -1,7 +1,7 @@
 import React from 'react'
-import EventNavBar from './EventNavBar'
+import EventNavBar from './Common/EventNavBar'
 import { WingBlank} from 'antd-mobile';
-import SubmitSignForm from './SubmitSignForm'
+import SignWay from './SignWay'
 
 export default class SignEvent extends React.Component{
     state={
@@ -12,11 +12,12 @@ export default class SignEvent extends React.Component{
         this.props.backToDetail()
     }
 
-    submitSignForm=(data)=>{
+    submitExistTeamForm=(data)=>{
         console.log(data)
         this.setState({
             toast:true
         });
+        this.props.submitExistTeamForm(data)
     }
 
     
@@ -28,7 +29,7 @@ export default class SignEvent extends React.Component{
         return(
             <WingBlank>
                 <EventNavBar  left="left" eventName={listItemDetails.eventName+'报名'} clickArrow={this.backSpace} />
-                <SubmitSignForm toast={this.state.toast} submitSignForm={this.submitSignForm}/>
+                <SignWay toast={this.state.toast} submitExistTeamForm={this.submitExistTeamForm}/>
             </WingBlank>
         )
     }

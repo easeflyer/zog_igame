@@ -1,11 +1,16 @@
 import React from 'react';
 import {List} from 'antd-mobile'
-import EventListPanel from './EventListPanel'
+import { SearchBar} from 'antd-mobile'
+import EventNavBar from './Common/EventNavBar'
 
 export default class Event extends React.Component{  
 
     handlerClick=(key)=>{
         this.props.handlerDetail(key);
+    }
+
+    handlerSearch(value){
+        this.props.handlerSearch(value);
     }
 
     render(){
@@ -30,7 +35,13 @@ export default class Event extends React.Component{
         
         return (
             <div>  
-                <EventListPanel handlerSearch={this.props.handlerSearch}/>             
+                <EventNavBar  left="" eventName="比赛列表" />
+                <SearchBar
+                ref='eventSearchBar'
+                placeholder="Search"
+                onSubmit={value => this.handlerSearch(value)}
+                onChange={value => this.handlerSearch(value)}
+                />
                 <List>{items}</List>
             </div>
         );
