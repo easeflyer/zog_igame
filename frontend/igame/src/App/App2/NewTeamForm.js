@@ -14,14 +14,14 @@ class FormForSign extends React.Component{
         e.preventDefault();
         this.props.form.validateFields(
             (err) => {
-              if (!err) {
-                  this.props.submitNewTeamForm(this.props.form.getFieldsValue());
-                console.info('success');
-              }else{
-                Toast.fail('验证失败，请重新填写表单', 1);
-              }
+                if (!err) {
+                    this.props.submitNewTeamForm(this.props.form.getFieldsValue());
+                    console.info('success');
+                }else{
+                    Toast.fail('验证失败，请重新填写表单', 2);
+                }
             },
-          );
+        );
     }
 
     cancelNewTeamForm=()=>{
