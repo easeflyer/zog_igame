@@ -35,18 +35,15 @@ class Models {
             return Models.models;
         }
     }
+    
     query(type = 'exec', json = {}, callback) {
         switch (type) {
             case 'exec':
                 this.exec(json,callback);
                 break;
-            case 'login':
-                this.login(json,callback);
+            default:
+                this.users(type,json,callback);
                 break;
-            case 'register':
-                this.register(json,callback);
-                break;
-                
         }
     }
     /**
@@ -71,24 +68,8 @@ class Models {
             });
     }
 
-    login(json, callback) {
-        const url = Models.types['login']
-        fetch(url,{
-                method:'POST',
-                body:JSON.stringify(json),
-                headers:new Headers({
-                    'Content-Type':'application/json'
-                })
-            }).then(res=>res.json())
-                .catch(error=>console.error('Error:',error))
-                .then(response => {
-                    const body = response.result  // 注意这里如果数据库没有链接将报错。
-                    callback(body);
-                });
-    }
-
-    register(json, callback) {
-        const url = Models.types['register']
+    users(ty,json, callback) {
+        const url = Models.types[ty]
         console.log(url)
         fetch(url,{
                 method:'POST',
@@ -109,9 +90,9 @@ class Models {
 Models.models = null;
 Models.types = {
     'exec': HOST+'/json/api',
-    // 'exec': HOST+'/jsonrpc/exec',
     'login': HOST+'/json/user/login',
-    'register': HOST+'/json/user/register'
+    'register': HOST+'/json/user/register',
+    'resetPassword': HOST+'/json/user/reset/password'
 }
 
 export default Models;

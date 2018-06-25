@@ -26,7 +26,7 @@ class TabBarExample extends React.Component {
       haslogin:false
     };
     if (session.get_sid()){
-      this.setState({haslogin:1})
+      this.state.haslogin = true
     }
   }
 

@@ -60,7 +60,7 @@ class BasicInput extends React.Component {   //输入组件，经过下面的cre
                         session.set_sid(data.sid)
                         Toast.success("登录成功！",1);
                         // this.callback();
-                        this.props.toggleLoginState()   //修改最外层的组件的登录状态（此方法经App.js-->User/Index.js-->到本组件）
+                        this.props.toggleLoginState();   //修改最外层的组件的登录状态（此方法经App.js-->User/Index.js-->到本组件）
                     }else{
                         Toast.fail('登录失败，请稍后重试！',1);
                     }

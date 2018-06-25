@@ -10,7 +10,13 @@ const Item = List.Item;
 const Brief = Item.Brief;
 export default class FindPwdPage extends React.Component{
     state = {
-        openCodePage:true
+        openCodePage:true,
+        user:null
+    }
+    setUser = (num)=>{
+        this.setState({
+            user:num
+        })
     }
     tooglePages = ()=>{
         this.setState({
@@ -20,21 +26,29 @@ export default class FindPwdPage extends React.Component{
     render () {
         return(
         this.state.openCodePage ? 
-        <CodePage toLoginPage={this.props.toLoginPage} tooglePages={this.tooglePages} /> 
+        <CodePage toLoginPage={this.props.toLoginPage} tooglePages={this.tooglePages} setUser={this.setUser} /> 
         :
-        <SubmitNewPasswordPage tooglePages={this.tooglePages} toLoginPage={this.props.toLoginPage} />
+        <SubmitNewPasswordPage tooglePages={this.tooglePages} toLoginPage={this.props.toLoginPage} user={this.state.user} />
         );
     } 
 }
 
 class CodeForm extends React.Component{
+    state={
+        msg:'获取验证码',   //获取验证码按钮文字
+        timer:null        //倒计时
+    }
     onSubmit = () => {   //表单提交方法
         this.props.form.validateFields({ force: true }, (error) => {  //输入验证，符合规则才向后后端交数据
             var formData = this.props.form.getFieldsValue();  //表单数据
-                // console.log(formData.password)
-                // console.log(formData.password2)
             if (!error) {
-                
+                console.log(formData.phone)
+                console.log(formData.code)
+
+                //  注意：此处应该先把手机号和验证码提交到后端做验证
+                clearInterval(this.state.timer);    //清除发送验证码的计时器
+                this.props.setUser(formData.phone);
+                this.props.tooglePages();
             } else {
                 Toast.fail('您的输入有误！');
             }
@@ -43,16 +57,27 @@ class CodeForm extends React.Component{
     getCode = () => {   //表单提交方法
         this.props.form.validateFields({ force: true }, (error) => {  //输入验证，符合规则才向后后端交数据
             var formData = this.props.form.getFieldsValue();  //表单数据
-                // console.log(formData)
-                // console.log(formData.password2)
+            if (!error || !error.phone) {
 
-                // console.log(error)
-                console.log(error.phone)
-            // if (!error) {
-                
-            // } else {
-            //     Toast.fail('您的输入有误！');
-            // }
+                //  注意：此处应该吧手机号发送至后端，获取验证码，然后在进行下面的操作
+                console.log(formData.phone)
+                var t=60;
+                this.setState({              //把倒计时放入state的timer,以便在其他函数清除
+                    timer:setInterval(()=>{
+                        if(t==0){
+                            this.setState({msg:'获取验证码'})  
+                            t=60;
+                            clearInterval(this.state.timer);
+                        }else{
+                            this.setState({msg:"重发(" + t + ")"})
+                            t--; 
+                            console.log(t)
+                        }   
+                    },1000)     
+                })
+            } else {
+                Toast.fail('手机号输入有误！');
+            }
         });
     }
     validateAccount = (rule, value, callback) => {  //手机号输入验证规则
@@ -98,7 +123,12 @@ class CodeForm extends React.Component{
                         placeholder="请输入手机号"
                     >手机号</InputItem>
                     <p className='find-p' > | </p>
-                    <Button type=""  className='code-btn' onClick={this.getCode} >获取验证码</Button>
+                    <Button type=""  className='code-btn' onClick={()=>this.getCode(this)}
+                        value={this.state.msg} 
+                        disabled={this.state.msg=="获取验证码"?false:true}
+                        >
+                        {this.state.msg}
+                    </Button>
                 </Flex>
                 <WhiteSpace size="lg" />
                 <Flex align="baseline">
@@ -122,7 +152,7 @@ class CodeForm extends React.Component{
                 <WhiteSpace size="xl" />
                 <WhiteSpace size="xl" />
                 <Flex align="baseline">
-                    <Button type=""  className='next-btn' onClick={()=>this.props.tooglePages()} >下一步</Button>
+                    <Button type=""  className='next-btn' onClick={()=>this.onSubmit()} >下一步</Button>
                 </Flex>
             </Flex>
         </form>
@@ -131,14 +161,50 @@ class CodeForm extends React.Component{
 }
 const CodePage = createForm()(CodeForm);
 
-class SubmitNewPasswordPage extends React.Component{
+class NewPwdForm extends React.Component{
     success = ()=>{
-        this.props.toLoginPage(),
-        this.props.tooglePages()
+        this.props.form.validateFields({ force: true }, (error) => {  //输入验证，符合规则才向后后端交数据
+            var formData = this.props.form.getFieldsValue();  //表单数据
+            if (!error) {
+                if (formData.password!=formData.password2){
+                    Toast.fail('两次输入的密码不一致！');
+                }else{
+                    const json = {
+                        'server':'TT',
+                        'user':this.props.user,
+                        'password':formData.password
+                    }
+                    console.log(json)
+                    const cb = (data)=>{
+                        if (data){   
+                            Toast.success('密码修改成功！',1);
+                            this.props.tooglePages();
+                            this.props.toLoginPage();   //注册成功，返回登录页面
+                        }else{
+                            Toast.fail('修改失败，请稍后重试！',1);
+                        }
+                    }
+                    const m = Models.create();
+                    m.query('resetPassword',json,cb)
+                }
+            } else {
+                Toast.fail('您的输入不正确！');
+            }
+        });
+        // this.props.toLoginPage(),
+        // this.props.tooglePages()
+    }
+    validatePwd = (rule, value, callback) => {  //密码输入验证规则
+        if (value && value.length < 6 || value.length > 20) {
+            callback(new Error('密码应在6-20位之间'));
+        } else {
+            callback();
+        }
     }
     render () {
+        const { getFieldProps, getFieldError } = this.props.form;
         return(
-        <div className="flex-container">
+        <form className="flex-container">
             <NavBar
                 mode="light"
                 icon={<Icon type="left" />}
@@ -148,12 +214,34 @@ class SubmitNewPasswordPage extends React.Component{
             <Flex direction='column'>
                 <WhiteSpace size="lg" />
                 <InputItem
-                    type="phone"
+                    {...getFieldProps('password',{
+                        rules: [
+                            { required: true, message: '密码不能为空！' },
+                            { validator: this.validatePwd },
+                        ],
+                    })}
+                    clear
+                    error={!!getFieldError('password')}
+                    onErrorClick={() => {
+                        Toast.info(getFieldError('password').join('、'));
+                    }}
+                    type="password"
                     placeholder="请输入新的登录密码"
                 >新密码</InputItem>
                 <WhiteSpace size="sm" />
                 <InputItem
-                    type="phone"
+                    {...getFieldProps('password2',{
+                        rules: [
+                            { required: true, message: '密码不能为空！' },
+                            { validator: this.validatePwd },
+                        ],
+                    })}
+                    clear
+                    error={!!getFieldError('password2')}
+                    onErrorClick={() => {
+                        Toast.info(getFieldError('password2').join('、'));
+                    }}
+                    type="password"
                     placeholder="请确认新密码"
                 >确认新密码</InputItem>
                 <WhiteSpace size="sm" />
@@ -163,7 +251,8 @@ class SubmitNewPasswordPage extends React.Component{
                 <WhiteSpace size="xl" />
                 <Button type=""  className='next-btn' onClick={()=>this.success()} >新密码确认</Button>
             </Flex>
-        </div>
+        </form>
         );
     }
 }
+const SubmitNewPasswordPage = createForm()(NewPwdForm);
