@@ -60,33 +60,33 @@ class FormForSign extends React.Component{
                         </Select>
                     </FormItem>
                     <FormItem label="领队"  style={{marginBottom:0}} >   
-                        <Row>
-                            <Col span={6}>
+                        <Row  type="flex" justify="center">
+                            <Col span={5}>
                                 <span>赛事证号</span>
                             </Col>
-                            <Col span={6}>
+                            <Col span={5}>
                                 <span>{allUserList.teamList[this.state.hasTeam].leaderId}</span>
                             </Col>
-                            <Col span={6}>
+                            <Col span={5}>
                                 <span>姓名</span>
                             </Col>
-                            <Col span={6}>
+                            <Col span={5}>
                                 <span>{allUserList.teamList[this.state.hasTeam].leaderName}</span>
                             </Col>
                         </Row>                        
                     </FormItem>
                     <FormItem label="教练"  style={{marginBottom:0}} >   
-                        <Row>
-                            <Col span={6}>
+                        <Row  type="flex" justify="center">
+                            <Col span={5}>
                                 <span>赛事证号</span>
                             </Col>
-                            <Col span={6}>
+                            <Col span={5}>
                                 <span>{allUserList.teamList[this.state.hasTeam].coachId}</span>
                             </Col>
-                            <Col span={6}>
+                            <Col span={5}>
                                 <span>姓名</span>
                             </Col>
-                            <Col span={6}>
+                            <Col span={5}>
                                 <span>{allUserList.teamList[this.state.hasTeam].coachName}</span>
                             </Col>
                         </Row>    
@@ -94,17 +94,17 @@ class FormForSign extends React.Component{
                     {
                         allUserList.teamList[this.state.hasTeam].player.map((item,index) =>
                             <FormItem key={index} label={"队员"+(index+1)}  style={{marginBottom:0}} >   
-                                <Row>
-                                    <Col span={6}>
+                                <Row  type="flex" justify="center">
+                                    <Col span={5}>
                                         <span>赛事证号</span>
                                     </Col>
-                                    <Col span={6}>
+                                    <Col span={5}>
                                         <span>{item.eventId}</span>
                                     </Col>
-                                    <Col span={6}>
+                                    <Col span={5}>
                                         <span>姓名</span>
                                     </Col>
-                                    <Col span={6}>
+                                    <Col span={5}>
                                         <span>{item.name}</span>
                                     </Col>
                                 </Row>    
