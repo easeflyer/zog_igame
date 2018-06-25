@@ -27,6 +27,7 @@ class IntelligentGameApi(models.Model):
         vals['score_uom'] = parent.score_uom
         return self.create(vals)
 
+
     @api.model
     @api.returns('self')
     def search_bridge_team(self,domain):
@@ -36,6 +37,11 @@ class IntelligentGameApi(models.Model):
         gms = self.env['og.igame'].search(dm)
         return gms  #self.env['og.igame'].browse(gid)
         #return [{'name':gm.name, 'id':gm.id}  for gm in gms ]
+
+    @api.model
+    def search2(self,domain):
+        gms = self.search_bridge_team(domain=domain)
+        return [{'name': gm.name, 'id': gm.id} for gm in gms]
 
     @api.model
     @api.returns('self')
@@ -94,6 +100,61 @@ class IntelligentGameApi(models.Model):
         player = self.env['res.partner'].browse(player_id)
         sc.player_ids |= player
 
+    @api.multi   # 创建,没有比赛id
+    def get_group_partner(self,partner_id):  # 队伍id
+        gs = self.group_ids.filtered( lambda g: partner_id in g.partner_ids )
+        g = gs and gs[0] or self.env['og.igame.group']
+        return g.name
+
+
+    @api.multi   # 创建,没有比赛id
+    def set_group_partner(self,group_name,number,partner_id):  # 队伍id
+        gid = self.id
+        #gs = self.group_ids.filtered(lambda g: g.name == group_name)
+
+        gs = self.env['og.igame.group'].search(
+              [('name','=',group_name),('igame_id','=',gid)  ] )
+
+        g = gs and gs[0] or None
+        if not g:
+            vals = {'igame_id':gid,'name':group_name}
+            g = self.env['og.igame.group'].create(vals)
+
+        ptn = self.env['res.partner'].browse(partner_id)
+        g.partner_ids += ptn
+        return True
+
+
+# class IntelligentGameGroup(models.Model):
+#     _inherit = "og.igame.group"
+#
+#     @api.model
+#     @api.returns('self')
+#     def set_group_partner(self, group_name, number, game_id, partner_id):  # 队伍id
+#
+#         gs = self.search( [('name','=',group_name),('igame_id','=',game_id)  ] )
+#
+#         g = gs and gs[0] or None
+#         if not g:
+#             vals = {'igame_id': game_id, 'name': group_name}
+#             g = self.create(vals)
+#
+#         ptn = self.env['res.partner'].browse(partner_id)
+#         g.partner_ids += ptn
+#
+#         return g
+
+
+# if not partner_id:
+        #    partner = self.env.user.partner_id
+        # else:
+        #    partner = self.env['res.partner'].browse(partner_id)
+
+        #org = self.env['res.partner'].browse(org_id)
+        #partner.parent_id = org
+
+        #if not group_name:
+         #   return group_name.create(group_name)
 
 
 """ 
