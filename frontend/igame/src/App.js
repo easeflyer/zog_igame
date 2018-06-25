@@ -4,8 +4,10 @@ import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 import 'antd/dist/antd.css'; // 这一句是从哪里引入的？
 import './App.css'
 import { TabBar } from 'antd-mobile';
-import { Site,App2 } from './App/Loadable';
+import { Site,App2,My } from './App/Loadable';
 import { Icon } from 'antd'
+import session from './App/User/session';
+import User from './App/User/Index';
 /**
  * 本页面是将来程序的入口，功能包括：
  * １）加载　loadable.js 也就是需要动态载入的所有　子程序。
@@ -14,9 +16,6 @@ import { Icon } from 'antd'
  * ４）State: 当前子程序，上一级页面等。
  */
 
-
-
-
 class TabBarExample extends React.Component {
   constructor(props) {
     super(props);
@@ -24,9 +23,24 @@ class TabBarExample extends React.Component {
       selectedTab: 'blueTab',
       hidden: false,
       fullScreen: true,  // 是否全屏显示
+      haslogin:false
     };
+    if (session.get_sid()){
+      this.state.haslogin = true
+    }
   }
 
+  goHome=()=>{
+    this.setState({
+      selectedTab: 'blueTab',
+      hidden: false,
+    });
+  }
+  toggleLoginState = ()=>{
+    this.setState({
+      haslogin:!this.state.haslogin,
+    })
+  }
   renderContent(app) {
     return app;
   }
@@ -100,10 +114,12 @@ class TabBarExample extends React.Component {
             onPress={() => {
               this.setState({
                 selectedTab: 'yellowTab',
+                hidden: true
               });
             }}
           >
-             {this.state.selectedTab=='yellowTab'?this.renderContent(<App2 />):null}
+             {this.state.selectedTab=='yellowTab'?this.renderContent(this.state.haslogin?<My />:<User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />):null}
+             {/* {this.state.selectedTab=='yellowTab'?this.renderContent(this.state.haslogin?<My />:<FlexExample toggleLogin={this.toggleLogin} />):null} */}
           </TabBar.Item>
         </TabBar>
       </div>

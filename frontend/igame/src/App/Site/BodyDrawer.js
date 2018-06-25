@@ -6,6 +6,9 @@ import Home from './Home/Index'
 import Test from './Test/Index2'
 import Navbar from './Navbar'
 
+
+import { session } from './Models/Models'
+
 import { Drawer, List } from 'antd-mobile';
 import { Icon } from 'antd';
 import Safety from './Safety/Index';
@@ -23,7 +26,17 @@ import Safety from './Safety/Index';
 class BodyDrawer extends React.Component {
     state = {
         page: 0, // 默认显示第一页
-        open: false
+        open: false,
+        hasLogin:false
+    }
+    constructor(){
+        super();
+        if(session.get_sid()) this.state.hasLogin = true;
+    }
+    toggleHasLogin =()=>{
+        this.setState({
+            hasLogin:!this.state.hasLogin
+        })
     }
     onMenuClick = (id) => {
         //alert("点击菜单："+id);
@@ -48,7 +61,7 @@ class BodyDrawer extends React.Component {
             { text: '俱乐部',   icon: <Icon type="usergroup-add" />,    page:<h1>page4</h1> },
             { text: '学习资料', icon: <Icon type="solution" />,         page:<h1>page5</h1> },
             { text: '测试页',   icon: <Icon type="solution" />,         page:<Test /> },
-            { text: '安全管理',   icon: <Icon type="solution" />,         page:<Safety /> },
+            { text: '安全管理',   icon: <Icon type="solution" />,         page:<Safety toggleHasLogin={this.toggleHasLogin} /> },
         ]
         //if(!this.props.open) return null; // 如果 open=false 不渲染任何东西（没用了）
         // fix in codepen 这里定义了列表的内容。 注意下面的语法。List 标签之间就是一个数组。 数组又 map 构造。
@@ -67,7 +80,7 @@ class BodyDrawer extends React.Component {
         // 这里定义屏幕整体效果。 包括顶部导航和抽屉菜单。其中抽屉菜单的sidebar 在上面用 list 定义。
         return (
             <div>
-                <Navbar toggleMenuBar={this.toggleMenuBar} />
+                <Navbar toggleMenuBar={this.toggleMenuBar} hasLogin={this.state.hasLogin} toggleHasLogin={this.toggleHasLogin} />
                 <Drawer
                     className="my-drawer"
 

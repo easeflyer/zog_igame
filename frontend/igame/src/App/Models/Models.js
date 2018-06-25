@@ -1,3 +1,5 @@
+import session from '../User/session';
+
 /**
  * 新建一个 服务器数据链接。
  * 这个链接应该是一个单例模式。
@@ -18,31 +20,6 @@
  * 
  */
 
-/**
- * use to handle session
- * localstorage is a html5 local storage solution
- * set_sid(sid) set sid into localstorage
- * get_sid()    get sid from the local or return false if no.
- * destroy()    remove sid from localstorage
- */
-const session = {
-    sid: null,
-    set_sid: function (sid) {
-        localStorage.sid = sid;
-        this.sid = sid;
-    },
-    get_sid: function () {
-        if (localStorage && localStorage.sid) {
-            return localStorage.sid;
-        } else {
-            return false;
-        }
-    },
-    destroy: function(){
-        if (localStorage && localStorage.sid) localStorage.removeItem('sid');
-    }
-};
-
 const HOST = 'http://192.168.0.115:8069'
 class Models {
 
@@ -58,18 +35,15 @@ class Models {
             return Models.models;
         }
     }
+    
     query(type = 'exec', json = {}, callback) {
         switch (type) {
             case 'exec':
                 this.exec(json,callback);
                 break;
-            case 'login':
-                this.login(json,callback);
+            default:
+                this.users(type,json,callback);
                 break;
-            case 'register':
-                this.register(json,callback);
-                break;
-                
         }
     }
     /**
@@ -94,24 +68,8 @@ class Models {
             });
     }
 
-    login(json, callback) {
-        const url = Models.types['login']
-        fetch(url,{
-                method:'POST',
-                body:JSON.stringify(json),
-                headers:new Headers({
-                    'Content-Type':'application/json'
-                })
-            }).then(res=>res.json())
-                .catch(error=>console.error('Error:',error))
-                .then(response => {
-                    const body = response.result  // 注意这里如果数据库没有链接将报错。
-                    callback(body);
-                });
-    }
-
-    register(json, callback) {
-        const url = Models.types['register']
+    users(ty,json, callback) {
+        const url = Models.types[ty]
         console.log(url)
         fetch(url,{
                 method:'POST',
@@ -123,19 +81,18 @@ class Models {
                 .catch(error=>console.error('Error:',error))
                 .then(response => {
                     const body = response.result  // 注意这里如果数据库没有链接将报错。
-                    // const body = response  // 注意这里如果数据库没有链接将报错。
                     callback(body);
                 });
     }
-
 
 }
 // 静态属性。ES6 
 Models.models = null;
 Models.types = {
-    'exec': HOST+'/jsonrpc/exec',
+    'exec': HOST+'/json/api',
     'login': HOST+'/json/user/login',
-    'register': HOST+'/json/user/register'
+    'register': HOST+'/json/user/register',
+    'resetPassword': HOST+'/json/user/reset/password'
 }
 
-export { Models,session };
+export default Models;
