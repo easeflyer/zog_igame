@@ -11,9 +11,6 @@ export default class SignEvent extends React.Component{
     backSpace= ()=>{
         this.props.backToDetail()
     }
-    backSpace_= ()=>{
-        this.props.backToWay()
-    }
 
     submitExistTeamForm=(data)=>{
         this.setState({
@@ -22,15 +19,13 @@ export default class SignEvent extends React.Component{
         this.props.submitExistTeamForm(data)
     }
 
-
     submitNewTeamForm=(data)=>{
         this.setState({
             toast:true
         });
         this.props.submitNewTeamForm(data)
     }
-
-    
+   
     render(){
         let list=this.props.list;
         let page=this.props.page-1;
