@@ -11,6 +11,7 @@ export default class EventNavBar extends React.Component{
                 mode="light"
                 icon={<Icon type={this.props.left} />}
                 onLeftClick={this.clickArrow}
+                style={{marginTop:1}}
                 >
                 {this.props.eventName}
             </NavBar>

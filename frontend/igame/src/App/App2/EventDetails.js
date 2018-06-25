@@ -1,5 +1,6 @@
 import React from 'react'
-import { WingBlank, Button } from 'antd-mobile';
+import { WingBlank, Button, } from 'antd-mobile';
+import {   Row, Col } from 'antd';
 import EventNavBar from './Common/EventNavBar'
 
 export default class EventDetails extends React.Component{
@@ -19,18 +20,30 @@ export default class EventDetails extends React.Component{
                 <EventNavBar left="left" eventName={listItemDetails.eventName} clickArrow={this.backSpace}/>
                 <img src={listItemDetails.thumb} style={{display:'block', margin:'0 auto', marginBottom:15, width:'100%'}}/>
                 <p>{listItemDetails.eventName}</p>
-                <p>比赛时间：</p>
-                <p style={{marginLeft:30}}>{listItemDetails.eventTime}</p>
-                <p>主办单位：</p>
-                <p style={{marginLeft:30}}>{listItemDetails.organizer}</p>
-                <p>赞助单位：</p>
-                <p style={{marginLeft:30}}>{listItemDetails.sponsors}</p>
-                <p>裁判：</p>
-                <p style={{marginLeft:30}}>{listItemDetails.referee}</p>
-                <p>仲裁：</p>
-                <p style={{marginLeft:30}}>{listItemDetails.arbitration}</p>
-                <p>报名时间：</p>
-                <p style={{marginLeft:30}}>{listItemDetails.signingTime}</p>
+                <Row>
+                    <Col span={8}><p>比赛时间：</p></Col>
+                    <Col span={16}><p>{listItemDetails.eventTime}</p></Col>
+                </Row>
+                <Row>
+                    <Col span={8}><p>主办单位：</p></Col>
+                    <Col span={16}><p>{listItemDetails.organizer}</p></Col>
+                </Row>
+                <Row>
+                    <Col span={8}><p>赞助单位：</p></Col>
+                    <Col span={16}><p>{listItemDetails.sponsors}</p></Col>
+                </Row>
+                <Row>
+                    <Col span={8}><p>裁判：</p></Col>
+                    <Col span={16}><p>{listItemDetails.referee}</p></Col>
+                </Row>
+                <Row>
+                    <Col span={8}><p>仲裁：</p></Col>
+                    <Col span={16}><p>{listItemDetails.arbitration}</p></Col>
+                </Row>
+                <Row>
+                    <Col span={8}><p>报名时间：</p></Col>
+                    <Col span={16}><p>{listItemDetails.signingTime}</p></Col>
+                </Row>
                 <Button type="primary" size="small" onClick={this.handlerSign} disabled={listItemDetails.isSign}>{!listItemDetails.isSign ? '我要报名' : '已报名'}</Button>
             </WingBlank>
         )

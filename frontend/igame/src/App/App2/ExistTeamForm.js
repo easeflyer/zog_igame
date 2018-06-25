@@ -19,6 +19,10 @@ class FormForSign extends React.Component{
         e.preventDefault();
         this.props.submitExistTeamForm(formDetail);
     }
+    cancelSubmit=()=>{
+        this.props.cancelExistTeamForm();
+    }
+    
 
     handlerEventSelect =(value)=>{
         formDetail.eventName = `${value}`;
@@ -114,7 +118,7 @@ class FormForSign extends React.Component{
                     </FormItem>
                     <FormItem>
                         <Button type="primary" style={{paddingLeft:10, paddingRight:10, marginRight:10}} htmlType="submit">提交</Button>
-                        <Button type="danger" style={{paddingLeft:10, paddingRight:10}}>取消</Button>
+                        <Button type="danger" style={{paddingLeft:10, paddingRight:10}} onClick={this.cancelSubmit}>取消</Button>
                     </FormItem>
                 </Form>      
         )

@@ -11,13 +11,23 @@ export default class SignEvent extends React.Component{
     backSpace= ()=>{
         this.props.backToDetail()
     }
+    backSpace_= ()=>{
+        this.props.backToWay()
+    }
 
     submitExistTeamForm=(data)=>{
-        console.log(data)
         this.setState({
             toast:true
         });
         this.props.submitExistTeamForm(data)
+    }
+
+
+    submitNewTeamForm=(data)=>{
+        this.setState({
+            toast:true
+        });
+        this.props.submitNewTeamForm(data)
     }
 
     
@@ -29,7 +39,7 @@ export default class SignEvent extends React.Component{
         return(
             <WingBlank>
                 <EventNavBar  left="left" eventName={listItemDetails.eventName+'报名'} clickArrow={this.backSpace} />
-                <SignWay toast={this.state.toast} submitExistTeamForm={this.submitExistTeamForm}/>
+                <SignWay toast={this.state.toast} submitExistTeamForm={this.submitExistTeamForm} submitNewTeamForm={this.submitNewTeamForm} cancelTeamForm={this.backSpace}/>
             </WingBlank>
         )
     }
