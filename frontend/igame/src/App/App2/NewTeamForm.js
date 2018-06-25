@@ -41,6 +41,18 @@ class FormForSign extends React.Component{
         }
     }
 
+    validatePlayerr = (rule, value, callback) => {
+        if(value){
+            if(value.length > 3 && value.length <= 6){
+                callback();
+              } else {
+                callback(new Error('请选择4-6个队员'));
+              }
+        }else{
+            callback();
+        }
+    }
+
     validateContactName = (rule, value, callback) => {
         let pattern=/[\u4e00-\u9fa5]+/;
         if(value){
@@ -135,7 +147,10 @@ class FormForSign extends React.Component{
                     </FormItem>
                     <FormItem label="队员(4-6人)"  style={{marginBottom:0}}>   
                         {getFieldDecorator('player', {
-                            rules: [{ required: true , message:'请选择队员'}],
+                            rules: [
+                                { required: true},
+                                { validator: this.validatePlayerr }
+                            ],
                         })(
                             <Select mode="multiple" placeholder="姓名" showSearch={true} style={{ width: 250 }}>
                                 {allUserList.map((item,index) =>
