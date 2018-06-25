@@ -25,8 +25,8 @@ export default class List {
 		    new ListItem(List.eventList[3]),
             new ListItem(List.eventList[4])
 		];
+        this.word = '';//搜索关键字
 		this.list = this.allList;
-		this.word = '';//搜索关键字
     }
     
     //搜索

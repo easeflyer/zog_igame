@@ -28,6 +28,7 @@ export default class ListApp extends React.Component{
     
     backToList=()=>{
         this.setState({
+            list: this.state.list.searchlist(''),
             open:0
         });
     }
