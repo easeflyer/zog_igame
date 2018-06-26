@@ -35,7 +35,7 @@ class SiteLogin {
         //alert(test);
         console.log(`login: ${login}, password: ${password}`)
         const json1 = {
-            'server':'T1',
+            'server':'TT',
             'user': login,  //1174809@qq.com
             'password': password,//09090909
         }

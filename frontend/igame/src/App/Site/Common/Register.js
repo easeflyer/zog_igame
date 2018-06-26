@@ -32,7 +32,7 @@ class SiteRegister {
         console.log('11...........')
         console.log(`user:${user},password:${password}`)
         const json = {
-            'server':'T1',
+            'server':'TT',
             'user':user,
             'password':password
         }

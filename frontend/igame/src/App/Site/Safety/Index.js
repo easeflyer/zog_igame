@@ -19,14 +19,14 @@ export default class Safety extends React.Component {
         // sid:session.get_sid()
     }
 
-    // componentWillMount() {
-    //     console.log('000 Component WILL MOUNT!渲染前调用,在客户端也在服务端');
-    //     console.log(session.get_sid())
-    //     this.setState({
-    //         sid:session.get_sid(),
-    //     });
-    // }
 
+    toggleMenu = ()=>{
+        this.setState({
+            SafetyNav:!this.state.SafetyNav,
+            change:true
+        }),
+        this.props.toggleHasLogin()
+    }
     onCheckChange = ()=>{
         if (session.get_sid()){
             this.setState({
@@ -34,7 +34,7 @@ export default class Safety extends React.Component {
                 change:true,
             });
         }else{
-            const login = new SiteLogin( ()=>this.setState({SafetyNav:!this.state.SafetyNav,change:true}) );  
+            const login = new SiteLogin( this.toggleMenu );  
             login.login();
         }
         
