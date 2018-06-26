@@ -1,7 +1,7 @@
 import React from 'react'
 import { WingBlank, Button, } from 'antd-mobile';
 import {   Row, Col } from 'antd';
-import EventNavBar from './Common/EventNavBar'
+import EventNavBar from './EventNavBar'
 
 export default class EventDetails extends React.Component{
     backSpace=()=>{

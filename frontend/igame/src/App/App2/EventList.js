@@ -1,7 +1,7 @@
 import React from 'react';
 import {List, SearchBar, WingBlank} from 'antd-mobile'
 import {NavBar, Icon} from 'antd-mobile'
-import EventNavBar from './Common/EventNavBar'
+import EventNavBar from './EventNavBar'
 
 export default class Event extends React.Component{  
 
@@ -35,7 +35,7 @@ export default class Event extends React.Component{
         
         return (
             <WingBlank>  
-               <EventNavBar  left="" eventName="比赛列表" />
+               <EventNavBar  left="" eventName="比赛列表" clickArrow={()=>{return false}}/>
                 <SearchBar
                 placeholder="Search"
                 onSubmit={value => this.handlerSearch(value)}

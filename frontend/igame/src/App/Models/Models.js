@@ -64,6 +64,7 @@ class Models {
             .catch(error => console.error('Error:', error))
             .then(response => {
                 const body = response.result  // 注意这里如果数据库没有链接将报错。
+                console.log(body);
                 callback(body);
             });
     }

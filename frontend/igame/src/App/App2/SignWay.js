@@ -23,17 +23,12 @@ export default class SignForm extends React.Component{
     submitExistTeamForm=(data)=>{
         this.props.submitExistTeamForm(data);
     }
-    cancelExistTeamForm=()=>{
-        this.props.cancelTeamForm();
-        // this.setState({
-        //     exist:0
-        // })
-    }
     
     submitNewTeamForm=(data)=>{
         this.props.submitNewTeamForm(data);
     }
-    cancelNewTeamForm=()=>{
+
+    cancelSubmit=()=>{
         this.props.cancelTeamForm();
         // this.setState({
         //     exist:0
@@ -51,11 +46,11 @@ export default class SignForm extends React.Component{
                         null
                     }
                     {this.state.exist==1 ? 
-                        !this.props.toast ? <ExistTeamForm submitExistTeamForm={this.submitExistTeamForm} cancelExistTeamForm={this.cancelExistTeamForm}/> : <p style={{textAlign:'center',marginTop:30}}>恭喜您，报名成功！</p>  : 
+                        !this.props.toast ? <ExistTeamForm submitExistTeamForm={this.submitExistTeamForm} cancelSubmit={this.cancelSubmit}/> : <p style={{textAlign:'center',marginTop:30}}>恭喜您，报名成功！</p>  : 
                         null  
                     }    
                     {this.state.exist==2 ? 
-                        !this.props.toast ? <NewTeamForm submitNewTeamForm={this.submitNewTeamForm} cancelNewTeamForm={this.cancelNewTeamForm}/> : <p style={{textAlign:'center',marginTop:30}}>恭喜您，报名成功！</p> :
+                        !this.props.toast ? <NewTeamForm submitNewTeamForm={this.submitNewTeamForm} cancelSubmit={this.cancelSubmit}/> : <p style={{textAlign:'center',marginTop:30}}>恭喜您，报名成功！</p> :
                         null
                     }
             </div>

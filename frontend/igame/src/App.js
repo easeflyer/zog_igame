@@ -23,7 +23,7 @@ class TabBarExample extends React.Component {
       selectedTab: 'blueTab',
       hidden: false,
       fullScreen: true,  // 是否全屏显示
-      haslogin:false
+      haslogin:true
     };
     if (session.get_sid()){
       this.state.haslogin = true
@@ -39,6 +39,7 @@ class TabBarExample extends React.Component {
   toggleLoginState = ()=>{
     this.setState({
       haslogin:!this.state.haslogin,
+      hidden:false
     })
   }
   renderContent(app) {
@@ -81,6 +82,11 @@ class TabBarExample extends React.Component {
             badge={'new'}
             selected={this.state.selectedTab === 'redTab'}
             onPress={() => {
+              if (!this.state.haslogin){
+                this.setState({
+                  hidden:true
+                })
+              }
               this.setState({
                 selectedTab: 'redTab',
               });
@@ -88,7 +94,7 @@ class TabBarExample extends React.Component {
             data-seed="logId1"
           >
             {/*动态加载 应该考虑 在这里执行。*/}
-            {this.state.selectedTab=='redTab'?this.renderContent(<App2 />):null}
+            {this.state.selectedTab=='redTab'? this.renderContent(this.state.haslogin? this.renderContent(<App2 />):<User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />):null}
           </TabBar.Item>
           <TabBar.Item
             icon={<Icon type="form" style={{fontSize:'22px'}} />}
@@ -112,9 +118,13 @@ class TabBarExample extends React.Component {
             key="my"
             selected={this.state.selectedTab === 'yellowTab'}
             onPress={() => {
+              if (!this.state.haslogin){
+                this.setState({
+                  hidden:true
+                })
+              }
               this.setState({
                 selectedTab: 'yellowTab',
-                hidden: true
               });
             }}
           >

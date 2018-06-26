@@ -102,6 +102,7 @@ class CodeForm extends React.Component{
                 mode="light"
                 icon={<Icon type="left" />}
                 onLeftClick={this.props.toLoginPage}
+                style={{marginTop:1}}
                 >找回密码
             </NavBar>
             <Flex direction='column'>

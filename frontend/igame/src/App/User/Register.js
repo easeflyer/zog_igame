@@ -60,6 +60,7 @@ class RsgisterForm extends React.Component{
                 mode="light"
                 icon={<Icon type="left" />}
                 onLeftClick={this.props.toLoginPage}
+                style={{marginTop:1}}
                 >注册
             </NavBar>
             <WhiteSpace size="xl" />

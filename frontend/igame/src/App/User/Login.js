@@ -14,6 +14,7 @@ export default class LoginPage extends React.Component{
                 mode="light"
                 icon={<Icon type="left" />}
                 onLeftClick={this.props.goHome}
+                style={{marginTop:1}}
                 >
             </NavBar>
             <Flex direction='column'>

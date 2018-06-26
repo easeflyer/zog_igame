@@ -20,10 +20,9 @@ class FormForSign extends React.Component{
         this.props.submitExistTeamForm(formDetail);
     }
     cancelSubmit=()=>{
-        this.props.cancelExistTeamForm();
+        this.props.cancelSubmit();
     }
     
-
     handlerEventSelect =(value)=>{
         formDetail.eventName = `${value}`;
     }
@@ -33,7 +32,6 @@ class FormForSign extends React.Component{
             hasTeam:`${value}`
         });
         formDetail.teamId = `${value}`;
-        console.log(formDetail)
     }
 
     render(){
