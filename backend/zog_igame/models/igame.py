@@ -121,26 +121,28 @@ class IntelligentGame(models.Model):
         help="Sequence of Children")
 
     child_ids = fields.One2many('og.igame', 'parent_id', string='Child Game')
-
-    partner_ids = fields.Many2many('res.partner', string='Teams',
-        compute='_compute_partner')
+    '''
+    # partner_ids = fields.Many2many('res.partner', string='Teams',
+    #     compute='_compute_partner')
+    '''
 
     # Only for Team Match
     group_ids = fields.One2many('og.igame.group','igame_id',string='Groups')
     round_ids = fields.One2many('og.igame.round','igame_id',string='Rounds')
     # Only for Team Match
 
-    score_ids = fields.One2many('og.igame.score', 'igame_id', string='Teams Score')
+    team_ids = fields.One2many('og.igame.team', 'igame_id', string='Teams')
     deal_ids = fields.Many2many('og.deal',string='Deals')
 
     # for Pair Match
-    table_ids = fields.Many2many('og.table')
+    # table_ids = fields.Many2many('og.table')
 
+    '''
     @api.multi
     def _compute_partner(self):
         for record in self:
-            record.partner_ids = record.score_ids.mapped('partner_id')
-
+            record.partner_ids = record.team_ids.mapped('partner_id')
+    '''
 
 class IntelligentGameGroup(models.Model):
     """
@@ -154,7 +156,8 @@ class IntelligentGameGroup(models.Model):
     name = fields.Char('Name')
     sequence = fields.Integer()
     igame_id = fields.Many2one('og.igame','Game')
-    partner_ids = fields.Many2many('res.partner')
+    # partner_ids = fields.Many2many('res.partner')
+    team_ids = fields.One2many('og.igame.team','group_id')
 
 class IntelligentGameRound(models.Model):
     """
@@ -174,13 +177,13 @@ class IntelligentGameRound(models.Model):
     deal_ids = fields.Many2many('og.deal',string='Deals')
 
     #  for  game room
-    score_line_ids = fields.One2many('og.igame.score.line','round_id')
+    team_line_ids = fields.One2many('og.igame.team.line','round_id')
     table_ids = fields.Many2many('og.table', compute='_compute_table')
 
     @api.multi
     def _compute_table(self):
         for rec in self:
-            matchs = rec.score_line_ids.mapped('match_id')
+            matchs = rec.team_line_ids.mapped('match_id')
             open  = matchs.mapped('open_table_id')
             close = matchs.mapped('close_table_id')
             rec.table_ids = open | close
