@@ -39,6 +39,7 @@ class TabBarExample extends React.Component {
   toggleLoginState = ()=>{
     this.setState({
       haslogin:!this.state.haslogin,
+      hidden:false
     })
   }
   renderContent(app) {
@@ -112,9 +113,15 @@ class TabBarExample extends React.Component {
             key="my"
             selected={this.state.selectedTab === 'yellowTab'}
             onPress={() => {
+              if (!this.state.haslogin){
+                this.setState({
+                  // selectedTab: 'yellowTab',
+                  hidden: true
+                });
+              }
               this.setState({
                 selectedTab: 'yellowTab',
-                hidden: true
+                // hidden: true
               });
             }}
           >
