@@ -31,19 +31,19 @@ class Match(models.Model):
 
     def _inverse_partner(self,pos):
         for rec in self:
-            score_id = rec.score_ids.filtered(lambda s: s.position==pos)
+            team_id = rec.team_ids.filtered(lambda s: s.position==pos)
 
             ptns = {'host': rec.host_partner_id,
                     'guest':rec.guest_partner_id}
 
-            if score_id:
-                score_id.partner_id = ptns[pos]
+            if team_id:
+                team_id.partner_id = ptns[pos]
             else:
                 vals = {'match_id':rec.id,
                         'position':pos,
                         'partner_id':ptns[pos].id }
 
-                score_id.create(vals)
+                team_id.create(vals)
 
     bam = fields.Integer(compute='_compute_imp')
     host_bam  = fields.Integer(compute='_compute_imp')
@@ -58,7 +58,7 @@ class Match(models.Model):
     guest_vp = fields.Float(compute='_compute_imp')
 
     line_ids = fields.One2many('og.match.line','match_id')
-    score_ids = fields.One2many('og.match.score','match_id')
+    team_ids = fields.One2many('og.match.team','match_id')
 
     #deal_count = fields.Integer(default=8, help='used for IMP 2 VP')
     deal_count = fields.Integer(compute='_compute_imp',
@@ -89,21 +89,23 @@ class Match(models.Model):
     @api.multi
     def _compute_partner(self):
         def _fn(pos):
-            return rec.score_ids.filtered(lambda s: s.position == pos).partner_id
+            return rec.team_ids.filtered(lambda s: s.position == pos).partner_id
 
         for rec in self:
             rec.host_partner_id  = _fn('host')
             rec.guest_partner_id = _fn('guest')
 
 
-class MatchScore(models.Model):
-    _name = "og.match.score"
-    _description = "Match Score"
+class MatchTeam(models.Model):
+    _name = "og.match.team"
+    _description = "Match Team"
     _order = 'id desc'
     _rec_name = 'partner_id'
 
+    _inherits = {'res.partner': 'partner_id'}
+
     match_id = fields.Many2one('og.match', string='Match', ondelete='restrict')
-    partner_id = fields.Many2one('res.partner', string='Player', ondelete='restrict')
+    partner_id = fields.Many2one('res.partner', string='Partner', ondelete='restrict')
     position = fields.Selection([
         ('host','Host'),
         ('guest','Guest')], string='Position', default='host')

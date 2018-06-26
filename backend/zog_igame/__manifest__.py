@@ -17,6 +17,7 @@ Have a nice time to play game.
     'depends': ['base', 
         #'account',
     ],
+    # data file
     'data': [
         #'security/ir.model.access.csv',
         'views/top_views.xml',
