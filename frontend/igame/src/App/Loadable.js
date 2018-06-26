@@ -26,6 +26,10 @@ export const App2 = Loadable({
     loader: () => import('./App2/Index2'),
     loading: loadingToast,
 });
+export const My = Loadable({
+    loader: () => import('./My/Index'),
+    loading: loadingToast,
+});
 
 // const App = {
 //     'App1':App1,
