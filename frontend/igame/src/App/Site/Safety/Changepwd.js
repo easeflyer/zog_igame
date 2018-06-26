@@ -6,20 +6,36 @@ import { Models,session } from '../Models/Models'
 const Item = List.Item;
 
 class BasicInput extends React.Component {
-    // componentWillMount() {
-    //     console.log('000 Component WILL MOUNT!渲染前调用,在客户端也在服务端');
-    //     console.log(session.get_sid())
-    //     const sid = session.get_sid()
-    // }
   state = {
     value: 1,
   }
   onSubmit = () => {
     this.props.form.validateFields({ force: true }, (error) => {
       if (!error) {
-        console.log(this.props.form.getFieldsValue());
-        Toast.success("修改成功！",1);   //这里提交数据做处理
-        this.props.onChange()
+        console.log(this.props.form.getFieldsValue());//表单数据
+        var formData = this.props.form.getFieldsValue()
+        var arr = Object.keys(formData).map(key=> formData[key]);  //表单数据转数组
+        // console.log(arr);
+
+        const json = {  //向后端发送的数据
+          'model': 'res.users',
+          'method': 'change_password',
+          'args': arr,
+          'kw': {},
+        }
+        console.log(json)
+
+        const cb = (data)=>{  //回调函数
+          if (data){
+            Toast.success("修改成功！",1); 
+            this.props.onChange()
+          }else{
+            console.log(data)
+            Toast.fail("修改失败，请稍后再试！");
+          }
+        }
+        const m = Models.create();
+        m.query('exec',json,cb) // 执行 exec 发送 json 获取数据后 执行回调 cb
       } else {
         alert('您的输入不完整！');
       }
@@ -57,24 +73,22 @@ class BasicInput extends React.Component {
           placeholder="请输入旧的密码"
           type='password'
         >旧密码</InputItem>
-
-        <InputItem {...getFieldProps('password',{
+        <InputItem 
+          {...getFieldProps('password',{
             rules:[
                 { required: true, message: '输入不能为空' },
                 { validator: this.validateAccount },
             ],
-        })} 
-        clear
-        error={!!getFieldError('password')}
-        onErrorClick={() => {
-            alert(getFieldError('password').join('、'));
-        }}
-        placeholder="请输入您的新密码" type="password"
-        
+          })} 
+          clear
+          error={!!getFieldError('password')}
+          onErrorClick={() => {
+              alert(getFieldError('password').join('、'));
+          }}
+          placeholder="请输入您的新密码" 
+          type="password"
         >新密码
         </InputItem>
-        
-       
         <Item>
           <Button type="primary" size="small" inline onClick={this.onSubmit}>提交</Button>
           <Button size="small" inline style={{ marginLeft: '2.5px' }} onClick={this.props.onChange}>取消</Button>
@@ -87,9 +101,7 @@ class BasicInput extends React.Component {
 const BasicInputWrapper = createForm()(BasicInput);
 
 class Changepwd extends React.Component {
-    componentWillMount() {
-        console.log('000 Component WILL MOUNT!渲染前调用,在客户端也在服务端');
-        console.log(session.get_sid())
+    componentWillMount() {  //生命周期函数，渲染前调用,在客户端也在服务端
         const sid = session.get_sid()
     }
     render (){
