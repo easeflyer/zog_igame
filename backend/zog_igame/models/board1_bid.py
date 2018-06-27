@@ -110,7 +110,6 @@ class Board(models.Model):
 
             return 0
 
-
         for ac in auction[::-1]:
             if ac in [PASS,DBL,RDB]:
                 continue

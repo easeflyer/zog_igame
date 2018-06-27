@@ -41,7 +41,9 @@ class IntelligentGameApi(models.Model):
     @api.model
     def search2(self,domain):
         gms = self.search_bridge_team(domain=domain)
-        return [{'name': gm.name, 'id': gm.id} for gm in gms]
+        return [{'name': gm.name, 'id': gm.id,'datetime':gm.date_game,'type':gm.match_type
+                 ,'referee':gm.referee,'arbitrator':gm.arbitrator,'host_unit':gm.host_unit
+                 ,'sponsor':gm.sponsor} for gm in gms]
 
     @api.model
     @api.returns('self')
@@ -50,10 +52,10 @@ class IntelligentGameApi(models.Model):
         partner_id = me.parent_id.id
         self = self.sudo()
         game = self.env['og.igame'].browse(game_id)
-        sc = self.env['og.igame.score'].search([('igame_id','=',game_id),
+        sc = self.env['og.igame.team'].search([('igame_id','=',game_id),
                                     ('partner_id','=',partner_id)])
         if not sc:
-            ret = self.env['og.igame.score'].create(
+            ret = self.env['og.igame.team'].create(
                     {'igame_id':game_id,'partner_id':partner_id }) 
 
         return game
@@ -67,7 +69,7 @@ class IntelligentGameApi(models.Model):
         sc = self.score_ids.filtered(
              lambda sc1: sc1.partner_id.id == partner_id)
         if not sc:
-            sc = self.env['og.igame.score'].create(
+            sc = self.env['og.igame.team'].create(
                     {'igame_id':self.id,'partner_id':partner_id }) 
 
         return sc
@@ -100,15 +102,14 @@ class IntelligentGameApi(models.Model):
         player = self.env['res.partner'].browse(player_id)
         sc.player_ids |= player
 
-    @api.multi   # 创建,没有比赛id
-    def get_group_partner(self,partner_id):  # 队伍id
+    @api.multi
+    def get_group_partner(self,partner_id):
         gs = self.group_ids.filtered( lambda g: partner_id in g.partner_ids )
         g = gs and gs[0] or self.env['og.igame.group']
         return g.name
 
-
-    @api.multi   # 创建,没有比赛id
-    def set_group_partner(self,group_name,number,partner_id):  # 队伍id
+    @api.multi
+    def set_group_partner(self,group_name,number,partner_id):
         gid = self.id
         #gs = self.group_ids.filtered(lambda g: g.name == group_name)
 
@@ -121,8 +122,37 @@ class IntelligentGameApi(models.Model):
             g = self.env['og.igame.group'].create(vals)
 
         ptn = self.env['res.partner'].browse(partner_id)
-        g.partner_ids += ptn
+        # g.partner_ids += ptn
         return True
+
+
+class IntelligentGameGroup(models.Model):
+    _inherit = "og.igame.group"
+
+    @api.model
+    @api.returns('self')
+    def search_bridge_group(self,domain):
+        # self = self.sudo()
+        # dm = [('parent_id','=',None),('game_type','=','bridge'),
+        #       ('match_type','=','team')  ] + domain
+        dm = domain
+
+        groups = self.env['og.igame.group'].search(dm)
+        return groups  #self.env['og.igame'].browse(gid)
+        #return [{'name':gm.name, 'id':gm.id}  for gm in gms ]
+
+    @api.model
+    def search3(self,domain):
+        groups = self.search_bridge_group(domain=domain)
+        return [{'name': group.name, 'id': group.id} for group in groups]
+        # return [{'name': gm.name, 'id': gm.id} for gm in gms]
+
+    @api.model
+    def delgroup(self,group_id):
+        sc = self.search(group_id)
+        if sc:
+            sc.unlink()
+
 
 
 # class IntelligentGameGroup(models.Model):
