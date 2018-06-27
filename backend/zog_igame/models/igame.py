@@ -24,6 +24,14 @@ class IntelligentGame(models.Model):
         index=True, copy=False, default=fields.Datetime.now,
         help="game date")
 
+    referee = fields.Char('referee')
+
+    arbitrator = fields.Char('arbitrator')
+
+    host_unit = fields.Char('host_unit')
+
+    sponsor = fields.Char('sponsor')
+
     game_type = fields.Selection([
         ('bridge','Bridge'),
         ('chess', 'Chess'),
@@ -108,11 +116,7 @@ class IntelligentGame(models.Model):
     def action_draft(self):
         return self.write({'state': 'draft'})
 
-
-
-
     notes = fields.Text('Notes')
-
     parent_id = fields.Many2one('og.igame', string='Parent Game', index=True, ondelete='restrict')
     parent_left = fields.Integer(string='Left parent', index=True)
     parent_right = fields.Integer(string='Right parent', index=True)
@@ -155,7 +159,7 @@ class IntelligentGameGroup(models.Model):
 
     name = fields.Char('Name')
     sequence = fields.Integer()
-    igame_id = fields.Many2one('og.igame','Game')
+    igame_id = fields.Many2one('og.igame','Game',ondelete='cascade')
     # partner_ids = fields.Many2many('res.partner')
     team_ids = fields.One2many('og.igame.team','group_id')
 
