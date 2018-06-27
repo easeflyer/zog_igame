@@ -2,14 +2,32 @@ import React from 'react'
 import DealUser from './Model/DealUser'
 import { Form, Input, Select, Button} from 'antd';
 import {Toast} from 'antd-mobile'
+import {DealFriends, DealSign} from './Model/Deal'
 const FormItem = Form.Item;
 const Option = Select.Option;
 
+
 class FormForSign extends React.Component{
     state={
-        userList: new DealUser()
+        eventDetail:this.props.eventDetail,//要报名赛事的全部信息
+        userList: new DealUser(),
+        myFriends:null
     }
 
+// 请求通讯录列表 ???
+    componentDidMount(){
+        // 每次打开报名页都重新请求
+        const MyFriends = new DealFriends(res => this.stateFriends(res));
+        MyFriends.myFriends();
+    }
+    stateFriends=(res)=>{
+        this.setState({
+            myFriends:res
+        });
+        this.props.stateFriends(res);
+    }
+
+// 提交表单，发送报名请求
     onSubmit=(e)=>{
         e.preventDefault();
         this.props.form.validateFields(
@@ -24,10 +42,12 @@ class FormForSign extends React.Component{
         );
     }
 
+// 取消报名，返回选择报名方式页面 ★
     cancelSubmit=()=>{
         this.props.cancelSubmit();
     }
 
+// 以下为验证表单数据
     validateTeamName = (rule, value, callback) => {
         let pattern=/[A-Za-z0-9_\-\u4e00-\u9fa5]+/;
         if(value){

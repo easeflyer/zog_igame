@@ -1,55 +1,71 @@
 import React from 'react'
-import EventNavBar from './EventNavBar'
+import EventNavBar from './Common/EventNavBar'
 import { WingBlank,Toast, Modal,} from 'antd-mobile';
-import SignWay from './SignWay'
 import {DealSign} from './Model/Deal'
+import ExistTeamForm from './ExistTeamForm';
+import NewTeamForm from './NewTeamForm';
+import { Input, Select, Button, Badge  } from 'antd-mobile';
 
 const alert = Modal.alert;
 
 export default class SignEvent extends React.Component{
     state={
-        toast:false
+        eventDetail:this.props.list[0], //要报名赛事的全部信息
+        toast:false,
+        exist:0 //0：选择报名方式，1：选择已有赛队进行报名，2：新建赛队并报名
     }
 
+// 回到详情页 ★
     backSpace= ()=>{
-        this.props.backToDetail()
+        if(this.state.exist){
+            this.setState({
+                exist:0
+            })
+        }else{
+            this.props.backToDetail()
+        }
     }
 
-    payPrompt=()=>{
-        alert('', '参加团体赛需要交纳200元报名费,是否确认？', [
-            { text: '取消', onPress: () => console.log('cancel') },
-            { text: '确认', onPress: () => console.log('ok') },
-          ])
-    }
-
-    submitExistTeamForm=(data)=>{
-        // 请求报名
-        // const Sign = new DealSign(this.payPrompt);
-        // Sign.existTeamSign(data);
-
-        // 是否支付弹窗
-        // this.payPrompt();
-
+// 选择已有赛队进行报名 ★
+    selectExist=()=>{
         this.setState({
-            toast:true
-        }); 
+            exist:1
+        })
     }
 
-    submitNewTeamForm=(data)=>{
+// 新建赛队并进行报名 ★
+    selectNew=()=>{
         this.setState({
-            toast:true
-        });      
+            exist:2
+        })
     }
-   
+
+// 取消报名，返回选择报名方式页面 ★
+    cancelSubmit=()=>{
+        this.setState({
+            exist:0
+        })
+    }
+    
     render(){
-        let list=this.props.list;
-        let page=this.props.page-1;
-        let listItemDetails= list[page].info;
-        
         return(
             <WingBlank>
-                <EventNavBar  left="left" eventName={listItemDetails.eventName+'报名'} clickArrow={this.backSpace} />
-                <SignWay toast={this.state.toast} submitExistTeamForm={this.submitExistTeamForm} submitNewTeamForm={this.submitNewTeamForm} cancelTeamForm={this.backSpace}/>
+                <EventNavBar  left="left" eventName={this.state.eventDetail.name+' 报名'} clickArrow={this.backSpace} />
+                {this.state.exist==0 ?
+                    <div>
+                        <Button type="primary" size="small" inline style={{float:'left',marginLeft:20, marginTop:30}} onClick={this.selectExist}>选择已有赛队报名</Button> 
+                        <Button type="warning" size="small" inline style={{float:'right',marginRight:20, marginTop:30}} onClick={this.selectNew}>新建赛队报名</Button>
+                    </div> :
+                    null
+                }
+                {this.state.exist==1 ? 
+                    !this.props.toast ? <ExistTeamForm eventDetail={this.state.eventDetail} stateTeams={this.props.stateTeams} cancelSubmit={this.cancelSubmit}/> : <p style={{textAlign:'center',marginTop:30}}>恭喜您，报名成功！</p>  : 
+                    null  
+                }    
+                {this.state.exist==2 ? 
+                    !this.props.toast ? <NewTeamForm eventDetail={this.state.eventDetail} stateFriends={this.props.stateFriends} cancelSubmit={this.cancelSubmit}/> : <p style={{textAlign:'center',marginTop:30}}>恭喜您，报名成功！</p> :
+                    null
+                }
             </WingBlank>
         )
     }

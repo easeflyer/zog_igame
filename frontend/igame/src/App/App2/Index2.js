@@ -1,77 +1,84 @@
 import React from 'react';
 
 import EventList from './EventList'
-import List from './Model/DealList'
+// import List from './Model/DealList'
 import EventDetails from './EventDetails'
 import SignEvent from './SignEvent'
 import {DealList, DealSign} from './Model/Deal'
 
+import  Models  from './../Models/Models'
+
+import { List, Modal } from 'antd-mobile';
+const alert = Modal.alert;
+
 export default class ListApp extends React.Component{
-
+    
     state={
-        list : null,
+        originList :  null, //暂存请求到的赛事列表数据
+        originTeams :null, //暂存请求到的赛队列表数据
+        originFriends: null,//暂存请求到的好友列表数据
         open: 1, //1: list, 2: detail, 3: sign
-        listPage: 0
+        eventId: null, //赛事ID，根据此参数展示相应的详情信息
+        initialize:true, //初始化列表，保证每次返回列表页时不会重新发送请求
     }
 
-    componentWillMount(){
-        // 请求赛事列表
-        // const eventList = new DealList();
-        // let listData = eventList.eventList();
-         
-        // if(listData){
-            // this.setState({
-            //     list:listData
-            // })
-        // }else{
-        //     this.setState({
-        //         list:null
-        //     })
-        // }
+// 获取赛事列表信息，以便传入其他子组件 ★
+    stateList=(list)=>{
         this.setState({
-            list:new List()
-        })
-    }
-
-    handlerSearch=(word)=>{
-        this.setState({
-            list: this.state.list.searchlist(word)
+            originList:list,
+            initialize:false
         });
     }
 
+// 获取赛队列表信息
+    stateTeams=(teams)=>{
+        this.setState({
+            originTeams:teams,
+        });
+    }
+
+// 获取好友列表信息
+    stateFriends=(friends)=>{
+        this.setState({
+            originFriends:friends,
+        });
+    }
+
+// 回到列表页 ★
+    backToList=()=>{
+        this.setState({
+            open:1,
+        });
+    }
+
+// 根据赛事ID，转至详情页，展示相应的赛事详情 ★
     handlerDetail=(key)=>{
         this.setState({
             open: 2,
-            listPage: key
+            eventId: key
         });
     }
-    
-    backToList=()=>{
-        this.setState({
-            list: this.state.list.searchlist(''),
-            open:1
-        });
-    }
-    
+
+// 回到详情页 ★
     backToDetail=()=>{
         this.setState({
             open:2
         });
     }
 
+// 转到报名页 ★
     signMatch=()=>{
         this.setState({
             open:3
         });
     }
 
-
     render(){
         return(
             <div>  
-                { this.state.open == 1 ? <EventList list={this.state.list.list}  handlerDetail={this.handlerDetail} handlerSearch={this.handlerSearch}/> : null}                
-                { this.state.open == 2 ? <EventDetails list={this.state.list.list} page={this.state.listPage} backToList={this.backToList} signMatch={this.signMatch} /> : null}
-                { this.state.open == 3 ? <SignEvent list={this.state.list.list} page={this.state.listPage} backToDetail={this.backToDetail} submitExistTeamForm={this.submitExistTeamForm} submitNewTeamForm={this.submitNewTeamForm}/> : null}
+                { this.state.open == 1 ? <EventList initialize={this.state.initialize} originList={this.state.originList} stateList={this.stateList}  handlerDetail={this.handlerDetail} /> : null}                
+                { this.state.open == 2 ? <EventDetails list={this.state.originList.filter(item => { return item.id === this.state.eventId })}  backToList={this.backToList} signMatch={this.signMatch} /> : null}
+                { this.state.open == 3 ? <SignEvent list={this.state.originList.filter(item => { return item.id === this.state.eventId })} stateTeams={this.stateTeams} stateFriends={this.stateFriends} backToDetail={this.backToDetail} stateTeams={this.stateTeams}/> : null}
             </div>
         )
     }

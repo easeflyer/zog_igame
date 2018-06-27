@@ -2,12 +2,113 @@ import { Modal,Toast } from 'antd-mobile';
 import  Models  from '../../Models/Models'
 const alert = Modal.alert;
 
+// 请求赛事列表及相关操作
+class DealList{
+    constructor(callback) {
+        this.callback = callback; 
+        this.word='';
+        this.list=null;
+    }
+
+    // 请求赛事列表，请求所有赛事信息，无返回值
+    eventList = ()=>{       
+        const json={
+            'model': 'og.igame',
+            'method': 'search2',
+            'args': [[]],
+            'kw': {},
+        }
+        const questEvent = (res)=>{
+            if (res){
+                this.callback(res);
+                console.log('赛事列表数据请求成功')
+            }else{
+                return null;
+            }
+        }
+        const m = Models.create();
+        m.query('exec', json, questEvent);
+    }
+
+    // 按关键字搜索比赛
+    searchList(list,word,callback){
+        this.list = list;
+        this.word = word;
+        //在list中搜索
+        if(!this.list){
+            callback(null);
+        }else{
+            if(this.word){
+                this.list = this.list.filter(item => {
+                    return item.name.indexOf(this.word)!=-1 
+                });
+                callback(this.list);
+            }else{
+                callback(this.list);
+            }
+        }
+    } 
+}
+
+// 请求赛队列表信息
+class DealTeams{
+    constructor(callback){
+        this.callback = callback;
+    }
+
+    myTeams=()=>{
+        const json={
+            'model': 'og.igame',
+            'method': 'search2',
+            'args': [[]],
+            'kw': {},
+        }
+        const questTeam = (res)=>{
+            if (res){
+                this.callback(res);
+                console.log('赛队列表数据请求成功')
+            }else{
+                return null;
+            }
+        }
+        const m = Models.create();
+        // m.query('exec', json, questTeam);
+    }
+}
+
+// 请求好友列表信息
+class DealFriends{
+    constructor(callback){
+        this.callback = callback;
+    }
+
+    myFriends=()=>{
+        const json={
+            'model': 'og.igame',
+            'method': 'search2',
+            'args': [[]],
+            'kw': {},
+        }
+        const questFriends = (res)=>{
+            if (res){
+                this.callback(res);
+                console.log('好友列表数据请求成功')
+            }else{
+                return null;
+            }
+        }
+        const m = Models.create();
+        // m.query('exec', json, questFriends);
+    }
+}
+
+// 请求报名
 class DealSign{
     constructor(callback) {
         this.callback = callback; 
     }
 
-// 已有赛队报名，表单提交
+    // 已有赛队报名，表单提交
     existTeamSign = (data)=>{
         const form = {
             eventName:data.eventName,
@@ -24,33 +125,10 @@ class DealSign{
             }
         }
         const m = Models.create();
-        m.query('exec',form,signExistCB);
+        // m.query('exec',form,signExistCB);
     }
 }
 
-class DealList{
 
-// 请求赛队列表
-    eventList = ()=>{
-        const json={
-            'model': 'og.igame',
-            'method': 'search2',
-            'args': [],
-            'kw': {},
-        }
-        console.log(json)
-        const questEvent = (res)=>{
-            console.log(res)
-            if (res){
-                return res;
-            }else{
-                // Toast.fail('网络繁忙，请稍后重试',1);
-                return null;
-            }
-        }
-        const m = Models.create();
-        m.query('exec',json,questEvent);
-    }
-}
 
-export {DealSign, DealList}
+export { DealList, DealTeams, DealFriends, DealSign}

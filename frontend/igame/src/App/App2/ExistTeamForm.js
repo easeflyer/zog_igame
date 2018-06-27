@@ -2,6 +2,8 @@ import React from 'react'
 import DealUser from './Model/DealUser'
 import { Form, Select, Button, Row, Col  } from 'antd';
 
+import {DealTeams, DealSign} from './Model/Deal'
+
 const FormItem = Form.Item;
 const Option = Select.Option;
 const formDetail={
@@ -11,22 +13,40 @@ const formDetail={
 
 class FormForSign extends React.Component{
     state={
+        eventDetail:this.props.eventDetail,//要报名赛事的全部信息
         userList: new DealUser(),  
-        hasTeam:0
+        hasTeam:0,
+        myTeams:null
     }
 
-    onSubmit=(e)=>{
-        e.preventDefault();
-        this.props.submitExistTeamForm(formDetail);
+// 请求赛队列表 ???
+    componentDidMount(){
+        // 每次打开报名页都重新请求
+        const Teams = new DealTeams(res => this.stateTeams(res));
+        Teams.myTeams();
     }
-    cancelSubmit=()=>{
-        this.props.cancelSubmit();
+    stateTeams=(res)=>{
+        this.setState({
+            myTeams:res
+        });
+        this.props.stateTeams(res);
     }
+    
+// 提交表单，发送报名请求
+        onSubmit=(e)=>{
+            e.preventDefault();
+            this.props.submitExistTeamForm(formDetail);
+        }
+    
+// 取消报名，返回选择报名方式页面 ★
+        cancelSubmit=()=>{
+            this.props.cancelSubmit();
+        }
     
     handlerEventSelect =(value)=>{
         formDetail.eventName = `${value}`;
     }
-
+    
     handlerTeamSelect=(value)=>{
         this.setState({
             hasTeam:`${value}`
@@ -43,7 +63,7 @@ class FormForSign extends React.Component{
             <Form layout="vertical" onSubmit={this.onSubmit}>
                     <FormItem  style={{marginBottom:0}} >
                         <span>项目：</span>
-                        <Select defaultValue='团体公开赛' style={{ width: 120 }} onSelect={this.handlerEventSelect}>
+                        <Select defaultValue="团体公开赛" style={{ width: 120 }} onSelect={this.handlerEventSelect}>
                             <Option value="团体公开赛">团体公开赛</Option>
                             <Option value="青年赛">青年赛</Option>
                             <Option value="中年赛">中年赛</Option>
