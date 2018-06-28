@@ -3,21 +3,24 @@ import { NavBar, List, WhiteSpace } from 'antd-mobile';
 import { Icon } from 'antd';
 import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 
-export default class TeamMine extends React.Component {       //我的比赛分类列表页组件，可以考虑分离出去
+export default class TeamMine extends React.Component {       //我的赛队列表页
     render() {
-        const TeamListData = [
-            {id:1,  mactchName:'1号种子队', num:'10'},
-            {id:2,  mactchName:'2号种子队', num:'4'},
-            {id:2,  mactchName:'2号种子队', num:'8'}
+        const matchListData = [
+            {id:1, people:'8人',  name:'欧德汇通牛逼1队'},
+            {id:2, people:'8人',  name:'欧德汇通牛逼2队'},
+            {id:3, people:'8人',  name:'欧德汇通牛逼3队'},
+            {id:4, people:'8人',  name:'欧德汇通牛逼4队'},
+            {id:8, people:'8人',  name:'欧德汇通牛逼5队'},
+            {id:9, people:'8人',  name:'欧德汇通牛逼8队'}
         ];
-        const TeamList = (<div>
-            {TeamListData.map((item, index) => {
+        const MatchList = (<div>
+            {matchListData.map((item, index) => {
                 return (
                     <List.Item key={index}    //?这里应该用id还是索引做key
-                    extra={item.num}
+                    extra={item.people}
                     arrow="horizontal" 
                     onClick={() => {}}
-                    >{item.mactchName}</List.Item>
+                    >{item.name}</List.Item>
                 );
             })}
         </div>);
@@ -26,11 +29,14 @@ export default class TeamMine extends React.Component {       //我的比赛分�
                 <NavBar
                 mode="light"
                 icon={<Icon type="left" />}
-                onLeftClick={this.props.toMine}
+                onLeftClick={this.props.toMine}    //返回我
+                rightContent={[
+                    <Icon key="0" type="plus-square" onClick={()=>{console.log(9999999999)}} style={{ marginRight: '16px',fontSize:20 }} />,
+                  ]}
                 >我的赛队
                 </NavBar>
                 <WhiteSpace size='xl' />
-                <TeamList />
+                {MatchList}
             </div>
         );
     }

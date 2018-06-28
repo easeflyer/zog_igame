@@ -1,6 +1,6 @@
 import React from 'react';
 import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
-// import MatchMine from './Mine';
+import TeamMine from './Mine';
 // import CompletedMatch from './Completed/Index';
 // import UpcomingMatch from './Upcoming/Index';
 
@@ -33,10 +33,10 @@ export default class MyTeam extends React.Component {
                     toTeamDetails={this.toTeamDetails} />;   //我的赛队详情
                 break;
             case 1:
-                page = <TeamAdd toTeamMine={this.toTeamMine}  />;   //创建赛队页
+                // page = <TeamAdd toTeamMine={this.toTeamMine}  />;   //创建赛队页
                 break;
             case 2:
-                page = <TeamDetailes toTeamMine={this.toTeamMine} />;   //赛队详情页
+                // page = <TeamDetailes toTeamMine={this.toTeamMine} />;   //赛队详情页
                 break;
             default:
                 

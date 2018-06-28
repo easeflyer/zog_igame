@@ -16,8 +16,8 @@ class RsgisterForm extends React.Component{
                     Toast.fail('两次输入的密码不一致！');
                 }else{
                     const json = {
-                        'server':'TT',
-                        'user':formData.phone,
+                        'db':'TT',
+                        'login':formData.phone,
                         'password':formData.password
                     }
                     console.log(json)
@@ -119,7 +119,7 @@ class RsgisterForm extends React.Component{
             <WhiteSpace size="xl" />
             <Button type=""  onClick={this.onSubmit} className='register-btn'>注册</Button>
             <WhiteSpace size="lg" />
-            <p className='text' >注册即代表您已同意<a href={()=>{}}>《智赛桥牌隐私政策》</a></p>
+            <p className='text' >注册即代表您已同意<a>《智赛桥牌隐私政策》</a></p>
             </Flex>
         </form>
         );

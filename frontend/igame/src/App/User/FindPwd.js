@@ -68,7 +68,7 @@ class CodeForm extends React.Component{
                         }else{
                             this.setState({msg:"重发(" + t + ")"})
                             t--; 
-                            console.log(t)
+                            // console.log(t)
                         }   
                     },1000)     
                 })
@@ -167,12 +167,13 @@ class NewPwdForm extends React.Component{
                     Toast.fail('两次输入的密码不一致！');
                 }else{
                     const json = {
-                        'server':'TT',
-                        'user':this.props.user,
+                        'db':'TT',
+                        'login':this.props.user,
                         'password':formData.password
                     }
                     console.log(json)
                     const cb = (data)=>{
+                        console.log(data)
                         if (data){   
                             Toast.success('密码修改成功！',1);
                             this.props.tooglePages();

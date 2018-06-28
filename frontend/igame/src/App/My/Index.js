@@ -4,10 +4,14 @@ import Mine from './Mine';
 import MySelf from './MySelf/Index';
 import MyMatch from './MyMatch/Index';
 import MyFriend from './MyFriend/Index';
+import MyTeam from './MyTeam/Index';
 
 export default class My extends React.Component {
     state = {
         page:'mine',
+    }
+    toMyTeam = ()=>{
+        this.setState({page:'myteam'})
     }
     toMyFriend = ()=>{
         this.setState({page:'myfriend'})
@@ -27,6 +31,7 @@ export default class My extends React.Component {
             case 'mine':
                 now = <Mine toMySelf={this.toMySelf} 
                 toMyFriend={this.toMyFriend}
+                toMyTeam={this.toMyTeam}
                 toMyMatch={this.toMyMatch} />
                 break;
             case 'myself':
@@ -37,6 +42,9 @@ export default class My extends React.Component {
                 break;
             case 'myfriend':
                 now = <MyFriend toMine={this.toMine} />
+                break;
+            case 'myteam':
+                now = <MyTeam toMine={this.toMine} />
                 break;
             default:
                 break;

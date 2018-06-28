@@ -42,7 +42,7 @@ export default class Mine extends React.Component {
                 <Item
                     thumb={<Icon type='usergroup-add' style={{fontSize:'22px'}} />}
                     arrow="horizontal"
-                    onClick={() => {}}
+                    onClick={() => this.props.toMyTeam()}
                     >我的赛队
                 </Item>
                 <Item
