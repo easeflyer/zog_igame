@@ -24,15 +24,12 @@
 }
 
 
-.login-btn{
-    margin-left: 20%;
-}
 .login-btn,.register-btn,.next-btn{
   background-color: #e8e8e8;
   width: 198px;
   height: 38px;
   line-height: 38px;
-
+  margin: auto
 }
 .btn1{
     background-color:white;

@@ -72,7 +72,7 @@ class TabBarExample extends React.Component {
             }}
             data-seed="logId"
           >
-            {this.state.selectedTab=='blueTab'?this.renderContent(<Site />):null}
+            {this.state.selectedTab==='blueTab'?this.renderContent(<Site />):null}
           </TabBar.Item>
           <TabBar.Item
             icon={<Icon type="rocket" style={{fontSize:'22px'}} />}
@@ -89,7 +89,7 @@ class TabBarExample extends React.Component {
             data-seed="logId1"
           >
             {/*动态加载 应该考虑 在这里执行。*/}
-            {this.state.selectedTab=='redTab'?this.renderContent(<App2 />):null}
+            {this.state.selectedTab==='redTab'?this.renderContent(<App2 />):null}
           </TabBar.Item>
           <TabBar.Item
             icon={<Icon type="form" style={{fontSize:'22px'}} />}
@@ -104,7 +104,7 @@ class TabBarExample extends React.Component {
               });
             }}
           >
-            {this.state.selectedTab=='greenTab'?this.renderContent(<Site />):null}
+            {this.state.selectedTab==='greenTab'?this.renderContent(<Site />):null}
           </TabBar.Item>
           <TabBar.Item
             icon={<Icon type="user" style={{fontSize:'22px'}} />}
@@ -125,7 +125,7 @@ class TabBarExample extends React.Component {
               });
             }}
           >
-             {this.state.selectedTab=='yellowTab'?this.renderContent(this.state.haslogin?<My />:<User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />):null}
+             {this.state.selectedTab==='yellowTab'?this.renderContent(this.state.haslogin?<My />:<User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />):null}
              {/* {this.state.selectedTab=='yellowTab'?this.renderContent(this.state.haslogin?<My />:<FlexExample toggleLogin={this.toggleLogin} />):null} */}
           </TabBar.Item>
         </TabBar>

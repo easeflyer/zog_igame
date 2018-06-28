@@ -1,5 +1,5 @@
 import React from 'react';
-import { Carousel, WingBlank } from 'antd-mobile';
+import { Carousel } from 'antd-mobile';
 
 class Banner extends React.Component {
   state = {

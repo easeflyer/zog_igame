@@ -17,13 +17,13 @@ export default class LoginPage extends React.Component{
                 >
             </NavBar>
             <Flex direction='column'>
-                <img src={require("./963065731.jpg")} style={{width:360,marginTop:-30}}/>
+                <img alt='log' src={require("./963065731.jpg")} style={{width:360,marginTop:-30}}/>
                 <WhiteSpace size="lg" />
 
                 <LoginForm toggleLoginState={this.props.toggleLoginState} />
                 <WhiteSpace size="sm" />
 
-                <p className='text'>登录即代表您已同意<a href='#'>《智赛桥牌隐私政策》</a></p>
+                <p className='text'>登录即代表您已同意<a href={()=>{}}>《智赛桥牌隐私政策》</a></p>
                 <WhiteSpace size="xl" />
                 <WhiteSpace size="xl" />
                 <WhiteSpace size="xl" />

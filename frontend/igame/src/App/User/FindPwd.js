@@ -1,13 +1,10 @@
 import React from 'react';
-import { Flex, WhiteSpace, InputItem, Toast, Button, NavBar, List, Icon, WingBlank } from 'antd-mobile';
+import { Flex, WhiteSpace, InputItem, Toast, Button, NavBar, Icon, WingBlank } from 'antd-mobile';
 import './Login.css'
 import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 import { createForm } from 'rc-form';
 import Models from '../Models/Models';
 
-
-const Item = List.Item;
-const Brief = Item.Brief;
 export default class FindPwdPage extends React.Component{
     state = {
         openCodePage:true,
@@ -64,7 +61,7 @@ class CodeForm extends React.Component{
                 var t=60;
                 this.setState({              //把倒计时放入state的timer,以便在其他函数清除
                     timer:setInterval(()=>{
-                        if(t==0){
+                        if(t===0){
                             this.setState({msg:'获取验证码'})  
                             t=60;
                             clearInterval(this.state.timer);
@@ -88,7 +85,7 @@ class CodeForm extends React.Component{
         }
     }
     validateCode = (rule, value, callback) => {  //手机号输入验证规则
-        if (value && value.length != 4) {
+        if (value && value.length !== 4) {
             callback(new Error('请输入4位验证码'));
         } else {
             callback();
@@ -125,7 +122,7 @@ class CodeForm extends React.Component{
                     <p className='find-p' > | </p>
                     <Button type=""  className='code-btn' onClick={()=>this.getCode(this)}
                         value={this.state.msg} 
-                        disabled={this.state.msg=="获取验证码"?false:true}
+                        disabled={this.state.msg==="获取验证码"?false:true}
                         >
                         {this.state.msg}
                     </Button>
@@ -166,7 +163,7 @@ class NewPwdForm extends React.Component{
         this.props.form.validateFields({ force: true }, (error) => {  //输入验证，符合规则才向后后端交数据
             var formData = this.props.form.getFieldsValue();  //表单数据
             if (!error) {
-                if (formData.password!=formData.password2){
+                if (formData.password!==formData.password2){
                     Toast.fail('两次输入的密码不一致！');
                 }else{
                     const json = {
@@ -191,11 +188,9 @@ class NewPwdForm extends React.Component{
                 Toast.fail('您的输入不正确！');
             }
         });
-        // this.props.toLoginPage(),
-        // this.props.tooglePages()
     }
     validatePwd = (rule, value, callback) => {  //密码输入验证规则
-        if (value && value.length < 6 || value.length > 20) {
+        if ( (value && value.length < 6 ) || (value && value.length > 20) ) {
             callback(new Error('密码应在6-20位之间'));
         } else {
             callback();

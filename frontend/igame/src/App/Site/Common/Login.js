@@ -1,8 +1,8 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+// import React from 'react';
+// import ReactDOM from 'react-dom';
 //import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 //import 'antd/dist/antd.css'; // 这一句是从哪里引入的？
-import { Toast, Modal, Button } from 'antd-mobile';
+import { Toast, Modal} from 'antd-mobile';
 import { Models,session } from '../Models/Models'
 
 class SiteLogin {
