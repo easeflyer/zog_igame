@@ -1,15 +1,8 @@
 import React from 'react';
 
 import EventList from './EventList'
-// import List from './Model/DealList'
 import EventDetails from './EventDetails'
 import SignEvent from './SignEvent'
-import {DealList, DealSign} from './Model/Deal'
-
-import  Models  from './../Models/Models'
-
-import { List, Modal } from 'antd-mobile';
-const alert = Modal.alert;
 
 export default class ListApp extends React.Component{
     
@@ -19,14 +12,12 @@ export default class ListApp extends React.Component{
         originFriends: null,//暂存请求到的好友列表数据
         open: 1, //1: list, 2: detail, 3: sign
         eventId: null, //赛事ID，根据此参数展示相应的详情信息
-        initialize:true, //初始化列表，保证每次返回列表页时不会重新发送请求
     }
 
 // 获取赛事列表信息，以便传入其他子组件 ★
     stateList=(list)=>{
         this.setState({
-            originList:list,
-            initialize:false
+            originList:list
         });
     }
 

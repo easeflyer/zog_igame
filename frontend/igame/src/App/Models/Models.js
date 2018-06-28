@@ -19,7 +19,11 @@ import session from '../User/session';
  *      如果后期代码逐步扩大，可以增加 子模型代码，然后在这里引入。扩展 Models 的功能。
  * 
  */
-
+const data={"jsonrpc":"2.0",
+                "method":"call",
+                "id":123,
+                "params":null
+                }
 const HOST = 'http://192.168.0.115:8069'
 class Models {
 
@@ -53,10 +57,13 @@ class Models {
      */
     exec(json, callback) {
         const url = Models.types['exec']
-        json['sid'] = session.get_sid() // 添加上  session sid
+        data['params']=json;
+        // json['sid'] = session.get_sid() // 添加上  session sid
+        console.log(data)
+        console.log(url)
         fetch(url, {
             method: 'POST', // or 'PUT'
-            body: JSON.stringify(json), // data can be `string` or {object}!
+            body: JSON.stringify(data), // data can be `string` or {object}!
             headers: new Headers({
                 'Content-Type': 'application/json'
             })
@@ -71,9 +78,10 @@ class Models {
     users(ty,json, callback) {
         const url = Models.types[ty]
         console.log(url)
+        data['params']=json;
         fetch(url,{
                 method:'POST',
-                body:JSON.stringify(json),
+                body:JSON.stringify(data),
                 headers:new Headers({
                     'Content-Type':'application/json'
                 })
@@ -81,6 +89,7 @@ class Models {
                 .catch(error=>console.error('Error:',error))
                 .then(response => {
                     const body = response.result  // 注意这里如果数据库没有链接将报错。
+                    console.log(body)
                     callback(body);
                 });
     }
@@ -89,7 +98,7 @@ class Models {
 // 静态属性。ES6 
 Models.models = null;
 Models.types = {
-    'exec': HOST+'/json/api',
+    'exec': HOST+'/json/api?session_id='+session.get_sid(),
     'login': HOST+'/json/user/login',
     'register': HOST+'/json/user/register',
     'resetPassword': HOST+'/json/user/reset/password'

@@ -1,8 +1,8 @@
 import React from 'react';
 import {List, SearchBar, WingBlank} from 'antd-mobile'
-import {NavBar, Icon} from 'antd-mobile'
+
 import EventNavBar from './Common/EventNavBar'
-import {DealList, DealSign} from './Model/Deal'
+import {DealList} from './Model/Deal'
 
 export default class Event extends React.Component{ 
     state={
@@ -12,20 +12,12 @@ export default class Event extends React.Component{
  
     // 请求比赛列表 ???
     componentDidMount(){
-        // 保证只请求一次
-        if(this.props.initialize){
-            const List = new DealList(res => this.stateList(res));
-            List.eventList();
-        }else{
-            this.setState({
-                list:this.state.originList
-            })
-        }
         // 每次打开或回到列表页都重新请求
-        // const List = new DealList(res => this.stateConfig(res));
-        // List.eventList();
+        const List = new DealList(res => this.stateList(res));
+        List.eventList();
     }
     stateList=(res)=>{
+        console.log(res)
         this.setState({
             originList:res,
             list:res

@@ -1,12 +1,9 @@
 import React from 'react'
+import { WingBlank, Button } from 'antd-mobile';
+
 import EventNavBar from './Common/EventNavBar'
-import { WingBlank,Toast, Modal,} from 'antd-mobile';
-import {DealSign} from './Model/Deal'
 import ExistTeamForm from './ExistTeamForm';
 import NewTeamForm from './NewTeamForm';
-import { Input, Select, Button, Badge  } from 'antd-mobile';
-
-const alert = Modal.alert;
 
 export default class SignEvent extends React.Component{
     state={

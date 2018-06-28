@@ -1,8 +1,10 @@
 import React from 'react'
-import DealUser from './Model/DealUser'
 import { Form, Input, Select, Button} from 'antd';
-import {Toast} from 'antd-mobile'
+import {Toast} from 'antd-mobile'  
+
+import DealUser from './Model/DealUser'
 import {DealFriends, DealSign} from './Model/Deal'
+
 const FormItem = Form.Item;
 const Option = Select.Option;
 
@@ -33,7 +35,7 @@ class FormForSign extends React.Component{
         this.props.form.validateFields(
             (err) => {
                 if (!err) {
-                    this.props.submitNewTeamForm(this.props.form.getFieldsValue());
+                    // this.props.submitNewTeamForm(this.props.form.getFieldsValue());
                     console.info('success');
                 }else{
                     Toast.fail('验证失败，请重新填写表单', 2);
@@ -74,12 +76,12 @@ class FormForSign extends React.Component{
     }
 
     validateContactName = (rule, value, callback) => {
-        let pattern=/[\u4e00-\u9fa5]+/;
+        let pattern=/[A-Za-z0-9_\-\u4e00-\u9fa5]+/;
         if(value){
             if( pattern.test(value) && value.length > 1 && value.length <= 4){
                 callback();
               } else {
-                callback(new Error('长度为2-6个中文字符'));
+                callback(new Error('长度为2-6个字符，可包含数字、字母和中文'));
               }
         }else{
             callback();
@@ -122,7 +124,7 @@ class FormForSign extends React.Component{
             });
         return(          
             <Form layout="vertical" onSubmit={this.onSubmit}>
-                    <FormItem label="项目"  style={{marginBottom:0}}>
+                    {/*<FormItem label="项目"  style={{marginBottom:0}}>
                         {getFieldDecorator('event', {
                             rules: [{ required: true ,message:'请选择参赛项目' }],
                         })(
@@ -132,7 +134,7 @@ class FormForSign extends React.Component{
                                 <Option value="中年赛">中年赛</Option>
                             </Select>
                         )}
-                    </FormItem>
+                    </FormItem>*/}
                     <FormItem label="队伍名称" style={{marginBottom:0}}>
                          {getFieldDecorator('team', {
                             rules: [

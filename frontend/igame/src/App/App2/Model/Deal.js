@@ -18,10 +18,10 @@ class DealList{
             'args': [[]],
             'kw': {},
         }
+        
         const questEvent = (res)=>{
             if (res){
                 this.callback(res);
-                console.log('赛事列表数据请求成功')
             }else{
                 return null;
             }
@@ -92,7 +92,6 @@ class DealFriends{
         const questFriends = (res)=>{
             if (res){
                 this.callback(res);
-                console.log('好友列表数据请求成功')
             }else{
                 return null;
             }
@@ -102,7 +101,7 @@ class DealFriends{
     }
 }
 
-// 请求报名
+// 报名请求
 class DealSign{
     constructor(callback) {
         this.callback = callback; 
