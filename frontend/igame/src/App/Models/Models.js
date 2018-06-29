@@ -47,8 +47,8 @@ class Models {
 
 
     query(type,json={}, callback) {
-        const url = Models.types[type];
-        // data['params']=json;
+        const url =  type=='exec' ? Models.types[type]+'?session_id='+session.get_sid() : Models.types[type] ;
+        // const url = Models.types[type];
         console.log(url)
         fetch(url,{
                 method:'POST',
@@ -67,6 +67,7 @@ class Models {
                 .catch(error=>console.error('Error:',error))
                 .then(response => {
                     const body = response.result  // 注意这里如果数据库没有链接将报错。
+                    console.log(body);
                     callback(body);
                 });
     }
@@ -118,7 +119,8 @@ class Models {
 // 静态属性。ES6 
 Models.models = null;
 Models.types = {
-    'exec': HOST+'/json/api?session_id='+session.get_sid(),
+    'exec': HOST+'/json/api',
+    // 'exec': HOST+'/json/api?session_id='+session.get_sid(),
     'login': HOST+'/json/user/login',
     'register': HOST+'/json/user/register',
     'resetPassword': HOST+'/json/user/reset/password'

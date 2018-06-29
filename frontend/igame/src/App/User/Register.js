@@ -20,12 +20,21 @@ class RsgisterForm extends React.Component{
                         'db':'TT',
                         'login':formData.phone,
 =======
+<<<<<<< HEAD
+                if (formData.password!==formData.password2){
+                    Toast.fail('两次输入的密码不一致！');
+                }else{
+                    const json = {
+                        'db':'TT',
+                        'login':formData.phone,
+=======
                 if (formData.password!=formData.password2){
                     Toast.fail('两次输入的密码不一致！');
                 }else{
                     const json = {
                         'server':'TT',
                         'user':formData.phone,
+>>>>>>> upstream/develop
 >>>>>>> upstream/develop
                         'password':formData.password
                     }
@@ -131,7 +140,11 @@ class RsgisterForm extends React.Component{
 <<<<<<< HEAD
             <p className='text' >注册即代表您已同意<a>《智赛桥牌隐私政策》</a></p>
 =======
+<<<<<<< HEAD
+            <p className='text' >注册即代表您已同意<a>《智赛桥牌隐私政策》</a></p>
+=======
             <p className='text' >注册即代表您已同意<a href='#'>《智赛桥牌隐私政策》</a></p>
+>>>>>>> upstream/develop
 >>>>>>> upstream/develop
             </Flex>
         </form>

@@ -21,7 +21,9 @@ export const Site = Loadable({
     loading: loadingToast
 });
 export const App2 = Loadable({
-    loader: () => import('./App2/Index'),
+    // 赛事列表入口
+    // loader: () => import('./App2/Index'),
+    loader: () => import('./App2/Index2'),
     loading: loadingToast,
 });
 export const My = Loadable({
