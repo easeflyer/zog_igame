@@ -17,11 +17,11 @@ export default class Event extends React.Component{
         List.eventList();
     }
     stateList=(res)=>{
-        console.log(res)
         this.setState({
             originList:res,
             list:res
         });
+        console.log(this.state.list)
         this.props.stateList(res);
     }
 
@@ -39,7 +39,7 @@ export default class Event extends React.Component{
    render(){
         let items = [];
         
-		if(!this.state.list || this.state.list.length == 0 ) {
+		if(!this.state.list || this.state.list.length === 0 ) {
             items.push(<p key={0} style={{textAlign:'center',fontSize:14,padding:15, marginTop:1}} >暂无比赛</p>);
         }
         else {

@@ -2,7 +2,7 @@ import React from 'react'
 import { Form, Select, Button, Row, Col  } from 'antd';
 
 import DealUser from './Model/DealUser'
-import {DealTeams, DealSign} from './Model/Deal'
+import { DealTeams } from './Model/Deal'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -62,7 +62,7 @@ class FormForSign extends React.Component{
     }
 
     render(){
-        const {getFieldProps, getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
+        // const {getFieldProps, getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
 
         const allUserList = this.state.userList.list[0].userInfo;
 

@@ -31,6 +31,12 @@ export const My = Loadable({
     loading: loadingToast,
 });
 
+export const NewTeamSign = Loadable({
+    loader: () => import('./App2/NewTeamForm'),
+    loading:() => <div>Loading...</div>,
+    // loading:loadingToast,
+});
+
 // const App = {
 //     'App1':App1,
 //     'App2':App2

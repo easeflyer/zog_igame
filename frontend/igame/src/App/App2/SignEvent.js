@@ -1,5 +1,6 @@
 import React from 'react'
 import { WingBlank, Button } from 'antd-mobile';
+import { NewTeamSign } from '../Loadable';
 
 import EventNavBar from './Common/EventNavBar'
 import ExistTeamForm from './ExistTeamForm';
@@ -43,26 +44,36 @@ export default class SignEvent extends React.Component{
             exist:0
         })
     }
+
+    renderContent(app) {
+        return app;
+      }
     
     render(){
         return(
             <WingBlank>
                 <EventNavBar  left="left" eventName={this.state.eventDetail.name+' 报名'} clickArrow={this.backSpace} />
-                {this.state.exist==0 ?
+                {this.state.exist === 0 ?
                     <div>
                         <Button type="primary" size="small" inline style={{float:'left',marginLeft:20, marginTop:30}} onClick={this.selectExist}>选择已有赛队报名</Button> 
                         <Button type="warning" size="small" inline style={{float:'right',marginRight:20, marginTop:30}} onClick={this.selectNew}>新建赛队报名</Button>
                     </div> :
                     null
                 }
-                {this.state.exist==1 ? 
+                {this.state.exist === 1 ? 
                     !this.props.toast ? <ExistTeamForm eventDetail={this.state.eventDetail} stateTeams={this.props.stateTeams} cancelSubmit={this.cancelSubmit}/> : <p style={{textAlign:'center',marginTop:30}}>恭喜您，报名成功！</p>  : 
                     null  
                 }    
-                {this.state.exist==2 ? 
+                {this.state.exist === 2 ? 
+                    !this.props.toast ? 
+                    this.renderContent(<NewTeamSign eventDetail={this.state.eventDetail} stateFriends={this.props.stateFriends} cancelSubmit={this.cancelSubmit}/>)
+                    : <p style={{textAlign:'center',marginTop:30}}>恭喜您，报名成功！</p> 
+                    : null
+                }
+                {/*{this.state.exist === 2 ? 
                     !this.props.toast ? <NewTeamForm eventDetail={this.state.eventDetail} stateFriends={this.props.stateFriends} cancelSubmit={this.cancelSubmit}/> : <p style={{textAlign:'center',marginTop:30}}>恭喜您，报名成功！</p> :
                     null
-                }
+                }*/}
             </WingBlank>
         )
     }

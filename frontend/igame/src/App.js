@@ -100,7 +100,7 @@ class TabBarExample extends React.Component {
             data-seed="logId1"
           >
             {/*动态加载 应该考虑 在这里执行。*/}
-            {this.state.selectedTab=='redTab'? this.renderContent(this.state.haslogin? this.renderContent(<App2 />):<User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />):null}
+            {this.state.selectedTab==='redTab'? this.renderContent(this.state.haslogin? this.renderContent(<App2 />):<User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />):null}
           </TabBar.Item>
           <TabBar.Item
             icon={<Icon type="form" style={{fontSize:'22px'}} />}

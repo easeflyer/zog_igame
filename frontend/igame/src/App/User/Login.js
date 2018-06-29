@@ -41,6 +41,9 @@ export default class LoginPage extends React.Component{
 }
 
 class BasicInput extends React.Component {   //输入组件，经过下面的createForm()变成可提交的组件
+    state={
+        name:null
+    }
     componentDidMount() {
     //   this.autoFocusInst.focus();
     }
@@ -55,6 +58,7 @@ class BasicInput extends React.Component {   //输入组件，经过下面的cre
                 }
                 const cb = (data)=>{
                     if (data.sid){
+                        session.set_name(formData.phone);
                         session.set_sid(data.sid);
                         console.log(session.get_sid())
                         Toast.success("登录成功！",1);

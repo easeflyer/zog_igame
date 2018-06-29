@@ -6,7 +6,11 @@
  * destroy()    remove sid from localstorage
  */
 const session = {
+    name:null,
     sid: null,
+    set_name:function(phone){
+        this.name = phone;
+    },
     set_sid: function (sid) {
         localStorage.sid = sid;
         this.sid = sid;

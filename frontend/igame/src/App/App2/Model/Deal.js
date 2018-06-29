@@ -1,6 +1,5 @@
-import { Modal,Toast } from 'antd-mobile';
+import { Toast } from 'antd-mobile';
 import  Models  from '../../Models/Models'
-const alert = Modal.alert;
 
 // 请求赛事列表及相关操作
 class DealList{
@@ -40,7 +39,7 @@ class DealList{
         }else{
             if(this.word){
                 this.list = this.list.filter(item => {
-                    return item.name.indexOf(this.word)!=-1 
+                    return item.name.indexOf(this.word)!==-1 
                 });
                 callback(this.list);
             }else{
@@ -76,6 +75,8 @@ class DealUsers{
     }
 }
 
+
+
 // 请求赛队列表信息
 class DealTeams{
     constructor(callback){
@@ -110,23 +111,24 @@ class DealSign{
     }
 
     // 已有赛队报名，表单提交
-    existTeamSign = (data)=>{
-        const form = {
-            eventName:data.eventName,
-            teamId:data.teamId,
-           
+    teamSign = (data)=>{
+        console.log(data)
+        const json={
+            'model': 'og.igame.team',
+            'method': 'create_team',
+            'args': data,
+            'kw': {},
         }
-        console.log(form)
-        const signExistCB = (res)=>{
-            console.log(res)
+        const questTeam = (res)=>{
             if (res){
-                this.callback();
+                // this.callback(res);
+                console.log('创建队伍成功')
             }else{
-                Toast.fail('报名失败，请稍后重试',1);
+                return null;
             }
         }
         const m = Models.create();
-        // m.query('exec',form,signExistCB);
+        m.query('exec', json, questTeam);
     }
 }
 

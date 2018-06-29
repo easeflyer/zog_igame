@@ -67,9 +67,9 @@ export default class ListApp extends React.Component{
     render(){
         return(
             <div>  
-                { this.state.open == 1 ? <EventList initialize={this.state.initialize} originList={this.state.originList} stateList={this.stateList}  handlerDetail={this.handlerDetail} /> : null}                
-                { this.state.open == 2 ? <EventDetails list={this.state.originList.filter(item => { return item.id === this.state.eventId })}  backToList={this.backToList} signMatch={this.signMatch} /> : null}
-                { this.state.open == 3 ? <SignEvent list={this.state.originList.filter(item => { return item.id === this.state.eventId })} stateTeams={this.stateTeams} stateFriends={this.stateFriends} backToDetail={this.backToDetail} stateTeams={this.stateTeams}/> : null}
+                { this.state.open === 1 ? <EventList initialize={this.state.initialize} originList={this.state.originList} stateList={this.stateList}  handlerDetail={this.handlerDetail} /> : null}                
+                { this.state.open === 2 ? <EventDetails list={this.state.originList.filter(item => { return item.id === this.state.eventId })}  backToList={this.backToList} signMatch={this.signMatch} /> : null}
+                { this.state.open === 3 ? <SignEvent list={this.state.originList.filter(item => { return item.id === this.state.eventId })} stateTeams={this.stateTeams} stateFriends={this.stateFriends} backToDetail={this.backToDetail} stateTeams={this.stateTeams}/> : null}
             </div>
         )
     }
