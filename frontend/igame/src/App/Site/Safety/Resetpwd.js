@@ -3,7 +3,6 @@ import { List } from 'antd-mobile';
 import './Index.css';
 
 const Item = List.Item;
-const Brief = Item.Brief;
 
 export default class Resetpwd extends React.Component {
 

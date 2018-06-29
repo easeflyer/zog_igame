@@ -4,10 +4,10 @@ import './Index.css';
 import Changepwd from './Changepwd';
 import Resetpwd from './Resetpwd';
 import { SiteLogin } from '../Common/Login';
-import { Models,session } from '../Models/Models';
+import { session } from '../Models/Models';
 
 const Item = List.Item;
-const Brief = Item.Brief;
+// const Brief = Item.Brief;
 
 
 export default class Safety extends React.Component {
@@ -24,7 +24,7 @@ export default class Safety extends React.Component {
         this.setState({
             SafetyNav:!this.state.SafetyNav,
             change:true
-        }),
+        })
         this.props.toggleHasLogin()
     }
     onCheckChange = ()=>{

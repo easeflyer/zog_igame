@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { List, InputItem, Switch, Stepper, Range, Button,Toast } from 'antd-mobile';
+import { List, InputItem, Button,Toast } from 'antd-mobile';
 import { createForm } from 'rc-form';
-import { Models,session } from '../Models/Models'
+import { Models} from '../Models/Models'
 const Item = List.Item;
 
 class BasicInput extends React.Component {
@@ -55,7 +55,7 @@ class BasicInput extends React.Component {
     <form>
       <List
         renderHeader={() => '您正在修改密码，请谨慎操作'}
-        renderFooter={() => getFieldError('account') && getFieldError('account')||getFieldError('password') && getFieldError('password').join(',')}
+        renderFooter={() => (getFieldError('account') &&  getFieldError('account'))||(getFieldError('password')  && getFieldError('password').join(',')) }
       >
         <InputItem
           {...getFieldProps('account', {
@@ -102,7 +102,7 @@ const BasicInputWrapper = createForm()(BasicInput);
 
 class Changepwd extends React.Component {
     componentWillMount() {  //生命周期函数，渲染前调用,在客户端也在服务端
-        const sid = session.get_sid()
+        // const sid = session.get_sid()
     }
     render (){
         return(
