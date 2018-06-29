@@ -50,6 +50,32 @@ class DealList{
     } 
 }
 
+// 请求用户列表信息
+class DealUsers{
+    constructor(callback){
+        this.callback = callback;
+    }
+
+    users=()=>{
+        const json={
+            'model': 'og.igame',
+            'method': 'get_users',
+            'args': [[]],
+            'kw': {},
+        }
+        const questFriends = (res)=>{
+            if (res){
+                console.log(res)
+                this.callback(res);
+            }else{
+                return null;
+            }
+        }
+        const m = Models.create();
+        m.query('exec', json, questFriends);
+    }
+}
+
 // 请求赛队列表信息
 class DealTeams{
     constructor(callback){
@@ -76,30 +102,6 @@ class DealTeams{
     }
 }
 
-// 请求好友列表信息
-class DealFriends{
-    constructor(callback){
-        this.callback = callback;
-    }
-
-    myFriends=()=>{
-        const json={
-            'model': 'og.igame',
-            'method': 'search2',
-            'args': [[]],
-            'kw': {},
-        }
-        const questFriends = (res)=>{
-            if (res){
-                this.callback(res);
-            }else{
-                return null;
-            }
-        }
-        const m = Models.create();
-        // m.query('exec', json, questFriends);
-    }
-}
 
 // 报名请求
 class DealSign{
@@ -130,4 +132,4 @@ class DealSign{
 
 
 
-export { DealList, DealTeams, DealFriends, DealSign}
+export { DealList, DealTeams, DealUsers, DealSign}

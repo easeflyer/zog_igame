@@ -2,8 +2,7 @@ import React from 'react'
 import { Form, Input, Select, Button} from 'antd';
 import {Toast} from 'antd-mobile'  
 
-import DealUser from './Model/DealUser'
-import {DealFriends, DealSign} from './Model/Deal'
+import {DealUsers, DealSign} from './Model/Deal'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -12,21 +11,21 @@ const Option = Select.Option;
 class FormForSign extends React.Component{
     state={
         eventDetail:this.props.eventDetail,//要报名赛事的全部信息
-        userList: new DealUser(),
         myFriends:null
     }
 
 // 请求通讯录列表 ???
     componentDidMount(){
         // 每次打开报名页都重新请求
-        const MyFriends = new DealFriends(res => this.stateFriends(res));
-        MyFriends.myFriends();
+        const Users = new DealUsers(res => this.stateFriends(res));
+        Users.users();
     }
     stateFriends=(res)=>{
         this.setState({
             myFriends:res
         });
-        this.props.stateFriends(res);
+        console.log(this.state.myFriends)
+        // this.props.stateFriends(res);
     }
 
 // 提交表单，发送报名请求
@@ -36,7 +35,8 @@ class FormForSign extends React.Component{
             (err) => {
                 if (!err) {
                     // this.props.submitNewTeamForm(this.props.form.getFieldsValue());
-                    console.info('success');
+                    console.log('新建队伍')
+                    console.log(this.props.form.getFieldsValue())
                 }else{
                     Toast.fail('验证失败，请重新填写表单', 2);
                 }
@@ -118,10 +118,19 @@ class FormForSign extends React.Component{
     render(){
         const {getFieldProps, getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
 
-        const allUserList = this.state.userList.list[0].userInfo.friendList;
-            allUserList.forEach((item)=>{
-                item.select=true;
-            });
+        //  let items=[];
+
+        // if(!this.state.myFriends || this.state.myFriends.length == 0 ) {
+        //     items.push(<p key={0} style={{textAlign:'center',fontSize:14,padding:15, marginTop:1}} >暂无比赛</p>);
+        // }
+        // else {
+        //     this.state.myFriends.forEach(item => {
+        //         items.push(
+        //             <Option key={index} value={item.id} disabled={false}>姓名：{item.name}，赛事证号：{item.id}</Option>
+        //         );
+        //     });
+        // }
+        
         return(          
             <Form layout="vertical" onSubmit={this.onSubmit}>
                     {/*<FormItem label="项目"  style={{marginBottom:0}}>
@@ -136,7 +145,7 @@ class FormForSign extends React.Component{
                         )}
                     </FormItem>*/}
                     <FormItem label="队伍名称" style={{marginBottom:0}}>
-                         {getFieldDecorator('team', {
+                         {getFieldDecorator('teamname', {
                             rules: [
                                 { required: true},
                                 { validator: this.validateTeamName }
@@ -145,13 +154,16 @@ class FormForSign extends React.Component{
                             <Input placeholder="填写队伍名称" style={{ width: 250 }}/>
                         )}
                     </FormItem>
-                    <FormItem label="领队"  style={{marginBottom:0}} >   
+                    <FormItem style={{marginBottom:0}}>
+                        <span>队伍成员(4-8人)：</span>
+                    </FormItem>
+                    {/*<FormItem label="领队"  style={{marginBottom:0}} >   
                         {getFieldDecorator('leader', {
                             rules: [{ required: true ,message:'请选择一名领队'}],
                         })(
                             <Select placeholder="姓名" showSearch={true} style={{ width: 250 }} onSelect={this.onLeaderSelect}>
-                                {allUserList.map((item,index) =>
-                                    <Option key={index} value={item.name} disabled={false}>姓名：{item.name}，赛事证号：{item.eventId}</Option>
+                                {this.state.myFriends.map((item,index) =>
+                                    <Option key={index} value={item.id} disabled={false}>姓名：{item.name}，赛事证号：{item.id}</Option>
                                 )}
                             </Select>   
                         )} 
@@ -161,13 +173,13 @@ class FormForSign extends React.Component{
                             rules: [{ required: true ,message:'请选择一名教练'}],
                         })( 
                             <Select placeholder="姓名" showSearch={true} style={{ width: 250 }}>
-                                {allUserList.map((item,index) =>
-                                    <Option key={index} value={item.name} disabled={false}>姓名：{item.name}，赛事证号：{item.eventId}</Option>
-                                )}
+                            {this.state.myFriends.map((item,index) =>
+                                <Option key={index} value={item.id} disabled={false}>姓名：{item.name}，赛事证号：{item.id}</Option>
+                            )}
                             </Select>   
                         )} 
                     </FormItem>
-                    <FormItem label="队员(4-6人)"  style={{marginBottom:0}}>   
+                    <FormItem label="队员"  style={{marginBottom:0}}>   
                         {getFieldDecorator('player', {
                             rules: [
                                 { required: true},
@@ -175,12 +187,12 @@ class FormForSign extends React.Component{
                             ],
                         })(
                             <Select mode="multiple" placeholder="姓名" showSearch={true} style={{ width: 250 }}>
-                                {allUserList.map((item,index) =>
-                                    <Option key={index} value={item.name}>姓名：{item.name}，赛事证号：{item.eventId}</Option>
-                                )}
+                            {this.state.myFriends.map((item,index) =>
+                                <Option key={index} value={item.id} disabled={false}>姓名：{item.name}，赛事证号：{item.id}</Option>
+                            )}
                             </Select>  
                         )}
-                    </FormItem>               
+                    </FormItem>  */}             
                     <FormItem label="联系人" style={{ marginBottom:0}}>
                         {getFieldDecorator('contacts', {
                             rules: [
