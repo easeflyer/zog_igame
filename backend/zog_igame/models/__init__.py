@@ -2,7 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from . import igame
-from . import igame_score
+from . import igame_team
 from . import deal
 from . import table
 from . import board

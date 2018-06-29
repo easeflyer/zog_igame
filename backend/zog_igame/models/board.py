@@ -26,7 +26,6 @@ class Board(models.Model):
     table_id = fields.Many2one('og.table')
     deal_id = fields.Many2one('og.deal')
 
-
     name   = fields.Char('Name', related='deal_id.name' )
     number = fields.Integer(related='deal_id.number' )
     dealer = fields.Selection(related='deal_id.dealer' )
