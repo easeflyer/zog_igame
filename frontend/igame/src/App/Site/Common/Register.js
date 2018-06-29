@@ -2,7 +2,7 @@
 // import ReactDOM from 'react-dom';
 
 import { Modal, Toast } from 'antd-mobile';
-import { session, Models } from '../Models/Models';
+import { Models } from '../Models/Models';
 
 class SiteRegister {
     // 注册 callback 登录成功后调用外部的 callback 函数

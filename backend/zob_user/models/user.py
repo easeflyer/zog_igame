@@ -41,7 +41,7 @@ class User(models.Model):
         return ret
 
     @api.model
-    def reset_password(self, login, new_passwd):
+    def reset_new_password(self, login, new_passwd):
         domain = [('login','=',login)]
         user = self.search(domain,limit=1)
         vals={''
@@ -52,7 +52,7 @@ class User(models.Model):
 
     @api.model
     def create_org(self, org_name):
-        # 创建用户名
+
         org = self.env.user.parent_id
         if org:
             org.name = org_name
@@ -64,7 +64,7 @@ class User(models.Model):
 
     @api.model
     def join_org(self, org_id, partner_id=None):
-        # 添加用户名
+
         if not partner_id:
             partner = self.env.user.partner_id
         else:

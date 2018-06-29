@@ -79,20 +79,14 @@ class Models {
      * @param {function} callback 外部传入的回调函数
      */
     // exec(json, callback) {
-    //     const url = Models.types['exec']+'?session_id='+session.get_sid();
-    //     console.log(url)
-    //     fetch(url,{
-    //         method:'POST',
-    //         body:JSON.stringify(
-    //             {"jsonrpc":"2.0",
-    //             "method":"call",
-    //             "id":null,
-    //             "params":json
-    //         }
-    //         ),
-    //         // body:JSON.stringify(json),
-    //         headers:new Headers({
-    //             'Content-Type':'application/json'
+    //     const url = Models.types['exec'];
+    //     data['params']=json;
+    //     // json['sid'] = session.get_sid() // 添加上  session sid
+    //     fetch(url, {
+    //         method: 'POST', // or 'PUT'
+    //         body: JSON.stringify(data), // data can be `string` or {object}!
+    //         headers: new Headers({
+    //             'Content-Type': 'application/json'
     //         })
     //     }).then(res => res.json())
     //         .catch(error => console.error('Error:', error))
@@ -104,20 +98,15 @@ class Models {
 
     // users(ty,json, callback) {
     //     const url = Models.types[ty];
+    //     data['params']=json;
     //     console.log(url)
     //     fetch(url,{
-    //         method:'POST',
-    //         body:JSON.stringify(
-    //             {"jsonrpc":"2.0",
-    //             "method":"call",
-    //             "id":null,
-    //             "params":json
-    //         }
-    //         ),
-    //         // body:JSON.stringify(json),
-    //         headers:new Headers({
-    //             'Content-Type':'application/json'
-    //         })
+    //             method:'POST',
+    //             body:JSON.stringify(data),
+    //             // body:JSON.stringify(json),
+    //             headers:new Headers({
+    //                 'Content-Type':'application/json'
+    //             })
     //         }).then(res=>res.json())
     //             .catch(error=>console.error('Error:',error))
     //             .then(response => {

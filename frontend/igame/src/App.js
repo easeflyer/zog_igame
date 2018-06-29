@@ -42,6 +42,12 @@ class TabBarExample extends React.Component {
       hidden:false
     })
   }
+  loginOut = ()=>{
+    this.setState({
+      haslogin:!this.state.haslogin,
+      hidden:true
+    })
+  }
   renderContent(app) {
     return app;
   }
@@ -72,7 +78,7 @@ class TabBarExample extends React.Component {
             }}
             data-seed="logId"
           >
-            {this.state.selectedTab=='blueTab'?this.renderContent(<Site />):null}
+            {this.state.selectedTab==='blueTab'?this.renderContent(<Site />):null}
           </TabBar.Item>
           <TabBar.Item
             icon={<Icon type="rocket" style={{fontSize:'22px'}} />}
@@ -109,7 +115,7 @@ class TabBarExample extends React.Component {
               });
             }}
           >
-            {this.state.selectedTab=='greenTab'?this.renderContent(<Site />):null}
+            {this.state.selectedTab==='greenTab'?this.renderContent(<Site />):null}
           </TabBar.Item>
           <TabBar.Item
             icon={<Icon type="user" style={{fontSize:'22px'}} />}
@@ -120,15 +126,20 @@ class TabBarExample extends React.Component {
             onPress={() => {
               if (!this.state.haslogin){
                 this.setState({
-                  hidden:true
-                })
+                  // selectedTab: 'yellowTab',
+                  hidden: true
+                });
               }
               this.setState({
                 selectedTab: 'yellowTab',
+                // hidden: true
               });
             }}
           >
-             {this.state.selectedTab=='yellowTab'?this.renderContent(this.state.haslogin?<My />:<User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />):null}
+              {this.state.selectedTab==='yellowTab'?
+                this.renderContent(this.state.haslogin?<My loginOut={this.loginOut} />:
+                <User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />)
+              :null}
              {/* {this.state.selectedTab=='yellowTab'?this.renderContent(this.state.haslogin?<My />:<FlexExample toggleLogin={this.toggleLogin} />):null} */}
           </TabBar.Item>
         </TabBar>

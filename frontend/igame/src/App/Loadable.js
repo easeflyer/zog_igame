@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom';
 import Loadable from 'react-loadable';
 import {Toast} from 'antd-mobile'
 /**
@@ -10,7 +10,7 @@ import {Toast} from 'antd-mobile'
 
 
 // 定义加载时 如何显示。可以考虑动画。
-const Loading = () => { return <div>Loading...</div> };
+// const Loading = () => { return <div>Loading...</div> };
 function loadingToast() {
     Toast.loading('Loading...', 1, null);
     return <div>载入完毕</div>
