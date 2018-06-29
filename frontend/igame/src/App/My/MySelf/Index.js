@@ -2,10 +2,16 @@ import React from 'react';
 import { WhiteSpace, Button, NavBar, List} from 'antd-mobile';
 import { Icon } from 'antd';
 import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
+import session from '../../User/session';
 
 const Item = List.Item;
 
 export default class MySelf extends React.Component {
+    loginOut = ()=>{
+        this.props.loginOut();
+        this.props.toMine();
+        session.destroy();
+    }
     render() {
         return(
             <div>
@@ -33,7 +39,7 @@ export default class MySelf extends React.Component {
 
                 <Button type="" size='small'
                 style={{width:150,backgroundColor:'#e8e8e8',margin:'auto'}} 
-                onClick={()=>{}} 
+                onClick={()=>this.loginOut()} 
                 >退出登录</Button>
 
             </div>

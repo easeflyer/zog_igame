@@ -35,7 +35,7 @@ export default class My extends React.Component {
                 toMyMatch={this.toMyMatch} />
                 break;
             case 'myself':
-                now = <MySelf toMine={this.toMine} />
+                now = <MySelf toMine={this.toMine}  loginOut={this.props.loginOut} />
                 break;
             case 'mymatch':
                 now = <MyMatch toMine={this.toMine} />
