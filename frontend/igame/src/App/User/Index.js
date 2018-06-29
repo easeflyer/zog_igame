@@ -29,6 +29,8 @@ export default class User extends React.Component{
                 return <RegisterPage toLoginPage={this.toLoginPage} />
             case 'findpwd':
                 return <FindPwdPage toLoginPage={this.toLoginPage} />
+            default:
+                break;
         }
         
     }

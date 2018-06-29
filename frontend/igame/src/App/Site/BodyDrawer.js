@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom';
 import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 import './BodyDrawer.css'
 import Home from './Home/Index'
