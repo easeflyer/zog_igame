@@ -2,8 +2,8 @@ import React from 'react'
 import { Form, Input, Select, Button} from 'antd';
 import {Toast} from 'antd-mobile'  
 
-import {DealUsers,DealSign } from './Model/Deal'
-import session from './../User/session'
+import {UserList,NewTeam, SignEvent } from '../Model/Deal'
+import session from '../../User/session'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -14,55 +14,44 @@ class FormForSign extends React.Component{
         eventDetail:this.props.eventDetail,//要报名赛事的全部信息
         myFriends:null,
         userList:null,
-        userList2:null
+        userList2:null,
+        mySelf:null,
     }
 
 // 请求通讯录列表  ★
     componentWillMount(){
-        console.log(session.name);
         // 每次打开报名页都重新请求
-        const Users = new DealUsers(res => this.stateFriends(res));
+        const Users = new UserList(res => this.stateFriends(res));
         Users.users();
     }
     stateFriends=(res)=>{
         if(res){
             this.setState({
                 myFriends:res,
-                userList:res.splice(1,1),
-                userList2:res.splice(1,1)
+                userList:res.filter(item => {return item.name !== session.get_name()}),
+                userList2:res.filter(item => {return item.name !== session.get_name()}),
+                mySelf: res.filter( item => {return item.name === session.get_name()})[0]
             });
         }
         console.log(this.state.myFriends)
         // this.props.stateFriends(res);
     }
 
-// 提交表单，发送报名请求
+// 创建新队伍（不设置人员身份），提交表单
     onSubmit=(e)=>{
         e.preventDefault();
-        const newTeamForm = [
-        ]
+        const newTeamForm = []
         this.props.form.validateFields(
             (err) => {
                 if (!err) {
-                    // this.props.submitNewTeamForm(this.props.form.getFieldsValue());
-                    console.log(this.props.form.getFieldsValue())
                     newTeamForm.push(this.props.form.getFieldValue('teamname'));
                     newTeamForm.push([]);
-                    // newTeamForm[1].push(
-                    //     this.props.form.getFieldValue('player').map(item=>{
-                    //         return item
-                    //     })
-                    // )
                     newTeamForm[1]=this.props.form.getFieldValue('player')
-                    newTeamForm[1].push(10)
-                    newTeamForm[1].push(this.props.form.getFieldValue('coach'))
-                    // this.props.form.getFieldValue('player').map(item =>{
-                    // })
-                    // newTeamForm.ID.push(this.props.form.getFieldValue('player'));
-                    console.log(newTeamForm)
-                    console.log(this.state.userList2)
-                    const Sign = new DealSign();
-                    Sign.teamSign(newTeamForm);
+                    newTeamForm[1].push(this.props.form.getFieldValue('leader'));
+                    newTeamForm[1].push(this.props.form.getFieldValue('coach'));
+
+                    const createTeam = new NewTeam(res => this.newTeamSign(res));
+                    createTeam.newTeam(newTeamForm);
                 }else{
                     Toast.fail('验证失败，请重新填写表单', 2);
                 }
@@ -70,33 +59,56 @@ class FormForSign extends React.Component{
         );
     }
 
+// 设置队伍人员身份，提交表单，发送报名请求
+    newTeamSign=(res)=>{
+        const teamSign = [];
+        teamSign.push(this.state.eventDetail.id);
+        teamSign.push(res);
+        // teamSign.push(this.props.form.getFieldValue('teamname'));
+        const player=[];
+        this.props.form.getFieldValue('player').forEach((item)=>{
+            const obj={};
+            obj.id=item;
+            obj.role='player';
+            player.push(obj);
+        });
+        teamSign.push(player)
+        teamSign[2].push({id:this.props.form.getFieldValue('leader'),role:'leader'})
+        teamSign[2].push({id:this.props.form.getFieldValue('coach'),role:'coach'})
+        console.log(teamSign)
+        console.log(this.props.form.getFieldsValue())
+
+        const EventSign = new SignEvent();
+        EventSign.signEvent(teamSign);
+    }
+
 // 取消报名，返回选择报名方式页面 ★
     cancelSubmit=()=>{
         this.props.cancelSubmit();
     }
 
-// 教练 ，值发生改变
+// 教练 ，值发生改变 ★
     handleCoach = (key)=>{
         this.setState({
-            userList2:  this.state.myFriends.filter(item => {
-                            return item.id != key;
+            userList2:  this.state.myFriends.filter((item,index) => {
+                            return item.name !== session.get_name() && item.id !== key;
                         })
         })
     }
 
-// 队员 ，值发生改变
+// 队员 ，值发生改变 ★
     handlePlayer = (key)=>{
         this.setState({
-            userList:   this.state.userList.filter(item => {
-                            return item.id != key;
+            userList:   this.state.userList.filter((item,index) => {
+                            return item.name !== session.get_name() && item.id !== key;
                         })
         })
     }
     handlePlayerDe = (key)=>{
         this.setState({
             userList:   this.state.userList.concat(
-                            this.state.userList2.filter(item => {
-                                return item.id == key;
+                            this.state.userList2.filter((item,index) => {
+                                return item.name !== session.get_name() && item.id === key;
                         }))
         })
     }
@@ -168,7 +180,9 @@ class FormForSign extends React.Component{
     // }
 
     render(){
-        const {getFieldProps, getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
+        const {getFieldProps, getFieldDecorator } = this.props.form;
+
+        const myself= this.state.myFriends ? this.state.myFriends.filter( item => {return item.name === session.get_name()} )[0] : null
 
         let items = [];
         
@@ -182,20 +196,10 @@ class FormForSign extends React.Component{
                 );
             });
         }
+
         
         return(       
             <Form layout="vertical"   onSubmit={this.onSubmit}>
-                    {/*<FormItem label="项目"  style={{marginBottom:0}}>
-                        {getFieldDecorator('event', {
-                            rules: [{ required: true ,message:'请选择参赛项目' }],
-                        })(
-                            <Select placeholder="选择参赛项目" style={{ width: 250 }}>
-                                <Option value="团体公开赛">团体公开赛</Option>
-                                <Option value="青年赛">青年赛</Option>
-                                <Option value="中年赛">中年赛</Option>
-                            </Select>
-                        )}
-                    </FormItem>*/}
                     <FormItem label="队伍名称" style={{marginBottom:0}}>
                          {getFieldDecorator('teamname', {
                             rules: [
@@ -210,16 +214,15 @@ class FormForSign extends React.Component{
                         <span>队伍成员(4-8人)：</span>
                     </FormItem>
                     <FormItem label="领队"  style={{marginBottom:0}} >   
-                            <Select placeholder="姓名" notFoundContent="没有用户信息" showSearch={true} style={{ width: 290 }} onSelect={key => this.handleCoach(key)}>
-                                <Option key={this.state.myFriends[0].id} value={this.state.myFriends[0].id} disabled={false}>姓名：{this.state.myFriends[0].name}，赛事证号：{this.state.myFriends[0].id}</Option>
+                            <Select placeholder="姓名" notFoundContent="没有用户信息" defaultValue={this.state.mySelf.id } style={{ width: 290 }} {...getFieldProps('leader')}>
+                                <Option key={this.state.mySelf.id } value={this.state.mySelf.id } disabled={false}>姓名：{this.state.mySelf.name}，赛事证号：{this.state.mySelf.id}</Option>
                             </Select>  
-
                     </FormItem>
                     <FormItem label="教练"  style={{marginBottom:0}}>  
                         {getFieldDecorator('coach', {
                             rules: [{ required: true ,message:'请选择一名教练'}],
                         })( 
-                            <Select placeholder="姓名" notFoundContent="没有用户信息" showSearch={true} style={{ width: 290 }} onSelect={key => this.handleCoach(key)}>
+                            <Select  placeholder="姓名" notFoundContent="没有用户信息" showSearch={true} style={{ width: 290 }} onSelect={key => this.handleCoach(key)}>
                             {this.state.userList.map(item =>
                                 <Option key={item.id} value={item.id} disabled={false}>姓名：{item.name}，赛事证号：{item.id}</Option>
                             )}

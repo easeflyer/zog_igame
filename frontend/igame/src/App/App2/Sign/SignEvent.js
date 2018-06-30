@@ -1,10 +1,8 @@
 import React from 'react'
 import { WingBlank, Button } from 'antd-mobile';
-import { NewTeamSign } from '../Loadable';
+import { NewTeamSign, ExistTeamSign } from '../../Loadable';
 
-import EventNavBar from './Common/EventNavBar'
-import ExistTeamForm from './ExistTeamForm';
-import NewTeamForm from './NewTeamForm';
+import EventNavBar from '../Common/EventNavBar'
 
 export default class SignEvent extends React.Component{
     state={
@@ -61,8 +59,10 @@ export default class SignEvent extends React.Component{
                     null
                 }
                 {this.state.exist === 1 ? 
-                    !this.props.toast ? <ExistTeamForm eventDetail={this.state.eventDetail} stateTeams={this.props.stateTeams} cancelSubmit={this.cancelSubmit}/> : <p style={{textAlign:'center',marginTop:30}}>恭喜您，报名成功！</p>  : 
-                    null  
+                    !this.props.toast ? 
+                    this.renderContent(<ExistTeamSign eventDetail={this.state.eventDetail} stateTeams={this.props.stateTeams} cancelSubmit={this.cancelSubmit}/>)
+                     : <p style={{textAlign:'center',marginTop:30}}>恭喜您，报名成功！</p> 
+                     : null  
                 }    
                 {this.state.exist === 2 ? 
                     !this.props.toast ? 

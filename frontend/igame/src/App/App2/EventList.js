@@ -2,7 +2,7 @@ import React from 'react';
 import {List, SearchBar, WingBlank} from 'antd-mobile'
 
 import EventNavBar from './Common/EventNavBar'
-import {DealList} from './Model/Deal'
+import {EventList} from './Model/Deal'
 
 export default class Event extends React.Component{ 
     state={
@@ -13,7 +13,7 @@ export default class Event extends React.Component{
     // 请求比赛列表 ???
     componentDidMount(){
         // 每次打开或回到列表页都重新请求
-        const List = new DealList(res => this.stateList(res));
+        const List = new EventList(res => this.stateList(res));
         List.eventList();
     }
     stateList=(res)=>{
@@ -27,7 +27,7 @@ export default class Event extends React.Component{
 
     // 按关键字搜索比赛 ★
     handlerSearch(value){
-        const searchEvent = new DealList();
+        const searchEvent = new EventList();
         searchEvent.searchList(this.state.originList, value, res =>this.setState({list:res}));
     }
 

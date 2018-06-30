@@ -59,8 +59,8 @@ class BasicInput extends React.Component {   //输入组件，经过下面的cre
                 const cb = (data)=>{
                     if (data.sid){
                         session.set_name(formData.phone);
+                        console.log(session.get_name())
                         session.set_sid(data.sid);
-                        console.log(session.get_sid())
                         Toast.success("登录成功！",1);
                         // this.callback();
                         this.props.toggleLoginState();   //修改最外层的组件的登录状态（此方法经App.js-->User/Index.js-->到本组件）

@@ -2,7 +2,7 @@ import { Toast } from 'antd-mobile';
 import  Models  from '../../Models/Models'
 
 // 请求赛事列表及相关操作
-class DealList{
+class EventList{
     constructor(callback) {
         this.callback = callback; 
         this.word='';
@@ -50,7 +50,7 @@ class DealList{
 }
 
 // 请求用户列表信息
-class DealUsers{
+class UserList{
     constructor(callback){
         this.callback = callback;
     }
@@ -75,43 +75,13 @@ class DealUsers{
     }
 }
 
-
-
-// 请求赛队列表信息
-class DealTeams{
-    constructor(callback){
-        this.callback = callback;
-    }
-
-    myTeams=()=>{
-        const json={
-            'model': 'og.igame',
-            'method': 'search2',
-            'args': [[]],
-            'kw': {},
-        }
-        const questTeam = (res)=>{
-            if (res){
-                this.callback(res);
-                console.log('赛队列表数据请求成功')
-            }else{
-                return null;
-            }
-        }
-        const m = Models.create();
-        // m.query('exec', json, questTeam);
-    }
-}
-
-
-// 报名请求
-class DealSign{
+// 创建新赛队，不为队员设置身份
+class NewTeam{
     constructor(callback) {
         this.callback = callback; 
     }
 
-    // 已有赛队报名，表单提交
-    teamSign = (data)=>{
+    newTeam = (data)=>{
         console.log(data)
         const json={
             'model': 'og.igame.team',
@@ -119,10 +89,37 @@ class DealSign{
             'args': data,
             'kw': {},
         }
+        const newteam = (res)=>{
+            if (res){
+                res ? this.callback(res) : null;
+            }else{
+                return null;
+            }
+        }
+        const m = Models.create();
+        m.query('exec', json, newteam);
+    }
+}
+
+// 查询我创建的赛队列表信息
+class QueryTeamList{
+    constructor(callback){
+        this.callback = callback;
+    }
+
+    myTeams=()=>{
+        const json={
+            'model': 'og.igame.team',
+            // 'method': 'get_teams',
+            'method': 'get_own_teams',
+            'args': [[]],
+            'kw': {},
+        }
         const questTeam = (res)=>{
             if (res){
-                // this.callback(res);
-                console.log('创建队伍成功')
+                this.callback(res);
+                console.log(res)
+                console.log('赛队列表数据请求成功')
             }else{
                 return null;
             }
@@ -132,6 +129,33 @@ class DealSign{
     }
 }
 
+// 报名
+class SignEvent{
+    constructor(callback){
+        this.callback = callback;
+    }
+
+    signEvent=(teamSign)=>{
+        const json={
+            'model': 'og.igame',
+            'method': 'register_game',
+            'args': teamSign,
+            'kw': {},
+        }
+        const signEvent = (res)=>{
+            if (res){
+                // this.callback(res);
+                console.log('报名成功')
+            }else{
+                return null;
+            }
+        }
+        const m = Models.create();
+        m.query('exec', json, signEvent);
+    }
+}
 
 
-export { DealList, DealTeams, DealUsers, DealSign}
+
+
+export { EventList, NewTeam, UserList, QueryTeamList, SignEvent}
