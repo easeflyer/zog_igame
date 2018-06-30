@@ -47,7 +47,7 @@ class Models {
 
 
     query(type,json={}, callback) {
-        const url =  type=='exec' ? Models.types[type]+'?session_id='+session.get_sid() : Models.types[type] ;
+        const url =  type==='exec' ? Models.types[type]+'?session_id='+session.get_sid() : Models.types[type] ;
         // const url = Models.types[type];
         console.log(url)
         fetch(url,{
