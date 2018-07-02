@@ -70,10 +70,6 @@ export default class SignEvent extends React.Component{
                     : <p style={{textAlign:'center',marginTop:30}}>恭喜您，报名成功！</p> 
                     : null
                 }
-                {/*{this.state.exist === 2 ? 
-                    !this.props.toast ? <NewTeamForm eventDetail={this.state.eventDetail} stateFriends={this.props.stateFriends} cancelSubmit={this.cancelSubmit}/> : <p style={{textAlign:'center',marginTop:30}}>恭喜您，报名成功！</p> :
-                    null
-                }*/}
             </WingBlank>
         )
     }
