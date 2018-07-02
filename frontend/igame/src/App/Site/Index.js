@@ -7,7 +7,7 @@
  * 本页面只是起到一个 索引的作用。Site 目录下其他所有子目录是 网站的各个子栏目。
  * 由本文件见负责 引入具体的子栏目。修改本文件可以重定向到其他首页。
  */
-import React from 'react';
+// import React from 'react';
 //import Home from './Home/Index'
 import BodyDrawer from './BodyDrawer'
 

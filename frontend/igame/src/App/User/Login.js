@@ -17,13 +17,13 @@ export default class LoginPage extends React.Component{
                 >
             </NavBar>
             <Flex direction='column'>
-                <img src={require("./963065731.jpg")} style={{width:360,marginTop:-30}}/>
+                <img alt='log' src={require("./963065731.jpg")} style={{width:360,marginTop:-30}}/>
                 <WhiteSpace size="lg" />
 
                 <LoginForm toggleLoginState={this.props.toggleLoginState} />
                 <WhiteSpace size="sm" />
 
-                <p className='text'>登录即代表您已同意<a href='#'>《智赛桥牌隐私政策》</a></p>
+                <p className='text'>登录即代表您已同意<a>《智赛桥牌隐私政策》</a></p>
                 <WhiteSpace size="xl" />
                 <WhiteSpace size="xl" />
                 <WhiteSpace size="xl" />
@@ -49,15 +49,14 @@ class BasicInput extends React.Component {   //输入组件，经过下面的cre
             if (!error) {
                 var formData = this.props.form.getFieldsValue();  //表单数据
                 const json = {  //向后端提交的数据
-                    'server':'TT',
-                    'user': formData.phone,  
+                    'db':'TT',
+                    'login': formData.phone,  
                     'password': formData.password,
                 }
-                console.log(json)
                 const cb = (data)=>{
-                    console.log(data)
                     if (data.sid){
-                        session.set_sid(data.sid)
+                        session.set_sid(data.sid);
+                        console.log(session.get_sid())
                         Toast.success("登录成功！",1);
                         // this.callback();
                         this.props.toggleLoginState();   //修改最外层的组件的登录状态（此方法经App.js-->User/Index.js-->到本组件）
@@ -66,11 +65,8 @@ class BasicInput extends React.Component {   //输入组件，经过下面的cre
                     }
                 }
                 const m = Models.create();
+                // m.query('login',json123,cb);
                 m.query('login',json,cb);
-
-
-
-
                 // this.props.toggleLoginState()   //修改最外层的组件的登录状态（此方法经App.js-->User/Index.js-->到本组件）
 
             } else {

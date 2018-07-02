@@ -69,6 +69,8 @@ class Models {
             case 'register':
                 this.register(json,callback);
                 break;
+            default:
+                break;
                 
         }
     }
