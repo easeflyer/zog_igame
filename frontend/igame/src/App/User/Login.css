@@ -24,22 +24,12 @@
 }
 
 
-<<<<<<< HEAD
-=======
-.login-btn{
-    margin-left: 20%;
-}
->>>>>>> upstream/develop
 .login-btn,.register-btn,.next-btn{
   background-color: #e8e8e8;
   width: 198px;
   height: 38px;
   line-height: 38px;
-<<<<<<< HEAD
   margin: auto
-=======
-
->>>>>>> upstream/develop
 }
 .btn1{
     background-color:white;
