@@ -19,7 +19,7 @@ import session from '../User/session';
  *      如果后期代码逐步扩大，可以增加 子模型代码，然后在这里引入。扩展 Models 的功能。
  * 
  */
-const HOST = 'http://192.168.0.115:8069';
+const HOST = 'http://192.168.0.20:8069';
 class Models {
     /**
      * @param {*} type 'exec','login','userexec','adminexec' 对应不同的 api 接口执行权限不同。

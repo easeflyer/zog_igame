@@ -8,20 +8,12 @@ export default class ListApp extends React.Component{
     
     state={
         originList :  null, //暂存请求到的赛事列表数据
-        originTeams :null, //暂存请求到的赛队列表数据
-        originFriends: null,//暂存请求到的好友列表数据
         open: 1, //1: list, 2: detail, 3: sign
         eventId: null, //赛事ID，根据此参数展示相应的详情信息
     }
 
 // 获取赛事列表信息，以便传入其他子组件 ★
     stateList=(list)=>{ this.setState({originList:list });}
-
-// 获取赛队列表信息
-    stateTeams=(teams)=>{ this.setState({originTeams:teams, }); }
-
-// 获取好友列表信息
-    stateFriends=(friends)=>{this.setState({ originFriends:friends,}); }
 
 // 回到列表页 ★
     toList=()=>{this.setState({open:1,});}
@@ -41,7 +33,7 @@ export default class ListApp extends React.Component{
             <div>  
                 { openPage === 1 ? <EventList originList={this.state.originList} stateList={this.stateList}  handlerDetail={this.toDetail} /> : null}                
                 { openPage === 2 ? <EventDetails list={this.state.originList.filter(item => { return item.id === this.state.eventId })}  backToList={this.toList} signMatch={this.toSignMatch} /> : null}
-                { openPage === 3 ? <SignEvent list={this.state.originList.filter(item => { return item.id === this.state.eventId })} stateTeams={this.stateTeams} stateFriends={this.stateFriends} backToDetail={this.backToDetail}/> : null}
+                { openPage === 3 ? <SignEvent list={this.state.originList.filter(item => { return item.id === this.state.eventId })} backToDetail={this.backToDetail}/> : null}
             </div>
         )
     }

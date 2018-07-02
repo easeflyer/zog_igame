@@ -60,13 +60,13 @@ export default class SignEvent extends React.Component{
                 }
                 {this.state.exist === 1 ? 
                     !this.props.toast ? 
-                    this.renderContent(<ExistTeamSign eventDetail={this.state.eventDetail} stateTeams={this.props.stateTeams} cancelSubmit={this.cancelSubmit}/>)
+                    this.renderContent(<ExistTeamSign eventDetail={this.state.eventDetail} cancelSubmit={this.cancelSubmit}/>)
                      : <p style={{textAlign:'center',marginTop:30}}>恭喜您，报名成功！</p> 
                      : null  
                 }    
                 {this.state.exist === 2 ? 
                     !this.props.toast ? 
-                    this.renderContent(<NewTeamSign eventDetail={this.state.eventDetail} stateFriends={this.props.stateFriends} cancelSubmit={this.cancelSubmit}/>)
+                    this.renderContent(<NewTeamSign eventDetail={this.state.eventDetail} cancelSubmit={this.cancelSubmit}/>)
                     : <p style={{textAlign:'center',marginTop:30}}>恭喜您，报名成功！</p> 
                     : null
                 }

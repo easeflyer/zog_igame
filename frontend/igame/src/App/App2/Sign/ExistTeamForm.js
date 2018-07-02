@@ -1,7 +1,8 @@
 import React from 'react'
 import { Form, Select, Button, Row, Col  } from 'antd';
+import {Toast} from 'antd-mobile'  
 
-import { QueryTeamList, UserList} from '../Model/Deal'
+import { QueryTeamList, SignEvent} from '../Model/Deal'
 import session from '../../User/session'
 
 const FormItem = Form.Item;
@@ -10,12 +11,12 @@ const Option = Select.Option;
 class FormForSign extends React.Component{
     state={
         eventDetail:this.props.eventDetail,//要报名赛事的全部信息
-        hasTeam:0,
         myTeams:null,
         currentTeam:null,
         currentTeam2:null,
         mySelf:null,
-        teamId:null
+        teamId:null,
+        disabled:true
     }
 
 // 请求赛队列表 ???
@@ -25,20 +26,40 @@ class FormForSign extends React.Component{
         Teams.myTeams();
     }
     stateTeams=(res)=>{
-        this.setState({
-            myTeams:res,
-            currentTeam:res[0].players.filter( item => {return item.playername !== session.get_name()}),
-            currentTeam2:res[0].players.filter( item => {return item.playername !== session.get_name()}),
-            mySelf: res[0].players.filter( item => {return item.playername === session.get_name()})[0],
-        });
-        this.props.stateTeams(res);
+        if(res && res.length!==0){
+            this.setState({
+                myTeams:res,
+                currentTeam:res[0].players.filter( item => {return item.playername !== session.get_name()}),
+                currentTeam2:res[0].players.filter( item => {return item.playername !== session.get_name()}),
+                mySelf: res[0].players.filter( item => {return item.playername === session.get_name()})[0],
+                teamId:res[0].id,
+                disabled:false
+            });
+        }else{
+            Toast.info('没有赛队信息，请先创建赛队！！', 2);
+        }
         console.log(this.state.teamIndex);
     }
     
 // 提交表单，发送报名请求
     onSubmit=(e)=>{
         e.preventDefault();
-        // this.props.submitExistTeamForm(formDetail);
+        const teamSign = [];
+        teamSign.push(this.state.eventDetail.id);
+        teamSign.push(this.state.teamId);
+        teamSign[2]=[];
+        this.props.form.getFieldValue('player').forEach((item)=>{
+            const obj={};
+            obj.id=item;
+            obj.role='player';
+            teamSign[2].push(obj);
+        });
+        teamSign[2].push({id:this.props.form.getFieldValue('leader'),role:'leader'})
+        teamSign[2].push({id:this.props.form.getFieldValue('coach'),role:'coach'})
+        console.log(teamSign)
+
+        const EventSign = new SignEvent();
+        EventSign.signEvent(teamSign);
     }
     
 // 取消报名，返回选择报名方式页面 ★
@@ -56,13 +77,21 @@ class FormForSign extends React.Component{
                 return item.id === val
             })[0].players.filter( item => {return item.playername !== session.get_name()}),
             teamId : val
+        });
+        this.props.form.setFieldsValue({
+            leader:null,
+            coach:null,
+            player:[]
         })
     }
 
 // 教练 ，值发生改变 ★
 handleCoach = (key)=>{
+    console.log(key)
     this.setState({
-        currentTeam2:  this.state.myTeams.player.filter((item,index) => {
+        currentTeam2:  this.state.myTeams.filter(item =>{
+                    return item.id === this.state.teamId
+                })[0].players.filter(item=> {
                         return item.playername !== session.get_name() && item.id !== key;
                     })
     })
@@ -84,48 +113,72 @@ handleCoach = (key)=>{
                         }))
         })
     }
-    
-    render(){
-        const {getFieldProps, getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
+
+// 添加新队伍
+    addTeam=()=>{ 
         
+    }  
+
+    validatePlayer = (rule, value, callback) => {
+        if(value){
+            if(value.length > 1 && value.length <= 6){
+                callback();
+              } else {
+                callback(new Error('请选择2-6个队员'));
+              }
+        }else{
+            callback();
+        }
+    }
+
+
+    items=(state)=>{
         let items = [];
         
-		if(!this.state.myTeams || this.state.myTeams.length === 0 ) {
+		if(!state || state.length === 0 ) {
             return items=[];
         }
         else {
-            this.state.myTeams.forEach(item => {
-                items.push(
-                    <Option key={item.id} value={item.id} disabled={false}>{item.name}</Option>
-                );
-            });
+            if(state == this.state.myTeams){
+                state.forEach(item => {
+                    items.push(
+                        <Option key={item.id} value={item.id}>{item.teamname}</Option>
+                    );
+                });
+            }else{
+                state.forEach(item => {
+                    items.push(
+                        <Option key={item.id} value={item.id} disabled={false}>姓名：{item.playername}，赛事证号：{item.id}</Option>
+                    );
+                });
+            }
         }
+        return items
+    }
+
+
+    render(){
+        const {getFieldProps, getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
         
-
-
         return(
             <Form layout="vertical" onSubmit={this.onSubmit}>
                     <FormItem style={{marginBottom:0}} >
                         <span>赛队：</span>
-                        <Select defaultValue={this.state.myTeams[0].id} style={{ width: 120 }} onChange={key => this.handleTeamSelect(key)}>
-                            {this.state.myTeams.map((item,index) =>
-                                <Option key={index} value={item.id}>{item.teamname}</Option>
-                            )}
+                        <Select placeholder="选择赛队" defaultValue={this.state.myTeams? this.state.myTeams[0].id : null } notFoundContent="没有赛队信息" style={{ width: 120 }} onChange={key => this.handleTeamSelect(key)}>
+                        {this.items(this.state.myTeams)}
                         </Select>
-                        </FormItem>
-                        <FormItem label="领队"  style={{marginBottom:0}} >   
-                        <Select placeholder="姓名" notFoundContent="没有用户信息" defaultValue={this.state.mySelf.id } style={{ width: 290 }} {...getFieldProps('leader')}>
-                            <Option key={this.state.mySelf.id } value={this.state.mySelf.id } disabled={false}>姓名：{this.state.mySelf.playername}，赛事证号：{this.state.mySelf.id}</Option>
+                    </FormItem>
+                    <FormItem label="领队"  style={{marginBottom:0}} >   
+                        <Select disabled={this.state.disabled} placeholder="姓名" notFoundContent="没有用户信息" defaultValue={this.state.mySelf ? this.state.mySelf.id :null } style={{ width: 290 }} {...getFieldProps('leader')}>
+                            <Option key={this.state.mySelf ? this.state.mySelf.id :null } value={this.state.mySelf ? this.state.mySelf.id :null} disabled={false}>{this.state.mySelf ? '姓名：' + this.state.mySelf.playername + '赛事证号：' +  this.state.mySelf.id :'没有用户信息'}</Option>
                         </Select>  
-                </FormItem>
+                    </FormItem>
                     <FormItem label="教练"  style={{marginBottom:0}}>  
                         {getFieldDecorator('coach', {
                             rules: [{ required: true ,message:'请选择一名教练'}],
                         })( 
-                            <Select  placeholder="姓名" notFoundContent="没有用户信息" showSearch={true} style={{ width: 290 }} onSelect={key => this.handleCoach(key)}>
-                            {this.state.currentTeam.map(item =>
-                                <Option key={item.id} value={item.id} disabled={false}>姓名：{item.playername}，赛事证号：{item.id}</Option>
-                            )}
+                            <Select  disabled={this.state.disabled}  placeholder="姓名" notFoundContent="没有用户信息" showSearch={true} style={{ width: 290 }} onSelect={key => this.handleCoach(key)}>
+                            {this.items(this.state.currentTeam)}
                             </Select>   
                         )} 
                     </FormItem>
@@ -133,19 +186,17 @@ handleCoach = (key)=>{
                         {getFieldDecorator('player', {
                             rules: [
                                 { required: true},
-                                // { validator: this.validatePlayerr }
+                                { validator: this.validatePlayer }
                             ],
                         })(
-                            <Select mode="multiple" notFoundContent="没有用户信息" placeholder="姓名" showSearch={true} style={{ width: 290 }} onSelect={key => this.handlePlayer(key)} onDeselect={key => this.handlePlayerDe(key)}>
-                            {this.state.currentTeam.map(item =>
-                                <Option key={item.id} value={item.id} disabled={false}>姓名：{item.playername}，赛事证号：{item.id}</Option>
-                            )}
+                            <Select  disabled={this.state.disabled} mode="multiple" notFoundContent="没有用户信息" placeholder="姓名" showSearch={true} style={{ width: 290 }} onSelect={key => this.handlePlayer(key)} onDeselect={key => this.handlePlayerDe(key)}>
+                            {this.items(this.state.currentTeam2)}
                             </Select>  
                         )}
                     </FormItem>     
                     <FormItem>
-                        <Button type="primary" style={{paddingLeft:10, paddingRight:10, marginRight:10}} htmlType="submit">提交</Button>
-                        <Button type="danger" style={{paddingLeft:10, paddingRight:10}} onClick={this.cancelSubmit}>取消</Button>
+                        <Button  disabled={this.state.disabled} type="primary" style={{paddingLeft:10, paddingRight:10, marginRight:10}} htmlType="submit">提交</Button>
+                        <Button  disabled={this.state.disabled} type="danger" style={{paddingLeft:10, paddingRight:10}} onClick={this.cancelSubmit}>取消</Button>
                     </FormItem>
                 </Form>      
         )

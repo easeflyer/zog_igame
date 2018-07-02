@@ -1,6 +1,56 @@
 import { Toast } from 'antd-mobile';
 import  Models  from '../../Models/Models'
 
+// model: og.igame , og.igame.team
+// methods: search2(查询赛事列表) ,  get_users(查询所有用户)
+
+class Currency{
+    constructor(callback) {
+        this.callback = callback; 
+        this.word='';
+        this.list=null;
+    }
+
+    // 请求赛事列表，请求所有赛事信息，无返回值
+    eventList = (method,data)=>{       
+        const json={
+            'model': 'og.igame',
+            'method': method,
+            'args': data,
+            'kw': {},
+        }
+        
+        const cb = (res)=>{
+            if (res){
+                this.callback(res);
+            }else{
+                return null;
+            }
+        }
+        const m = Models.create();
+        m.query('exec', json, cb);
+    }
+
+    // 按关键字搜索比赛
+    searchList(list,word,callback){
+        this.list = list;
+        this.word = word;
+        //在list中搜索
+        if(!this.list){
+            callback(null);
+        }else{
+            if(this.word){
+                this.list = this.list.filter(item => {
+                    return item.name.indexOf(this.word)!==-1 
+                });
+                callback(this.list);
+            }else{
+                callback(this.list);
+            }
+        }
+    } 
+}
+
 // 请求赛事列表及相关操作
 class EventList{
     constructor(callback) {
@@ -64,7 +114,6 @@ class UserList{
         }
         const questFriends = (res)=>{
             if (res){
-                console.log(res)
                 this.callback(res);
             }else{
                 return null;
@@ -91,13 +140,13 @@ class NewTeam{
         }
         const newteam = (res)=>{
             if (res){
-                res ? this.callback(res) : null;
+                this.callback(res);
             }else{
                 return null;
             }
         }
         const m = Models.create();
-        m.query('exec', json, newteam);
+        // m.query('exec', json, newteam);
     }
 }
 
@@ -110,7 +159,6 @@ class QueryTeamList{
     myTeams=()=>{
         const json={
             'model': 'og.igame.team',
-            // 'method': 'get_teams',
             'method': 'get_own_teams',
             'args': [[]],
             'kw': {},
@@ -118,8 +166,6 @@ class QueryTeamList{
         const questTeam = (res)=>{
             if (res){
                 this.callback(res);
-                console.log(res)
-                console.log('赛队列表数据请求成功')
             }else{
                 return null;
             }
@@ -144,18 +190,18 @@ class SignEvent{
         }
         const signEvent = (res)=>{
             if (res){
-                // this.callback(res);
+                this.callback(res);
                 console.log('报名成功')
             }else{
                 return null;
             }
         }
         const m = Models.create();
-        m.query('exec', json, signEvent);
+        // m.query('exec', json, signEvent);
     }
 }
 
 
 
 
-export { EventList, NewTeam, UserList, QueryTeamList, SignEvent}
+export {Currency, EventList, NewTeam, UserList, QueryTeamList, SignEvent}
