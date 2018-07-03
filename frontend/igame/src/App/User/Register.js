@@ -118,7 +118,7 @@ class RsgisterForm extends React.Component{
             <p className='text' >注册即代表您已同意<a>《智赛桥牌隐私政策》</a></p>
             </Flex>
         </form>
-        );
+        ); 
     } 
 }
 const RegisterPage = createForm()(RsgisterForm);

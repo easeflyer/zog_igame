@@ -62,6 +62,18 @@ export const TeamMine = Loadable({
 })
 
 
+export const NewTeamSign = Loadable({
+    loader: () => import('./App2/Sign/NewTeamForm'),
+    // loading:() => <div>Loading...</div>,
+    loading:() => loading1,
+});
+
+export const ExistTeamSign = Loadable({
+    loader: () => import('./App2/Sign/ExistTeamForm'),
+    // loading:() => <div>Loading...</div>,
+    loading:() => loading1,
+});
+
 // const App = {
 //     'App1':App1,
 //     'App2':App2
