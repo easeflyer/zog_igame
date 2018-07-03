@@ -38,16 +38,7 @@ class BaseForm extends React.Component{
     }
 // 请求通讯录列表 
     componentDidMount(){
-        const json = {
-            'model': 'og.igame',
-            'method': 'get_users',
-            'args': [[]],
-            'kw': {},
-        }
-        const cb = (data)=>{
-            this.setState({player:data})
-        }
-        m.query('exec',json,cb);
+        m.query('exec','og.igame','get_users',{},(data)=>{this.setState({player:data})},()=>{},[]);
     }
 
 // 提交表单，发送创建赛队请求
@@ -59,25 +50,14 @@ class BaseForm extends React.Component{
                     // console.log('创建赛队');
                     // console.log(this.props.form.getFieldsValue());
                     let formData = this.props.form.getFieldsValue();
-                    let arrs = [];
-                    arrs.push(formData.teamname);
-                    arrs.push(formData.player);
-                    // console.log(arrs);
-                    const json = {
-                        'model': 'og.igame.team',
-                        'method': 'create_team',
-                        'args': arrs,
-                        'kw': {},
+                    const successCallback = ()=>{
+                        Toast.success(`队伍：【${formData.teamname}】创建成功`,1);
+                        this.props.toTeamMine();
                     }
-                    const cb = (data)=>{
-                        if (data) {
-                            Toast.success(`队伍：【${formData.teamname}】创建成功`,1);
-                            this.props.toTeamMine();
-                        }else{
-                            Toast.fail('创建失败，请稍后再试！', 1);
-                        }
+                    const errorCallback =()=>{
+                        Toast.fail('创建失败，请稍后再试！', 1);
                     }
-                    m.query('exec',json,cb);
+                    m.query('exec','og.igame.team','create_team',{},successCallback,errorCallback,formData.teamname,formData.player);
                 }else{
                     Toast.fail('您的输入不完整！', 1);
                 }
