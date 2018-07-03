@@ -90,7 +90,7 @@ class Models {
                     if (response.result){
                         successCallback(response.result)
                     }else{
-                        errorCallback
+                        errorCallback(response.result)
                     }
 
 
