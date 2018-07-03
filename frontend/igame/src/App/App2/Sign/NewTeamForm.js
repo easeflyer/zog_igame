@@ -2,7 +2,6 @@ import React from 'react'
 import { Form, Input, Select, Button} from 'antd';
 import {Toast} from 'antd-mobile'  
 
-// import {Currency} from '../Model/Handle'
 import session from '../../User/session'
 import  Models  from '../../Models/Models'
 

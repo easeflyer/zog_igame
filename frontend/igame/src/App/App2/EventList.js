@@ -2,7 +2,6 @@ import React from 'react';
 import {List, SearchBar, WingBlank,Toast} from 'antd-mobile'
 
 import EventNavBar from './Common/EventNavBar'
-// import {Currency} from './Model/Handle'
 import  Models  from './../Models/Models'
 
 export default class Event extends React.Component{ 
