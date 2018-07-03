@@ -48,27 +48,21 @@ class BasicInput extends React.Component {   //输入组件，经过下面的cre
         this.props.form.validateFields({ force: true }, (error) => {  //输入验证，符合规则才向后后端交数据
             if (!error) {
                 var formData = this.props.form.getFieldsValue();  //表单数据
-                const json = {  //向后端提交的数据
-                    'db':'TT',
-                    'login': formData.phone,  
-                    'password': formData.password,
-                }
-                const cb = (data)=>{
-                    if (data.sid){
-                        session.set_sid(data.sid);
-                        console.log(session.get_sid())
-                        Toast.success("登录成功！",1);
-                        // this.callback();
-                        this.props.toggleLoginState();   //修改最外层的组件的登录状态（此方法经App.js-->User/Index.js-->到本组件）
-                    }else{
-                        Toast.fail('登录失败，请稍后重试！',1);
-                    }
-                }
+                const model = 'TT';
+                const method = formData.phone;
+                const data = formData.password;
                 const m = Models.create();
-                // m.query('login',json123,cb);
-                m.query('login',json,cb);
-                // this.props.toggleLoginState()   //修改最外层的组件的登录状态（此方法经App.js-->User/Index.js-->到本组件）
-
+                const successCallback = (data)=>{
+                    session.set_sid(data.sid);
+                    console.log(session.get_sid())
+                    Toast.success("登录成功！",1);
+                    // this.callback();
+                    this.props.toggleLoginState();    //修改最外层的组件的登录状态（此方法经App.js-->User/Index.js-->到本组件）
+                }
+                const errorCallback =()=>{
+                    Toast.fail('登录失败，请稍后重试！',1);
+                }
+                m.query('login',model,method,{},successCallback,errorCallback,data);
             } else {
                 Toast.fail('您的输入不完整！');
             }
