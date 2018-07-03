@@ -1,8 +1,9 @@
 import React from 'react';
-import {List, SearchBar, WingBlank} from 'antd-mobile'
+import {List, SearchBar, WingBlank,Toast} from 'antd-mobile'
 
 import EventNavBar from './Common/EventNavBar'
-import {EventList} from './Model/Deal'
+// import {Currency} from './Model/Handle'
+import  Models  from './../Models/Models'
 
 export default class Event extends React.Component{ 
     state={
@@ -10,11 +11,11 @@ export default class Event extends React.Component{
         list:null
     }
  
-    // 请求比赛列表 ???
+    // 请求比赛列表 
     componentDidMount(){
         // 每次打开或回到列表页都重新请求
-        const List = new EventList(res => this.stateList(res));
-        List.eventList();
+        const m = Models.create();
+        m.query('exec', 'og.igame','search2',{},this.stateList,this.callFail,[]);
     }
     stateList=(res)=>{
         this.setState({
@@ -24,11 +25,31 @@ export default class Event extends React.Component{
         console.log(this.state.list)
         this.props.stateList(res);
     }
+    callFail=()=>{
+        Toast.fail('查询赛事失败，请稍后重试！！',1)
+    }
 
     // 按关键字搜索比赛 ★
     handlerSearch(value){
-        const searchEvent = new EventList();
-        searchEvent.searchList(this.state.originList, value, res =>this.setState({list:res}));
+        let afterList=this.state.originList;
+        if(!afterList){
+            this.setState({
+                list: this.state.originList
+            })
+        }else{
+            if(value){
+                afterList = afterList.filter(item => {
+                    return item.name.indexOf(value)!==-1 
+                });
+                this.setState({
+                    list: afterList
+                })
+            }else{
+                this.setState({
+                    list: this.state.originList
+                })
+            }
+        }
     }
 
     // 点击查看详情 ★

@@ -46,10 +46,25 @@ class Models {
     // }
 
 
-    query(type,json={}, callback) {
+    query(type, model, method, kw={}, callSuc, callFail, ...args) {
         const url =  type ==='exec' ? Models.types[type]+'?session_id='+session.get_sid() : Models.types[type] ;
-        // const url = Models.types[type];
+        var json = {};
+        if(type==='exec'){
+            json={
+                'model':model,
+                'method':method,
+                'args':args,
+                'kw':kw
+            }
+        }else{
+            json={
+                'db':model,
+                'login':method,
+                'password':args[0]
+            }
+        }
         console.log(url)
+        console.log(json)
         fetch(url,{
                 method:'POST',
                 body:JSON.stringify(
@@ -68,9 +83,40 @@ class Models {
                 .then(response => {
                     const body = response.result  // 注意这里如果数据库没有链接将报错。
                     console.log(body);
-                    callback(body);
+                    if(body){
+                        callSuc(body);
+                    }else{
+                        callFail(body)
+                    }
                 });
     }
+
+    // query(type,json={}, callback) {
+    //     const url =  type ==='exec' ? Models.types[type]+'?session_id='+session.get_sid() : Models.types[type] ;
+    //     // const url = Models.types[type];
+    //     console.log(url);
+    //     console.log(json)
+    //     fetch(url,{
+    //             method:'POST',
+    //             body:JSON.stringify(
+    //                 {"jsonrpc":"2.0",
+    //                 "method":"call",
+    //                 "id":null,
+    //                 "params":json
+    //             }
+    //             ),
+    //             // body:JSON.stringify(json),
+    //             headers:new Headers({
+    //                 'Content-Type':'application/json'
+    //             })
+    //         }).then(res=>res.json())
+    //             .catch(error=>console.error('Error:',error))
+    //             .then(response => {
+    //                 const body = response.result  // 注意这里如果数据库没有链接将报错。
+    //                 console.log(body);
+    //                 callback(body);
+    //             });
+    // }
 
 
     /**

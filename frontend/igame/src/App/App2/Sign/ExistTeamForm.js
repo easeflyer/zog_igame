@@ -1,9 +1,10 @@
 import React from 'react'
-import { Form, Select, Button, Row, Col  } from 'antd';
+import { Form, Select, Button, Input, Row, Col  } from 'antd';
 import {Toast} from 'antd-mobile'  
 
-import { QueryTeamList, SignEvent} from '../Model/Deal'
+// import {Currency} from '../Model/Handle'
 import session from '../../User/session'
+import  Models  from '../../Models/Models'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -19,11 +20,10 @@ class FormForSign extends React.Component{
         disabled:true
     }
 
-// 请求赛队列表 ???
     componentDidMount(){
-        // 每次打开报名页都重新请求
-        const Teams = new QueryTeamList(res => this.stateTeams(res));
-        Teams.myTeams();
+        // 请求赛队列表 
+        const m = Models.create();
+        m.query('exec', 'og.igame.team','get_own_teams',{},this.stateTeams,this.requestFail,[]);
     }
     stateTeams=(res)=>{
         if(res && res.length!==0){
@@ -31,35 +31,40 @@ class FormForSign extends React.Component{
                 myTeams:res,
                 currentTeam:res[0].players.filter( item => {return item.playername !== session.get_name()}),
                 currentTeam2:res[0].players.filter( item => {return item.playername !== session.get_name()}),
-                mySelf: res[0].players.filter( item => {return item.playername === session.get_name()})[0],
+                mySelf: res[1].players.filter( item => {return item.playername === session.get_name()})[0],
                 teamId:res[0].id,
                 disabled:false
             });
         }else{
             Toast.info('没有赛队信息，请先创建赛队！！', 2);
         }
-        console.log(this.state.teamIndex);
+    }
+    requestFail=()=>{
+        Toast.fail('查询赛队失败，请稍后重试！！',1)
     }
     
 // 提交表单，发送报名请求
     onSubmit=(e)=>{
         e.preventDefault();
         const teamSign = [];
-        teamSign.push(this.state.eventDetail.id);
-        teamSign.push(this.state.teamId);
-        teamSign[2]=[];
         this.props.form.getFieldValue('player').forEach((item)=>{
             const obj={};
             obj.id=item;
             obj.role='player';
-            teamSign[2].push(obj);
+            teamSign.push(obj);
         });
-        teamSign[2].push({id:this.props.form.getFieldValue('leader'),role:'leader'})
-        teamSign[2].push({id:this.props.form.getFieldValue('coach'),role:'coach'})
-        console.log(teamSign)
+        teamSign.push({id:this.props.form.getFieldValue('leader'),role:'leader'})
+        teamSign.push({id:this.props.form.getFieldValue('coach'),role:'coach'})
 
-        const EventSign = new SignEvent();
-        EventSign.signEvent(teamSign);
+        const m = Models.create();
+        m.query('exec', 'og.igame','register_game',{},this.signEvent,this.registerFail,this.state.eventDetail.id,this.state.teamId,teamSign);
+    }
+    signEvent =(res)=>{
+        this.props.setToast();
+        Toast.success('报名成功，请到‘我-我的比赛’中查看',1)
+    }
+    registerFail=()=>{
+        Toast.fail('报名失败，请稍后重试！！',1)
     }
     
 // 取消报名，返回选择报名方式页面 ★
@@ -86,18 +91,17 @@ class FormForSign extends React.Component{
     }
 
 // 教练 ，值发生改变 ★
-handleCoach = (key)=>{
-    console.log(key)
-    this.setState({
-        currentTeam2:  this.state.myTeams.filter(item =>{
-                    return item.id === this.state.teamId
-                })[0].players.filter(item=> {
-                        return item.playername !== session.get_name() && item.id !== key;
-                    })
-    })
-}
+    handleCoach = (key)=>{
+        this.setState({
+            currentTeam2:  this.state.myTeams.filter(item =>{
+                        return item.id === this.state.teamId
+                    })[0].players.filter(item=> {
+                            return item.playername !== session.get_name() && item.id !== key;
+                        })
+        })
+    }
 
-// // 队员 ，值发生改变 ★
+// 队员 ，值发生改变 ★
     handlePlayer = (key)=>{
         this.setState({
             currentTeam:   this.state.currentTeam.filter((item,index) => {
@@ -114,10 +118,18 @@ handleCoach = (key)=>{
         })
     }
 
-// 添加新队伍
-    addTeam=()=>{ 
-        
-    }  
+    validateTeamName = (rule, value, callback) => {
+        let pattern=/[A-Za-z0-9_\-\u4e00-\u9fa5]+/;
+        if(value){
+            if(pattern.test(value) && value.length > 2 && value.length <= 10){
+                callback();
+              } else {
+                callback(new Error('长度为3-10个字符，只能包含中文、数字、字母'));
+              }
+        }else{
+            callback();
+        }
+    }
 
     validatePlayer = (rule, value, callback) => {
         if(value){
@@ -164,7 +176,7 @@ handleCoach = (key)=>{
             <Form layout="vertical" onSubmit={this.onSubmit}>
                     <FormItem style={{marginBottom:0}} >
                         <span>赛队：</span>
-                        <Select placeholder="选择赛队" defaultValue={this.state.myTeams? this.state.myTeams[0].id : null } notFoundContent="没有赛队信息" style={{ width: 120 }} onChange={key => this.handleTeamSelect(key)}>
+                        <Select placeholder="选择赛队" defaultValue={this.state.myTeams ? this.state.myTeams[0].id : null } notFoundContent="没有赛队信息" style={{ width: 120 }} onChange={key => this.handleTeamSelect(key)}>
                         {this.items(this.state.myTeams)}
                         </Select>
                     </FormItem>
@@ -202,7 +214,6 @@ handleCoach = (key)=>{
         )
     }
 }
-
 
 const ExistTeamForm = Form.create()(FormForSign);
 

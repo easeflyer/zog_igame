@@ -10,17 +10,19 @@ class Currency{
         this.word='';
         this.list=null;
     }
-    currency = (method,data)=>{       
+    currency = (model,method,data=[])=>{       
         const json={
-            'model': 'og.igame',
+            'model': model,
             'method': method,
             'args': data,
             'kw': {},
         }
         const cb = (res)=>{
             if (res){
-                this.callback(res);
+                this.callback ? this.callback(res):null;
+                console.log(res)
             }else{
+                Toast.fail('操作失败，请重试',1)
                 return null;
             }
         }
@@ -32,19 +34,20 @@ class Currency{
         this.list = list;
         this.word = word;
         //在list中搜索
-        if(!this.list){
+        if(!list){
             callback(null);
         }else{
-            if(this.word){
-                this.list = this.list.filter(item => {
-                    return item.name.indexOf(this.word)!==-1 
+            if(word){
+                list = list.filter(item => {
+                    return item.name.indexOf(word)!==-1 
                 });
-                callback(this.list);
+                callback(list);
             }else{
-                callback(this.list);
+                callback(list);
             }
         }
     } 
 }
 
-export {Currency}
+
+// export {Currency}

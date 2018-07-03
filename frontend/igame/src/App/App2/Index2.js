@@ -28,12 +28,11 @@ export default class ListApp extends React.Component{
     toSignMatch=()=>{ this.setState({ open:3 }); }
 
     render(){
-        const openPage = this.state.open
         return(
             <div>  
-                { openPage === 1 ? <EventList originList={this.state.originList} stateList={this.stateList}  handlerDetail={this.toDetail} /> : null}                
-                { openPage === 2 ? <EventDetails list={this.state.originList.filter(item => { return item.id === this.state.eventId })}  backToList={this.toList} signMatch={this.toSignMatch} /> : null}
-                { openPage === 3 ? <SignEvent list={this.state.originList.filter(item => { return item.id === this.state.eventId })} backToDetail={this.backToDetail}/> : null}
+                { this.state.open === 1 ? <EventList originList={this.state.originList} stateList={this.stateList}  handlerDetail={this.toDetail} /> : null}                
+                { this.state.open === 2 ? <EventDetails list={this.state.originList.filter(item => { return item.id === this.state.eventId })}  backToList={this.toList} signMatch={this.toSignMatch} /> : null}
+                { this.state.open === 3 ? <SignEvent list={this.state.originList.filter(item => { return item.id === this.state.eventId })} backToDetail={this.backToDetail}/> : null}
             </div>
         )
     }

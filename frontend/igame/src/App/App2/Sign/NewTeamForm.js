@@ -2,8 +2,9 @@ import React from 'react'
 import { Form, Input, Select, Button} from 'antd';
 import {Toast} from 'antd-mobile'  
 
-import {UserList,NewTeam, SignEvent } from '../Model/Deal'
+// import {Currency} from '../Model/Handle'
 import session from '../../User/session'
+import  Models  from '../../Models/Models'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -16,13 +17,14 @@ class FormForSign extends React.Component{
         userList:null,
         userList2:null,
         mySelf:null,
+        teamId:null
     }
 
 // 请求通讯录列表  ★
     componentWillMount(){
         // 每次打开报名页都重新请求
-        const Users = new UserList(res => this.stateFriends(res));
-        Users.users();
+        const m = Models.create();
+        m.query('exec', 'og.igame','get_users',{},this.stateFriends,this.requestFail,[]);
     }
     stateFriends=(res)=>{
         if(res && res.length!==0){
@@ -30,12 +32,14 @@ class FormForSign extends React.Component{
                 myFriends:res,
                 userList:res.filter(item => {return item.name !== session.get_name()}),
                 userList2:res.filter(item => {return item.name !== session.get_name()}),
-                mySelf: res.filter( item => {return item.name === session.get_name()})[0]
+                mySelf: res.filter( item => {return item.name === session.get_name()})[0],
             });
         }else{
             Toast.info('没有用户信息，请先添加好友！！', 2);
         }
-        console.log(this.state.myFriends)
+    }
+    requestFail=()=>{
+        Toast.fail('查询用户列表失败，请稍后重试！！',1)
     }
 
 // 创建新队伍（不设置人员身份），提交表单
@@ -45,39 +49,46 @@ class FormForSign extends React.Component{
         this.props.form.validateFields(
             (err) => {
                 if (!err) {
-                    newTeamForm.push(this.props.form.getFieldValue('teamname'));
-                    newTeamForm.push([]);
-                    this.props.form.getFieldValue('player').map(item=>{newTeamForm[1].push(item)})
-                    newTeamForm[1].push(this.props.form.getFieldValue('leader'));
-                    newTeamForm[1].push(this.props.form.getFieldValue('coach'));
+                    this.props.form.getFieldValue('player').map(item=>{newTeamForm.push(item)})
+                    newTeamForm.push(this.props.form.getFieldValue('leader'));
+                    newTeamForm.push(this.props.form.getFieldValue('coach'));
 
-                    const createTeam = new NewTeam(res => this.newTeamSign(res));
-                    createTeam.newTeam(newTeamForm);
+                    const m = Models.create();
+                    m.query('exec', 'og.igame.team','create_team',{},this.newTeamSign,this.createFail,this.props.form.getFieldValue('teamname'),newTeamForm);
                 }else{
                     Toast.fail('验证失败，请重新填写表单', 2);
                 }
             },
         );
     }
+    createFail=()=>{
+        Toast.fail('创建赛队失败，请稍后重试',1)
+    }
 
 // 设置队伍人员身份，提交表单，发送报名请求
     newTeamSign=(res)=>{
+        this.setState({
+            teamId:res
+        })
         const teamSign = [];
-        teamSign.push(this.state.eventDetail.id);
-        teamSign.push(this.state.teamId);
-        teamSign[2]=[];
         this.props.form.getFieldValue('player').forEach((item)=>{
             const obj={};
             obj.id=item;
             obj.role='player';
-            teamSign[2].push(obj);
+            teamSign.push(obj);
         });
-        teamSign[2].push({id:this.props.form.getFieldValue('leader'),role:'leader'})
-        teamSign[2].push({id:this.props.form.getFieldValue('coach'),role:'coach'})
-        console.log(teamSign)
+        teamSign.push({id:this.props.form.getFieldValue('leader'),role:'leader'})
+        teamSign.push({id:this.props.form.getFieldValue('coach'),role:'coach'})
 
-        const EventSign = new SignEvent();
-        EventSign.signEvent(teamSign);
+        const m = Models.create();
+        m.query('exec', 'og.igame','register_game',{},this.signEvent,this.registerFail,this.state.eventDetail.id,this.state.teamId,teamSign);
+    }
+    signEvent =(res)=>{
+        this.props.setToast();
+        Toast.success('报名成功，请到‘我-我的比赛’中查看',1)
+    }
+    registerFail=()=>{
+        Toast.fail('报名失败，请稍后重试！！',1)
     }
 
 // 取消报名，返回选择报名方式页面 ★
