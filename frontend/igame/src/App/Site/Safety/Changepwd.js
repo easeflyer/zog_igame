@@ -103,7 +103,7 @@ const BasicInputWrapper = createForm()(BasicInput);
 
 class Changepwd extends React.Component {
     componentWillMount() {  //生命周期函数，渲染前调用,在客户端也在服务端
-        //const sid = session.get_sid()
+        // const sid = session.get_sid()
     }
     render (){
         return(

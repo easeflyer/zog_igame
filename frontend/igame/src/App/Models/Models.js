@@ -46,25 +46,26 @@ class Models {
     // }
 
 
-    query(type, model, method, kw={}, callSuc, callFail, ...args) {
-        const url =  type ==='exec' ? Models.types[type]+'?session_id='+session.get_sid() : Models.types[type] ;
-        var json = {};
-        if(type==='exec'){
-            json={
+    query(type,model,method,kw={}, successCallback,errorCallback,...data) {
+    // query(type,json={}, callback) {
+        const url =  type==='exec' ? Models.types[type]+'?session_id='+session.get_sid() : Models.types[type] ;
+        // const url = Models.types[type];
+        console.log(url)
+
+
+        const json = type==='exec' ? 
+            {
                 'model':model,
                 'method':method,
-                'args':args,
-                'kw':kw
-            }
-        }else{
-            json={
+                'args':data,
+                'kw':kw,
+            } : {
                 'db':model,
                 'login':method,
-                'password':args[0]
-            }
-        }
-        console.log(url)
-        console.log(json)
+                'password':data[0],
+            };
+
+
         fetch(url,{
                 method:'POST',
                 body:JSON.stringify(
@@ -72,8 +73,7 @@ class Models {
                     "method":"call",
                     "id":null,
                     "params":json
-                }
-                ),
+                }),
                 // body:JSON.stringify(json),
                 headers:new Headers({
                     'Content-Type':'application/json'
@@ -81,13 +81,21 @@ class Models {
             }).then(res=>res.json())
                 .catch(error=>console.error('Error:',error))
                 .then(response => {
-                    const body = response.result  // 注意这里如果数据库没有链接将报错。
-                    console.log(body);
-                    if(body){
-                        callSuc(body);
+                    // const body = response.result  // 注意这里如果数据库没有链接将报错。
+                    // console.log(body);
+                    // callback(body);
+
+
+                    console.log(response.result);
+                    if (response.result){
+                        successCallback(response.result)
                     }else{
-                        callFail(body)
+                        errorCallback
                     }
+
+
+
+
                 });
     }
 

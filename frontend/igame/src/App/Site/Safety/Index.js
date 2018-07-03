@@ -24,7 +24,7 @@ export default class Safety extends React.Component {
         this.setState({
             SafetyNav:!this.state.SafetyNav,
             change:true
-                })
+        })
         this.props.toggleHasLogin()
     }
     onCheckChange = ()=>{

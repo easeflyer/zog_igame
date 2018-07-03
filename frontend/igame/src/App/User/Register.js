@@ -15,22 +15,18 @@ class RsgisterForm extends React.Component{
                 if (formData.password!==formData.password2){
                     Toast.fail('两次输入的密码不一致！');
                 }else{
-                    const json = {
-                        'db':'TT',
-                        'login':formData.phone,
-                        'password':formData.password
+                    const model = 'TT';
+                    const method = formData.phone;
+                    const data = formData.password;
+                    const successCallback = ()=>{
+                        Toast.success('注册成功！',1);
+                        this.props.toLoginPage();   //注册成功，返回登录页面
                     }
-                    console.log(json)
-                    const cb = (data)=>{
-                        if (data){   
-                            Toast.success('注册成功！',1);
-                            this.props.toLoginPage();   //注册成功，返回登录页面
-                        }else{
-                            Toast.fail('注册失败，请稍后重试！',1);
-                        }
+                    const errorCallback =()=>{
+                        Toast.fail('注册失败，请稍后重试！',1);
                     }
                     const m = Models.create();
-                    m.query('register',json,cb)
+                    m.query('register',model,method,{},successCallback,errorCallback,data);
                 }
             } else {
                 Toast.fail('您的输入有误！');
@@ -119,10 +115,10 @@ class RsgisterForm extends React.Component{
             <WhiteSpace size="xl" />
             <Button type=""  onClick={this.onSubmit} className='register-btn'>注册</Button>
             <WhiteSpace size="lg" />
-            <p className='text' >注册即代表您已同意<a href=''>《智赛桥牌隐私政策》</a></p>
+            <p className='text' >注册即代表您已同意<a>《智赛桥牌隐私政策》</a></p>
             </Flex>
         </form>
-        );
+        ); 
     } 
 }
 const RegisterPage = createForm()(RsgisterForm);
