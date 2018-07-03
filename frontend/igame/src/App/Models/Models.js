@@ -19,7 +19,7 @@ import session from '../User/session';
  *      如果后期代码逐步扩大，可以增加 子模型代码，然后在这里引入。扩展 Models 的功能。
  * 
  */
-const HOST = 'http://192.168.0.115:8069';
+const HOST = 'http://192.168.0.20:8069';
 class Models {
     /**
      * @param {*} type 'exec','login','userexec','adminexec' 对应不同的 api 接口执行权限不同。
@@ -46,10 +46,26 @@ class Models {
     // }
 
 
-    query(type,json={}, callback) {
+    query(type,model,method,kw={}, successCallback,errorCallback,...data) {
+    // query(type,json={}, callback) {
         const url =  type==='exec' ? Models.types[type]+'?session_id='+session.get_sid() : Models.types[type] ;
         // const url = Models.types[type];
         console.log(url)
+
+
+        const json = type==='exec' ? 
+            {
+                'model':model,
+                'method':method,
+                'args':data,
+                'kw':kw,
+            } : {
+                'db':model,
+                'login':method,
+                'password':data[0],
+            };
+
+
         fetch(url,{
                 method:'POST',
                 body:JSON.stringify(
@@ -57,8 +73,7 @@ class Models {
                     "method":"call",
                     "id":null,
                     "params":json
-                }
-                ),
+                }),
                 // body:JSON.stringify(json),
                 headers:new Headers({
                     'Content-Type':'application/json'
@@ -66,9 +81,21 @@ class Models {
             }).then(res=>res.json())
                 .catch(error=>console.error('Error:',error))
                 .then(response => {
-                    const body = response.result  // 注意这里如果数据库没有链接将报错。
-                    console.log(body);
-                    callback(body);
+                    // const body = response.result  // 注意这里如果数据库没有链接将报错。
+                    // console.log(body);
+                    // callback(body);
+
+
+                    console.log(response.result);
+                    if (response.result){
+                        successCallback(response.result)
+                    }else{
+                        errorCallback
+                    }
+
+
+
+
                 });
     }
 

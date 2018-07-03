@@ -10,17 +10,8 @@ export default class TeamMine extends React.Component {       //我的赛队列�
     }
     // 请求我的赛队列表 
     componentDidMount(){
-        const json = {
-            'model': 'og.igame.team',
-            'method': 'get_teams',
-            'args': [[]],
-            'kw': {},
-        }
-        const cb = (data)=>{
-            this.setState({teamList:data})
-        }
         const m = Models.create();
-        m.query('exec',json,cb);
+        m.query('exec','og.igame.team','get_teams',{},(data)=>{this.setState({teamList:data})},()=>{},[]);
     }
     render() {
         let datalist;
