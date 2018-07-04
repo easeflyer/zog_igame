@@ -8,7 +8,7 @@ import Match from '../../Common/Index';
 export default class MyMatch extends React.Component {
     render() {
         return(
-            <Match name='zj' toMine={this.props.toMine} />
+            <Match name='zj' toMine={this.props.toMine} />      //传入name的目的是为了区分入口，加载不同的数据
         );
     }
 }

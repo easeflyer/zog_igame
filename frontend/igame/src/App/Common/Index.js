@@ -62,18 +62,19 @@ class SortList extends React.Component {       //我的比赛分类列表页组�
         this.props.setTitle(title);
     }
     render() {
+        const name = this.props.name;
         return(
             <div>
                 <NavBar
                 mode="light"
-                icon={<Icon type="left" />}
-                onLeftClick={()=>this.props.toMine()}
-                >{this.props.name}的比赛
+                icon={name ? <Icon type="left" /> : '' }
+                onLeftClick={name ? ()=>this.props.toMine() : ()=>{} }      //如果有name，认为是从《我》这个入口进来，从而加载不同的数据，设置不同的title
+                >{name ? `${name}的比赛` : '比赛列表'}
                 </NavBar>
                 <WhiteSpace size='xl' />
-                <Item extra="" arrow="horizontal" onClick={() => {this.toMatchList('即将进行的比赛')} }>即将开始的比赛</Item>
-                <Item extra="" arrow="horizontal" onClick={() => {} }>正在进行的比赛</Item>
-                <Item extra="" arrow="horizontal" onClick={() => {} }>已经完成的比赛</Item>
+                <Item extra="" arrow="horizontal" onClick={() => {this.toMatchList('即将开始的比赛')} }>即将开始的比赛</Item>
+                <Item extra="" arrow="horizontal" onClick={() => {this.toMatchList('正在进行的比赛')} }>正在进行的比赛</Item>
+                <Item extra="" arrow="horizontal" onClick={() => {this.toMatchList('已经完成的比赛')} }>已经完成的比赛</Item>
             </div>
         );
     }

@@ -17,7 +17,8 @@ export default class LoginPage extends React.Component{
                 >
             </NavBar>
             <Flex direction='column'>
-                <img alt='log' src={require("./963065731.jpg")} style={{width:360,marginTop:-30}}/>
+                <img alt='log' src={"/Images/963065731.jpg"} style={{width:360,marginTop:-30}}/>
+                {/* <img alt='log' src={require("./963065731.jpg")} style={{width:360,marginTop:-30}}/> */}
                 <WhiteSpace size="lg" />
 
                 <LoginForm toggleLoginState={this.props.toggleLoginState} />
