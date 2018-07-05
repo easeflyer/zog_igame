@@ -2,7 +2,7 @@ import React from 'react';
 import {List, SearchBar, WingBlank,Toast} from 'antd-mobile'
 
 import EventNavBar from './Common/EventNavBar'
-import  Models  from './../Models/Models'
+import  { Game } from './../Models/Models'
 
 export default class Event extends React.Component{ 
     state={
@@ -13,8 +13,11 @@ export default class Event extends React.Component{
     // 请求比赛列表 
     componentDidMount(){
         // 每次打开或回到列表页都重新请求
-        const m = Models.create();
-        m.query('exec', 'og.igame','search2',{},this.stateList,this.callFail,[]);
+        // const m = Game.create();
+        // m.query('exec', 'og.igame','search2',{},this.stateList,this.callFail,[]);
+        const m = new Game(this.stateList,this.callFail);
+        m.search2();
+
     }
     stateList=(res)=>{
         this.setState({

@@ -1,9 +1,10 @@
 import React from 'react'
-import { Form, Select, Button, Input, Row, Col  } from 'antd';
+import { Form, Select, Button } from 'antd';
+// import { Form, Select, Button, Input, Row, Col  } from 'antd';
 import {Toast} from 'antd-mobile'  
 
 import session from '../../User/session'
-import  Models  from '../../Models/Models'
+import  { Game, GameTeam } from '../../Models/Models'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -21,8 +22,8 @@ class FormForSign extends React.Component{
 
     componentDidMount(){
         // 请求赛队列表 
-        const m = Models.create();
-        m.query('exec', 'og.igame.team','get_own_teams',{},this.stateTeams,this.requestFail,[]);
+        const m = new GameTeam(this.stateTeams,this.requestFai);        //说明：传入回调函数
+        m.get_own_teams();                                              //说明：调用Models里面定义好的方法
     }
     stateTeams=(res)=>{
         if(res && res.length!==0){
@@ -55,8 +56,11 @@ class FormForSign extends React.Component{
         teamSign.push({id:this.props.form.getFieldValue('leader'),role:'leader'})
         teamSign.push({id:this.props.form.getFieldValue('coach'),role:'coach'})
 
-        const m = Models.create();
-        m.query('exec', 'og.igame','register_game',{},this.signEvent,this.registerFail,this.state.eventDetail.id,this.state.teamId,teamSign);
+        // const m = Models.create();
+        // m.query('exec', 'og.igame','register_game',{},this.signEvent,this.registerFail,this.state.eventDetail.id,this.state.teamId,teamSign);
+
+        const m = new Game(this.signEvent,this.registerFail);                   //说明：传入回调函数
+        m.register_game(this.state.eventDetail.id,this.state.teamId,teamSign);  //说明：调用Models里面定义好的方法，传入相应的参数
     }
     signEvent =(res)=>{
         this.props.setToast();
@@ -150,7 +154,7 @@ class FormForSign extends React.Component{
             return items=[];
         }
         else {
-            if(state == this.state.myTeams){
+            if(state === this.state.myTeams){
                 state.forEach(item => {
                     items.push(
                         <Option key={item.id} value={item.id}>{item.teamname}</Option>
@@ -169,7 +173,8 @@ class FormForSign extends React.Component{
 
 
     render(){
-        const {getFieldProps, getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
+        const {getFieldProps, getFieldDecorator} = this.props.form;
+        // const {getFieldProps, getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
         
         return(
             <Form layout="vertical" onSubmit={this.onSubmit}>

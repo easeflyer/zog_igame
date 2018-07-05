@@ -3,7 +3,8 @@ import { Form, Input, Select, Button} from 'antd';
 import {Toast} from 'antd-mobile'  
 
 import session from '../../User/session'
-import  Models  from '../../Models/Models'
+import  { GameTeam, Game }  from '../../Models/Models'
+// import  Models  from '../../Models/Models'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -22,8 +23,10 @@ class FormForSign extends React.Component{
 // 请求通讯录列表  ★
     componentWillMount(){
         // 每次打开报名页都重新请求
-        const m = Models.create();
-        m.query('exec', 'og.igame','get_users',{},this.stateFriends,this.requestFail,[]);
+        // const m = Models.create();
+        // m.query('exec', 'og.igame','get_users',{},this.stateFriends,this.requestFail,[]);
+        const m = new Game(this.stateFriends,this.requestFail);
+        m.get_users();
     }
     stateFriends=(res)=>{
         if(res && res.length!==0){
@@ -48,12 +51,15 @@ class FormForSign extends React.Component{
         this.props.form.validateFields(
             (err) => {
                 if (!err) {
-                    this.props.form.getFieldValue('player').map(item=>{newTeamForm.push(item)})
+                    this.props.form.getFieldValue('player').map(item=>{return newTeamForm.push(item)})
                     newTeamForm.push(this.props.form.getFieldValue('leader'));
                     newTeamForm.push(this.props.form.getFieldValue('coach'));
 
-                    const m = Models.create();
-                    m.query('exec', 'og.igame.team','create_team',{},this.newTeamSign,this.createFail,this.props.form.getFieldValue('teamname'),newTeamForm);
+                    // const m = Models.create();
+                    // m.query('exec', 'og.igame.team','create_team',{},this.newTeamSign,this.createFail,this.props.form.getFieldValue('teamname'),newTeamForm);
+
+                    const m = new GameTeam(this.newTeamSign,this.createFail);
+                    m.create_team(this.props.form.getFieldValue('teamname'),newTeamForm);
                 }else{
                     Toast.fail('验证失败，请重新填写表单', 2);
                 }
@@ -79,8 +85,11 @@ class FormForSign extends React.Component{
         teamSign.push({id:this.props.form.getFieldValue('leader'),role:'leader'})
         teamSign.push({id:this.props.form.getFieldValue('coach'),role:'coach'})
 
-        const m = Models.create();
-        m.query('exec', 'og.igame','register_game',{},this.signEvent,this.registerFail,this.state.eventDetail.id,this.state.teamId,teamSign);
+        // const m = Models.create();
+        // m.query('exec', 'og.igame','register_game',{},this.signEvent,this.registerFail,this.state.eventDetail.id,this.state.teamId,teamSign);
+
+        const m = new Game(this.signEvent,this.registerFail);
+        m.register_game(this.state.eventDetail.id,this.state.teamId,teamSign);
     }
     signEvent =(res)=>{
         this.props.setToast();

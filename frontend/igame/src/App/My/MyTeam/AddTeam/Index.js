@@ -2,11 +2,10 @@ import React from 'react';
 import { Form, Input, Select,  Button} from 'antd';
 import { WingBlank, WhiteSpace, Toast, NavBar, Icon } from 'antd-mobile';
 import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
-import Models from '../../../Models/Models';
+import { Game, GameTeam } from '../../../Models/Models';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
-const m = Models.create();
 
 export default class TeamAdd extends React.Component {      //创建赛队页面
     render() {
@@ -38,7 +37,9 @@ class BaseForm extends React.Component{
     }
 // 请求通讯录列表 
     componentDidMount(){
-        m.query('exec','og.igame','get_users',{},(data)=>{this.setState({player:data})},()=>{},[]);
+        // m.query('exec','og.igame','get_users',{},(data)=>{this.setState({player:data})},()=>{},[]);
+        const m = new Game((data)=>{this.setState({player:data})},()=>{});
+        m.get_users();
     }
 
 // 提交表单，发送创建赛队请求
@@ -47,8 +48,6 @@ class BaseForm extends React.Component{
         this.props.form.validateFields(
             (err) => {
                 if (!err) {
-                    // console.log('创建赛队');
-                    // console.log(this.props.form.getFieldsValue());
                     let formData = this.props.form.getFieldsValue();
                     const successCallback = ()=>{
                         Toast.success(`队伍：【${formData.teamname}】创建成功`,1);
@@ -57,7 +56,8 @@ class BaseForm extends React.Component{
                     const errorCallback =()=>{
                         Toast.fail('创建失败，请稍后再试！', 1);
                     }
-                    m.query('exec','og.igame.team','create_team',{},successCallback,errorCallback,formData.teamname,formData.player);
+                    const m = new GameTeam(successCallback,errorCallback);
+                    m.create_team(formData.teamname,formData.player);
                 }else{
                     Toast.fail('您的输入不完整！', 1);
                 }
