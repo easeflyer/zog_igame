@@ -6,18 +6,14 @@ import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 
 export default class MatchList extends React.Component {    //已完成的比赛
     render() {
-        const matchListData = [
-            {id:1,  mactchName:'智赛杯桥牌大赛'},
-            {id:2,  mactchName:'鸿宏杯桥牌大赛'},
-            {id:3,  mactchName:'慧通杯桥牌大赛'}
-        ];
         const MatchList = (<div>
-            {matchListData.map((item, index) => {
+            {this.props.matchList.map((item, index) => {
                 return (
                     <List.Item key={index}    //?这里应该用id还是索引做key
+                    extra={item.datetime}
                     arrow="horizontal" 
-                    onClick={() => {}}
-                    >{item.mactchName}</List.Item>
+                    onClick={() => this.props.toMatchDetails(index)}
+                    >{item.name}</List.Item>
                 );
             })}
         </div>);

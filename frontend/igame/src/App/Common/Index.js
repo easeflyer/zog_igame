@@ -3,16 +3,25 @@ import { NavBar, List, WhiteSpace } from 'antd-mobile';
 import { Icon } from 'antd';
 import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 import MatchList from './MatchList';
+import { Game } from '../Models/Models';
+import MatchDetails from './Match/Index';
 
 const Item = List.Item;
 
 
 export default class Match extends React.Component {
     state = {
-        open:0,       // 0：默认页，分类列表， 1：所选分类的比赛列表， 2：所选比赛的详细
-        title:'',
+        open:0,             // 0：默认页，分类列表， 1：所选分类的比赛列表， 2：所选比赛的详细
+        title:'',           //分类列表页的标题
+        matchList:null,     //当前分类的比赛列表
+        match:null,         //选中的单个比赛
     }
-    setTitle = (title)=>{
+    setMatchList = (val)=>{        //设置所选分类的赛事数据
+        this.setState({
+            matchList:val,
+        })
+    }
+    setTitle = (title)=>{          //设置分类列表的导航标题
         this.setState({
             title:title,
         })
@@ -27,22 +36,35 @@ export default class Match extends React.Component {
             open:1,
         })
     }
+    toMatchDetails = (index)=>{     //进入比赛详情页
+        this.setState({
+            open:2,
+            match:this.state.matchList[index],
+        })
+    }
     
     render() {
         let page = null;
         switch (this.state.open) {
-            case 0:
+            case 0:     //默认页，分类列表
                 page = <SortList 
-                    name = {this.props.name}
+                    name = {this.props.name}                    //用以验证入口，有这个字段说明是从《我》这个入口进来的
                     toMine={this.props.toMine}                  //返回个人中心
                     setTitle={this.setTitle}                    //设置导航标题
-                    toMatchList={this.toMatchList} />;         //进入比赛列表页
+                    setMatchList={this.setMatchList}            //设置比赛列表数据
+                    toMatchList={this.toMatchList} />;          //进入比赛列表页
                 break;
-            case 1:
-                page = <MatchList title={this.state.title} toSortList={this.toSortList} />;   
+            case 1:      //所选分类的比赛列表
+                page = <MatchList 
+                    title={this.state.title} 
+                    toMatchDetails={this.toMatchDetails} 
+                    matchList={this.state.matchList} 
+                    toSortList={this.toSortList} />;  
                 break;
-            case 2:
-                // page = <CompletedMatch toMatchMine={this.toMatchMine} />;   //已经完成的比赛列表页面
+            case 2:     //所选比赛的详细
+                page = <MatchDetails 
+                    toMatchList={this.toMatchList} 
+                    match={this.state.match} />;   
                 break;
             default:
                 // page = <Match toMine={this.props.toMine} />;
@@ -57,9 +79,75 @@ export default class Match extends React.Component {
 }
 
 class SortList extends React.Component {       //我的比赛分类列表页组件
-    toMatchList = (title)=>{
+    state = {
+        data:null,
+        matchList1:null,             //即将开始的比赛列表
+        matchList2:null,             //正在进行的比赛列表
+        matchList3:null,             //已经完成的比赛列表
+    }
+    
+    componentWillMount(){
+        //获取所有比赛列表
+        const m = new Game(this.stateList,this.callFail);
+        this.props.name ? m.search2() : m.search2();
+        
+    }
+    stateList = (data)=>{
+        //这里先用模拟数据list，后面应该 换成真实的数据data
+        const list = [{arbitrator:false,datetime:"2018-01-30 07:07:20",host_unit:false,id:1,name:"G1",referee:false,sponsor:false,type:"team",state:'draft'},
+                    {arbitrator:false,datetime:"2018-02-30 20:27:24",host_unit:false,id:2,name:"G2",referee:false,sponsor:false,type:"team",state:'conformed'},
+                    {arbitrator:false,datetime:"2018-06-30 08:14:14",host_unit:false,id:3,name:"G3",referee:false,sponsor:false,type:"team",state:'locked'},
+                    {arbitrator:false,datetime:"2018-05-30 01:27:25",host_unit:false,id:4,name:"G4",referee:false,sponsor:false,type:"team",state:'ready'},
+                    {arbitrator:false,datetime:"2018-05-30 07:27:34",host_unit:false,id:5,name:"G5",referee:false,sponsor:false,type:"team",state:'done'},
+                    {arbitrator:false,datetime:"2018-06-30 07:27:54",host_unit:false,id:6,name:"G6",referee:false,sponsor:false,type:"team",state:'cancel'},
+                    {arbitrator:false,datetime:"2018-06-30 13:28:24",host_unit:false,id:7,name:"G7",referee:false,sponsor:false,type:"team",state:'draft'},
+                    {arbitrator:false,datetime:"2018-08-30 10:27:37",host_unit:false,id:8,name:"G8",referee:false,sponsor:false,type:"team",state:'conformed'},
+                    {arbitrator:false,datetime:"2018-08-30 05:25:24",host_unit:false,id:9,name:"G9",referee:false,sponsor:false,type:"team",state:'locked'},
+                    {arbitrator:false,datetime:"2018-08-30 07:27:26",host_unit:false,id:10,name:"G10",referee:false,sponsor:false,type:"team",state:'ready'},
+                    {arbitrator:false,datetime:"2018-06-30 07:27:14",host_unit:false,id:11,name:"G11",referee:false,sponsor:false,type:"team",state:'done'},
+                    {arbitrator:false,datetime:"2018-06-30 08:26:24",host_unit:false,id:12,name:"G12",referee:false,sponsor:false,type:"team",state:'cancel'},
+                    {arbitrator:false,datetime:"2018-06-30 07:23:33",host_unit:false,id:13,name:"G13",referee:false,sponsor:false,type:"team",state:'draft'},
+                    {arbitrator:false,datetime:"2018-06-30 09:27:45",host_unit:false,id:14,name:"G14",referee:false,sponsor:false,type:"team",state:'conformed'},
+                    {arbitrator:false,datetime:"2018-06-30 06:25:44",host_unit:false,id:15,name:"G15",referee:false,sponsor:false,type:"team",state:'draft'},
+                    {arbitrator:false,datetime:"2018-06-30 16:27:29",host_unit:false,id:16,name:"G16",referee:false,sponsor:false,type:"team",state:'done'},]
+
+        let list1 = [];         //即将进行的比赛列表     
+        let list2 = [];         //正在进行的比赛列表
+        let list3 = [];         //已经完成的比赛列表
+
+        list.forEach((item)=>{
+            if( item.state==='draft' || item.state==='conformed' ){
+                list1.push(item)
+            }
+
+            if( item.state==='locked' || item.state==='ready' ){
+                list2.push(item)
+            }
+
+            if( item.state==='done' || item.state==='cancel' ){
+                list3.push(item)
+            }
+        });
+        this.setState({
+            data:data,
+            matchList1:list1,
+            matchList2:list2,
+            matchList3:list3,
+        })
+        console.log('获取列表成功...')
+        console.log(this.state.data)
+        console.log(this.state.matchList1)
+        console.log(this.state.matchList2)
+        console.log(this.state.matchList3)
+        
+    }
+    callFail = ()=>{
+        console.log('没找到......')
+    }
+    toMatchList = (title,data)=>{
         this.props.toMatchList();
         this.props.setTitle(title);
+        this.props.setMatchList(data);
     }
     render() {
         const name = this.props.name;
@@ -69,12 +157,12 @@ class SortList extends React.Component {       //我的比赛分类列表页组�
                 mode="light"
                 icon={name ? <Icon type="left" /> : '' }
                 onLeftClick={name ? ()=>this.props.toMine() : ()=>{} }      //如果有name，认为是从《我》这个入口进来，从而加载不同的数据，设置不同的title
-                >{name ? `${name}的比赛` : '比赛列表'}
+                >{name ? '我的比赛' : '比赛列表'}
                 </NavBar>
                 <WhiteSpace size='xl' />
-                <Item extra="" arrow="horizontal" onClick={() => {this.toMatchList('即将开始的比赛')} }>即将开始的比赛</Item>
-                <Item extra="" arrow="horizontal" onClick={() => {this.toMatchList('正在进行的比赛')} }>正在进行的比赛</Item>
-                <Item extra="" arrow="horizontal" onClick={() => {this.toMatchList('已经完成的比赛')} }>已经完成的比赛</Item>
+                <Item extra="" arrow="horizontal" onClick={() => {this.toMatchList('即将开始的比赛',this.state.matchList1)} }>即将开始的比赛</Item>
+                <Item extra="" arrow="horizontal" onClick={() => {this.toMatchList('正在进行的比赛',this.state.matchList2)} }>正在进行的比赛</Item>
+                <Item extra="" arrow="horizontal" onClick={() => {this.toMatchList('已经完成的比赛',this.state.matchList3)} }>已经完成的比赛</Item>
             </div>
         );
     }
