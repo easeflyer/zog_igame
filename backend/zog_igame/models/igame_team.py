@@ -28,6 +28,8 @@ class IntelligentGameTeam(models.Model):
     player_ids = fields.One2many('og.igame.team.player','team_id')
     number = fields.Char('Number', default='0')
 
+    # name = fields.Char('name')
+
     # position = fields.Selection(POSITIONS, string='Position', default='-', help='used for pair match')
 
     # state = fields.Selection([
@@ -112,7 +114,7 @@ class IntelligentGameTeamLine(models.Model):
     @api.multi
     def _compute_score(self):
         def fn_team(rec):
-            p = rec.match_id.score_ids.filtered( 
+            p = rec.match_id.team_ids.filtered(
                     lambda s: s.partner_id == rec.partner_id )
             rec.score = {'IMP':p.vp,'MP':p.bam}[rec.igame_id.score_type]
 

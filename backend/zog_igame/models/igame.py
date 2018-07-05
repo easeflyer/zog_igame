@@ -161,7 +161,7 @@ class IntelligentGameGroup(models.Model):
     sequence = fields.Integer()
     igame_id = fields.Many2one('og.igame','Game',ondelete='cascade')
     # partner_ids = fields.Many2many('res.partner')
-    team_ids = fields.One2many('og.igame.team','group_id')
+    team_ids = fields.One2many('og.igame.team','group_id',ondelete='cascade')
 
 class IntelligentGameRound(models.Model):
     """
