@@ -3,6 +3,7 @@ import React from 'react';
 import { List, InputItem, Button,Toast } from 'antd-mobile';
 import { createForm } from 'rc-form';
 import { Models} from '../Models/Models'
+
 const Item = List.Item;
 
 class BasicInput extends React.Component {
@@ -102,11 +103,7 @@ const BasicInputWrapper = createForm()(BasicInput);
 
 class Changepwd extends React.Component {
     componentWillMount() {  //生命周期函数，渲染前调用,在客户端也在服务端
-<<<<<<< HEAD
         // const sid = session.get_sid()
-=======
-        const sid = session.get_sid()
->>>>>>> upstream/develop
     }
     render (){
         return(

@@ -3,7 +3,7 @@ import { Flex, WhiteSpace, InputItem, Toast, Button, NavBar, Icon } from 'antd-m
 import './Login.css'
 import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 import { createForm } from 'rc-form';
-import Models from '../Models/Models';
+import { User } from '../Models/Models';
 import session from './session';
 
 export default class LoginPage extends React.Component{
@@ -17,7 +17,8 @@ export default class LoginPage extends React.Component{
                 >
             </NavBar>
             <Flex direction='column'>
-                <img alt='log' src={require("./963065731.jpg")} style={{width:360,marginTop:-30}}/>
+                <img alt='log' src={"/Images/963065731.jpg"} style={{width:360,marginTop:-30}}/>
+                {/* <img alt='log' src={require("./963065731.jpg")} style={{width:360,marginTop:-30}}/> */}
                 <WhiteSpace size="lg" />
 
                 <LoginForm toggleLoginState={this.props.toggleLoginState} />
@@ -41,6 +42,9 @@ export default class LoginPage extends React.Component{
 }
 
 class BasicInput extends React.Component {   //输入组件，经过下面的createForm()变成可提交的组件
+    state={
+        name:null
+    }
     componentDidMount() {
     //   this.autoFocusInst.focus();
     }
@@ -48,27 +52,18 @@ class BasicInput extends React.Component {   //输入组件，经过下面的cre
         this.props.form.validateFields({ force: true }, (error) => {  //输入验证，符合规则才向后后端交数据
             if (!error) {
                 var formData = this.props.form.getFieldsValue();  //表单数据
-                const json = {  //向后端提交的数据
-                    'db':'TT',
-                    'login': formData.phone,  
-                    'password': formData.password,
+                const successCallback = (data)=>{
+                    session.set_sid(data.sid);
+                    session.set_name(formData.phone);       //把用户名也保存到session里面
+                    console.log(session.get_sid())
+                    Toast.success("登录成功！",1);
+                    this.props.toggleLoginState();    //修改最外层的组件的登录状态（此方法经App.js-->User/Index.js-->到本组件）
                 }
-                const cb = (data)=>{
-                    if (data.sid){
-                        session.set_sid(data.sid);
-                        console.log(session.get_sid())
-                        Toast.success("登录成功！",1);
-                        // this.callback();
-                        this.props.toggleLoginState();   //修改最外层的组件的登录状态（此方法经App.js-->User/Index.js-->到本组件）
-                    }else{
-                        Toast.fail('登录失败，请稍后重试！',1);
-                    }
+                const errorCallback =()=>{
+                    Toast.fail('登录失败，请稍后重试！',1);
                 }
-                const m = Models.create();
-                // m.query('login',json123,cb);
-                m.query('login',json,cb);
-                // this.props.toggleLoginState()   //修改最外层的组件的登录状态（此方法经App.js-->User/Index.js-->到本组件）
-
+                const m = new User(successCallback,errorCallback);
+                m.login(formData.phone, formData.password );
             } else {
                 Toast.fail('您的输入不完整！');
             }

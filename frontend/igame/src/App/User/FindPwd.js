@@ -3,7 +3,7 @@ import { Flex, WhiteSpace, InputItem, Toast, Button, NavBar, Icon, WingBlank } f
 import './Login.css'
 import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 import { createForm } from 'rc-form';
-import Models from '../Models/Models';
+import { User } from '../Models/Models';
 
 export default class FindPwdPage extends React.Component{
     state = {
@@ -166,24 +166,16 @@ class NewPwdForm extends React.Component{
                 if (formData.password!==formData.password2){
                     Toast.fail('两次输入的密码不一致！');
                 }else{
-                    const json = {
-                        'db':'TT',
-                        'login':this.props.user,
-                        'password':formData.password
+                    const successCallback = (data)=>{
+                        Toast.success('密码修改成功！',1);
+                        this.props.tooglePages();
+                        this.props.toLoginPage();       //修改成功，返回登录页
                     }
-                    console.log(json)
-                    const cb = (data)=>{
-                        console.log(data)
-                        if (data){   
-                            Toast.success('密码修改成功！',1);
-                            this.props.tooglePages();
-                            this.props.toLoginPage();   //注册成功，返回登录页面
-                        }else{
-                            Toast.fail('修改失败，请稍后重试！',1);
-                        }
+                    const errorCallback =()=>{
+                        Toast.fail('修改失败，请稍后重试！',1);
                     }
-                    const m = Models.create();
-                    m.query('resetPassword',json,cb)
+                    const m = new User(successCallback,errorCallback);
+                    m.resetPassword(this.props.user, formData.password );
                 }
             } else {
                 Toast.fail('您的输入不正确！');
