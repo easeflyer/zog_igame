@@ -46,7 +46,7 @@ class Match(models.Model):
                 team_id.create(vals)
 
     bam = fields.Integer(compute='_compute_imp')
-    host_bam  = fields.Integer(compute='_compute_imp')
+    host_bam  = fields.Integer(compute='_6compute_imp')
     guest_bam = fields.Integer(compute='_compute_imp')
 
     imp = fields.Integer(compute='_compute_imp')
