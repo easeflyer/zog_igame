@@ -3,6 +3,7 @@
 
 from odoo import api, fields, models
 
+
 class IntelligentGameApi(models.Model):
     _inherit = "og.igame"
 
@@ -27,7 +28,6 @@ class IntelligentGameApi(models.Model):
         vals['score_uom'] = parent.score_uom
         return self.create(vals)
 
-
     @api.model
     @api.returns('self')
     def search_bridge_game(self,domain):
@@ -44,7 +44,6 @@ class IntelligentGameApi(models.Model):
                  ,'referee':gm.referee,'arbitrator':gm.arbitrator,'host_unit':gm.host_unit
                  ,'sponsor':gm.sponsor} for gm in gms]
 
-
     @api.model
     def search_user(self,user_id):
         us = self.env['res.users'].search([('id','=',user_id)])
@@ -59,7 +58,6 @@ class IntelligentGameApi(models.Model):
         return [{'name': game.name, 'id': game.id,'datetime':game.date_game,'type':game.match_type
                  ,'state':game.state,'referee':game.referee,'arbitrator':game.arbitrator,'host_unit':game.host_unit
                  ,'sponsor':game.sponsor}for game in games]
-
 
     @api.multi
     def search_rounds_details(self):
@@ -80,11 +78,10 @@ class IntelligentGameApi(models.Model):
     #     ms = self.search_round_details(round_id)
     #     return [{}]
 
-
     @api.multi
     def set_group(self, group_name, number):
         gid = self.id
-        #gs = self.group_ids.filtered(lambda g: g.name == group_name)
+        # gs = self.group_ids.filtered(lambda g: g.name == group_name)
 
         gs = self.env['og.igame.group'].search(
               [('name','=',group_name),('igame_id','=',gid)  ] )
@@ -119,6 +116,7 @@ class IntelligentGameApi(models.Model):
             vals={'partner_id':player_id,'role':role,'team_id':new_team.id}
             self.env['og.igame.team.player'].create(vals)
         return True
+
 
 class IntelligentGameTeam(models.Model):
     _inherit = "og.igame.team"
@@ -273,8 +271,6 @@ class IntelligentGameGroup(models.Model):
 
         sc = self.env['og.igame.team'].browse(team_id)
         sc.group_id = None
-
-
 
 
 class IntelligentGameRound(models.Model):
