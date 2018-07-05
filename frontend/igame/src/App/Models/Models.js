@@ -112,7 +112,7 @@ class Game extends Models{
     register_game(...data){        //赛队报名
         this.exec('og.igame','register_game',{},...data);
     }
-    search2(){
+    search2(){  //查询赛事列表
         this.exec('og.igame','search2',{},[]);
     }
 }

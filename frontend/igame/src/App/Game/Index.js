@@ -1,6 +1,6 @@
 import React from 'react'
 import  {Flex, Button, WingBlank} from 'antd-mobile'
-import { Row, Col } from 'antd';
+import { Row, Col, Table, Icon, Divider  } from 'antd';
 
 // spades: 黑桃  hearts: 红桃  diamond: 方块  clubs: 梅花    ♠ ♥ ♦ ♣ 
 const Cards=[
@@ -18,6 +18,16 @@ const Cards=[
         {num:'9', score:'♦'}, {num:'A', score:'♦'}, {num:'4', score:'♦'} ]},
 ]
 
+const columns = [
+    { title: 'W', dataIndex: 'w', key: 'w'},
+    { title: 'N', dataIndex: 'n', key: 'n'},
+    { title: 'E', dataIndex: 'e', key: 'e'},
+    { title: 'S', dataIndex: 's', key: 's'}];
+
+const suit = ['NT','♠','♥','♦','♣']
+const pierNumber = ['1','2','3','4','5','6','7']
+const dbl = ['PASS','X','XX']
+
 let pier=[]
 let piersCountSN = 0
 let piersCountEW = 0
@@ -26,6 +36,17 @@ export default class PokerTable extends React.Component{
     // 叫牌完成后，返回值：定约，明守方牌面，首墩第一个出牌方位，
     // 打牌过程（墩）：当前出牌方位所出牌面，下一个出牌方位（根据出牌方位判断己方是否可出牌）
     state={
+        dataSource:[{
+            key:1,
+            w:'7♠',
+            n:'5♦',
+            e:'Pass',
+            s:'Dbl'
+        }],
+        call:true, //是否处于叫牌状态
+        callDirect:'N', //当前应该哪个方位叫牌
+        callCards:null, //我，叫的牌
+        guard:'S',  //明守方位
         cardsN:Cards[0], // North 牌面
         cardsE:Cards[1], // East 牌面
         cardsS:Cards[2], // South 牌面
@@ -201,7 +222,6 @@ export default class PokerTable extends React.Component{
                 }
             })
         }
-
         let itemsE=[[],[],[],[]];
         if(this.state.cardsE.length===0){
             itemsE.push(<p>暂无数据</p>)
@@ -222,7 +242,6 @@ export default class PokerTable extends React.Component{
                 }
             })
         }
-
         let itemsS=[[],[],[],[]];
         if(this.state.cardsS.length===0){
             itemsS.push(<p>暂无数据</p>)
@@ -243,7 +262,6 @@ export default class PokerTable extends React.Component{
                 }
             })
         }
-
         let itemsW=[[],[],[],[]];
         if(this.state.cardsW.length===0){
             itemsW.push(<p>暂无数据</p>)
@@ -264,6 +282,20 @@ export default class PokerTable extends React.Component{
                 }
             })
         }
+
+        // 叫牌所需花色及墩数
+        let callDbl = [];
+        dbl.map((item,index)=>{
+            callDbl.push(<span key={index} style={{display:'inline-block',width:40,height:25,margin:3,border:'1px solid #ccc',borderRadius:3,textAlign:'center'}} onclick={e=>{console.log(e.target.innerHTML)}}>{item}</span>)
+        })
+        let callSuit = [];
+        suit.map((item,index)=>{
+            callSuit.push(<span key={index} style={{display:'inline-block',width:30,height:25,margin:3,border:'1px solid #ccc',borderRadius:3,textAlign:'center'}} onclick={e=>{console.log(e.target.innerHTML)}}>{item}</span>)
+        })
+        let callPierNumber = [];
+        pierNumber.map((item,index)=>{
+            callPierNumber.push(<span key={index} style={{display:'inline-block',width:30,height:25,margin:3,border:'1px solid #ccc',borderRadius:3,textAlign:'center'}} onclick={e=>{console.log(e.target.innerHTML)}}>{item}</span>)
+        })
         
         return(
             <div>
@@ -291,17 +323,17 @@ export default class PokerTable extends React.Component{
                 <Row style={{marginBottom:10}}>
                     <Col span={4} style={{background:'#0f0',paddingLeft:10}}>N</Col>
                     <Col span={20} style={{background:'#ff0',paddingLeft:10}}>买玉米 {this.state.currentDirect==='N'?'★':null}</Col>
-                    <Col span={24} style={{paddingLeft:10,textAlign:'center'}}>{itemsN[0]}{itemsN[1]}{itemsN[2]}{itemsN[3]}</Col>
+                    <Col span={24} style={{display:!this.state.call&&this.state.guard=="N"?'inline-block':'none',paddingLeft:10,textAlign:'center'}}>{itemsN[0]}{itemsN[1]}{itemsN[2]}{itemsN[3]}</Col>
                 </Row>
                 <Row>
                 {/* 左 */}
-                <Col span={2}>
+                    <Col span={2}>
                         <Row style={{height:300,writingMode: 'vertical-lr'}}>
                         <Col span={24} style={{height:60,background:'#0f0'}}>W</Col>
                         <Col span={24} style={{height:240,background:'#ff0'}}>猫头鹰 {this.state.currentDirect==='W'?'★':null}</Col>
                         </Row>
                     </Col>
-                    <Col span={6}>
+                    <Col span={6} style={{display:!this.state.call&&this.state.guard==="W"?'inline-block':'none'}}>
                         <Row>
                             <Col span={24}>{itemsW[0]}</Col>
                         </Row>
@@ -315,8 +347,26 @@ export default class PokerTable extends React.Component{
                             <Col span={24}>{itemsW[3]}</Col>
                         </Row>
                     </Col>
+                {/* 叫牌区 */}
+                    <Col span={20} style={{display:this.state.call?'inline-block':'none'}}>
+                        <Row>
+                            <Table columns={columns} dataSource={this.state.dataSource} size="small" style={{width:210}} />
+                        </Row>
+                        <Row style={{marginTop:20}}>
+                            {callDbl}
+                        </Row>
+                        <Row>
+                            {callSuit}
+                        </Row>
+                        <Row>
+                            {callPierNumber}
+                        </Row>
+                        <Row>
+                            <Button size="small" inline={true} type="primary">alert</Button>
+                        </Row>
+                    </Col>
                 {/* 打牌区 */}
-                    <Col span={8} style={{height:200,textAlign:'center',verticalAlign:'middle'}}>
+                   <Col span={this.state.guard==="W"||this.state.guard=="E"?14:20} style={{display:this.state.call?'none':'inline-block',height:200,textAlign:'center',verticalAlign:'middle'}}>
                         <Row>
                             <Col span={24} style={{textAlign:'center'}}>
                                 <p style={{width:30,border:'1px solid #ddd',borderRadius:5,background:'#ccc',textAlign:'center',padding:10,margin:'0 auto'}}>{this.state.currentCardN}</p>
@@ -337,7 +387,7 @@ export default class PokerTable extends React.Component{
                         </Row>
                     </Col>
                 {/* 右 */}
-                    <Col span={6} >
+                    <Col span={6} style={{display:!this.state.call&&this.state.guard=="E"?'inline-block':'none'}}>
                         <Row>
                             <Col span={24} style={{textAlign:'right'}}>{itemsE[0]}</Col>
                             <Col span={24} style={{textAlign:'right'}}>{itemsE[1]}</Col>
