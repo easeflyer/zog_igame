@@ -3,7 +3,7 @@ import { Flex, WhiteSpace, InputItem, Toast, Button, NavBar, Icon, WingBlank  } 
 import './Login.css'
 import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 import { createForm } from 'rc-form';
-import Models from '../Models/Models';
+import { User } from '../Models/Models';
 
 class RsgisterForm extends React.Component{
     onSubmit = () => {   //表单提交方法
@@ -15,9 +15,6 @@ class RsgisterForm extends React.Component{
                 if (formData.password!==formData.password2){
                     Toast.fail('两次输入的密码不一致！');
                 }else{
-                    const model = 'TT';
-                    const method = formData.phone;
-                    const data = formData.password;
                     const successCallback = ()=>{
                         Toast.success('注册成功！',1);
                         this.props.toLoginPage();   //注册成功，返回登录页面
@@ -25,8 +22,8 @@ class RsgisterForm extends React.Component{
                     const errorCallback =()=>{
                         Toast.fail('注册失败，请稍后重试！',1);
                     }
-                    const m = Models.create();
-                    m.query('register',model,method,{},successCallback,errorCallback,data);
+                    const m = new User(successCallback,errorCallback);
+                    m.register(formData.phone, formData.password );
                 }
             } else {
                 Toast.fail('您的输入有误！');

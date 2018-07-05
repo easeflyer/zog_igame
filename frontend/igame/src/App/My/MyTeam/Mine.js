@@ -2,7 +2,7 @@ import React from 'react';
 import { NavBar, List, WhiteSpace } from 'antd-mobile';
 import { Icon } from 'antd';
 import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
-import Models from '../../Models/Models';
+import { GameTeam } from '../../Models/Models';
 
 export default class TeamMine extends React.Component {       //我的赛队列表页
     state = {
@@ -10,8 +10,8 @@ export default class TeamMine extends React.Component {       //我的赛队列�
     }
     // 请求我的赛队列表 
     componentDidMount(){
-        const m = Models.create();
-        m.query('exec','og.igame.team','get_teams',{},(data)=>{this.setState({teamList:data})},()=>{},[]);
+        const m = new GameTeam((data)=>{this.setState({teamList:data})}, ()=>{});
+        m.get_teams();
     }
     render() {
         let datalist;
