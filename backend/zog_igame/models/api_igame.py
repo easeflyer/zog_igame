@@ -44,11 +44,12 @@ class IntelligentGameApi(models.Model):
                  ,'referee':gm.referee,'arbitrator':gm.arbitrator,'host_unit':gm.host_unit
                  ,'sponsor':gm.sponsor} for gm in gms]
 
+
     @api.model
     def search_user(self,user_id):
         us = self.env['res.users'].search([('id','=',user_id)])
         pa = self.env['res.partner'].search([('id','=',us.partner_id.id)])
-        team = self.env['og.igame.team'].search([('partner_id', '=', pa.id)])
+        team = self.env['og.igame.team'].search([('partner_id', '=', pa.parent_id.id)])
         games = self.env['og.igame'].search([('id', '=', team.igame_id.id)])
         return games
 
@@ -58,6 +59,40 @@ class IntelligentGameApi(models.Model):
         return [{'name': game.name, 'id': game.id,'datetime':game.date_game,'type':game.match_type
                  ,'state':game.state,'referee':game.referee,'arbitrator':game.arbitrator,'host_unit':game.host_unit
                  ,'sponsor':game.sponsor}for game in games]
+
+    @api.model
+    # @api.returns('self')
+    def search_own_match(self,user_id):
+
+        us = self.env['res.users'].search([('id','=',user_id)])
+        pa = self.env['res.partner'].search([('id','=',us.partner_id.id)])
+        if pa.parent_id is not None:
+            team = self.env['og.igame.team'].search([('partner_id', '=', pa.parent_id.id)])
+            games = self.env['og.igame'].search([])
+
+            arr = []
+
+            for g in games:
+                if team.igame_id.id == g.id:
+                    arr.append([{'name': g.name, 'id': g.id,'datetime':g.date_game,'type':g.match_type
+                     ,'state':g.state,'referee':g.referee,'arbitrator':g.arbitrator,'host_unit':g.host_unit
+                     ,'sponsor':g.sponsor,'tt':True}])
+
+                else:
+                    arr.append([{'name': g.name, 'id': g.id,'datetime':g.date_game,'type':g.match_type
+                 ,'state':g.state,'referee':g.referee,'arbitrator':g.arbitrator,'host_unit':g.host_unit
+                 ,'sponsor':g.sponsor,'tt':False}])
+            return arr
+        else:
+            # team = self.env['og.igame.team'].search([('partner_id', '=', pa.parent_id.id)])
+            games = self.env['og.igame'].search([])
+            arr = []
+            for g in games:
+                arr.append([{'name': g.name, 'id': g.id,'datetime':g.date_game,'type':g.match_type
+                     ,'state':g.state,'referee':g.referee,'arbitrator':g.arbitrator,'host_unit':g.host_unit
+                     ,'sponsor':g.sponsor,'tt':False}])
+            return arr
+
 
     @api.multi
     def search_rounds_details(self):
@@ -73,10 +108,10 @@ class IntelligentGameApi(models.Model):
 
         return ms
 
-    # @api.model
-    # def search_round_details(self,round_id):
-    #     ms = self.search_round_details(round_id)
-    #     return [{}]
+    @api.model
+    def search_round_details(self,round_id):
+        ms = self.search_round_details(round_id)
+        return [{}]
 
     @api.multi
     def set_group(self, group_name, number):
