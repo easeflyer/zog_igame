@@ -47,6 +47,7 @@ class Table(models.Model):
     deal_ids  = fields.Many2many('og.deal', string='Deals')
     board_ids = fields.One2many('og.board', 'table_id', string='Boards')
 
+
 class TablePartner(models.Model):
     _name = "og.table.partner"
     _description = "Table Partner"
