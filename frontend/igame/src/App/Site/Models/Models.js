@@ -67,11 +67,12 @@ class Models {
     }
 
 }
-// 静态属性。ES6 
+// 静态属性。ES6
 Models.models = null;
 Models.types = {
     'exec': 'http://192.168.0.11:8069/jsonrpc/exec',
-    'login': 'http://192.168.0.11:8069/jsonrpc/login'
+    //'login': 'http://192.168.0.11:8069/jsonrpc/login'
+    'login': 'http://192.168.0.11:8069/json/user/login'
 }
 
 export default Models;

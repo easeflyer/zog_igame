@@ -57,14 +57,17 @@ class SiteLogin {
     }
     // 用户名密码由 prompt 调用时提供。
     handleLogin = (login, password) => {
+        const url = "http://192.168.0.11:8069/json/user/login"
         //alert(test);
         console.log(`login: ${login}, password: ${password}`)
         const json1 = {
+            'server':'odoo',
             'user': login,  //1174809@qq.com
             'password': password,//09090909
         }
-        fetch("http://192.168.0.11:8069/jsonrpc/login", {
+        fetch(url, {
             method: 'POST', // or 'PUT'
+            mode:'cors', // 后台代码有 cors='*'
             body: JSON.stringify(json1), // data can be `string` or {object}!
             headers: new Headers({
                 'Content-Type': 'application/json'
