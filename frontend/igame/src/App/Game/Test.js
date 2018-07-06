@@ -1,42 +1,27 @@
-import { Table, Icon, Divider } from 'antd';
+import React from 'react'
+import Index2 from './Index2'
+import Index3 from './Index3'
+import { Button} from 'antd-mobile';
 
-const columns = [{
-  title: 'W',
-  dataIndex: 'w',
-  key: 'w',
-  render: text => <a href="javascript:;">{text}</a>,
-},{
-    title: 'N',
-    dataIndex: 'n',
-    key: 'n',
-    render: text => <a href="javascript:;">{text}</a>,
-  },{
-    title: 'E',
-    dataIndex: 'e',
-    key: 'e',
-    render: text => <a href="javascript:;">{text}</a>,
-  },{
-    title: 'S',
-    dataIndex: 's',
-    key: 's',
-    render: text => <a href="javascript:;">{text}</a>,
-  }];
+let test1=<Index2></Index2>
 
-const data = [{
-  key: '1',
-  name: 'John Brown',
-  age: 32,
-  address: 'New York No. 1 Lake Park',
-}, {
-  key: '2',
-  name: 'Jim Green',
-  age: 42,
-  address: 'London No. 1 Lake Park',
-}, {
-  key: '3',
-  name: 'Joe Black',
-  age: 32,
-  address: 'Sidney No. 1 Lake Park',
-}];
+export default class TT extends React.Component{
 
-ReactDOM.render(<Table columns={columns} dataSource={data} />, mountNode);
+    componentDidMount(){
+
+    }
+
+    toIndex=()=>{
+        test1=<Index3></Index3>
+        forceUpdate()
+    }
+
+    render(){
+        return(
+            <div>
+                {test1}
+                <Button onClick={this.toIndex}>确认</Button>
+            </div>
+        )
+    }
+}

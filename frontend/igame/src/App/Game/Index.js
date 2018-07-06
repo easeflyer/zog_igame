@@ -3,6 +3,7 @@ import  {Flex, Button, WingBlank} from 'antd-mobile'
 import { Row, Col, Table, Icon, Divider  } from 'antd';
 
 // spades: 黑桃  hearts: 红桃  diamond: 方块  clubs: 梅花    ♠ ♥ ♦ ♣ 
+const Card=[{dir:'N', card: 'T8.Q.QT874.A9632'},{dir:'E', card: 'J53.J7652.93.JT4'},{dir:'S', card: 'AQ62.K94.KJ62.Q8'}, {dir:'W', card: 'K974.AT83.A5.K75'},]
 const Cards=[
     {N: [{num:'6', score:'♠'}, {num:'2', score:'♣'}, {num:'10', score:'♥'}, {num:'6', score:'♥'}, {num:'9', score:'♠'},
         {num:'J', score:'♣'}, {num:'Q', score:'♥'}, {num:'J', score:'♠'}, {num:'A', score:'♣'}, {num:'7', score:'♦'},
@@ -17,16 +18,21 @@ const Cards=[
         {num:'7', score:'♣'}, {num:'K', score:'♥'}, {num:'J', score:'♠'}, {num:'8', score:'♣'}, {num:'2', score:'♦'},
         {num:'9', score:'♦'}, {num:'A', score:'♦'}, {num:'4', score:'♦'} ]},
 ]
-
 const columns = [
     { title: 'W', dataIndex: 'w', key: 'w'},
     { title: 'N', dataIndex: 'n', key: 'n'},
     { title: 'E', dataIndex: 'e', key: 'e'},
     { title: 'S', dataIndex: 's', key: 's'}];
 
-const suit = ['NT','♠','♥','♦','♣']
-const pierNumber = ['1','2','3','4','5','6','7']
-const dbl = ['PASS','X','XX']
+// const suit = ['NT','♠','♥','♦','♣']
+const dbl = ['PASS','X','XX','Alert']
+const suit=[
+    ['1♠','2♠','3♠','4♠','5♠','6♠','7♠'],
+    ['1♥','2♥','3♥','4♥','5♥','6♥','7♥'],
+    ['1♦','2♦','3♦','4♦','5♦','6♦','7♦'],
+    ['1♣','2♣','3♣','4♣','5♣','6♣','7♣'],
+    ['1NT','2NT','3NT','4NT','5NT','6NT','7NT']
+]
 
 let pier=[]
 let piersCountSN = 0
@@ -38,11 +44,12 @@ export default class PokerTable extends React.Component{
     state={
         dataSource:[{
             key:1,
-            w:'7♠',
-            n:'5♦',
-            e:'Pass',
-            s:'Dbl'
+            w:'',
+            n:'',
+            e:'',
+            s:''
         }],
+        myDirect:'S',
         call:true, //是否处于叫牌状态
         callDirect:'N', //当前应该哪个方位叫牌
         callCards:null, //我，叫的牌
@@ -63,6 +70,42 @@ export default class PokerTable extends React.Component{
         scoreEW:0,
         piersSN:piersCountSN,
         piersEW:piersCountEW
+    }
+
+    componentDidMount(){
+        this.dealCards(this.state.myDirect)
+    }
+
+
+    // 处理发过来的牌
+    dealCards=(dir)=>{
+        let  cardMy=[];
+        Card.map(item=>{
+            if(item.dir===dir){
+                item.card.split('.').map(i=>{
+                    cardMy.push(i.split(''));
+                })
+            }
+        })
+        return cardMy
+    }
+
+    post=(e)=>{
+        // ♠ ♥ ♦ ♣ 
+        let val = e.target.innerHTML;
+        if(val.split('').length===3){
+            val = this.transfer(val,2)
+        }
+        val = this.transfer(val,1)
+        // $.post('/post', { 'message': val });
+    }
+
+    transfer=(val,num)=>{
+        if(val.split('')[num]==="♠"){val=val.split('')[0]+'s'}
+        if(val.split('')[num]==="♥"){val=val.split('')[0]+'h'}
+        if(val.split('')[num]==="♦"){val=val.split('')[0]+'d'}
+        if(val.split('')[num]==="♣"){val=val.split('')[0]+'c'}
+        return val
     }
 
     clearCurrentPiers=()=>{
@@ -103,7 +146,6 @@ export default class PokerTable extends React.Component{
               },2000)
         }
     }
-
 
     clickN=(e)=>{
         if(this.state.currentDirect==='N'){
@@ -243,22 +285,22 @@ export default class PokerTable extends React.Component{
             })
         }
         let itemsS=[[],[],[],[]];
-        if(this.state.cardsS.length===0){
+        if(Cards.length===0){
             itemsS.push(<p>暂无数据</p>)
         }else{
             this.state.cardsS.S.map((item,index)=>{
                 let id = item.num+item.score;
                 if(item.score==='♠'){
-                    itemsS[0].push(<span key={index} style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5}}  onClick={key=>this.clickS(key)}>{item.num}{`\n`}{item.score}</span>)
+                    itemsS[0].push(<span key={index} style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5}}  onClick={this.post}>{item.num}{`\n`}{item.score}</span>)
                 }
                 if(item.score==='♣'){
-                    itemsS[1].push(<span key={index} style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5}}  onClick={key=>this.clickS(key)}>{item.num}{`\n`}{item.score}</span>)
+                    itemsS[1].push(<span key={index} style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5}}  onClick={this.post}>{item.num}{`\n`}{item.score}</span>)
                 }
                 if(item.score==='♥'){
-                    itemsS[2].push(<span key={index} style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5,color:'#f00'}}  onClick={key=>this.clickS(key)}>{item.num}{`\n`}{item.score}</span>)
+                    itemsS[2].push(<span key={index} style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5,color:'#f00'}}  onClick={this.post}>{item.num}{`\n`}{item.score}</span>)
                 }
                 if(item.score==='♦'){
-                    itemsS[3].push(<span key={index} style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5,color:'#f00'}}  onClick={key=>this.clickS(key)}>{item.num}{`\n`}{item.score}</span>)
+                    itemsS[3].push(<span key={index} style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5,color:'#f00'}}  onClick={this.post}>{item.num}{`\n`}{item.score}</span>)
                 }
             })
         }
@@ -284,19 +326,17 @@ export default class PokerTable extends React.Component{
         }
 
         // 叫牌所需花色及墩数
+        let callSuitS = [];
+        suit.map((items,i)=>{
+            items.map((item,index)=>{
+                callSuitS.push(<span key={item} style={{display:'inline-block',width:35,height:25,margin:3,border:'1px solid #ccc',borderRadius:3,textAlign:'center'}} onClick={this.post}>{item}</span>)
+            })
+        })
         let callDbl = [];
-        dbl.map((item,index)=>{
-            callDbl.push(<span key={index} style={{display:'inline-block',width:40,height:25,margin:3,border:'1px solid #ccc',borderRadius:3,textAlign:'center'}} onclick={e=>{console.log(e.target.innerHTML)}}>{item}</span>)
+        dbl.map((item,i)=>{
+            callDbl.push(<span key={item} style={{display:'inline-block',width:35,height:25,margin:3,border:'1px solid #ccc',borderRadius:3,textAlign:'center'}} onClick={this.post}>{item}</span>)
         })
-        let callSuit = [];
-        suit.map((item,index)=>{
-            callSuit.push(<span key={index} style={{display:'inline-block',width:30,height:25,margin:3,border:'1px solid #ccc',borderRadius:3,textAlign:'center'}} onclick={e=>{console.log(e.target.innerHTML)}}>{item}</span>)
-        })
-        let callPierNumber = [];
-        pierNumber.map((item,index)=>{
-            callPierNumber.push(<span key={index} style={{display:'inline-block',width:30,height:25,margin:3,border:'1px solid #ccc',borderRadius:3,textAlign:'center'}} onclick={e=>{console.log(e.target.innerHTML)}}>{item}</span>)
-        })
-        
+
         return(
             <div>
                 <Row >
@@ -350,19 +390,27 @@ export default class PokerTable extends React.Component{
                 {/* 叫牌区 */}
                     <Col span={20} style={{display:this.state.call?'inline-block':'none'}}>
                         <Row>
-                            <Table columns={columns} dataSource={this.state.dataSource} size="small" style={{width:210}} />
+                            <Table columns={columns} dataSource={this.state.dataSource} size="small" style={{width:210,}} />
                         </Row>
                         <Row style={{marginTop:20}}>
+                        {callSuitS.slice(0,7)}
+                        </Row>
+                        <Row>
+                        {callSuitS.slice(7,14)}
+                        </Row>
+                        <Row>
+                        {callSuitS.slice(14,21)}
+                        </Row>
+                        <Row>
+                        {callSuitS.slice(21,28)}
+                        </Row>
+                        <Row>
+                        {callSuitS.slice(28,35)}
+                        </Row>
+                        <Row>
                             {callDbl}
                         </Row>
                         <Row>
-                            {callSuit}
-                        </Row>
-                        <Row>
-                            {callPierNumber}
-                        </Row>
-                        <Row>
-                            <Button size="small" inline={true} type="primary">alert</Button>
                         </Row>
                     </Col>
                 {/* 打牌区 */}
