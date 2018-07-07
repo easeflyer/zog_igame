@@ -2,6 +2,8 @@ import React from 'react'
 import  {Flex, Button, WingBlank} from 'antd-mobile'
 import { Row, Col, Table, Icon, Divider  } from 'antd';
 
+import {Match} from '../Models/Models'
+
 // spades: 黑桃  hearts: 红桃  diamond: 方块  clubs: 梅花    ♠ ♥ ♦ ♣ 
 const Card=[{dir:'N', card: 'T8.Q.QT874.A9632'},{dir:'E', card: 'J53.J7652.93.JT4'},{dir:'S', card: 'AQ62.K94.KJ62.Q8'}, {dir:'W', card: 'K974.AT83.A5.K75'},]
 const columns = [
@@ -11,7 +13,7 @@ const columns = [
     { title: 'S', dataIndex: 's', key: 's'}];
 
 // const suit = ['NT','♠','♥','♦','♣']
-const dbl = ['PASS','X','XX','Alert']
+const dbl = ['PASS','X','XX',]
 const suit=[
     ['1♠','2♠','3♠','4♠','5♠','6♠','7♠'],
     ['1♥','2♥','3♥','4♥','5♥','6♥','7♥'],
@@ -23,21 +25,23 @@ const suit=[
 let pier=[]
 let piersCountSN = 0
 let piersCountEW = 0
+let count=0
 
 export default class PokerTable extends React.Component{
     // 叫牌完成后，返回值：定约，明守方牌面，首墩第一个出牌方位，
     // 打牌过程（墩）：当前出牌方位所出牌面，下一个出牌方位（根据出牌方位判断己方是否可出牌）
     state={
         dataSource:[{
-            key:1,
+            key:count,
             w:'',
             n:'',
             e:'',
             s:''
         }],
         myDirect:'S', //我所在方位
-        myCards:null,
-        call:false, //是否处于叫牌状态
+        myCards:null, //我的牌，消息格式
+        myCardsNum:null,//我的牌，全数字
+        call:true, //是否处于叫牌状态
         callDirect:'N', //当前应该哪个方位叫牌
         callCards:null, //我，叫的牌
         guard:'W',  //明守方位
@@ -56,10 +60,49 @@ export default class PokerTable extends React.Component{
     }
 
     componentDidMount(){
+        // this.sse()
+
+        // 建立长连接
+        // const m = new Match(this.sucPolling,this.failPolling); //说明：传入回调函数
+        // m.longPolling();  //说明：调用Models里面定义好的方法，传入相应的参数
+
+        // 发送消息
+        // const m = new Match(this.sucPost,this.failPost); //说明：传入回调函数
+        // m.play_cards();  //说明：调用Models里面定义好的方法，传入相应的参数
+
         this.setState({
-            myCards:this.addColor(this.dealCards(this.state.myDirect))[1]
+            myCards:this.addColor(this.dealCards(this.state.myDirect))[1],
+            myCardsNum:this.dealCards(this.state.myDirect),
+            guardCards:this.addColor(this.dealCards(this.state.guard))[1],
+            guardCardsNum:this.dealCards(this.state.guard)
         })
     }
+    // 监听消息并处理
+    sucPolling=(json)=>{
+        const msg = json.result
+        msg.forEach(element => {
+            console.log(element.message.body)
+        });
+        if (msg.length) window.last = msg.slice(-1)[0]['id'];
+        
+        const m = new Match(this.sucPolling,this.failPolling);
+        m.longPolling();
+    }
+    failPolling=(json)=>{
+        console.log(json)
+    }
+
+    // sse=()=> {
+    //     var source = new EventSource('192.168.0.20:8989/stream');  // 监听这个网址的消息。事件。
+    //     source.onmessage = function (e) {
+    //         //这里没有屏蔽 跨站脚本攻击，可以输入脚本。造成 安全隐患！
+    //         // out.innerHTML = e.data + '\n' + out.innerHTML;
+    //         console.log(e.data)
+    //     };
+    //     source.onclose = function(e){
+    //         alert('再见！')
+    //     }
+    // }
 
     // 处理发过来的牌:分割
     dealCards=(dir)=>{
@@ -75,32 +118,34 @@ export default class PokerTable extends React.Component{
     }
     // 处理发过来的牌：添加花色
     addColor=(cards,dir)=>{
-        let catoCards=[]
+        // if(cards===this.state.myCardsNum&&cards===null){
+            // cards=this.dealCards(dir)
+        // }
         let addCards=[[],[],[],[]]
         let colorCards=[[],[],[],[]]
         cards.map((item,index)=>{
             if(index===0&&item.length!==0){
                 item.map(i=>{
+                    addCards[0].push(<span key={index+i} style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5}} onClick={this.state.currentDirect===this.state.myDirect&&!this.state.call?this.post:null}>{i}{`\n`}{'♠'}</span>)
                     colorCards[0].push(i+'s')
-                    addCards[0].push(<span key={index+i} style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5}} onClick={this.state.currentDirect===dir?this.post:null}>{i}{`\n`}{'♠'}</span>)
                 })
             }
             if(index===1&&item.length!==0){
                 item.map(i=>{
+                    addCards[1].push(<span key={index+i} style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5}} onClick={this.state.currentDirect===this.state.myDirect&&!this.state.call?this.post:null}>{i}{`\n`}{'♥'}</span>)
                     colorCards[1].push(i+'h')
-                    addCards[1].push(<span key={index+i} style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5}} onClick={this.state.currentDirect===dir?this.post:null}>{i}{`\n`}{'♥'}</span>)
                 })
             }
             if(index===2&&item.length!==0){
                 item.map(i=>{
+                    addCards[2].push(<span key={index+i} style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5}} onClick={this.state.currentDirect===this.state.myDirect&&!this.state.call?this.post:null}>{i}{`\n`}{'♦'}</span>)
                     colorCards[2].push(i+'d')
-                    addCards[2].push(<span key={index+i} style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5}} onClick={this.state.currentDirect===dir?this.post:null}>{i}{`\n`}{'♦'}</span>)
                 })
             }
             if(index===3&&item.length!==0){
                 item.map(i=>{
+                    addCards[3].push(<span key={index+i} style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5}} onClick={this.state.currentDirect===this.state.myDirect&&!this.state.call?this.post:null}>{i}{`\n`}{'♣'}</span>)
                     colorCards[3].push(i+'c')
-                    addCards[3].push(<span key={index+i} style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5}} onClick={this.state.currentDirect===dir?this.post:null}>{i}{`\n`}{'♣'}</span>)
                 })
             }
         })
@@ -110,13 +155,42 @@ export default class PokerTable extends React.Component{
     post=(e)=>{
         // ♠ ♥ ♦ ♣ 
         let val = e.target.innerHTML;
-        val = this.transfer(val,2)
-        console.log(val)
-        // $.post('/post', { 'message': val });
+        if(!this.state.call){
+            val = this.transfer(val,2);
+            let i1=0,i2=0;
+            this.state.myCards.map((item,index)=>{
+                if(item.indexOf(val)>=0){
+                    i1=index;
+                    i2=item.indexOf(val);
+                    item.splice(item.indexOf(val),1)
+                }
+            })
+            this.state.myCardsNum.map((item,index)=>{
+                if(index===i1){
+                    item.splice(i2,1)
+                }
+            })
+            this.setState({
+                currentDirect:'W',
+                currentCardS:e.target.innerHTML,
+            })
+        }
+        let calls=this.state.dataSource;
+        val=this.transfer(val,1);
+        if(calls[count].s){
+            count++;
+            calls.push({
+                key:count,
+                w:'',
+                n:'',
+                e:'',
+                s:val
+            })
+        }else{
+            calls[count].s=val
+        }
         this.setState({
-            myCards:'',
-            currentCardS:e.target.innerHTML,
-            // currentPiers:pier,
+            dataSource:calls
         })
     }
     // 要发送的消息整理成‘5h’的格式
@@ -207,7 +281,7 @@ export default class PokerTable extends React.Component{
                 <Row style={{marginBottom:10}}>
                     <Col span={4} style={{background:'#0f0',paddingLeft:10}}>N</Col>
                     <Col span={20} style={{background:'#ff0',paddingLeft:10}}>买玉米 {this.state.currentDirect==='N'?'★':null}</Col>
-                    <Col span={24} style={{display:!this.state.call&&this.state.guard=="N"?'inline-block':'none',paddingLeft:10,textAlign:'center'}}>{this.addColor(this.dealCards(this.state.guard))[0]}</Col>
+                    <Col span={24} style={{display:!this.state.call&&this.state.guard=="N"?'inline-block':'none',paddingLeft:10,textAlign:'center'}}>{/*{this.addColor(this.state.myCardsNum,'N')[0]}*/}</Col>
                 </Row>
                 <Row>
                 {/* 左 */}
@@ -218,18 +292,12 @@ export default class PokerTable extends React.Component{
                         </Row>
                     </Col>
                     <Col span={6} style={{display:!this.state.call&&this.state.guard==="W"?'inline-block':'none'}}>
-                        <Row>
-                            <Col span={24}>{this.addColor(this.dealCards(this.state.guard))[0][0]}</Col>
-                        </Row>
-                        <Row>
-                            <Col span={24}>{this.addColor(this.dealCards(this.state.guard))[0][1]}</Col>
-                        </Row>
-                        <Row>
-                            <Col span={24}>{this.addColor(this.dealCards(this.state.guard))[0][2]}</Col>
-                        </Row>
-                        <Row>
-                            <Col span={24}>{this.addColor(this.dealCards(this.state.guard))[0][3]}</Col>
-                        </Row>
+                        {/*<Row>
+                            <Col span={24}>{this.addColor(this.state.guardCardsNum,'E')[0][0]}</Col>
+                            <Col span={24}>{this.addColor(this.state.guardCardsNum,'E')[0][1]}</Col>
+                            <Col span={24}>{this.addColor(this.state.guardCardsNum,'E')[0][2]}</Col>
+                            <Col span={24}>{this.addColor(this.state.guardCardsNum,'E')[0][3]}</Col>
+                        </Row>*/}
                     </Col>
                 {/* 叫牌区 */}
                     <Col span={20} style={{display:this.state.call?'inline-block':'none'}}>
@@ -266,12 +334,12 @@ export default class PokerTable extends React.Component{
                     </Col>
                 {/* 右 */}
                     <Col span={6} style={{display:!this.state.call&&this.state.guard=="E"?'inline-block':'none',textAlign:'right'}}>
-                        <Row>
-                            <Col span={24}>{this.addColor(this.dealCards(this.state.guard))[0][0]}</Col>
-                            <Col span={24}>{this.addColor(this.dealCards(this.state.guard))[0][1]}</Col>
-                            <Col span={24}>{this.addColor(this.dealCards(this.state.guard))[0][2]}</Col>
-                            <Col span={24}>{this.addColor(this.dealCards(this.state.guard))[0][3]}</Col>
-                        </Row>
+                        {/*<Row>
+                            <Col span={24}>{this.addColor(this.state.myCardsNum,'E')[0][0]}</Col>
+                            <Col span={24}>{this.addColor(this.state.myCardsNum,'E')[0][1]}</Col>
+                            <Col span={24}>{this.addColor(this.state.myCardsNum,'E')[0][2]}</Col>
+                            <Col span={24}>{this.addColor(this.state.myCardsNum,'E')[0][3]}</Col>
+                        </Row>*/}
                     </Col>
                     <Col span={2}>
                         <Row style={{height:300,writingMode: 'vertical-lr',float:'right'}}>
@@ -282,8 +350,8 @@ export default class PokerTable extends React.Component{
                 </Row>
                 {/* 下 */}
                 <Row style={{marginTop:10}}>
-                    <Col span={24} style={{paddingLeft:10,textAlign:'center'}}>{this.addColor(this.dealCards(this.state.myDirect),this.state.myDirect)[0]}</Col>
-                    {/*<Col span={24} style={{paddingLeft:10,textAlign:'center'}}>{this.state.myCards}</Col>*/}
+                    {/*<Col span={24} style={{paddingLeft:10,textAlign:'center'}}>{this.addColor(this.dealCards(this.state.myDirect),this.state.myDirect)[0]}</Col>*/}
+                    <Col span={24} style={{paddingLeft:10,textAlign:'center'}}>{this.state.myCardsNum===null?this.addColor(this.dealCards(this.state.myDirect),this.state.myDirect)[0]:this.addColor(this.state.myCardsNum,this.state.myDirect)[0]}</Col>
                     <Col span={4} style={{background:'#0f0',paddingLeft:10}}>S</Col>
                     <Col span={20} style={{background:'#ff0',paddingLeft:10}}>baifdsf {this.state.currentDirect==='S'?'★':null}</Col>
                 </Row>
