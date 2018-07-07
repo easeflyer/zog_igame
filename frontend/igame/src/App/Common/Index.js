@@ -89,7 +89,13 @@ class SortList extends React.Component {       //我的比赛分类列表页组�
     componentWillMount(){
         //获取所有比赛列表
         const m = new Game(this.stateList,this.callFail);
+        //如果不是从《我》入口进来，调用后面的查询函数
         this.props.name ? m.search2() : m.search2();
+
+        //      这里是正确的调用接口
+        // this.props.name ? m.search_user_match() : m.search_user_match();
+
+        // this.props.name ? m.search_own_match() : m.search_own_match();
         
     }
     stateList = (data)=>{
@@ -134,15 +140,9 @@ class SortList extends React.Component {       //我的比赛分类列表页组�
             matchList2:list2,
             matchList3:list3,
         })
-        console.log('获取列表成功...')
-        console.log(this.state.data)
-        console.log(this.state.matchList1)
-        console.log(this.state.matchList2)
-        console.log(this.state.matchList3)
-        
     }
     callFail = ()=>{
-        console.log('没找到......')
+        console.log('没有比赛信息......')
     }
     toMatchList = (title,data)=>{
         this.props.toMatchList();
