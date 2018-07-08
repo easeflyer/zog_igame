@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import settings from '../game/settings';
 import Table from './Table';
+import Bid from './Bid'
 
 /**
  * Game  是一局比赛，涉及到了比赛者，以及和比赛相关的其他信息。重点在于比赛。
@@ -9,6 +10,11 @@ import Table from './Table';
 
 class Game extends Component {
     constructor(props){
+        /**
+         * 属性列表：
+         *  屏幕大小
+         * 
+         */
         super(props);
         this.width = window.screen.width;
         this.height = window.screen.height;
@@ -18,7 +24,9 @@ class Game extends Component {
     }
     render(){
         return(
-            <Table></Table>
+            <Table>
+                <Bid />
+            </Table>
         );
     }
 }
