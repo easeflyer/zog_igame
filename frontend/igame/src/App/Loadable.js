@@ -42,7 +42,7 @@ export const Site = Loadable({
 export const App2 = Loadable({
     // 赛事列表入口
     // loader: () => import('./App2/Index2'),
-    loader: () => import('./Game/Index'),
+    loader: () => import('./Game/Index0'),
     loading: () => loading1,
 });
 export const My = Loadable({
