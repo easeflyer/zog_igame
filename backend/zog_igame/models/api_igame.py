@@ -35,6 +35,7 @@ class IntelligentGameApi(models.Model):
         dm = [('parent_id','=',None),('game_type','=','bridge'),
               ('match_type','=','team')  ] + domain
         gms = self.env['og.igame'].search(dm)
+
         return gms
 
     @api.model
@@ -46,26 +47,30 @@ class IntelligentGameApi(models.Model):
 
 
     @api.model
-    def search_user(self,user_id):
-        us = self.env['res.users'].search([('id','=',user_id)])
-        pa = self.env['res.partner'].search([('id','=',us.partner_id.id)])
+    def search_user(self):
+        self = self.sudo()
+        user = self.env.user.partner_id
+        # us = self.env['res.users'].search([('id','=',user_id)])
+        pa = self.env['res.partner'].search([('id','=',user.id)])
         team = self.env['og.igame.team'].search([('partner_id', '=', pa.parent_id.id)])
         games = self.env['og.igame'].search([('id', '=', team.igame_id.id)])
         return games
 
     @api.model
-    def search_user_match(self, user_id):
-        games = self.search_user(user_id)
+    def search_own_match(self):
+        games = self.search_user()
         return [{'name': game.name, 'id': game.id,'datetime':game.date_game,'type':game.match_type
                  ,'state':game.state,'referee':game.referee,'arbitrator':game.arbitrator,'host_unit':game.host_unit
                  ,'sponsor':game.sponsor}for game in games]
 
     @api.model
     # @api.returns('self')
-    def search_own_match(self,user_id):
-
-        us = self.env['res.users'].search([('id','=',user_id)])
-        pa = self.env['res.partner'].search([('id','=',us.partner_id.id)])
+    def search_user_match(self):
+        # dm = [] + domain
+        self = self.sudo()
+        user = self.env.user.partner_id
+        # us = self.env['res.users'].search([('id','=',user_id)])
+        pa = self.env['res.partner'].search([('id','=',user.id)])
         if pa.parent_id is not None:
             team = self.env['og.igame.team'].search([('partner_id', '=', pa.parent_id.id)])
             games = self.env['og.igame'].search([])
@@ -93,6 +98,24 @@ class IntelligentGameApi(models.Model):
                      ,'sponsor':g.sponsor,'tt':False}])
             return arr
 
+
+    @api.multi
+    def search_game_player(self):
+        self = self.sudo()
+        tms = self.env['og.igame.team'].search([('igame_id','=',self.id)])
+
+        ps = []
+
+        for t in tms:
+            pl=[]
+            team = self.env['res.partner'].search([('id', '=', t.partner_id.id)])
+            player = self.env['res.partner'].search([('parent_id','=',t.partner_id.id)])
+            for p in player:
+                if team.id == p.parent_id.id:
+                    pl.append(p.name)
+                    # ps.append({team.name:p.name})
+            ps.append({team.name:pl})
+        return ps
 
     @api.multi
     def search_rounds_details(self):
@@ -365,14 +388,14 @@ class IntelligentGameRound(models.Model):
 
         return tm
 
-    @api.multi
-    def create_table(self,table_id):
-        tt = self.search([('id','=',self.id)])
-        tb = self.env['og.table'].search([('id', '=', table_id)])
-        tt.table_ids = tb
+
+class IntelligentGameTeamPlayer(models.Model):
+    __inherit = "og.igame.team.player"
+
+    def choice_player(self,team_id):
+        pass
 
 
-        return tt
 
 # class IntelligentGameTeamLine(models.Model):
 #     _inherit = "og.igame.team.line"
