@@ -5,6 +5,10 @@ import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 
 
 export default class MatchList extends React.Component {    //已完成的比赛
+    toMatchDetails = (index)=>{
+        this.props.toMatchDetails();
+        this.props.setMatch(index);
+    }
     render() {
         let matchList = null;
         if (!this.props.matchList){
@@ -18,7 +22,7 @@ export default class MatchList extends React.Component {    //已完成的比赛
                         <List.Item key={index}    //?这里应该用id还是索引做key
                         extra={item.datetime}
                         arrow="horizontal" 
-                        onClick={() => this.props.toMatchDetails(index)}
+                        onClick={() => this.toMatchDetails(index)}
                         >{item.name}</List.Item>
                     );
                 })}

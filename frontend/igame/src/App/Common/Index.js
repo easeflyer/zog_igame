@@ -4,17 +4,39 @@ import { Icon } from 'antd';
 import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 import MatchList from './MatchList';
 import { Game } from '../Models/Models';
-import MatchDetails from './Match/Index';
+import MatchDetails from './MatchMessage/Index';
+import MatchResult from './MatchResult/Index';
 
 const Item = List.Item;
 
 
 export default class Match extends React.Component {
     state = {
-        open:0,             // 0：默认页，分类列表， 1：所选分类的比赛列表， 2：所选比赛的详细
+        open:0,             // 0：默认页，分类列表， 1：所选分类的比赛列表， 2：所选比赛的详细信息，    3：比赛结果，   4：比赛
         title:'',           //分类列表页的标题
         matchList:null,     //当前分类的比赛列表
         match:null,         //选中的单个比赛
+        course:null,        //轮次信息
+        initialPage:0,      //赛事详细信息默认展示的页面
+        courseId:null,      //轮次id
+    }
+    setCourseId = (index)=>{             //设置所选轮次id
+        this.setState({
+            courseId:index,
+        })
+    }
+    setInitialPage = (index)=>{     //设置赛事详细信息的显示页
+        this.setState({initialPage:index})
+    }
+    setCourse = (index)=>{          //设置轮次信息数据
+        this.setState({
+            course:index,
+        })
+    }
+    setMatch = (index)=>{           //设置当前选中的比赛数据
+        this.setState({
+            match:this.state.matchList[index],
+        })
     }
     setMatchList = (val)=>{        //设置所选分类的赛事数据
         this.setState({
@@ -27,19 +49,36 @@ export default class Match extends React.Component {
         })
     }
     toSortList = ()=>{             //返回我的比赛分类页
+        if (this.props.setHiddenState){
+            this.props.setHiddenState(false)
+        }
         this.setState({
             open:0,
         })
     }
     toMatchList = ()=>{            //进入比赛列表页
+        if (this.props.setHiddenState){
+            this.props.setHiddenState(true)
+        }
         this.setState({
             open:1,
         })
     }
-    toMatchDetails = (index)=>{     //进入比赛详情页
+    toMatchDetails = (index)=>{     //进入比赛详细信息页
+        if (this.props.setHiddenState){
+            this.props.setHiddenState(true)
+        }
         this.setState({
             open:2,
-            match:this.state.matchList[index],
+            // match:this.state.matchList[index],
+        })
+    }
+    toMatchResult = ()=>{           //进入比赛结果
+        if (this.props.setHiddenState){
+            this.props.setHiddenState(true)
+        }
+        this.setState({
+            open:3,
         })
     }
     
@@ -57,14 +96,27 @@ export default class Match extends React.Component {
             case 1:      //所选分类的比赛列表
                 page = <MatchList 
                     title={this.state.title} 
-                    toMatchDetails={this.toMatchDetails} 
+                    toMatchDetails={this.toMatchDetails}
+                    setMatch={this.setMatch} 
                     matchList={this.state.matchList} 
                     toSortList={this.toSortList} />;  
                 break;
             case 2:     //所选比赛的详细
-                page = <MatchDetails 
+                page = <MatchDetails
+                    setCourseId={this.setCourseId}
+                    setInitialPage={this.setInitialPage}
+                    setCourse={this.setCourse}
                     toMatchList={this.toMatchList} 
-                    match={this.state.match} />;   
+                    toMatchResult={this.toMatchResult}
+                    match={this.state.match}
+                    initialPage={this.state.initialPage}
+                    course={this.state.course} />;   
+                break;
+            case 3:     //所选比赛的详细
+                page = <MatchResult
+                match={this.state.match}
+                courseId={this.state.courseId}
+                toMatchDetails={this.toMatchDetails} />;
                 break;
             default:
                 // page = <Match toMine={this.props.toMine} />;
