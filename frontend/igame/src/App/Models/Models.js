@@ -112,8 +112,16 @@ class Game extends Models{
     register_game(...data){        //赛队报名
         this.exec('og.igame','register_game',{},...data);
     }
-    search2(){
+    search2(){      //查找所有比赛
         this.exec('og.igame','search2',{},[]);
+    }
+
+    //      这两个接口是查找比赛的接口，还需后端修改，目前还不能用
+    search_user_match(){
+        this.exec('og.igame','search_user_match',{},[]);
+    }
+    search_own_match(){
+        this.exec('og.igame','search_own_match',{},[]);
     }
 }
 
