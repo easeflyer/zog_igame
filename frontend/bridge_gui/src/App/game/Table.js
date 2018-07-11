@@ -3,12 +3,16 @@ import ReactDOM from 'react-dom';
 import settings from '../game/settings';
 import Card from './Card'
 import Models from '../models/model'
+import { StaggeredMotion, spring } from 'react-motion';
 
 /**
  * Game  是一局比赛，涉及到了比赛者，以及和比赛相关的其他信息。重点在于比赛。
  * Table 是一桌游戏的界面：重点在于 一桌
  */
 class Table extends Component {
+    state = {
+        cards: null
+    }
     constructor(props) {
         /**
          * 重构参考： 打牌的几个阶段，应该在规则里面，调入进来。
@@ -21,14 +25,69 @@ class Table extends Component {
 
         super(props);
         this.deals = 'XXXXXXXXXXXXX QJ98.A5.J853.QT4 XXXXXXXXXXXXX XXXXXXXXXXXXX'
-        this.cards = this.initDeals() // 把以上牌初始化放到桌子上(不发牌)
+        this.state.cards = this.initDeals() // 把以上牌初始化放到桌子上(不发牌)
         this.seat = 'S'               // 用户坐在 南
+        this.site = {
+            'east': { x: 0, y: 0 },  // site 用于记录坐标
+            'south': { x: 0, y: 0 },
+            'west': { x: 0, y: 0 },
+            'north': { x: 0, y: 0 }
+        }
+        this.ref = {};                     // ref 用来记录引用
+        for (let key in this.site) this.ref[key] = React.createRef()
         this.width = window.screen.width;
         this.height = window.screen.height;
         console.log('width:' + this.width)
         console.log('height:' + this.height)
         if (this.width < 400) settings.scale = 0.5;
     }
+    initDeals1() {
+        const suits = ['S', 'H', 'D', 'C'];
+        const site = ['east', 'south', 'west', 'north'];
+        const deals = this.deals.split(' ')
+        const cards = []
+        // 遍历4个方向的牌
+        let rotate = 0;
+        let x = 5, y = 5;
+        let index = 1;
+
+        deals.forEach((item, index1) => {
+            cards[index1] = []              // index1 四个方位
+            const suit = item.split('.')
+            // 遍历 每个花色
+            x = this.site[site[index1]].x
+            y = this.site[site[index1]].y
+
+            // 横向的牌 做一下调整位置。因为
+            if ('02'.indexOf(index1) != -1) {
+                x = x + 16;
+                y = y - 10;
+            } else {
+                x = x + 5;
+                y = y + 5;
+            }
+            rotate += 90;
+            suit.forEach((s, index2) => {      // index2 四个花色
+                cards[index1][index2] = [];
+                //console.log(s,index)
+                for (var i = 0; i < s.length; i++) {
+                    cards[index1][index2][i] = (
+                        <Card
+                            index={index++}
+                            size='80'
+                            card={s[i] + suits[index2]}
+                            rotate={rotate}
+                            position={{ x: x, y: y }}
+                        />
+                    )
+                    if ('02'.indexOf(index1) != -1) y = y + 10;
+                    else x = x + 20;
+                }
+            });
+        });
+        return cards;
+    }
+
     /**
      * 初始化扑克：把牌放到桌子上等待发牌。
      * TODO: 
@@ -39,7 +98,7 @@ class Table extends Component {
         const cards = []
         // 遍历4个方向的牌
         let rotate = 0;
-        let x = 0, y = 0;
+        let x = 180, y = 160;
 
         deals.forEach((item, index1) => {
             cards[index1] = []              // index1 四个方位
@@ -67,14 +126,20 @@ class Table extends Component {
      * deals 四个人的牌
      * cards 三维数组 1） 4个方位 2） 4个花色 3） 具体一张牌
      */
-    deal = (deals) => {
-        const cards = this.cards;
+    deal1 = (deals) => {
+        const cards = this.state.cards;
         const site = ['east', 'south', 'west', 'north']
         let rotate = 0;
         cards.forEach((e1, i1) => {    // 四个方向的牌
             rotate += 90;
             const mount = document.querySelector('#' + site[i1])
-            ReactDOM.render(this.cards[i1], mount);
+            ReactDOM.render(this.state.cards[i1], mount);
+        });
+    }
+    deal = () => {
+        const cards = this.initDeals1()
+        this.setState({
+            cards: cards
         });
     }
     testDeal = () => {
@@ -82,10 +147,24 @@ class Table extends Component {
     }
     /**
      * 把特定的牌挂载到特定的位置上。
+     * 1) 挂载完毕后，获得每个位置的坐标。
      */
     componentDidMount() {
-        const mountTest = document.querySelector('#test')
-        ReactDOM.render(this.cards, mountTest);
+        for (let key in this.site) {
+            this.site[key]['y'] = this.ref[key].current.offsetTop
+            this.site[key]['x'] = this.ref[key].current.offsetLeft
+        }
+        // console.log('this.ref')
+        // console.log(this.ref)
+        // console.log('this.site')
+        // console.log(this.site)
+        // const mount = document.querySelector('#board')
+        // ReactDOM.render(this.state.cards, mount);  // 先放到桌子上
+
+        // const mountTest = document.querySelector('#test')
+        // ReactDOM.render(this.cards, mountTest);
+        // 坐标已经完成，下面就是 重新渲染 setState
+
     }
     render() {
         const css = {
@@ -191,18 +270,20 @@ class Table extends Component {
                         <div style={css.re}>墩数</div>
                     </div>
                     <div id='body' style={css.body}>
-                        <div id='east' style={css.east}>east</div>
-                        <div id='west' style={css.west}>west</div>
-                        <div id='south' style={css.south}>south</div>
-                        <div id='north' style={css.north}>north</div>
-                        <div id='board' style={css.board}>
+                        <div id='east' style={css.east} ref={this.ref.east}>east</div>
+                        <div id='west' style={css.west} ref={this.ref.west}>west</div>
+                        <div id='south' style={css.south} ref={this.ref.south}>south</div>
+                        <div id='north' style={css.north} ref={this.ref.north}>north</div>
+                        <div id='board' style={css.board} ref={this.ref.board}>
                         </div>
+                        {this.state.cards}
+                        
                     </div>
                     <button onClick={this.deal}>发牌</button>
                     <div id='test' style={{ position: 'relative' }}>测试区域</div>
                     <div id='footer' style={css.footer}>footer</div>
                 </div>
-            </div>
+            </div >
         );
     }
 }

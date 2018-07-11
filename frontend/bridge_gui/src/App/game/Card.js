@@ -2,6 +2,8 @@ import React from 'react';
 import { Motion, spring } from "react-motion";
 
 /**
+ * react-motion 的参考看这里：https://npm.taobao.org/package/react-motion
+ * 
  * 注意 Cards 动画效果。
  * 
  * 在组件内调用 setState 修改 x,y 是标准的方法。
@@ -35,7 +37,7 @@ class Cards extends React.Component {
     }
     onclick = () => {
         this.setState({
-            x: 200, y: 250
+            x: 180, y: 160
         });
     }
     //componentWillUpdate
@@ -60,8 +62,8 @@ class Cards extends React.Component {
         // 设置 Motion 弹性 x,y 为目标坐标
         const getSprings = (x, y) => {
             const springConfig = {
-                stiffness: 2050,  // 硬度
-                damping: 68,     // 阻尼
+                stiffness: 250,  // 硬度
+                damping: 28,     // 阻尼 68
                 precision: 0.0001
             };
 
@@ -76,6 +78,8 @@ class Cards extends React.Component {
             position: "absolute",
             top: y,
             left: x,
+            //animation-delay:0.3s,  // 这里写延迟动画没有意义。因为动画不是 css 产生的。
+            //webkitAnimationDelay:`${this.props.index*0.8}s`, /* Safari 和 Chrome */
             width: `${width}px`,
             height: `${height}px`,
             zIndex: `${zIndex}`,
