@@ -39,11 +39,19 @@ class Table extends Component {
         const cards = []
         // 遍历4个方向的牌
         let rotate = 0;
-        let x = 0, y = 0;
+        let x = 5 , y = 5;
 
         deals.forEach((item, index1) => {
             cards[index1] = []              // index1 四个方位
             const suit = item.split('.')
+            // 遍历 每个花色
+            x = y = 5; // 初始化位置
+            // 横向的牌 做一下调整位置。因为
+            if ('02'.indexOf(index1) != -1) { 
+                x = 16;
+                y = -10;
+            }
+            rotate += 90;
             suit.forEach((s, index2) => {      // index2 四个花色
                 cards[index1][index2] = [];
                 //console.log(s,index)
@@ -65,27 +73,22 @@ class Table extends Component {
     /**
      * 发牌
      * deals 四个人的牌
-     * cards 三维数组 1） 4个方位 2） 4个花色 3） 具体一张牌
      */
-    deal = (deals) => {
-        const cards = this.cards;
-        const site = ['east', 'south', 'west', 'north']
-        let rotate = 0;
-        cards.forEach((e1, i1) => {    // 四个方向的牌
-            rotate += 90;
-            const mount = document.querySelector('#' + site[i1])
-            ReactDOM.render(this.cards[i1], mount);
-        });
-    }
-    testDeal = () => {
+    deal(deals) {
 
     }
     /**
      * 把特定的牌挂载到特定的位置上。
      */
     componentDidMount() {
-        const mountTest = document.querySelector('#test')
-        ReactDOM.render(this.cards, mountTest);
+        const mountEast = document.querySelector('#east')
+        const mountSouth = document.querySelector('#south')
+        const mountWest = document.querySelector('#west')
+        const mountNorth = document.querySelector('#north')
+        ReactDOM.render(this.cards[0], mountEast);
+        ReactDOM.render(this.cards[1], mountSouth);
+        ReactDOM.render(this.cards[2], mountWest);
+        ReactDOM.render(this.cards[3], mountNorth);
     }
     render() {
         const css = {
@@ -199,7 +202,6 @@ class Table extends Component {
                         </div>
                     </div>
                     <button onClick={this.deal}>发牌</button>
-                    <div id='test' style={{ position: 'relative' }}>测试区域</div>
                     <div id='footer' style={css.footer}>footer</div>
                 </div>
             </div>
