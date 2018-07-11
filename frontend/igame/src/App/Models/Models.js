@@ -80,7 +80,7 @@ class Models{       //用于被继承，来接受回调函数success，error
         return this.m.jsonrpc(url,data)
     }
 
-    // 建立连接
+    // 建立连接,收消息
     polling(last = null){
         const url = HOST + '/longpolling/poll';
         last = window.last + 1;
