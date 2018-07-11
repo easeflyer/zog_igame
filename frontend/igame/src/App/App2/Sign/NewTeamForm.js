@@ -3,7 +3,9 @@ import { Form, Input, Select, Button} from 'antd';
 import {Toast} from 'antd-mobile'  
 
 import session from '../../User/session'
-import  { GameTeam, Game }  from '../../Models/Models'
+// import  { GameTeam, Game }  from '../../Models/Models'
+import Game from '../../OdooRpc/Game';
+import GameTeam from '../../OdooRpc/GameTeam';
 // import  Models  from '../../Models/Models'
 
 const FormItem = Form.Item;

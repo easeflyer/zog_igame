@@ -3,7 +3,8 @@ import { NavBar, List, WhiteSpace } from 'antd-mobile';
 import { Icon } from 'antd';
 import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 import MatchList from './MatchList';
-import { Game } from '../Models/Models';
+// import { Game } from '../Models/Models';
+import Game from '../OdooRpc/Game';
 import MatchDetails from './MatchMessage/Index';
 import MatchResult from './MatchResult/Index';
 
@@ -91,15 +92,16 @@ export default class Match extends React.Component {
                     toMine={this.props.toMine}                  //返回个人中心
                     setTitle={this.setTitle}                    //设置导航标题
                     setMatchList={this.setMatchList}            //设置比赛列表数据
-                    toMatchList={this.toMatchList} />;          //进入比赛列表页
+                    toMatchList={this.toMatchList} />          //进入比赛列表页
                 break;
             case 1:      //所选分类的比赛列表
                 page = <MatchList 
+                    name = {this.props.name}
                     title={this.state.title} 
                     toMatchDetails={this.toMatchDetails}
                     setMatch={this.setMatch} 
                     matchList={this.state.matchList} 
-                    toSortList={this.toSortList} />;  
+                    toSortList={this.toSortList} />  
                 break;
             case 2:     //所选比赛的详细
                 page = <MatchDetails
@@ -110,13 +112,13 @@ export default class Match extends React.Component {
                     toMatchResult={this.toMatchResult}
                     match={this.state.match}
                     initialPage={this.state.initialPage}
-                    course={this.state.course} />;   
+                    course={this.state.course} />   
                 break;
             case 3:     //所选比赛的详细
                 page = <MatchResult
                 match={this.state.match}
                 courseId={this.state.courseId}
-                toMatchDetails={this.toMatchDetails} />;
+                toMatchDetails={this.toMatchDetails} />
                 break;
             default:
                 // page = <Match toMine={this.props.toMine} />;
@@ -136,16 +138,17 @@ class SortList extends React.Component {       //我的比赛分类列表页组�
         matchList1:null,             //即将开始的比赛列表
         matchList2:null,             //正在进行的比赛列表
         matchList3:null,             //已经完成的比赛列表
+        title:'',
     }
     
     componentWillMount(){
         //获取所有比赛列表
         const m = new Game(this.stateList,this.callFail);
         //如果不是从《我》入口进来，调用后面的查询函数
-        this.props.name ? m.search2() : m.search2();
+        // this.props.name ? m.search2() : m.search2();
 
         //      这里是正确的调用接口
-        // this.props.name ? m.search_user_match() : m.search_user_match();
+        this.props.name ? m.search_own_match() : m.search_user_match();
 
         // this.props.name ? m.search_own_match() : m.search_own_match();
         
@@ -187,11 +190,12 @@ class SortList extends React.Component {       //我的比赛分类列表页组�
             }
         });
         this.setState({
-            data:data,
+            data:list,
             matchList1:list1,
             matchList2:list2,
             matchList3:list3,
         })
+        !this.props.name?this.toMatchList('比赛列表',this.state.data):this.setState({title:'我的比赛'})
     }
     callFail = ()=>{
         console.log('没有比赛信息......')
@@ -202,14 +206,14 @@ class SortList extends React.Component {       //我的比赛分类列表页组�
         this.props.setMatchList(data);
     }
     render() {
-        const name = this.props.name;
+        // const name = this.props.name;
         return(
             <div>
                 <NavBar
                 mode="light"
-                icon={name ? <Icon type="left" /> : '' }
-                onLeftClick={name ? ()=>this.props.toMine() : ()=>{} }      //如果有name，认为是从《我》这个入口进来，从而加载不同的数据，设置不同的title
-                >{name ? '我的比赛' : '比赛列表'}
+                icon={ <Icon type="left" /> }
+                onLeftClick={()=>this.props.toMine() }      //如果有name，认为是从《我》这个入口进来，从而加载不同的数据，设置不同的title
+                >{this.state.title}
                 </NavBar>
                 <WhiteSpace size='xl' />
                 <Item extra="" arrow="horizontal" onClick={() => {this.toMatchList('即将开始的比赛',this.state.matchList1)} }>即将开始的比赛</Item>

@@ -32,8 +32,8 @@ export default class MatchList extends React.Component {    //已完成的比赛
             <div>
                 <NavBar
                 mode="light"
-                icon={<Icon type="left" />}
-                onLeftClick={this.props.toSortList}    //返回我的比赛分类页
+                icon={ this.props.name ? <Icon type="left" /> : '' }
+                onLeftClick={ this.props.name ? this.props.toSortList : ()=>{} }    //返回我的比赛分类页
                 >{this.props.title}
                 </NavBar>
                 <WhiteSpace size='xl' />
