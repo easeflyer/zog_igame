@@ -19,7 +19,8 @@ class LoginTest extends React.Component{
         e.target.value==='202'? myDirect='E':null;
         e.target.value==='203'? myDirect='S':null;
         e.target.value==='204'? myDirect='W':null;
-        $.post('http://192.168.0.20:8989/login', 
+        $.post('http://124.42.117.43:8989/login', 
+        // $.post('http://192.168.0.20:8989/login', 
                { 'user': e.target.value} ,
                (data)=>{
                    localStorage.session = data;
