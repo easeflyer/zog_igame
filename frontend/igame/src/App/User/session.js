@@ -33,6 +33,7 @@ const session = {
     },
     destroy: function(){
         if (localStorage && localStorage.sid) localStorage.removeItem('sid');
+        if (localStorage && localStorage.phone) localStorage.removeItem('phone');
     }
 };
 

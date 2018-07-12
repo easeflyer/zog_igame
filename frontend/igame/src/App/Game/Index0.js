@@ -32,18 +32,16 @@ class LoginTest extends React.Component{
     }
 
     render(){
-        // const {getFieldProps, getFieldDecorator} = this.props.form;
         return(
             <WingBlank>
                 <WhiteSpace/>
                 {this.state.login? <Index />:
-                    <div><span>login: </span><Input placeholder='请输入用户名'   onPressEnter={this.onClick}/></div>
+                    <div><p>请登录: </p><Input placeholder='请输入用户名'   onPressEnter={this.onClick}/></div>
                  } 
             </WingBlank>
         )
     }
 }
 
-// const LoginForm = Form.create()(LoginTest);
 
 export default LoginTest;

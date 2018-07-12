@@ -50,9 +50,9 @@ export default class TT extends React.Component{
     }
     // listen polling interface for live chat
     polling=(last = null)=> {
-        const uri = host + '/longpolling/poll'
+        const uri = host + '/longpolling/igame'
         last = window.last + 1;
-        const data = { "channels": [], "last": last, "options": {} }
+        const data = { "channels": [], "last": last}
         const headers = null
         this.jsonrpc(uri,data,headers,this.cb1)
     }
