@@ -62,8 +62,42 @@ class Models{       //用于被继承，来接受回调函数success，error
         }
         return this.m.jsonrpc(url,data)
     }
-}
 
+    // 打牌，发送消息
+    match (args,body){
+        const url = HOST + '/web/dataset/call_kw/mail.channel/message_post';
+        const data = {
+            "model": "mail.channel",
+            "method": "message_post",
+            "args": args,
+            "kwargs": {
+                "body": body,
+                "message_type": "comment",
+                "subtype": "mail.mt_comment",
+                "subject": "1222",
+            }
+        }
+        return this.m.jsonrpc(url,data)
+    }
+
+    // 建立连接,收消息
+    polling(last = null){
+        const url = HOST + '/longpolling/poll';
+        last = window.last + 1;
+        const data={
+             "channels": [], "last": last, "options": {} 
+        }
+        return this.m.jsonrpc(url,data);
+    }
+}
+class Match extends Models {
+    longPolling(){
+        this.polling()
+    }
+    play_cards(args,body){
+        this.match(args,body);
+    }
+}
 class User extends Models {
     login(login,password){
         const url = HOST+'/json/user/login';
@@ -125,4 +159,10 @@ class Game extends Models{
     }
 }
 
-export { User, GameTeam, Game };
+// class Match extends Models{
+//     play_cards(msg,...args){
+//         this.match(msg,args);
+//     }
+// }
+
+export { User, GameTeam, Game, Match };
