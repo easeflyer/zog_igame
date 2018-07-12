@@ -2,7 +2,8 @@ import React from 'react';
 import {List, SearchBar, WingBlank,Toast} from 'antd-mobile'
 
 import EventNavBar from './Common/EventNavBar'
-import  { Game } from './../Models/Models'
+// import  { Game } from './../Models/Models'
+import Game from '../OdooRpc/Game';
 
 export default class Event extends React.Component{ 
     state={

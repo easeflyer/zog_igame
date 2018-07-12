@@ -149,11 +149,36 @@ export default class PokerTable extends React.Component{
                         guardCardsNum:this_.arrange_my_cards(data[1]),
                     })
                 }
+                if(e.data.split(' ')[0]===this_.state.currentDirect){
+                    this_.state.currentDirect===this_.state.topDirect?this_.setState({currentCardT:null}):null;
+                    this_.state.currentDirect===this_.state.myDirect?this_.setState({currentCardB:null}):null;
+                    this_.state.currentDirect===this_.state.leftDirect?this_.setState({currentCardL:null}):null;
+                    this_.state.currentDirect===this_.state.rightDirect?this_.setState({currentCardR:null}):null;
+                    let is = null;
+                    this_.state.currentPiers.map((item,index)=>{
+                        item.dir===this_.state.currentDirect?is = index:null;
+                        return is;
+                    })
+                    this_.state.currentPiers = this_.state.currentPiers.splice(is,1);
+                }
                 if(e.data.split(' ')[0]===this_.state.myDirect){this_.setState({myCardsNum:this_.arrange_my_cards(e.data.split(' ')[2])})}
                 if(e.data.split(' ')[0]===this_.state.guard){this_.setState({guardCardsNum:this_.arrange_my_cards(e.data.split(' ')[2])})}
                 this_.setState({
                     currentDirect:e.data.split(' ')[0],
                 })
+                if(this_.state.currentPiers.length===4){
+                    setTimeout(()=>{
+                        this_.setState({
+                            currentCardB:null,
+                            currentCardT:null,
+                            currentCardL:null,
+                            currentCardR:null,
+                            currentPiers:[]
+                        })
+                    },1000)
+                    console.log(this_.state.currentPiers)
+                    console.log(this_.state.currentPiers.length)
+                }
             }
             if(!this_.state.call && e.data.split(' ').length===3 && e.data.split(' ')[1].slice(3,4)===':' && e.data.split(' ')[2].slice(0,4)!=='claim'){  //接收到打牌消息   [10:19:04] 202: c5
                 let play_direct = direct[user.indexOf(e.data.split(' ')[1].slice(0,3))];  //方位
@@ -194,19 +219,7 @@ export default class PokerTable extends React.Component{
                         }
                     })
                 }
-                if(this_.state.currentPiers.length===4){
-                    setTimeout(()=>{
-                        this_.setState({
-                            currentCardB:null,
-                            currentCardT:null,
-                            currentCardL:null,
-                            currentCardR:null,
-                            currentPiers:[]
-                        })
-                    },1000)
-                    console.log(this_.state.currentPiers)
-                    console.log(this_.state.currentPiers.length)
-                }
+                
             }
             // if(!this_.state.call && e.data.split(' ').length===3 && e.data.split(' ')[1].slice(3,4)===':' && e.data.split(' ')[2].slice(0,4)=='claim')  //[15:12:00] 201: claim5
             //这里没有屏蔽 跨站脚本攻击，可以输入脚本。造成 安全隐患！
