@@ -3,7 +3,8 @@ import { Flex, WhiteSpace, InputItem, Toast, Button, NavBar, Icon } from 'antd-m
 import './Login.css'
 import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 import { createForm } from 'rc-form';
-import { User } from '../Models/Models';
+// import { User } from '../Models/Models';
+import User from '../OdooRpc/User';
 import session from './session';
 
 export default class LoginPage extends React.Component{

@@ -4,7 +4,9 @@ import { Form, Select, Button } from 'antd';
 import {Toast} from 'antd-mobile'  
 
 import session from '../../User/session'
-import  { Game, GameTeam } from '../../Models/Models'
+// import  { Game, GameTeam } from '../../Models/Models'
+import Game from '../../OdooRpc/Game';
+import GameTeam from '../../OdooRpc/GameTeam';
 
 const FormItem = Form.Item;
 const Option = Select.Option;

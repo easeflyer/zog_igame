@@ -3,7 +3,8 @@ import { Flex, WhiteSpace, InputItem, Toast, Button, NavBar, Icon, WingBlank  } 
 import './Login.css'
 import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 import { createForm } from 'rc-form';
-import { User } from '../Models/Models';
+// import { User } from '../Models/Models';
+import User from '../OdooRpc/User';
 
 class RsgisterForm extends React.Component{
     onSubmit = () => {   //表单提交方法

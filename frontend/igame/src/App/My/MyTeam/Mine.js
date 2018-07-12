@@ -2,7 +2,8 @@ import React from 'react';
 import { NavBar, List, WhiteSpace } from 'antd-mobile';
 import { Icon } from 'antd';
 import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
-import { GameTeam } from '../../Models/Models';
+// import { GameTeam } from '../../Models/Models';
+import GameTeam from '../../OdooRpc/GameTeam';
 
 export default class TeamMine extends React.Component {       //我的赛队列表页
     state = {
@@ -12,6 +13,7 @@ export default class TeamMine extends React.Component {       //我的赛队列�
     componentDidMount(){
         const m = new GameTeam((data)=>{this.setState({teamList:data})}, ()=>{});
         m.get_teams();
+
     }
     render() {
         let datalist;
