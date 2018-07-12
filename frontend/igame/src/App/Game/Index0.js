@@ -6,17 +6,21 @@ import Index from './Index'
 
 class LoginTest extends React.Component{
     state={
-        login:localStorage && localStorage.session,
+        login:false,
+        value:''
     }
 
-    onClick=()=>{
+    onClick=(e)=>{
+        this.setState({
+            value:e.target.value
+        })
         let myDirect = null;
-        this.props.form.getFieldValue('user')==='201'? myDirect='N':null;
-        this.props.form.getFieldValue('user')==='202'? myDirect='E':null;
-        this.props.form.getFieldValue('user')==='203'? myDirect='S':null;
-        this.props.form.getFieldValue('user')==='204'? myDirect='W':null;
+        e.target.value==='201'? myDirect='N':null;
+        e.target.value==='202'? myDirect='E':null;
+        e.target.value==='203'? myDirect='S':null;
+        e.target.value==='204'? myDirect='W':null;
         $.post('http://192.168.0.20:8989/login', 
-               { 'user': this.props.form.getFieldValue('user') } ,
+               { 'user': e.target.value} ,
                (data)=>{
                    localStorage.session = data;
                    localStorage.user = myDirect;
@@ -28,21 +32,16 @@ class LoginTest extends React.Component{
     }
 
     render(){
-        const {getFieldProps, getFieldDecorator} = this.props.form;
         return(
             <WingBlank>
                 <WhiteSpace/>
                 {this.state.login? <Index />:
-                    <Form onSubmit={this.onClick}>
-                        <Input placeholder='输入用户名' {...getFieldProps('user')}></Input>
-                        <Button  type="primary" style={{paddingLeft:10, paddingRight:10, marginRight:10}} htmlType="submit">提交</Button>
-                    </Form>
-                }
+                    <div><p>请登录: </p><Input placeholder='请输入用户名'   onPressEnter={this.onClick}/></div>
+                 } 
             </WingBlank>
         )
     }
 }
 
-const LoginForm = Form.create()(LoginTest);
 
-export default LoginForm;
+export default LoginTest;
