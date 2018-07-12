@@ -49,9 +49,10 @@ class Table extends Component {
         // 遍历4个方向的牌
         let rotate = 0;
         let x = 5, y = 5;
-        let index = 1;
+        let index = 1;  // 当前利用 index 来处理发牌缓动 delay
 
         deals.forEach((item, index1) => {
+            let index = 1;
             cards[index1] = []              // index1 四个方位
             const suit = item.split('.')
             // 遍历 每个花色
@@ -146,8 +147,8 @@ class Table extends Component {
 
     }
     /**
-     * 把特定的牌挂载到特定的位置上。
-     * 1) 挂载完毕后，获得每个位置的坐标。
+     * 需要把特定的牌发到特定的位置上。
+     * 1) 因此界面挂载完毕后，获得每个位置的坐标。
      */
     componentDidMount() {
         for (let key in this.site) {
@@ -277,7 +278,6 @@ class Table extends Component {
                         <div id='board' style={css.board} ref={this.ref.board}>
                         </div>
                         {this.state.cards}
-                        
                     </div>
                     <button onClick={this.deal}>发牌</button>
                     <div id='test' style={{ position: 'relative' }}>测试区域</div>

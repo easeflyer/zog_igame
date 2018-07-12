@@ -1,6 +1,9 @@
+/**
+ * Card.1.js 用 react-motion 实现的动画。后期改用了 ant-motion
+ */
+
 import React from 'react';
 import { Motion, spring } from "react-motion"; // 用 ant-motion 替代
-import TweenOne from 'rc-tween-one';
 
 /**
  * react-motion 的参考看这里：https://npm.taobao.org/package/react-motion
@@ -49,8 +52,8 @@ class Cards extends React.Component {
      * 这里使用生命周期函数的原因是 render 里面没有直接使用 props 而是用的 state
      * 
      */
-    componentWillReceiveProps(nextProps) {
-        this.state.x = nextProps.position.x;
+    componentWillReceiveProps(nextProps){
+        this.state.x = nextProps.position.x; 
         this.state.y = nextProps.position.y;
         // this.setState({
         //     x:nextProps.position.x,
@@ -88,7 +91,7 @@ class Cards extends React.Component {
         });
         let { index, card, size } = this.props;
         //if("SHDC".indexOf(this.suit) == -1) card = 'back';
-        if (this.pip == 'X') card = 'back';
+        if(this.pip == 'X') card = 'back';
         console.log('xy......................')
         console.log(this.state.x)
         console.log(this.state.y)
@@ -99,35 +102,22 @@ class Cards extends React.Component {
              * {回调函数{x,y}} 从当前坐标，逐渐移动到目标坐标。每次变化把数值发送给回调
              * 回调函数负责调整 <div> 的位置。
              */
-            <TweenOne
-                animation={{
-                    x: this.state.x,
-                    y: this.state.y,
-                    //scale: 0.8,
-                    delay:this.props.index*200,
-                    rotate: this.props.rotate,  // 牌旋转到位。
-                    duration: 300
+            <Motion style={getSprings(this.state.x, this.state.y)}>
+                {({ x, y }) => {
+                    return (
+                        <div
+                            onClick={this.onclick}
+                            id="card"
+                            style={getStyle(x, y, size * 0.7, size, 1)}
+                        >
+                            <img
+                                src={`cards/${card}.svg`}
+                                style={{ width: "100%", height: "100%" }}
+                            />
+                        </div>
+                    );
                 }}
-                //paused={props.paused}
-                style={{
-                    position:'absolute',
-                    height: size*1,
-                    width: size * 0.7+1,
-                    //transform: `rotate(${this.props.rotate}deg)` 牌不旋转到位。
-                }}
-            //className="code-box-shape"
-            >
-                <div
-                    onClick={this.onclick}
-                    id="card"
-                    style={{ width: size * 0.7, height: size*1, position: 'absolute' }}
-                >
-                    <img
-                        src={`cards/${card}.svg`}
-                        style={{ width: "100%", height: "100%" }}
-                    />
-                </div>
-            </TweenOne >
+            </Motion>
         )
     }
 }
