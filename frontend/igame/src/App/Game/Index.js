@@ -106,7 +106,8 @@ export default class PokerTable extends React.Component{
     sse=()=> {
         let i=0;
         const this_=this;
-        var source = new EventSource('http://192.168.0.20:8989/stream');  // 监听这个网址的消息。事件。
+        var source = new EventSource('http://124.42.117.43:8989/stream');  // 监听这个网址的消息。事件。
+        // var source = new EventSource('http://192.168.0.20:8989/stream');  // 监听这个网址的消息。事件。
         source.onmessage = function (e) {
             console.log(e.data)
             console.log()
@@ -229,7 +230,8 @@ export default class PokerTable extends React.Component{
         }
     }
     postMsg=(val)=>{
-        $.post('http://192.168.0.20:8989/post?session_id='+this.get_session(), { 'message': val } );
+        $.post('http://124.42.117.43:8989/post?session_id='+this.get_session(), { 'message': val } );
+        // $.post('http://192.168.0.20:8989/post?session_id='+this.get_session(), { 'message': val } );
     }
     arrange_my_cards=(cards)=>{   //整理牌的格式
         let  cardMy=[];
