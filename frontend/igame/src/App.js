@@ -8,7 +8,6 @@ import { Site,App2,My } from './App/Loadable';
 import { Icon } from 'antd'
 import session from './App/User/session';
 import User from './App/User/Index';
-// import Match from './App/Common/Index';
 /**
  * 本页面是将来程序的入口，功能包括：
  * １）加载　loadable.js 也就是需要动态载入的所有　子程序。
@@ -24,18 +23,13 @@ class TabBarExample extends React.Component {
       selectedTab: 'blueTab',
       hidden: false,
       fullScreen: true,  // 是否全屏显示
-      haslogin:false
+      haslogin:true
     };
     if (session.get_sid()){
       this.state.haslogin = true
     }
   }
 
-  setHiddenState = (index)=>{
-    this.setState({
-      hidden:index,
-    })
-  }
   goHome=()=>{
     this.setState({
       selectedTab: 'blueTab',
@@ -106,11 +100,6 @@ class TabBarExample extends React.Component {
             data-seed="logId1"
           >
             {/*动态加载 应该考虑 在这里执行。*/}
-            {/* {this.state.selectedTab==='redTab' ? 
-              this.renderContent(this.state.haslogin ? 
-                this.renderContent(<Match setHiddenState={this.setHiddenState} />)
-                : <User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />)
-              : null} */}
             {this.state.selectedTab==='redTab'? this.renderContent(this.state.haslogin? this.renderContent(<App2 />):<User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />):null}
           </TabBar.Item>
           <TabBar.Item
@@ -148,7 +137,7 @@ class TabBarExample extends React.Component {
             }}
           >
               {this.state.selectedTab==='yellowTab'?
-                this.renderContent(this.state.haslogin?<My loginOut={this.loginOut} setHiddenState={this.setHiddenState} />:
+                this.renderContent(this.state.haslogin?<My loginOut={this.loginOut} />:
                 <User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />)
               :null}
              {/* {this.state.selectedTab=='yellowTab'?this.renderContent(this.state.haslogin?<My />:<FlexExample toggleLogin={this.toggleLogin} />):null} */}
