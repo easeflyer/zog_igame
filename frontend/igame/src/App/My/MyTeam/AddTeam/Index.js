@@ -2,7 +2,9 @@ import React from 'react';
 import { Form, Input, Select,  Button} from 'antd';
 import { WingBlank, WhiteSpace, Toast, NavBar, Icon } from 'antd-mobile';
 import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
-import { Game, GameTeam } from '../../../Models/Models';
+// import { Game, GameTeam } from '../../../Models/Models';
+import Game from '../../../OdooRpc/Game';
+import GameTeam from '../../../OdooRpc/GameTeam';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
