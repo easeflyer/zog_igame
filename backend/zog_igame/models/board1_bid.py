@@ -29,6 +29,7 @@ class Board(models.Model):
         self.call_ids.create(vals)
         return 0
 
+
     def _check_call(self, pos, call):
         if self.contract:
             return (-1,'Bid End')
