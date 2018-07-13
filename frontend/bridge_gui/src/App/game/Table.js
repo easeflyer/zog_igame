@@ -10,7 +10,7 @@ import Models from '../models/model'
  */
 class Table extends Component {
     state = {
-        cards: null
+        cards: null // 考虑这里不用 cards 只用必要的数字
     }
     constructor(props) {
         /**
@@ -24,6 +24,7 @@ class Table extends Component {
          */
 
         super(props);
+        this.zindex = 10;
         this.width = window.screen.width;
         this.height = window.screen.height;
         this._csize = null; // 牌的大小
@@ -43,7 +44,7 @@ class Table extends Component {
 
     }
     get csize() {
-        // 短路语法
+        // 短路语法 牌的大小 可以计算在下面的函数内。
         return this._csize || (() => {
             return 80;
         })()
@@ -154,7 +155,8 @@ class Table extends Component {
         const cards = []
         // 遍历4个方向的牌
         let rotate = 0;
-        let x = 180, y = 160;   // 默认放在 牌桌中间。
+        //let x = 180, y = 160;   // 默认放在 牌桌中间。
+        let x = 180, y = 460;   // 默认放在 牌桌中间。
 
         deals.forEach((item, index1) => {
             cards[index1] = []              // index1 四个方位
@@ -165,6 +167,7 @@ class Table extends Component {
                 for (var i = 0; i < s.length; i++) {
                     cards[index1][index2][i] = (
                         <Card
+                            table={this}
                             size='80'
                             card={s[i] + suits[index2]}
                             rotate={rotate}
@@ -184,7 +187,7 @@ class Table extends Component {
      */
     deal1 = (deals) => {
         const cards = this.state.cards;
-        const seat = ['east', 'south', 'west', 'north']
+        const seat = Table.seats;
         let rotate = 0;
         cards.forEach((e1, i1) => {    // 四个方向的牌
             rotate += 90;

@@ -17,7 +17,7 @@ import TweenOne from 'rc-tween-one';
 class Cards extends React.Component {
     state = {
         x: 0,
-        y: 590, // 默认位置放在屏幕外边。
+        y: 590, // 默认位置放在屏幕外边。 没有起作用。
         width: 80 * 0.7,
         height: 80,
         zIndex: 0
@@ -30,7 +30,7 @@ class Cards extends React.Component {
     constructor(props) {
         super(props);
         this.animation = {
-            delay:0,
+            delay: 0,
         }
 
         this.suit = props.card.slice(1);
@@ -48,7 +48,7 @@ class Cards extends React.Component {
     onclick = () => {
         console.log('thi.................')
         console.log(this);
-        let x1=0,y1=0;
+        let x1 = 0, y1 = 0;
         const table = this.props.table;
         const key = this.props.seat; // 
         x1 = table.seat[key][1].x
@@ -70,7 +70,7 @@ class Cards extends React.Component {
     componentWillReceiveProps(nextProps) {
         this.state.x = nextProps.position.x;
         this.state.y = nextProps.position.y;
-        this.animation.delay = nextProps.index*80
+        this.animation.delay = nextProps.index * 80
         // this.setState({
         //     x:nextProps.position.x,
         //     y:nextProps.position.y
@@ -78,7 +78,7 @@ class Cards extends React.Component {
         //console.log('aaaaaaaaa.log')
     }
     toc = (e) => {
-        this.animation.delay=0;
+        this.animation.delay = 0;
     }
     render() {
         //console.log('render...............')
@@ -111,49 +111,54 @@ class Cards extends React.Component {
         let { index, card, size } = this.props;
         //if("SHDC".indexOf(this.suit) == -1) card = 'back';
         if (this.pip == 'X') card = 'back';
-        // console.log('xy......................')
-        // console.log(this.state.x)
-        // console.log(this.state.y)
         return (
             /**
              * 解读
              * <Motion   style 负责目标坐标>
              * {回调函数{x,y}} 从当前坐标，逐渐移动到目标坐标。每次变化把数值发送给回调
              * 回调函数负责调整 <div> 的位置。
+             * 
+             * 最外层的 div 主要目的就是设置 zIndex 使得最后一张牌在最上面。
              */
-            <TweenOne
-                animation={{
-                    x: this.state.x,
-                    y: this.state.y,
-                    //scale: 0.8,
-                    delay:this.animation.delay,
-                    rotate: this.props.rotate,  // 牌旋转到位。
-                    duration: 300,
-                    ease:'easeOutQuint',        // 缓动参数 参考蚂蚁手册
-                    onComplete:this.toc
-                }}
-                //paused={props.paused}
-                style={{
-                    position:'absolute',
-                    height: size*1,
-                    width: size * 0.7,
-                    //transform: `rotate(${this.props.rotate}deg)` 牌不旋转到位。
-                }}
-            //className="code-box-shape"
-            >
-                <div
-                    onClick={this.onclick}
-                    id="card"
-                    style={{ width: size * 0.7, height: size*1, position: 'absolute' }}
+            <div style={{ position: 'absolute', zIndex: this.props.table.zindex++ }}>
+                <TweenOne
+                    animation={{
+                        x: this.state.x,
+                        y: this.state.y,
+                        //scale: 0.8,
+                        delay: this.animation.delay,
+                        rotate: this.props.rotate,  // 牌旋转到位。
+                        duration: 300,
+                        ease: 'easeOutQuint',        // 缓动参数 参考蚂蚁手册 easeOutExpo
+                        onComplete: this.toc         // 恢复 delay 为立即相应
+                    }}
+                    //paused={props.paused}
+                    style={{
+                        position: 'absolute',
+                        height: size * 1,
+                        width: size * 0.7,
+                        //transform: `rotate(${this.props.rotate}deg)` 牌不旋转到位。
+                    }}
+                //className="code-box-shape"
                 >
-                    <img
-                        src={`/cards/${card}.svg`}
-                        style={{ width: "100%", height: "100%" }}
-                    />
-                </div>
-            </TweenOne >
+                    <div
+                        onClick={this.onclick}
+                        id="card"
+                        style={{
+                            width: size * 0.7,
+                            height: size * 1,
+                            position: 'absolute',
+                        }}
+                    >
+                        <img
+                            src={`/cards/${card}.svg`}
+                            style={{ width: "100%", height: "100%", zIndex: this.props.table.zindex++ }}
+                        />
+                    </div>
+                </TweenOne>
+            </div>
         )
     }
 }
-Cards.suits =  ['S', 'H', 'D', 'C'];
+Cards.suits = ['S', 'H', 'D', 'C'];
 export default Cards
