@@ -22,8 +22,17 @@ class Cards extends React.Component {
         height: 80,
         zIndex: 0
     }
+    /**
+     * @param {*} props 
+     * 写清楚props  都有那些属性。
+     * seat 这张牌是 那个方位的
+     */
     constructor(props) {
         super(props);
+        this.animation = {
+            delay:0,
+        }
+
         this.suit = props.card.slice(1);
         this.pip = props.card.slice(0, 1);
         // props.size  80
@@ -37,8 +46,16 @@ class Cards extends React.Component {
         // console.log(props.position.x);
     }
     onclick = () => {
+        console.log('thi.................')
+        console.log(this);
+        let x1=0,y1=0;
+        const table = this.props.table;
+        const key = this.props.seat; // 
+        x1 = table.seat[key][1].x
+        y1 = table.seat[key][1].y
         this.setState({
-            x: 180, y: 160
+            x: x1, y: y1
+            //x:this.props.table.
         });
     }
     //componentWillUpdate
@@ -48,24 +65,29 @@ class Cards extends React.Component {
      * 下面 setState 的方式也是可行的。
      * 这里使用生命周期函数的原因是 render 里面没有直接使用 props 而是用的 state
      * 
+     * TODO:此函数好像已经不建议了。应该更换。
      */
     componentWillReceiveProps(nextProps) {
         this.state.x = nextProps.position.x;
         this.state.y = nextProps.position.y;
+        this.animation.delay = nextProps.index*80
         // this.setState({
         //     x:nextProps.position.x,
         //     y:nextProps.position.y
         // });
-        console.log('aaaaaaaaa.log')
+        //console.log('aaaaaaaaa.log')
+    }
+    toc = (e) => {
+        this.animation.delay=0;
     }
     render() {
-        console.log('render...............')
-        // 设置 Motion 弹性 x,y 为目标坐标
+        //console.log('render...............')
+        // 设置 Motion 弹性 x,y 为目标坐标 考虑修改成 ant-motion 对应的
         const getSprings = (x, y) => {
             const springConfig = {
                 stiffness: 250,  // 硬度
                 damping: 28,     // 阻尼 68
-                precision: 0.0001
+                precision: 0.01
             };
 
             return {
@@ -89,9 +111,9 @@ class Cards extends React.Component {
         let { index, card, size } = this.props;
         //if("SHDC".indexOf(this.suit) == -1) card = 'back';
         if (this.pip == 'X') card = 'back';
-        console.log('xy......................')
-        console.log(this.state.x)
-        console.log(this.state.y)
+        // console.log('xy......................')
+        // console.log(this.state.x)
+        // console.log(this.state.y)
         return (
             /**
              * 解读
@@ -104,15 +126,17 @@ class Cards extends React.Component {
                     x: this.state.x,
                     y: this.state.y,
                     //scale: 0.8,
-                    delay:this.props.index*200,
+                    delay:this.animation.delay,
                     rotate: this.props.rotate,  // 牌旋转到位。
-                    duration: 300
+                    duration: 300,
+                    ease:'easeOutQuint',        // 缓动参数 参考蚂蚁手册
+                    onComplete:this.toc
                 }}
                 //paused={props.paused}
                 style={{
                     position:'absolute',
                     height: size*1,
-                    width: size * 0.7+1,
+                    width: size * 0.7,
                     //transform: `rotate(${this.props.rotate}deg)` 牌不旋转到位。
                 }}
             //className="code-box-shape"
@@ -123,7 +147,7 @@ class Cards extends React.Component {
                     style={{ width: size * 0.7, height: size*1, position: 'absolute' }}
                 >
                     <img
-                        src={`cards/${card}.svg`}
+                        src={`/cards/${card}.svg`}
                         style={{ width: "100%", height: "100%" }}
                     />
                 </div>
@@ -131,4 +155,5 @@ class Cards extends React.Component {
         )
     }
 }
+Cards.suits =  ['S', 'H', 'D', 'C'];
 export default Cards
