@@ -12,21 +12,22 @@ class Table extends Component {
     state = {
         cards: null // 考虑这里不用 cards 只用必要的数字
     }
+    /**
+     * 重构参考： 打牌的几个阶段，应该在规则里面，调入进来。
+     * 属性列表：
+     *  scene: 1 叫牌，2 打牌 3 claim 4 展示比分
+     *         1 
+     *  deals: 牌，除了自己的牌，其他人的牌应该不显示
+     *  seat：ESWN 自己做在那个方位。
+     *  csize: 牌的大小 手机 80像素比较合适。
+     */
     constructor(props) {
-        /**
-         * 重构参考： 打牌的几个阶段，应该在规则里面，调入进来。
-         * 属性列表：
-         *  scene: 1 叫牌，2 打牌 3 claim 4 展示比分
-         *         1 
-         *  deals: 牌，除了自己的牌，其他人的牌应该不显示
-         *  seat：ESWN 自己做在那个方位。
-         *  csize: 牌的大小 手机 80像素比较合适。
-         */
 
         super(props);
         this.zindex = 10;
         this.width = window.screen.width;
         this.height = window.screen.height;
+        this.center = null; // 桌子的中心 {x,y}
         this._csize = null; // 牌的大小
         this.deals = 'XXXXXXXXXXXXX QJ98.A5.J853.QT4 XXXXXXXXXXXXX XXXXXXXXXXXXX'
         this.myseat = 'S'               // 用户坐在 南
@@ -36,13 +37,15 @@ class Table extends Component {
             'west':     [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // 第二个xy 是 出牌4个区域坐标。
             'north':    [{ x: 0, y: 0 }, { x: 0, y: 0 }]   // 也就是牌出到什么地方。
         }
-        this.ref = {};                     // ref 用来记录引用
+        // ref 用来记录 四个发牌位置的div引用
+        this.ref = {}; 
         for (let key in this.seat) this.ref[key] = React.createRef()
         this.ref.board = React.createRef();
-
         this.state.cards = this.initDeals() // 把以上牌初始化放到桌子上(不发牌)
-
     }
+    /**
+     * 通过计算获得 Card 的 size
+     */
     get csize() {
         // 短路语法 牌的大小 可以计算在下面的函数内。
         return this._csize || (() => {
@@ -50,6 +53,14 @@ class Table extends Component {
         })()
     }
     /**
+     * 完成挂载后，要计算 各个位置的坐标。
+     */
+    componentDidMount() {
+        this._initSeat(); // 初始化 发牌位置 出牌位置等坐标
+        //console.log(parseInt(center.y) - parseInt(this.csize) * 0.7 / 2)
+    }
+    /**
+    * _initSeat 初始化 发牌位置 出牌位置的坐标。 
     * center   桌子的中心
     *          以body 为父元素计算。
     * offset   是四张牌叠放需要错开的空间。（长 - 宽）/ 2
@@ -58,12 +69,13 @@ class Table extends Component {
     *          出牌坐标计算依据：1）扑克牌的中心点和左上角位置差固定。
     *          因此可以以中心点考虑四个方位的位移 再加减相同的 位置差即可。
     */
-    componentDidMount() {
+    _initSeat(){
         const center = { x: 0, y: 0 };
         center.x = this.ref.board.current.offsetTop + 
             parseInt(this.ref.board.current.style.height.slice(0, -2)) / 2
         center.y = this.ref.board.current.offsetLeft + 
             parseInt(this.ref.board.current.style.width.slice(0, -2)) / 2
+        this.center = center;            
         const offset = (this.csize - this.csize * 0.7) / 2;
         // 获得 四个方位的发牌空间左上角坐标, 以及出牌空间左上角
         for (let key in this.seat) {
@@ -84,45 +96,37 @@ class Table extends Component {
                 this.seat[key][1]['x'] = center.x - this.csize * 0.7 / 2;
             }
         }
-        console.log('this.seat')
-        console.log(center.y)
-        //console.log(parseInt(center.y) - parseInt(this.csize) * 0.7 / 2)
-
-
     }
 
+    // 这里看完了，需要进行 封装
+    // TODO:给出一组 deals 发到桌子上。
+    // TODO:放到 指定位置。
     initDeals1() {
         const suits = Card.suits                //['S', 'H', 'D', 'C'];
-        const seat = Object.keys(this.seat);    //['east', 'south', 'west', 'north'];
+        const seats = Object.keys(this.seat);   //['east', 'south', 'west', 'north'];
         const deals = this.deals.split(' ')
-        const cards = []
-        // 遍历4个方向的牌
-        let rotate = 0;
-        let x = 5, y = 5; // 初始化2个变量 貌似
-        let index = 1;  // 当前利用 index 来处理发牌缓动 delay
-
+        const cards = [[],[],[],[]];            // 初始化二维数组 保存四个方位的牌
+        //deals. [XXXXXXXXXXXXX,QJ98.A5.J853.QT4,XXXXXXXXXXXXX,XXXXXXXXXXXXX]
         deals.forEach((item, index1) => {
             let index = 1;                  // 复位index 可以让四个人的牌同时发出来
-            cards[index1] = []              // index1 四个方位
-            console.log('Table.seats[index1]');
-            console.log(Table.seats[index1]);
+            let rotate = 0;
+            let [x,y] = [5,5];
             const suit = item.split('.')
-            // 遍历 每个花色
-            x = this.seat[seat[index1]][0].x
-            y = this.seat[seat[index1]][0].y
-            // 横向的牌 做一下调整位置。因为
+            let seat = seats[index1]        //  'east'
+            x = this.seat[seat][0].x        // [0] 是发牌位置坐标
+            y = this.seat[seat][0].y
+            // TODO: 数值计算需要写到相同的地方。然后给出明确的数值。
+            //横向的牌 做一下调整位置。因为
             if ('02'.indexOf(index1) != -1) {
-                x = x + 16;
-                y = y - 10;
+                x = x + 16; y = y - 10;
             } else {
-                x = x + 5;
-                y = y + 5;
+                x = x + 5; y = y + 5;
             }
-            if( ['east','west'].indexOf(Table.seats[index1]) !=-1 ) rotate = 90;
-            else rotate = 0;
-            suit.forEach((s, index2) => {      // index2 四个花色
+            // 东西 位置的牌需要旋转 90度
+            if( '02'.indexOf(index1) !=-1 ) rotate = 90;
+
+            suit.forEach((s, index2) => {      // index2 四个花色  s 'QJ98' 牌点字串
                 cards[index1][index2] = [];
-                //console.log(s,index)
                 for (var i = 0; i < s.length; i++) {
                     cards[index1][index2][i] = (
                         <Card
@@ -135,15 +139,13 @@ class Table extends Component {
                             position={{ x: x, y: y }}
                         />
                     )
+                    // TODO: 牌之间的距离也应该提前计算好。不能硬编码到这里
                     if ('02'.indexOf(index1) != -1) y = y + 10;
                     else x = x + 20;
                 }
             });
         });
         return cards;
-    }
-    test1 = () => {
-        alert(33)
     }
     /**
      * 初始化扑克：把牌放到桌子上等待发牌。
@@ -185,24 +187,21 @@ class Table extends Component {
      * deals 四个人的牌
      * cards 三维数组 1） 4个方位 2） 4个花色 3） 具体一张牌
      */
-    deal1 = (deals) => {
-        const cards = this.state.cards;
-        const seat = Table.seats;
-        let rotate = 0;
-        cards.forEach((e1, i1) => {    // 四个方向的牌
-            rotate += 90;
-            const mount = document.querySelector('#' + seat[i1])
-            ReactDOM.render(this.state.cards[i1], mount);
-        });
-    }
+    // deal1 = (deals) => {
+    //     const cards = this.state.cards;
+    //     const seat = Table.seats;
+    //     let rotate = 0;
+    //     cards.forEach((e1, i1) => {    // 四个方向的牌
+    //         rotate += 90;
+    //         const mount = document.querySelector('#' + seat[i1])
+    //         ReactDOM.render(this.state.cards[i1], mount);
+    //     });
+    // }
     deal = () => {
         const cards = this.initDeals1()
         this.setState({
             cards: cards
         });
-    }
-    testDeal = () => {
-
     }
     render() {
         const css = {
