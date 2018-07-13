@@ -3,7 +3,8 @@ import { Flex, WhiteSpace, InputItem, Toast, Button, NavBar, Icon, WingBlank } f
 import './Login.css'
 import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 import { createForm } from 'rc-form';
-import { User } from '../Models/Models';
+// import { User } from '../Models/Models';
+import User from '../OdooRpc/User';
 
 export default class FindPwdPage extends React.Component{
     state = {

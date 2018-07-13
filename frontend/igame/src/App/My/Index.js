@@ -11,18 +11,23 @@ export default class My extends React.Component {
         page:'mine',
     }
     toMyTeam = ()=>{
+        this.props.setHiddenState(true);
         this.setState({page:'myteam'})
     }
     toMyFriend = ()=>{
+        this.props.setHiddenState(true);
         this.setState({page:'myfriend'})
     }
     toMySelf = ()=>{
+        this.props.setHiddenState(true);
         this.setState({page:'myself'})
     }
     toMyMatch = ()=>{
+        this.props.setHiddenState(true);
         this.setState({page:'mymatch'})
     }
     toMine = ()=>{
+        this.props.setHiddenState(false);
         this.setState({page:'mine'})
     }
     render() {

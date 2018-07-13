@@ -1,6 +1,7 @@
 import session from '../User/session';
 
-const HOST = 'http://192.168.0.20:8069';
+const HOST = 'http://124.42.117.43:8069';
+// const HOST = 'http://192.168.0.20:8069';
 const DATABASE = 'TT';
 
 class OdooRpc {      
@@ -62,8 +63,42 @@ class Models{       //用于被继承，来接受回调函数success，error
         }
         return this.m.jsonrpc(url,data)
     }
-}
 
+    // 打牌，发送消息
+    match (args,body){
+        const url = HOST + '/web/dataset/call_kw/mail.channel/message_post';
+        const data = {
+            "model": "mail.channel",
+            "method": "message_post",
+            "args": args,
+            "kwargs": {
+                "body": body,
+                "message_type": "comment",
+                "subtype": "mail.mt_comment",
+                "subject": "1222",
+            }
+        }
+        return this.m.jsonrpc(url,data)
+    }
+
+    // 建立连接,收消息
+    polling(last = null){
+        const url = HOST + '/longpolling/poll';
+        last = window.last + 1;
+        const data={
+             "channels": [], "last": last, "options": {} 
+        }
+        return this.m.jsonrpc(url,data);
+    }
+}
+class Match extends Models {
+    longPolling(){
+        this.polling()
+    }
+    play_cards(args,body){
+        this.match(args,body);
+    }
+}
 class User extends Models {
     login(login,password){
         const url = HOST+'/json/user/login';
@@ -112,9 +147,23 @@ class Game extends Models{
     register_game(...data){        //赛队报名
         this.exec('og.igame','register_game',{},...data);
     }
-    search2(){
+    search2(){      //查找所有比赛
         this.exec('og.igame','search2',{},[]);
+    }
+
+    //      这两个接口是查找比赛的接口，还需后端修改，目前还不能用
+    search_user_match(){
+        this.exec('og.igame','search_user_match',{},[]);
+    }
+    search_own_match(){
+        this.exec('og.igame','search_own_match',{},[]);
     }
 }
 
-export { User, GameTeam, Game };
+// class Match extends Models{
+//     play_cards(msg,...args){
+//         this.match(msg,args);
+//     }
+// }
+
+export { User, GameTeam, Game, Match };

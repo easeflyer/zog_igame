@@ -4,7 +4,9 @@ import { Form, Select, Button } from 'antd';
 import {Toast} from 'antd-mobile'  
 
 import session from '../../User/session'
-import  { Game, GameTeam } from '../../Models/Models'
+// import  { Game, GameTeam } from '../../Models/Models'
+import Game from '../../OdooRpc/Game';
+import GameTeam from '../../OdooRpc/GameTeam';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -31,7 +33,7 @@ class FormForSign extends React.Component{
                 myTeams:res,
                 currentTeam:res[0].players.filter( item => {return item.playername !== session.get_name()}),
                 currentTeam2:res[0].players.filter( item => {return item.playername !== session.get_name()}),
-                mySelf: res[1].players.filter( item => {return item.playername === session.get_name()})[0],
+                mySelf: res[0].players.filter( item => {return item.playername === session.get_name()})[0],
                 teamId:res[0].id,
                 disabled:false
             });
