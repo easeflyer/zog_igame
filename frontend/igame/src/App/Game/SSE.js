@@ -1,11 +1,11 @@
-import React from 'react'
-import  {Flex, Button, WingBlank} from 'antd-mobile'
-import { Row, Col, Table, Icon, Divider ,Input } from 'antd';
+import React from 'C:/Users/admini/AppData/Local/Microsoft/TypeScript/2.9/node_modules/@types/react'
+import  {Flex, Button, WingBlank} from '../../../node_modules/_antd-mobile@2.2.0@antd-mobile'
+import { Row, Col, Table, Icon, Divider ,Input } from '../../../node_modules/_antd@3.6.3@antd';
 import $ from 'jquery';
 import Session from '../User/session'
 
-import {Match} from '../Models/Models'
-import Login from './Index0'
+import Polling from '../OdooRpc/Polling'
+import Board from '../OdooRpc/Board'
 
 // N: 201 S:203 E:202 W 204
 // spades: 黑桃  hearts: 红桃  diamond: 方块  clubs: 梅花    ♠ ♥ ♦ ♣ 
@@ -35,6 +35,7 @@ export default class PokerTable extends React.Component{
         super(props);
     }
     state={
+        first:true,
         calculate:true,
         cards:[],
         dataSource:[{
@@ -60,10 +61,11 @@ export default class PokerTable extends React.Component{
         guardCardsNum:null,//我的牌，全数字
         deal:false, //是否发牌
         call:true, //是否处于叫牌状态
-        callDirect:'N', //当前应该哪个方位叫牌  ** 
+        callDirect:'N', //当前应该哪个方位叫牌 
         callCards:null, //我，叫的牌  ** 
         openLeader:null, //首攻  
         currentDirect:null, //当前应该哪个方位打牌 
+        currentSuit:null,
         currentCardB:null, // 我，当前出的牌 
         currentCardT:null, // 我的对家，当前出的牌 
         currentCardL:null, // 左侧，当前出的牌 
@@ -90,12 +92,12 @@ export default class PokerTable extends React.Component{
         this.sse();
         
         // 建立连接
-        // const m = new Match(this.sucPolling,this.failPolling); //说明：传入回调函数
-        // m.longPolling();  //说明：调用Models里面定义好的方法，传入相应的参数
+        // const poll = new Polling(this.sucPolling,this.failPolling); //说明：传入回调函数
+        // poll.polling();  //说明：调用Models里面定义好的方法，传入相应的参数
 
         // 发送消息
-        // const m = new Match(this.sucPost,this.failPost); //说明：传入回调函数
-        // m.play_cards();  //说明：调用Models里面定义好的方法，传入相应的参数
+        // const  board= new Board(this.sucPost,this.failPost); //说明：传入回调函数
+        // board.bid();  //说明：调用Models里面定义好的方法，传入相应的参数
     }
     sucPolling=()=>{
         console.log('success')
@@ -106,11 +108,10 @@ export default class PokerTable extends React.Component{
     sse=()=> {
         let i=0;
         const this_=this;
-        var source = new EventSource('http://124.42.117.43:8989/stream');  // 监听这个网址的消息。事件。
-        // var source = new EventSource('http://192.168.0.20:8989/stream');  // 监听这个网址的消息。事件。
+        // var source = new EventSource('http://124.42.117.43:8989/stream');  // 监听这个网址的消息。事件。
+        var source = new EventSource('http://192.168.0.20:8989/stream');  // 监听这个网址的消息。事件。
         source.onmessage = function (e) {
             console.log(e.data)
-            console.log()
             if(e.data.split(':').length===2 && e.data.split(':')[0].slice(0,6)==='SERVER'){   //发牌  SERVER(N):J92.K64.KJ84.J32
                 let data=e.data.split(':');
                 this_.state.cards.push(data);
@@ -133,6 +134,9 @@ export default class PokerTable extends React.Component{
                 let call_direct = direct[user.indexOf(e.data.split(' ')[1].slice(0,3))];  //方位
                 let call_card = e.data.split(' ')[2];   //叫的牌
                 this_.call_cards(call_direct,call_card);
+                this_.setState({
+                    callDirect:direct[user.indexOf(e.data.split(' ')[1].slice(0,3))+1]||direct[user.indexOf(e.data.split(' ')[1].slice(0,3))-3]
+                })
             }
             if(e.data.split(' ')[1]==='card:'){   //calculate？叫牌结束，设置庄家、明守、首攻：接收到下一轮出牌方信息  E card: AK.AQJT875.T.Q85
                 if(this_.state.calculate){
@@ -150,40 +154,39 @@ export default class PokerTable extends React.Component{
                         guardCardsNum:this_.arrange_my_cards(data[1]),
                     })
                 }
-                if(e.data.split(' ')[0]===this_.state.currentDirect){
-                    this_.state.currentDirect===this_.state.topDirect?this_.setState({currentCardT:null}):null;
-                    this_.state.currentDirect===this_.state.myDirect?this_.setState({currentCardB:null}):null;
-                    this_.state.currentDirect===this_.state.leftDirect?this_.setState({currentCardL:null}):null;
-                    this_.state.currentDirect===this_.state.rightDirect?this_.setState({currentCardR:null}):null;
-                    let is = null;
-                    this_.state.currentPiers.map((item,index)=>{
-                        item.dir===this_.state.currentDirect?is = index:null;
-                        return is;
-                    })
-                    this_.state.currentPiers = this_.state.currentPiers.splice(is,1);
-                }
+                // if(e.data.split(' ')[0]===this_.state.currentDirect){
+                //     this_.state.currentDirect===this_.state.topDirect?this_.setState({currentCardT:null}):null;
+                //     this_.state.currentDirect===this_.state.myDirect?this_.setState({currentCardB:null}):null;
+                //     this_.state.currentDirect===this_.state.leftDirect?this_.setState({currentCardL:null}):null;
+                //     this_.state.currentDirect===this_.state.rightDirect?this_.setState({currentCardR:null}):null;
+                //     let is = null;
+                //     this_.state.currentPiers.map((item,index)=>{
+                //         item.dir===this_.state.currentDirect?is = index:null;
+                //         return is;
+                //     })
+                //     this_.state.currentPiers = this_.state.currentPiers.splice(is,1);
+                // }
                 if(e.data.split(' ')[0]===this_.state.myDirect){this_.setState({myCardsNum:this_.arrange_my_cards(e.data.split(' ')[2])})}
                 if(e.data.split(' ')[0]===this_.state.guard){this_.setState({guardCardsNum:this_.arrange_my_cards(e.data.split(' ')[2])})}
                 this_.setState({
                     currentDirect:e.data.split(' ')[0],
                 })
-                if(this_.state.currentPiers.length===4){
-                    setTimeout(()=>{
-                        this_.setState({
-                            currentCardB:null,
-                            currentCardT:null,
-                            currentCardL:null,
-                            currentCardR:null,
-                            currentPiers:[]
-                        })
-                    },1000)
-                    console.log(this_.state.currentPiers)
-                    console.log(this_.state.currentPiers.length)
-                }
+                // if(this_.state.currentPiers.length===4){
+                //     setTimeout(()=>{
+                //         this_.setState({
+                //             currentCardB:null,
+                //             currentCardT:null,
+                //             currentCardL:null,
+                //             currentCardR:null,
+                //             currentPiers:[]
+                //         })
+                //     },1000)
+                // }
             }
             if(!this_.state.call && e.data.split(' ').length===3 && e.data.split(' ')[1].slice(3,4)===':' && e.data.split(' ')[2].slice(0,4)!=='claim'){  //接收到打牌消息   [10:19:04] 202: c5
                 let play_direct = direct[user.indexOf(e.data.split(' ')[1].slice(0,3))];  //方位
                 let play_card = e.data.split(' ')[2];   //出的牌 c5格式
+                this_.setState({currentSuit:play_card.slice(1,1)})
                 let val = e.data.split(' ')[2].split('').reverse().join('');   //出的牌 5c格式
                 play_direct===this_.state.topDirect?this_.setState({currentCardT:this_.re_transfer(play_card,0,1,true)}):null;
                 play_direct===this_.state.myDirect?this_.setState({currentCardB:this_.re_transfer(play_card,0,1,true)}):null;
@@ -230,8 +233,8 @@ export default class PokerTable extends React.Component{
         }
     }
     postMsg=(val)=>{
-        $.post('http://124.42.117.43:8989/post?session_id='+this.get_session(), { 'message': val } );
-        // $.post('http://192.168.0.20:8989/post?session_id='+this.get_session(), { 'message': val } );
+        // $.post('http://124.42.117.43:8989/post?session_id='+this.get_session(), { 'message': val } );
+        $.post('http://192.168.0.20:8989/post?session_id='+this.get_session(), { 'message': val } );
     }
     arrange_my_cards=(cards)=>{   //整理牌的格式
         let  cardMy=[];
@@ -282,16 +285,6 @@ export default class PokerTable extends React.Component{
         this.postMsg(val);
     }
 
-    //计算方位
-    calculateDirect=(dir)=>{
-        let calculateDirect=null;
-        let base = direct.indexOf(this.state.myDirect);
-        dir==='top'?calculateDirect=direct[base+2]:null
-        dir==='left'?calculateDirect=direct[base+1]:null
-        dir==='right'?calculateDirect=direct[base-1]:null
-        return calculateDirect;
-    }
-
     // 处理发过来的牌：添加花色
     addColor=(cards,dir)=>{
         let addCards=[[],[],[],[]],colorCards=[[],[],[],[]];
@@ -311,7 +304,7 @@ export default class PokerTable extends React.Component{
                 item.map(i=>{
                     addCards[1].push(<span 
                         key={index+i} 
-                        style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5}} 
+                        style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5,color:'red'}} 
                         onClick={!this.state.call&&this.state.currentDirect===this.state.myDirect?this.click:null}>
                         {i}{`\n`}{'♥'}
                         </span>)
@@ -322,7 +315,7 @@ export default class PokerTable extends React.Component{
                 item.map(i=>{
                      addCards[2].push(<span 
                         key={index+i} 
-                        style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5}} 
+                        style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5,color:'red'}} 
                         onClick={!this.state.call&&this.state.currentDirect===this.state.myDirect?this.click:null}>
                         {i}{`\n`}{'♦'}
                         </span>)
@@ -373,12 +366,14 @@ export default class PokerTable extends React.Component{
         let callSuitS = [];
         suit.map((items,i)=>{
             items.map((item,index)=>{
-                callSuitS.push(<span key={item} style={{display:'inline-block',width:35,height:25,margin:3,border:'1px solid #ccc',borderRadius:3,textAlign:'center'}} onClick={this.state.deal?this.click:null}>{item}</span>)
+                callSuitS.push(<span key={item} style={{display:'inline-block',width:35,height:25,margin:3,border:'1px solid #ccc',borderRadius:3,textAlign:'center'}} onClick={this.state.deal&&this.state.callDirect===this.state.myDirect?this.click:null}>{item}</span>)
+                // callSuitS.push(<span key={item} style={{display:'inline-block',width:35,height:25,margin:3,border:'1px solid #ccc',borderRadius:3,textAlign:'center'}} onClick={this.click}>{item}</span>)
             })
         })
         let callDbl = [];
         dbl.map((item,i)=>{
-            callDbl.push(<span key={item} style={{display:'inline-block',width:35,height:25,margin:3,border:'1px solid #ccc',borderRadius:3,textAlign:'center'}} onClick={this.state.deal?this.click:null}>{item}</span>)
+            callDbl.push(<span key={item} style={{display:'inline-block',width:35,height:25,margin:3,border:'1px solid #ccc',borderRadius:3,textAlign:'center'}} onClick={this.state.deal&&this.state.callDirect===this.state.myDirect?this.click:null}>{item}</span>)
+            // callDbl.push(<span key={item} style={{display:'inline-block',width:35,height:25,margin:3,border:'1px solid #ccc',borderRadius:3,textAlign:'center'}} onClick={this.click}>{item}</span>)
         })
 
         return(
