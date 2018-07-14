@@ -15,8 +15,8 @@ export default class GameTeam extends Models{
         this.exec('get_own_teams',{},[]);
     }
 
-    get_match_teams(...data){   //请求比赛的参赛队
-        this.exec('get_match_teams',{},...data);
+    get_match_teams(gameId){   //请求比赛的参赛队
+        this.exec('get_match_teams',{},gameId);
         /**
          * params:gameId
          * return:
@@ -27,7 +27,6 @@ export default class GameTeam extends Models{
             member:[{id:1,name:'蒋周伟',others:'56%'},{id:1,name:'蒋周伟',others:'56%'},
                     {id:1,name:'蒋周伟',others:'56%'},{id:1,name:'蒋周伟',others:'56%'},],
             pay:true},
-
             {number:'25',
             ranking:'3',
             name:'白鲨2队',
