@@ -14,7 +14,7 @@ export default class Board extends Models {
     bid(...data){         //发送叫牌信息
         this.exec('bid',{},...data);
         /*
-         * params:[pos,call,channel_id]
+         * params:[board_id,pos,call,channel_id]
          * return:[
                 {name:call,pos:pos,number:num}
                 // 叫的牌，叫牌方位，第n次叫牌
@@ -24,7 +24,7 @@ export default class Board extends Models {
     call_result(...data){    //查询叫牌结果
         this.exec('call_result',{},...data);
         /*
-         * params:[self,channel_id]
+         * params:[board_id,channel_id]
          * return:[
                 // {name:call,pos:pos,number:num}
             ]
@@ -33,7 +33,7 @@ export default class Board extends Models {
     play(...data){       //发送打牌消息
         this.exec('play',{},...data);
         /*
-         * params:[pos,card,channel_id]
+         * params:[board_id,pos,card,channel_id]
          * return:[
                 {number:int, card:str, pos:str, ns_wh:int, ew_win:int}
             ]

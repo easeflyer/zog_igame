@@ -1,11 +1,8 @@
-import React from 'C:/Users/admini/AppData/Local/Microsoft/TypeScript/2.9/node_modules/@types/react'
-import  {Flex, Button, WingBlank} from '../../../node_modules/_antd-mobile@2.2.0@antd-mobile'
-import { Row, Col, Table, Icon, Divider ,Input } from '../../../node_modules/_antd@3.6.3@antd';
+import React from 'react'
+import  {Flex, Button, WingBlank} from 'antd-mobile'
+import { Row, Col, Table, Icon, Divider ,Input } from 'antd';
 import $ from 'jquery';
 import Session from '../User/session'
-
-import Polling from '../OdooRpc/Polling'
-import Board from '../OdooRpc/Board'
 
 // N: 201 S:203 E:202 W 204
 // spades: 黑桃  hearts: 红桃  diamond: 方块  clubs: 梅花    ♠ ♥ ♦ ♣ 
@@ -90,14 +87,6 @@ export default class PokerTable extends React.Component{
 
     componentDidMount(){
         this.sse();
-        
-        // 建立连接
-        // const poll = new Polling(this.sucPolling,this.failPolling); //说明：传入回调函数
-        // poll.polling();  //说明：调用Models里面定义好的方法，传入相应的参数
-
-        // 发送消息
-        // const  board= new Board(this.sucPost,this.failPost); //说明：传入回调函数
-        // board.bid();  //说明：调用Models里面定义好的方法，传入相应的参数
     }
     sucPolling=()=>{
         console.log('success')

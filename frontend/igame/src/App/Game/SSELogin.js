@@ -1,6 +1,6 @@
-import React from 'C:/Users/admini/AppData/Local/Microsoft/TypeScript/2.9/node_modules/@types/react'
-import  { WingBlank,WhiteSpace} from '../../../node_modules/_antd-mobile@2.2.0@antd-mobile'
-import { Form, Input, Button } from '../../../node_modules/_antd@3.6.3@antd';
+import React from 'react'
+import  { WingBlank,WhiteSpace} from 'antd-mobile'
+import { Form, Input, Button } from 'antd';
 import $ from 'jquery';
 import SSE from './SSE'
 

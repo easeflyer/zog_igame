@@ -29,7 +29,6 @@ class OdooRpc {
         ).then(response => {
             console.log(response.result);
             if (response.result){
-            // m.result = response.result;
                 this.success(response.result)
             }else{
                 this.error(response.result)
