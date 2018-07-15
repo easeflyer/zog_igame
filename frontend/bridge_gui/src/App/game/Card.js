@@ -42,6 +42,8 @@ class Cards extends React.Component {
         this.state.height = props.size
         this.state.x = props.position.x
         this.state.y = props.position.y
+
+        if(props.table) props.table.cards[props.index] = this;
         // console.log('console.log(props.position.x);')
         // console.log(props.position.x);
     }
@@ -70,12 +72,7 @@ class Cards extends React.Component {
     componentWillReceiveProps(nextProps) {
         this.state.x = nextProps.position.x;
         this.state.y = nextProps.position.y;
-        this.animation.delay = nextProps.index * 80
-        // this.setState({
-        //     x:nextProps.position.x,
-        //     y:nextProps.position.y
-        // });
-        //console.log('aaaaaaaaa.log')
+        this.animation.delay = (nextProps.index%13) * 80  // 计算缓动 %13 为了4家同时发牌
     }
     toc = (e) => {
         this.animation.delay = 0;
@@ -143,7 +140,7 @@ class Cards extends React.Component {
                 >
                     <div
                         onClick={this.onclick}
-                        id="card"
+                        id={'card'+this.props.index}
                         style={{
                             width: size * 0.7,
                             height: size * 1,

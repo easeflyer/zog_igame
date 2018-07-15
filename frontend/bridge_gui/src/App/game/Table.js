@@ -24,24 +24,27 @@ class Table extends Component {
     constructor(props) {
 
         super(props);
+        this.cards = [];
         this.zindex = 10;
         this.width = window.screen.width;
         this.height = window.screen.height;
         this.center = null; // 桌子的中心 {x,y}
         this._csize = null; // 牌的大小
         this.deals = 'XXXXXXXXXXXXX QJ98.A5.J853.QT4 XXXXXXXXXXXXX XXXXXXXXXXXXX'
+        this.deals = Models.deals()[0];
         this.myseat = 'S'               // 用户坐在 南
         this.seat = {
-            'east':     [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // seat 用于记录坐标 
-            'south':    [{ x: 0, y: 0 }, { x: 0, y: 0 }], // 第一个xy 是 四个区域左上角坐标
-            'west':     [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // 第二个xy 是 出牌4个区域坐标。
-            'north':    [{ x: 0, y: 0 }, { x: 0, y: 0 }]   // 也就是牌出到什么地方。
+            'east': [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // seat 用于记录坐标 
+            'south': [{ x: 0, y: 0 }, { x: 0, y: 0 }], // 第一个xy 是 四个区域左上角坐标
+            'west': [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // 第二个xy 是 出牌4个区域坐标。
+            'north': [{ x: 0, y: 0 }, { x: 0, y: 0 }]   // 也就是牌出到什么地方。
         }
         // ref 用来记录 四个发牌位置的div引用
-        this.ref = {}; 
+        this.ref = {};
         for (let key in this.seat) this.ref[key] = React.createRef()
         this.ref.board = React.createRef();
-        this.state.cards = this.initDeals() // 把以上牌初始化放到桌子上(不发牌)
+        //this.state.cards = this.initDeals() // 把以上牌初始化放到桌子上(不发牌)
+        this.state.cards = this.initCards() // 把以上牌初始化放到桌子上(不发牌)
     }
     /**
      * 通过计算获得 Card 的 size
@@ -68,16 +71,17 @@ class Table extends Component {
     * this.seat[key][1] 四个作为出牌坐标xy
     *          出牌坐标计算依据：1）扑克牌的中心点和左上角位置差固定。
     *          因此可以以中心点考虑四个方位的位移 再加减相同的 位置差即可。
+    *          注：0.7 是扑克的横竖比例。
     */
-    _initSeat(){
+    _initSeat() {
         const center = { x: 0, y: 0 };
-        center.x = this.ref.board.current.offsetTop + 
+        center.x = this.ref.board.current.offsetTop +
             parseInt(this.ref.board.current.style.height.slice(0, -2)) / 2
-        center.y = this.ref.board.current.offsetLeft + 
+        center.y = this.ref.board.current.offsetLeft +
             parseInt(this.ref.board.current.style.width.slice(0, -2)) / 2
-        this.center = center;            
+        this.center = center;
         const offset = (this.csize - this.csize * 0.7) / 2;
-        // 获得 四个方位的发牌空间左上角坐标, 以及出牌空间左上角
+        // 获得 四个方位的发牌空间左上角坐标, 以及出牌空间左上角 
         for (let key in this.seat) {
             this.seat[key][0]['y'] = this.ref[key].current.offsetTop;
             this.seat[key][0]['x'] = this.ref[key].current.offsetLeft;
@@ -98,20 +102,105 @@ class Table extends Component {
         }
     }
 
+    /**
+     * initCards 从 this.deals 初始化成 Cards 组件为渲染输出做准备，返回到 this.cards
+     */
+    initCards() {
+        const suits = Card.suits                //['S', 'H', 'D', 'C'];
+        const deals = this.deals.split(' ')
+        let index = 0;               // 复位index 可以让四个人的牌同时发出来
+        const cards = [[], [], [], []];            // 初始化二维数组 保存四个方位的牌
+        //deals. [XXXXXXXXXXXXX,QJ98.A5.J853.QT4,XXXXXXXXXXXXX,XXXXXXXXXXXXX]
+        deals.forEach((item, index1) => {
+            // TODO：index 和缓动参数进行分离
+            const suit = item.split('.')
+            suit.forEach((s, index2) => {      // index2 四个花色  s 'QJ98' 牌点字串
+                cards[index1][index2] = [];
+                for (var i = 0; i < s.length; i++) {
+                    cards[index1][index2][i] = (
+                        <Card
+                            key={index}
+                            seat={Table.seats[index1]}   // 这张牌是那个方位的
+                            table={this}
+                            index={index++}
+                            rotate={0}
+                            size={this.csize}           // 牌的大小
+                            card={s[i] + suits[index2]}
+                            position={{ x: 180, y: 350 }}   // 考虑一个默认位置。
+                        />
+                    )
+                }
+            });
+        });
+        return cards;
+    }
+    // 如果还是原来的 引用地址 则不变化？
+    dealCards() {
+        // 下面这样写 应为 cards 值 也就是内存地址不变，因此造成不刷新。
+        //const cards = this.state.cards || this.initCards();
+        const cards = this.initCards();
+        cards.forEach((item, index) => {
+            let rotate = 0;
+            let seat = Table.seats[index]
+            let [x, y] = [this.seat[seat][0].x, this.seat[seat][0].y]
+            if ('02'.indexOf(index) != -1) {
+                x = x + 16; y = y - 10; rotate = 90;
+            } else {
+                x = x + 5; y = y + 5;
+            }
+            item.forEach((item1, index1) => {
+                item1.forEach((card, index2) => {
+                    //card.props.position.x = x;
+                    //card.props.position.y = y;
+                    cards[index][index1][index2] = <Card
+                        key = {card.key}
+                        seat = {Table.seats[index]}
+                        table = {this}
+                        index={card.key}
+                        rotate={rotate}
+                        size = {this.csize}
+                        card = {card.props.card}
+                        position={{x:x,y:y}}
+                    />
+
+                    //card.props.rotate = rotate;
+                    if ('02'.indexOf(index) != -1) y = y + 10;
+                    else x = x + 20;                    
+                });
+            });
+
+        })
+        //this.state.cards = cards;
+        console.log('cards......333...................')
+        console.log(cards)
+        return cards;
+    }
+    test1 = () => {
+        alert(33)
+        console.log(this.cards)
+
+    }
+    /**
+     * initDeals  把牌准备到桌子上
+     * initDeals1 把牌发到四个位置
+     */
     // 这里看完了，需要进行 封装
     // TODO:给出一组 deals 发到桌子上。
     // TODO:放到 指定位置。
     initDeals1() {
         const suits = Card.suits                //['S', 'H', 'D', 'C'];
         const seats = Object.keys(this.seat);   //['east', 'south', 'west', 'north'];
+        let index = 0;                  // 复位index 可以让四个人的牌同时发出来
         const deals = this.deals.split(' ')
-        const cards = [[],[],[],[]];            // 初始化二维数组 保存四个方位的牌
+        const cards = [[], [], [], []];            // 初始化二维数组 保存四个方位的牌
         //deals. [XXXXXXXXXXXXX,QJ98.A5.J853.QT4,XXXXXXXXXXXXX,XXXXXXXXXXXXX]
         deals.forEach((item, index1) => {
-            let index = 1;                  // 复位index 可以让四个人的牌同时发出来
+
             let rotate = 0;
-            let [x,y] = [5,5];
+            let [x, y] = [5, 5];
             const suit = item.split('.')
+
+
             let seat = seats[index1]        //  'east'
             x = this.seat[seat][0].x        // [0] 是发牌位置坐标
             y = this.seat[seat][0].y
@@ -123,13 +212,14 @@ class Table extends Component {
                 x = x + 5; y = y + 5;
             }
             // 东西 位置的牌需要旋转 90度
-            if( '02'.indexOf(index1) !=-1 ) rotate = 90;
+            if ('02'.indexOf(index1) != -1) rotate = 90;
 
             suit.forEach((s, index2) => {      // index2 四个花色  s 'QJ98' 牌点字串
                 cards[index1][index2] = [];
                 for (var i = 0; i < s.length; i++) {
                     cards[index1][index2][i] = (
                         <Card
+                            key={index}
                             seat={Table.seats[index1]}   // 这张牌是那个方位的
                             table={this}
                             index={index++}
@@ -163,6 +253,8 @@ class Table extends Component {
         deals.forEach((item, index1) => {
             cards[index1] = []              // index1 四个方位
             const suit = item.split('.')
+
+
             suit.forEach((s, index2) => {      // index2 四个花色
                 cards[index1][index2] = [];
                 //console.log(s,index)
@@ -198,7 +290,15 @@ class Table extends Component {
     //     });
     // }
     deal = () => {
-        const cards = this.initDeals1()
+        //const cards = this.initDeals1()
+        const cards = this.dealCards()
+
+        console.log('cards....cards1..............')
+        console.log(cards)
+        // console.log('cards....cards1..............')
+        // console.log(cards1)
+        // console.log(cards == cards1 || "不等")
+
         this.setState({
             cards: cards
         });
@@ -278,8 +378,8 @@ class Table extends Component {
 
         }
         //const deals = this.props.deals;
-        const deals = Models.deals()[0];
-        console.log(deals);
+        //const deals = Models.deals()[0];
+        //console.log(deals);
         //const cards = <Card size='80' card='KS' rotate='0' position={{x:0,y:550}} />
         return (
             /**
