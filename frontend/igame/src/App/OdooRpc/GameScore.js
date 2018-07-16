@@ -4,8 +4,8 @@ class RoundScore extends Models {
         super(...args);
         this.model='og.ig.team.line';
     }
-    search_round_score(...data){       //查询每轮成绩，按桌号排序
-        this.exec('search_round_score',{},...data);
+    search_round_score(gameId,roundId){       //查询每轮成绩，按桌号排序
+        this.exec('search_round_score',{},gameId,roundId);
         /**
          * params:gameId,courseId(或者叫round_id)
          * return:[
@@ -15,8 +15,8 @@ class RoundScore extends Models {
          * 
          */
     }
-    search_round_ranking(...data){             //查询每轮排名
-        this.exec('search_round_ranking',{},...data);
+    search_round_ranking(gameId,roundId){             //查询每轮排名
+        this.exec('search_round_ranking',{},gameId,roundId);
         /**
          * params:gameId,courseId(或者叫roundID)
          * return:[
@@ -33,8 +33,8 @@ class TableScore extends Models {
         super(...args);
         this.model='og.ig.natch';
     }
-    search_table_score(...data){       //查询每桌成绩
-        this.exec('search_round_score',{},...data);
+    search_table_score(gameId,courseId,tableId){       //查询每桌成绩
+        this.exec('search_round_score',{},gameId,courseId,tableId);
         /**
          * params:gameId,courseId(或者叫roundID),tableId
          * return:

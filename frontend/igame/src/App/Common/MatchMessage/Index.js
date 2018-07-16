@@ -28,7 +28,9 @@ export default class MatchDetails extends React.Component {    //已完成的比
 
     render() {
         const tabs = [
-            { title: <Badge>首页</Badge>,                  content:<DetailsHome match={this.props.match} />},
+            { title: <Badge>首页</Badge>,                  content:<DetailsHome match={this.props.match}
+                                                          toSignMatch={this.props.toSignMatch}
+                                                          name={this.props.name} />},
             { title: <Badge>参赛队</Badge>,                content:<MatchTeam match={this.props.match} /> },
             { title: <Badge dot>赛程</Badge>,              content:<Course match={this.props.match} 
                                                           setCourse={this.props.setCourse}

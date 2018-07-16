@@ -26,14 +26,13 @@ export default class Game extends Models {
         this.exec('search_own_match',{},[]);
     }
 
-    search_round_details(...data){         //根据gameID查轮次详细信息
-        this.exec('search_round_details',{},...data);
+    search_rounds_details(gameId){         //根据gameID查轮次详细信息
+        this.exec('search_rounds_details',{},gameId);
         /**
          * params:gameId
-         * return:[
-                {id:1, begintime:'2018-07-07 10:00:00', endtime:'2018-07-07 11:00:00', course:'排位赛第一轮'},
-                {id:2, begintime:'2018-07-07 11:15:00', endtime:'2018-07-07 12:15:00', course:'排位赛第二轮'}
-            ]
+         * return:
+                [{id:1, start_time:'2018-07-07 10:00:00', over_time:'2018-07-07 11:00:00', name:'G1', number:1},
+                {id:2, start_time:'2018-07-07 11:15:00', over_time:'2018-07-07 12:15:00', name:'G1', number:2}]
          * 
          */
     }

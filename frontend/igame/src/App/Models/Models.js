@@ -1,7 +1,7 @@
 import session from '../User/session';
 
-const HOST = 'http://124.42.117.43:8069';
-// const HOST = 'http://192.168.0.20:8069';
+// const HOST = 'http://124.42.117.43:8069';
+const HOST = 'http://192.168.0.20:8069';
 const DATABASE = 'TT';
 
 class OdooRpc {      
