@@ -178,6 +178,14 @@ class IntelligentGameRound(models.Model):
     number = fields.Integer('Number')
     round  = fields.Integer('Number', related='number')
 
+    start_time = fields.Datetime('Start Time', required=True,
+        DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S",
+        help="Start Time")
+
+    over_time = fields.Datetime('Over Time', required=True,
+        DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S",
+        help="Over Time")
+
     deal_ids = fields.Many2many('og.deal',string='Deals')
 
     #  for  game room

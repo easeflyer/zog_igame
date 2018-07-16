@@ -75,7 +75,7 @@ class IntelligentGameTeamPlayer(models.Model):
         ('leader',  'Leader'),
         ('player',     'Player')
 
-        ], string='Role', default='player')
+        ], string='Role')
 
 
 class IntelligentGameTeamLine(models.Model):
