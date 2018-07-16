@@ -1,8 +1,7 @@
 import React from 'react';
-import { NavBar, WhiteSpace} from 'antd-mobile';
-import { Icon } from 'antd';
 import OneCourseResult from './OneCourseResult';
 import OneCourseRanking from './OneCourseRanking';
+import Ranking_scores from './Ranking-scores';
 
 export default class MatchResult extends React.Component{
     state={
@@ -31,6 +30,13 @@ export default class MatchResult extends React.Component{
                 page=<OneCourseRanking
                     showPage={this.showPage}
                     toMatchDetails={this.props.toMatchDetails} 
+                    match={this.props.match}        
+                    courseId={this.props.courseId}
+                />
+                break;
+            case 'Ranking_scores':
+                page=<Ranking_scores
+                    showPage={this.showPage}
                     match={this.props.match}        
                     courseId={this.props.courseId}
                 />
