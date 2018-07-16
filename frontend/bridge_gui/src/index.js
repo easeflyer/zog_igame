@@ -5,6 +5,7 @@ import './index.css';
 import Game from './App/game/Game';  
 //import Game from './App/test/card_motion' // 测试用例
 //import Game from './App/test/com_render' // 测试用例
+//import Game from './App/test/test_card' // 测试用例
 import registerServiceWorker from './registerServiceWorker';
 
 ReactDOM.render(<Game />, document.getElementById('root'));

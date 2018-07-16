@@ -1,3 +1,7 @@
+/**
+ * Card.2.js  Table.2.js  是 已经完成的 发牌出牌。
+ * 但是 组件的结构 考虑进行改进。比如 card 写成纯 Ui 组件。
+ */
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 //import settings from '../game/settings';
@@ -117,16 +121,18 @@ class Table extends Component {
             suit.forEach((s, index2) => {      // index2 四个花色  s 'QJ98' 牌点字串
                 cards[index1][index2] = [];
                 for (var i = 0; i < s.length; i++) {
-                    cards[index1][index2][i] = {
-                            key:index,
-                            seat:Table.seats[index1],   // 这张牌是那个方位的
-                            table:this,
-                            index:index++,
-                            rotate:0,
-                            size:this.csize,           // 牌的大小
-                            card:s[i] + suits[index2],
-                            position:{ x: 180, y: 450 }   // 考虑一个默认位置。
-                    }
+                    cards[index1][index2][i] = (
+                        <Card
+                            key={index}
+                            seat={Table.seats[index1]}   // 这张牌是那个方位的
+                            table={this}
+                            index={index++}
+                            rotate={0}
+                            size={this.csize}           // 牌的大小
+                            card={s[i] + suits[index2]}
+                            position={{ x: 180, y: 450 }}   // 考虑一个默认位置。
+                        />
+                    )
                 }
             });
         });
@@ -167,16 +173,8 @@ class Table extends Component {
         return cards;
     }
     test1 = () => {
-        const cards = this.state.cards;
-        //cards[0][0][0].position = {x:200,y:200}
-        cards[0][0][0].animation = {
-            top:200,
-            left:200
-        }
-        //console.log(cards)
-        this.setState({
-            cards:cards
-        })
+        alert(33)
+        console.log(this.cards)
 
     }
     deal = () => {
@@ -267,20 +265,10 @@ class Table extends Component {
             }
 
         }
-        const cards = this.state.cards.map((item1,index1)=>{
-            return item1.map((item2,index2)=>{
-                return item2.map((item3,index3)=>{
-                    return <Card
-                        animation={item3.animation}
-                        card={item3.card}
-                        size={item3.size}
-                        left={item3.position.x}
-                        top={item3.position.y}
-                    />
-                });
-            });
-        });
-        console.log(cards)
+        //const deals = this.props.deals;
+        //const deals = Models.deals()[0];
+        //console.log(deals);
+        //const cards = <Card size='80' card='KS' rotate='0' position={{x:0,y:550}} />
         return (
             /**
              * 设计分析：
@@ -313,7 +301,7 @@ class Table extends Component {
                         <div id='north' style={css.north} ref={this.ref.north}>north</div>
                         <div id='board' style={css.board} ref={this.ref.board}>
                         </div>
-                        {cards}
+                        {this.state.cards}
                     </div>
 
                     <button onClick={this.deal}>发牌</button>
