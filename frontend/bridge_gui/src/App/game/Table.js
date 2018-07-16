@@ -123,6 +123,7 @@ class Table extends Component {
                             table:this,
                             index:index++,
                             rotate:0,
+                            zIndex:1,
                             size:this.csize,           // 牌的大小
                             card:s[i] + suits[index2],
                             position:{ x: 180, y: 450 }   // 考虑一个默认位置。
@@ -136,7 +137,7 @@ class Table extends Component {
     dealCards() {
         // 下面这样写 应为 cards 值 也就是内存地址不变，因此造成不刷新。
         //const cards = this.state.cards || this.initCards();
-        const cards = this.initCards();
+        const cards = this.state.cards;
         cards.forEach((item, index) => {
             let rotate = 0;
             let seat = Table.seats[index]
@@ -147,17 +148,26 @@ class Table extends Component {
                 x = x + 5; y = y + 5;
             }
             item.forEach((item1, index1) => {
-                item1.forEach((card, index2) => {
-                    cards[index][index1][index2] = <Card
-                        key = {card.key}
-                        seat = {Table.seats[index]}
-                        table = {this}
-                        index={card.key}
-                        rotate={rotate}
-                        size = {this.csize}
-                        card = {card.props.card}
-                        position={{x:x,y:y}}
-                    />
+                item1.forEach((item2, index2) => {
+                    cards[index][index1][index2] = {
+                        animation:{
+                            top:y,
+                            left:x,
+                            delay:(item2.index % 13) * 80,
+                            duration:300,
+                            rotate:rotate
+                        },
+                        key:item2.key,
+                        seat:Table.seats[index],
+                        table:this,
+                        index:item2.key,
+                        rotate:rotate,
+                        size:this.csize,
+                        card:item2.card,
+                        zIndex:1,
+                        position:{x:item2.position.x,y:item2.position.y}
+                        //position:{x:x,y:y}
+                    }
                     if ('02'.indexOf(index) != -1) y = y + 10;
                     else x = x + 20;                    
                 });
@@ -165,6 +175,21 @@ class Table extends Component {
 
         })
         return cards;
+    }
+    onclick = (item) => {
+        return ()=>{
+            console.log('item.........................')
+            console.log(item)
+            item['left'] = item['animation']['left'];
+            item['top'] = item['animation']['top'];
+            item['animation']['left'] = this.seat[item.seat][1].x;
+            item['animation']['top'] = this.seat[item.seat][1].y;
+            item['animation']['delay'] = 0;
+            item['zIndex'] = this.zindex++
+            this.setState({
+                cards:this.state.cards
+            })
+        }
     }
     test1 = () => {
         const cards = this.state.cards;
@@ -267,20 +292,23 @@ class Table extends Component {
             }
 
         }
+
+        // cards 从 state.cards 遍历获得。不要重复构造，而所有操作只操作数据。
         const cards = this.state.cards.map((item1,index1)=>{
             return item1.map((item2,index2)=>{
                 return item2.map((item3,index3)=>{
-                    return <Card
+                    return <span className={'ease1'} onClick={this.onclick(item3)}><Card
+                        key={item3.key}
                         animation={item3.animation}
                         card={item3.card}
                         size={item3.size}
-                        left={item3.position.x}
-                        top={item3.position.y}
-                    />
+                        left={item3.position && item3.position.x}
+                        top={item3.position && item3.position.y}
+                        zIndex={item3.zIndex || null}
+                    /></span>
                 });
             });
         });
-        console.log(cards)
         return (
             /**
              * 设计分析：
