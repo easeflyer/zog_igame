@@ -6,7 +6,8 @@ import EventNavBar from '../Common/EventNavBar'
 
 export default class SignEvent extends React.Component{
     state={
-        eventDetail:this.props.list[0], //要报名赛事的全部信息
+        eventDetail:this.props.match, //要报名赛事的全部信息
+        // eventDetail:this.props.list[0], //要报名赛事的全部信息
         toastNew:false,
         toastExi:false,
         exist:0 //0：选择报名方式，1：选择已有赛队进行报名，2：新建赛队并报名
@@ -19,7 +20,8 @@ export default class SignEvent extends React.Component{
                 exist:0
             })
         }else{
-            this.props.backToDetail()
+            this.props.toMatchDetails()
+            // this.props.backToDetail()
         }
     }
 

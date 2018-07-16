@@ -7,7 +7,7 @@ export default class Home extends React.Component {
         return (
             <div>
                 <Banner />
-                <GridSection />
+                <GridSection setOthers={this.props.setOthers} />
             </div>
         );
     }

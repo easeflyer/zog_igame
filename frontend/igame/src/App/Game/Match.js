@@ -273,7 +273,7 @@ export default class PokerTable extends React.Component{
                 item.map(i=>{
                     addCards[1].push(<span 
                         key={index+i} 
-                        style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5}} 
+                        style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5,color:'red'}} 
                         onClick={this.state.play&&
                             ((this.state.currentDirect!==this.state.dummy&&this.state.currentDirect===this.state.myDirect)||
                             (this.state.currentDirect===this.state.dummy&&this.state.declarer===this.state.myDirect))
@@ -287,7 +287,7 @@ export default class PokerTable extends React.Component{
                 item.map(i=>{
                      addCards[2].push(<span 
                         key={index+i} 
-                        style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5}} 
+                        style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5,color:'red'}} 
                         onClick={this.state.play&&
                             ((this.state.currentDirect!==this.state.dummy&&this.state.currentDirect===this.state.myDirect)||
                             (this.state.currentDirect===this.state.dummy&&this.state.declarer===this.state.myDirect))

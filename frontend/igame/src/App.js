@@ -8,7 +8,7 @@ import { Site,App2,My,Learn } from './App/Loadable';
 import { Icon } from 'antd'
 import session from './App/User/session';
 import User from './App/User/Index';
-// import Match from './App/Common/Index';
+import Match from './App/Common/Index';
 /**
  * 本页面是将来程序的入口，功能包括：
  * １）加载　loadable.js 也就是需要动态载入的所有　子程序。
@@ -24,13 +24,19 @@ class TabBarExample extends React.Component {
       selectedTab: 'blueTab',
       hidden: false,
       fullScreen: true,  // 是否全屏显示
-      haslogin:false
+      haslogin:false,
+      others:null,
     };
     if (session.get_sid()){
       this.state.haslogin = true
     }
   }
 
+  setOthers = (index)=>{
+    this.setState({
+      others:index,
+    })
+  }
   setHiddenState = (index)=>{
     this.setState({
       hidden:index,
@@ -84,7 +90,12 @@ class TabBarExample extends React.Component {
             }}
             data-seed="logId"
           >
-            {this.state.selectedTab==='blueTab'?this.renderContent(<Site />):null}
+            {/* {this.state.selectedTab==='blueTab'?this.renderContent(<Site />):null} */}
+            {this.state.selectedTab==='blueTab'?
+              this.state.others==='match'? 
+                  <Match setHiddenState={this.setHiddenState} setOthers={this.setOthers} /> 
+                :this.renderContent(<Site setOthers={this.setOthers} />)
+            :null}
           </TabBar.Item>
           <TabBar.Item
             icon={<Icon type="rocket" style={{fontSize:'22px'}} />}

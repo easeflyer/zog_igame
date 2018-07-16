@@ -3,8 +3,8 @@
 
 from odoo import api, fields, models
 
-import logging
-_logger = logging.getLogger(__name__)
+# import logging
+# _logger = logging.getLogger(__name__)
 
 class GameChannel(models.Model):
     _name = "og.channel"
@@ -75,3 +75,21 @@ class GameChannel(models.Model):
 
         return self.env['mail.channel'].create(channel_vals)
 
+    # @api.model
+    # @api.returns('self')
+    # def create_channel(self,name):
+    #     self=self.sudo()
+       
+    #     channel=self.env['res.partner'].search([('name','=',name)])
+    #     # vals1={'igame_id':igame,'table_id':table,'mail_channel_id':channel.id,'type':type}
+    #     # num=self.create(vals1)
+    #     return channel
+
+    @api.model
+    def test(self,game_id,channel_id):
+        self = self.sudo()
+        t = self.env['og.igame'].browse(game_id)
+        t.name = 'newzhangze'
+        bidinfo={'name':t.name}
+        res = self.env['og.channel'].browse(channel_id).message_post(body=bidinfo)
+        return 0

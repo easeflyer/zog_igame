@@ -28,9 +28,10 @@
  * ------------------------------------
  */
 import React from 'react';
-import { Grid, Flex, List, } from 'antd-mobile';
+import { Grid, Flex, List, Toast } from 'antd-mobile';
 import { Icon } from 'antd'
 import './GridSection.css'
+import session from '../../User/session';
 const Item = List.Item;
 const Brief = Item.Brief;
 /**
@@ -38,16 +39,17 @@ const Brief = Item.Brief;
  */
 const data = [{
     icon: 'red-envelope',
-    text: { title: '分享的红包', desc: '一大波红包正在等你' },
+    text: {key:'match', title: '大型赛事', desc: '一大波红包正在等你' },
+    // text: { title: '分享的红包', desc: '一大波红包正在等你' },
 }, {
     icon: 'flag',
-    text: { title: '俱乐部招募', desc: '欢迎优秀团队加入' }
+    text: {key:'match', title: '俱乐部招募', desc: '欢迎优秀团队加入' }
 }, {
     icon: 'solution',
-    text: { title: '成绩查询', desc: '近期比赛成绩查询' }
+    text: {key:'match', title: '成绩查询', desc: '近期比赛成绩查询' }
 }, {
     icon: 'video-camera',
-    text: { title: '桥牌课堂', desc: '从入门到高手' }
+    text: {key:'match', title: '桥牌课堂', desc: '从入门到高手' }
 }];
 
 function GridItem(el, index) {
@@ -72,9 +74,19 @@ const Separator = ()=>(
 
     </div>
 );
-const GridSection = () => (
+const GridSection = (props) => (
     <div>
         <Grid
+            onClick={_el =>{
+                console.log(session.get_sid())
+                if(session.get_sid()){
+                    props.setOthers(_el.text.key)
+                }else{
+                    Toast.fail('请先登录！',3)
+                } 
+            }
+            }
+            // onClick={_el => console.log(props.setOthers)}
             data={data}
             columnNum={2}
             activeStyle={false}

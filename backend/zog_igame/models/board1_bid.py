@@ -15,20 +15,34 @@ from .bridge_tools import cmp_gt_call
 class Board(models.Model):
     _inherit = "og.board"
 
-    #@api.multi
-    def bid(self, pos, call):
+    @api.multi
+    def bid(self, pos, call, channel_id):
+        self = self.sudo()
         ret = self._check_call(pos, call)
         if ret:
             return ret
 
         nums = self.call_ids.mapped('number')
-        num  = 1+(nums and max(nums) or 0)
-        vals = {'name':call, 'pos': pos,
-                'board_id':self.id, 'number': num }
+        num = 1 + (nums and max(nums) or 0)
+        vals = {'name': call, 'pos': pos,
+                'board_id': self.id, 'number': num}
 
-        self.call_ids.create(vals)
+        self.sudo().call_ids.create(vals)
+        self._send_bid(channel_id, vals)
         return 0
 
+    # new func
+    def _send_bid(self, channel_id, bidinfo):
+        res = self.env['og.channel'].browse(channel_id).message_post(body=bidinfo)
+
+    # new func  after biding call this.
+    @api.multi
+    def call_result(self, channel_id):
+        self = self.sudo()
+        vals = {'contract': self.contract, 'declarer': self.declarer, 'dummy': self.dummy,
+                'openlead': self.openleader, 'nextplayer': self.player}
+        self._send_bid(channel_id, vals)
+        return 0
 
     def _check_call(self, pos, call):
         if self.contract:
