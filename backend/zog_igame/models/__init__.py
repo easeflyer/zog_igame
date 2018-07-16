@@ -12,3 +12,4 @@ from . import board_call
 from . import board_card
 from . import match
 from . import api_igame
+from . import apiboard

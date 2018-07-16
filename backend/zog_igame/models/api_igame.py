@@ -100,17 +100,17 @@ class IntelligentGameApi(models.Model):
 
                 arr = []
 
-            for g in games:
-                # [team for team_id in team_ids]
-                if team.igame_id.id == g.id:
-                    arr.append({'name': g.name, 'id': g.id,'datetime':g.date_game,'type':g.match_type
-                     ,'state':g.state,'referee':g.referee,'arbitrator':g.arbitrator,'host_unit':g.host_unit
-                     ,'sponsor':g.sponsor,'tt':True})
+                for g in games:
+                    # [team for team_id in team_ids]
+                    if team.igame_id.id == g.id:
+                        arr.append({'name': g.name, 'id': g.id,'datetime':g.date_game,'type':g.match_type
+                         ,'state':g.state,'referee':g.referee,'arbitrator':g.arbitrator,'host_unit':g.host_unit
+                         ,'sponsor':g.sponsor,'tt':True})
 
-                else:
-                    arr.append({'name': g.name, 'id': g.id,'datetime':g.date_game,'type':g.match_type
-                 ,'state':g.state,'referee':g.referee,'arbitrator':g.arbitrator,'host_unit':g.host_unit
-                 ,'sponsor':g.sponsor,'tt':False})
+                    else:
+                        arr.append({'name': g.name, 'id': g.id,'datetime':g.date_game,'type':g.match_type
+                     ,'state':g.state,'referee':g.referee,'arbitrator':g.arbitrator,'host_unit':g.host_unit
+                     ,'sponsor':g.sponsor,'tt':False})
                 gg.append(arr)
             return gg
         else:

@@ -13,7 +13,7 @@ from odoo.addons.bus.controllers.main import BusController
 
 class Message(BusController):
 
-    @http.route('/longpolling/igame', type="json", auth="public")
+    @http.route('/longpolling/igame', type="json", auth="public", cors='*')
     def poll2(self, channels, last, options=None):
         msgs = self.poll(channels, last, options)
         new_msgs = []

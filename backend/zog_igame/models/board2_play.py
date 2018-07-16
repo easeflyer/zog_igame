@@ -11,15 +11,41 @@ import random
 class Board(models.Model):
     _inherit = "og.board"
 
+    # for testing
     @api.multi
-    def play(self,pos,card):
+    def init_board(self, channel_id):
+        self = self.sudo()
+        players = self.table_id.player_ids
+        players_info = []
+        for rec in players:
+            vals = [rec.name, rec.position, rec.partner_id.id]
+            players_info.append(vals)
+        vals = {'cards': self.name, 'dealer': self.dealer, 'vulnerable': self.vulnerable,
+                'players': players_info}
+        self.env['og.channel'].browse(channel_id).message_post(body=str(vals))
+        return vals
+
+    # new func
+    def _send_play(self, channel_id, bidinfo):
+        self.env['og.channel'].browse(channel_id).message_post(body=str(bidinfo))
+
+    # modified
+    @api.multi
+    def play(self, pos, card, channel_id):
+        self = self.sudo()
         ret, ccdd = self._check_play(pos, card)
         if ret:
             return ret, ccdd
-
+        # self.env['og.board.card'].browse(ccdd.id).write({'number': 1 + max(self.card_ids.mapped('number'))})
         ccdd.number = 1 + max(self.card_ids.mapped('number') )
-        #self.refresh()
-        return 0
+        # fccdd = self.env['og.board.card'].browse(ccdd.id)
+        # board = self.browse(fccdd.board_id.id)
+
+        vals = {'number': ccdd.number, 'card': ccdd.name, 'pos': ccdd.pos, 'suit': ccdd.suit,
+                'rank': ccdd.rank, 'ns_win': self.ns_win, 'ew_win': self.ew_win,
+                'nextplayer': self.player}
+        self._send_play(channel_id, vals)
+        return vals
 
     def _check_play(self, pos, card):
         if not ( self.contract and self.declarer):

@@ -134,7 +134,8 @@ class Board(models.Model):
         t1.sort(key=lambda c: c.number)
         return t1 and t1[0].name or None
 
-    @api.multi
+
+    @api.depends('card_ids.number')
     def _compute_play(self):
         for rec in self:
             pass
@@ -147,7 +148,8 @@ class Board(models.Model):
     ns_win  = fields.Integer(compute='_compute_win')
     ew_win  = fields.Integer(compute='_compute_win')
 
-    @api.multi
+
+    @api.depends('card_ids.number')
     def _compute_win(self):
         for rec in self:
             dclr, opp, ns, ew = rec._get_win()
