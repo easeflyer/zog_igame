@@ -4,9 +4,10 @@ import session from '../User/session';
 const HOST = 'http://192.168.0.112:8069';
 class OdooRpc {
     static create(success,error) {
-        if (OdooRpc.models === null) {
-            OdooRpc.models = new OdooRpc();
-        }
+        // if (OdooRpc.models === null) {
+        //     OdooRpc.models = new OdooRpc();
+        // }
+        OdooRpc.models = new OdooRpc();
         OdooRpc.models.success=success;
         OdooRpc.models.error=error;
         return OdooRpc.models;
@@ -15,7 +16,8 @@ class OdooRpc {
         const data1 = {
             "jsonrpc":"2.0",
             "method":"call",
-            "id":Math.floor(Math.random()*100),
+            // "id":Math.floor(Math.random()*100),
+            "id":123,
             "params":data
         }
         fetch(url,{
@@ -54,6 +56,11 @@ class Models{       //用于被继承，来接受回调函数success，error
             'kw':kw,
         }
         return this.m.jsonrpc(url,data)
+    }
+    poll(last){
+        const url = HOST + '/longpolling/igame?session_id='+session.get_sid();
+        const data = {'channels':[], 'last':last, "options": {} }
+        return this.m.jsonrpc(url,data);
     }
 }
 export default Models;
