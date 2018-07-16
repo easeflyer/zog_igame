@@ -4,7 +4,7 @@ import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 import 'antd/dist/antd.css'; // 这一句是从哪里引入的？
 import './App.css'
 import { TabBar } from 'antd-mobile';
-import { Site,App2,My } from './App/Loadable';
+import { Site,App2,My,Learn } from './App/Loadable';
 import { Icon } from 'antd'
 import session from './App/User/session';
 import User from './App/User/Index';
@@ -137,7 +137,7 @@ class TabBarExample extends React.Component {
               });
             }}
           >
-            {this.state.selectedTab==='greenTab'?this.renderContent(<Site />):null}
+            {this.state.selectedTab==='greenTab'? this.renderContent(this.state.haslogin? this.renderContent(<Learn />):<User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />):null}
           </TabBar.Item>
           <TabBar.Item
             icon={<Icon type="user" style={{fontSize:'22px'}} />}
