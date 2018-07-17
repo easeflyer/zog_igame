@@ -47,7 +47,7 @@ class IntelligentGameApi(models.Model):
 
 
     @api.model
-    def search_user(self):
+    def search_own_match(self):
 
         user = self.env.user.partner_id
         self = self.sudo()
@@ -58,19 +58,23 @@ class IntelligentGameApi(models.Model):
         team_ids = team1.mapped('team_id')
 
         games = []
-        for team_id in team_ids:
-            team = self.env['og.igame.team'].search([('id', '=', team_id.id)])
-            game = self.env['og.igame'].search([('id', '=', team.igame_id.id)])
+        game1 = self.env['og.igame'].search([])
+        for game in game1:
+            for team_id in team_ids:
+                team = self.env['og.igame.team'].search([('id', '=', team_id.id)])
+                if team.igame_id.id == game.id:
 
-            games.append(game)
+                    games.append({'name': game.name, 'id': game.id,'datetime':game.date_game,'type':game.match_type
+                     ,'state':game.state,'referee':game.referee,'arbitrator':game.arbitrator,'host_unit':game.host_unit
+                     ,'sponsor':game.sponsor})
         return games
 
-    @api.model
-    def search_own_match(self):
-        games = self.search_user()
-        return [{'name': game.name, 'id': game.id,'datetime':game.date_game,'type':game.match_type
-                 ,'state':game.state,'referee':game.referee,'arbitrator':game.arbitrator,'host_unit':game.host_unit
-                 ,'sponsor':game.sponsor}for game in games]
+    # @api.model
+    # def search_own_match(self):
+    #     games = self.search_user()
+    #     return [{'name': game.name, 'id': game.id,'datetime':game.date_game,'type':game.match_type
+    #              ,'state':game.state,'referee':game.referee,'arbitrator':game.arbitrator,'host_unit':game.host_unit
+    #              ,'sponsor':game.sponsor}for game in games]
 
     @api.model
     # @api.returns('self')
@@ -94,25 +98,28 @@ class IntelligentGameApi(models.Model):
             gg = []
             arr = []
             games = self.env['og.igame'].search([])
-            for team_id in team_ids:
-                team = self.env['og.igame.team'].search([('id', '=', team_id.id)])
-                # game = self.env['og.igame'].search([('id', '=', team.igame_id.id)])
 
-                arr = []
+            for g in games:
+                for team_id in team_ids:
+                    team = self.env['og.igame.team'].search([('id', '=', team_id.id)])
+                    # game = self.env['og.igame'].search([('id', '=', team.igame_id.id)])
 
-                for g in games:
-                    # [team for team_id in team_ids]
                     if team.igame_id.id == g.id:
                         arr.append({'name': g.name, 'id': g.id,'datetime':g.date_game,'type':g.match_type
                          ,'state':g.state,'referee':g.referee,'arbitrator':g.arbitrator,'host_unit':g.host_unit
                          ,'sponsor':g.sponsor,'tt':True})
-
-                    else:
-                        arr.append({'name': g.name, 'id': g.id,'datetime':g.date_game,'type':g.match_type
+            for g in games:
+                arr.append({'name': g.name, 'id': g.id,'datetime':g.date_game,'type':g.match_type
                      ,'state':g.state,'referee':g.referee,'arbitrator':g.arbitrator,'host_unit':g.host_unit
                      ,'sponsor':g.sponsor,'tt':False})
-                gg.append(arr)
-            return gg
+                for team_id in team_ids:
+                    team = self.env['og.igame.team'].search([('id', '=', team_id.id)])
+                    if team.igame_id.id == g.id:
+                        arr.remove({'name': g.name, 'id': g.id,'datetime':g.date_game,'type':g.match_type
+                         ,'state':g.state,'referee':g.referee,'arbitrator':g.arbitrator,'host_unit':g.host_unit
+                         ,'sponsor':g.sponsor,'tt':False})
+            # gg.append(arr)
+            return arr
         else:
             # team = self.env['og.igame.team'].search([('partner_id', '=', pa.parent_id.id)])
             games = self.env['og.igame'].search([])
@@ -341,7 +348,7 @@ class IntelligentGameTeam(models.Model):
         team = self.env['og.igame.team.line'].search([('team_id','=',self.id)])
         round_id = team.mapped('round_id')
         match_id = team.mapped('match_id')
-        partner = self.env['og.']
+        # partner = self.env['og.']
         return round_id,match_id
 
 
