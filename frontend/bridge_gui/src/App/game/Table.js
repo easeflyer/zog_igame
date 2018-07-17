@@ -171,7 +171,7 @@ class Table extends Component {
                         active:0,
                         key: index++,
                         seat: Table.seats[index1],       // 这张牌是那个方位的
-                        table: this,
+                        //table: this,
                         size: this.csize,                // 牌的大小
                         card: s[i] + suits[index2],
                         position: { x: this.width/2, y: this.width*2 }     // 考虑一个默认位置。
@@ -291,11 +291,60 @@ class Table extends Component {
      *  成功：牌打开
      *  失败：false 从 model 中调取数据，判断规则。
      */
-    openDummy(){
-        const dCards = Models.openDummy();
+    openDummy1 = () => {
+        const seat = 'north'
+        const dCards = Models.openDummy().cards.split('.');
+
         const cards = this.state.cards;
+        cards[Table.seats.indexOf(seat)].forEach((item,index)=>{
+            item.forEach((item1,index1)=>{
+                let card = cards[Table.seats.indexOf(seat)][index][index1];
+                card.card = dCards[index].split('')[index1] + Card.suits[index]
+            });
+        })
+        console.log('openDummy..............')
+        console.log(cards)
 
     }
+    // todo： 修改 cards 生成
+    openDummy = () => {
+        const seat = 'north'
+        const index = 39
+        const dCards = Models.openDummy().cards.split('.');
+        let [x, y] = [this.seat[seat][0].x, this.seat[seat][0].y]
+        const cards = this.state.cards;
+        cards[Table.seats.indexOf(seat)] = [[],[],[],[]]
+        cards[Table.seats.indexOf(seat)].forEach((item,index)=>{
+            dCards[index].split('').forEach((item1,index1)=>{
+                // 这里。
+                cards[Table.seats.indexOf(seat)][index][index1] = {
+                    onclick:()=>false,
+                    active:0,
+                    card:item1+Card.suits['index'],
+                    key:index++,
+                    seat:seat,
+                    size:this.csize,
+                    animation:{
+                        top:y,
+                        left:x,
+                        delay:0,
+                        duration:300,
+                    }
+
+                }
+                x = x + this.csize*0.2;                
+            })
+        })
+
+        this.setState({
+            cards:cards
+        })
+        // console.log('openDummy..............')
+        // console.log(cards)
+
+    }
+
+    
     render() {
         const css = this.css;
         // cards 从 state.cards 遍历获得。不要重复构造，而所有操作只操作数据。
@@ -306,7 +355,7 @@ class Table extends Component {
                         active={item3.active}
                         onClick={item3.onclick}
                         key={item3.key}
-                        table={item3.table}
+                        //table={item3.table}
                         seat={item3.seat}
                         animation={item3.animation || ''}
                         card={item3.card}
@@ -355,6 +404,7 @@ class Table extends Component {
                     <button onClick={this.deal}>发牌</button>
                     <button onClick={this.test1}>test1</button>
                     <button onClick={this.test2}>test2</button>
+                    <button onClick={this.openDummy}>openDummy</button>
                     <div id='test' style={{ position: 'relative' }}>测试区域</div>
                     <div id='footer' className='footer' style={css.footer}>footer</div>
                 </div>

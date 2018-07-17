@@ -65,4 +65,24 @@ class Card extends React.Component {
     }
 }
 Card.suits = ['S', 'H', 'D', 'C'];
+/**
+ * 
+ * @param {*} deals 字符串 一手牌，比如：J95.K862.J97.643
+ * 顺序为：黑桃，红桃，方片，梅花
+ * @param {*} order 这张牌的序号基数 饕餮鱼
+ */
+// Card.crateCards = function(deals,order){
+//     let index = order;
+//     const suits = deals.split('.')
+//     suits.map((item,index)=>{
+//         item.split('').map((item1)=>{
+//             return {
+//                 onclick:()=>false,
+//                 active:0,
+//                 key:index++,
+
+//             }
+//         })
+//     })
+// }
 export default Card
