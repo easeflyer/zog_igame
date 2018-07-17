@@ -13,9 +13,11 @@
   考虑每张牌是从哪里打出来的？
   一墩牌 ：在哪里记录上一轮牌。
 
-  做一个 从 字典 到 组件的 函数。先不实例化 组件。
+   这篇文章必须看：https://segmentfault.com/a/1190000005159165#articleHeader0
 
-  这篇文章必须看：https://segmentfault.com/a/1190000005159165#articleHeader0
+  明手的处理
+  
+
 
 
 ## 核心分析

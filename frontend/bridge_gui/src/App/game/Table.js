@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 //import settings from '../game/settings';
 import Card from './Card'
+import './Table.css'
 import Models from '../models/model'
 
 /**
@@ -80,23 +80,23 @@ class Table extends Component {
         center.y = this.ref.board.current.offsetLeft +
             parseInt(this.ref.board.current.style.width.slice(0, -2)) / 2
         this.center = center;
-        const offset = (this.csize - this.csize * 0.7) / 2;
-        // 获得 四个方位的发牌空间左上角坐标, 以及出牌空间左上角 
+        const offset = this.csize * 0.7 / 2
         for (let key in this.seat) {
             this.seat[key][0]['y'] = this.ref[key].current.offsetTop;
             this.seat[key][0]['x'] = this.ref[key].current.offsetLeft;
 
             if (key == 'east') {
-                this.seat[key][1]['y'] = center.y - this.csize / 2;
-                this.seat[key][1]['x'] = center.x + offset - this.csize * 0.7 / 2;
+                this.seat[key][1]['y'] = center.y - offset
+                this.seat[key][1]['x'] = center.x - offset
             } else if (key == 'south') {
-                this.seat[key][1]['y'] = center.y + offset - this.csize / 2;
+                //this.seat[key][1]['y'] = center.y + offset - this.csize / 2;
+                this.seat[key][1]['y'] = center.y - offset
                 this.seat[key][1]['x'] = center.x - this.csize * 0.7 / 2;
             } else if (key == 'west') {
-                this.seat[key][1]['y'] = center.y - this.csize / 2;
-                this.seat[key][1]['x'] = center.x - offset - this.csize * 0.7 / 2;
+                this.seat[key][1]['y'] = center.y - offset
+                this.seat[key][1]['x'] = center.x + offset - this.csize;
             } else {
-                this.seat[key][1]['y'] = center.y - offset - this.csize / 2;
+                this.seat[key][1]['y'] = center.y + offset - this.csize;
                 this.seat[key][1]['x'] = center.x - this.csize * 0.7 / 2;
             }
         }
@@ -106,114 +106,126 @@ class Table extends Component {
      * initCards 从 this.deals 初始化成 Cards 组件为渲染输出做准备，返回到 this.cards
      */
     initCards() {
-        const suits = Card.suits                //['S', 'H', 'D', 'C'];
+        const suits = Card.suits                    //['S', 'H', 'D', 'C'];
         const deals = this.deals.split(' ')
-        let index = 0;               // 复位index 可以让四个人的牌同时发出来
-        const cards = [[], [], [], []];            // 初始化二维数组 保存四个方位的牌
+        let index = 0;                              // 复位index 可以让四个人的牌同时发出来
+        const cards = [[], [], [], []];             // 初始化二维数组 保存四个方位的牌
         //deals. [XXXXXXXXXXXXX,QJ98.A5.J853.QT4,XXXXXXXXXXXXX,XXXXXXXXXXXXX]
         deals.forEach((item, index1) => {
-            // TODO：index 和缓动参数进行分离
             const suit = item.split('.')
-            suit.forEach((s, index2) => {      // index2 四个花色  s 'QJ98' 牌点字串
+            suit.forEach((s, index2) => {           // index2 四个花色  s 'QJ98' 牌点字串
                 cards[index1][index2] = [];
                 for (var i = 0; i < s.length; i++) {
                     cards[index1][index2][i] = {
-                            key:index,
-                            seat:Table.seats[index1],   // 这张牌是那个方位的
-                            table:this,
-                            index:index++,
-                            rotate:0,
-                            zIndex:1,
-                            size:this.csize,           // 牌的大小
-                            card:s[i] + suits[index2],
-                            position:{ x: 180, y: 450 }   // 考虑一个默认位置。
+                        onclick:()=>false,              // onclick 必须是个函数
+                        active:0,
+                        key: index++,
+                        seat: Table.seats[index1],       // 这张牌是那个方位的
+                        table: this,
+                        size: this.csize,                // 牌的大小
+                        card: s[i] + suits[index2],
+                        position: { x: 180, y: 450 }     // 考虑一个默认位置。
                     }
                 }
             });
         });
+        //console.log(cards)
         return cards;
     }
-    // 如果还是原来的 引用地址 则不变化？
+    /**
+     * 出牌
+     * 
+     * 算法注解：
+     *  1） 东西牌是横向的，因此要确定旋转的圆心。旋转后保证左上角坐标就是牌的左上角
+     *      如果按照中心旋转则还需要计算偏移量。
+     *  2） 出牌的位置 东西南北 四个位置之前计算好的。
+     *  3） xy+5 目的是避免靠近牌桌边缘。
+     *  4） delay 是每张牌发出来的延迟时间。按照牌编号进行计算。出牌时应清零
+     *  5） '02'.indexOf(index) 东西的牌 rotate 旋转90度
+     *  6） .onclick=this.onclick(item2) onclick 函数引用
+     *      this.onclick(item2) 仍然返回一个函数 用来处理点击事件，传入item2
+     */
     dealCards() {
-        // 下面这样写 应为 cards 值 也就是内存地址不变，因此造成不刷新。
-        //const cards = this.state.cards || this.initCards();
         const cards = this.state.cards;
+        const offset = this.csize * 0.7/2
         cards.forEach((item, index) => {
             let rotate = 0;
             let seat = Table.seats[index]
             let [x, y] = [this.seat[seat][0].x, this.seat[seat][0].y]
-            if ('02'.indexOf(index) != -1) {
-                x = x + 16; y = y - 10; rotate = 90;
-            } else {
-                x = x + 5; y = y + 5;
-            }
+            if ('02'.indexOf(index) != -1) rotate = -90;
+            x = x + 5; y = y + 5;
             item.forEach((item1, index1) => {
                 item1.forEach((item2, index2) => {
-                    cards[index][index1][index2] = {
-                        animation:{
-                            top:y,
-                            left:x,
-                            delay:(item2.index % 13) * 80,
-                            duration:300,
-                            rotate:rotate
-                        },
-                        key:item2.key,
-                        seat:Table.seats[index],
-                        table:this,
-                        index:item2.key,
-                        rotate:rotate,
-                        size:this.csize,
-                        card:item2.card,
-                        zIndex:1,
-                        position:{x:item2.position.x,y:item2.position.y}
-                        //position:{x:x,y:y}
+                    cards[index][index1][index2].animation = {
+                        top: y,
+                        left: x,
+                        delay: (item2.key % 13) * 80,
+                        duration: 300,
+                        rotate: rotate,
+                        transformOrigin: `${offset}px ${offset}px`
                     }
+                    cards[index][index1][index2].rotate = rotate;
+                    cards[index][index1][index2].onclick=this.play(item2)
                     if ('02'.indexOf(index) != -1) y = y + 10;
-                    else x = x + 20;                    
+                    else x = x + 20;
                 });
             });
-
         })
         return cards;
     }
-    onclick = (item) => {
-        return ()=>{
-            console.log('item.........................')
-            console.log(item)
-            item['left'] = item['animation']['left'];
-            item['top'] = item['animation']['top'];
+    /**
+     * 出牌
+     */
+    play = (item) => {
+        return () => {
             item['animation']['left'] = this.seat[item.seat][1].x;
             item['animation']['top'] = this.seat[item.seat][1].y;
             item['animation']['delay'] = 0;
             item['zIndex'] = this.zindex++
             this.setState({
-                cards:this.state.cards
+                cards: this.state.cards
             })
         }
     }
-    test1 = () => {
+    test2 = () => {
+        console.log('test2.........................')
         const cards = this.state.cards;
-        //cards[0][0][0].position = {x:200,y:200}
-        cards[0][0][0].animation = {
-            top:200,
-            left:200
-        }
-        //console.log(cards)
+        cards[1][1][0]['active']=2;                  // 测试用 2张牌可以出
+        cards[1][1][1]['active']=2;
+        cards[1][1][0]['animation']['delay']=0;                  // 测试用 2张牌可以出
+        cards[1][1][1]['animation']['delay']=0;
+
+        // cards[1][1][1]['position']['x']=180;
+        // cards[1][1][1]['position']['y']=160;
         this.setState({
             cards:cards
         })
-
+        //this.forceUpdate()
+        // this.setState((preState,props)=>{
+        //     return {
+        //         cards:preState.cards
+        //     }
+        // })
     }
+
+    /**
+     * 测试出牌
+     */
+    test1 = () => {
+        const cards = this.state.cards;
+        cards[0][0][0].animation = {
+            top: 200,
+            left: 200,
+        }
+        this.setState({
+            cards: cards
+        })
+    }
+    /**
+     * 发牌
+     */
     deal = () => {
-        //const cards = this.initDeals1()
         const cards = this.dealCards()
-
-        console.log('cards....cards1..............')
-        console.log(cards)
-        // console.log('cards....cards1..............')
-        // console.log(cards1)
-        // console.log(cards == cards1 || "不等")
-
         this.setState({
             cards: cards
         });
@@ -221,7 +233,7 @@ class Table extends Component {
     render() {
         const css = {
             table: {
-                position: 'relative',
+                //position: 'relative',
                 width: this.width,
                 height: this.height,
             },
@@ -294,18 +306,24 @@ class Table extends Component {
         }
 
         // cards 从 state.cards 遍历获得。不要重复构造，而所有操作只操作数据。
-        const cards = this.state.cards.map((item1,index1)=>{
-            return item1.map((item2,index2)=>{
-                return item2.map((item3,index3)=>{
-                    return <span className={'ease1'} onClick={this.onclick(item3)}><Card
+        console.log('cards................')
+        console.log(this.state.cards)
+
+        const cards = this.state.cards.map((item1, index1) => {
+            return item1.map((item2, index2) => {
+                return item2.map((item3, index3) => {
+                    return <Card
+                        active={item3.active}
+                        onClick={item3.onclick}
                         key={item3.key}
-                        animation={item3.animation}
+                        table={item3.table}
+                        seat={item3.seat}
+                        animation={item3.animation || ''}
                         card={item3.card}
                         size={item3.size}
-                        left={item3.position && item3.position.x}
-                        top={item3.position && item3.position.y}
-                        zIndex={item3.zIndex || null}
-                    /></span>
+                        position={item3.position}
+                        zIndex={item3.zIndex}
+                    />
                 });
             });
         });
@@ -328,26 +346,27 @@ class Table extends Component {
              * 
              */
             <div>
-                <div id='table' style={css.table}>
-                    <div id='header' style={css.header}>
-                        <div style={css.re}>分数</div>
-                        <div style={css.re}>方位</div>
-                        <div style={css.re}>墩数</div>
+                <div id='table' className='table' style={css.table}>
+                    <div id='header' className='header' style={css.header}>
+                        <div className='re' style={css.re}>分数</div>
+                        <div className='re' style={css.re}>方位</div>
+                        <div className='re' style={css.re}>墩数</div>
                     </div>
-                    <div id='body' style={css.body}>
-                        <div id='east' style={css.east} ref={this.ref.east}>east</div>
-                        <div id='west' style={css.west} ref={this.ref.west}>west</div>
-                        <div id='south' style={css.south} ref={this.ref.south}>south</div>
-                        <div id='north' style={css.north} ref={this.ref.north}>north</div>
-                        <div id='board' style={css.board} ref={this.ref.board}>
+                    <div id='body' className='body' style={css.body}>
+                        <div id='east' className='east' style={css.east} ref={this.ref.east}>east</div>
+                        <div id='west' className='west' style={css.west} ref={this.ref.west}>west</div>
+                        <div id='south' className='south' style={css.south} ref={this.ref.south}>south</div>
+                        <div id='north' className='north' style={css.north} ref={this.ref.north}>north</div>
+                        <div id='board' className='board' style={css.board} ref={this.ref.board}>
                         </div>
                         {cards}
                     </div>
 
                     <button onClick={this.deal}>发牌</button>
-                    <button onClick={this.test1}>测试出牌</button>
+                    <button onClick={this.test1}>test1</button>
+                    <button onClick={this.test2}>test2</button>
                     <div id='test' style={{ position: 'relative' }}>测试区域</div>
-                    <div id='footer' style={css.footer}>footer</div>
+                    <div id='footer' className='footer' style={css.footer}>footer</div>
                 </div>
             </div >
         );

@@ -1,0 +1,41 @@
+.table{
+    position: 'relative';
+}
+.header{
+    background-color: '#552211'
+}
+.body{
+    position: 'relative';
+    background-image: 'url(/imgs/bg1.png)';
+    background-size: '100% 100%';
+}
+.footer{
+    position: 'absolute';
+    bottom: '0';
+    background-color: '#552211'
+}
+.east {
+    position: 'absolute';
+    right: '0';
+}
+.south {
+    position: 'absolute';
+    bottom: '0px';
+}
+.west {
+    position: 'absolute';
+    top: '90px';
+}
+.north {
+    position: 'absolute';
+    top: 0;
+}
+.re{
+    background-color: '#ee88ee';
+    float: left;
+    margin:2px
+}
+.board {
+    position: 'absolute';
+    border: '1px solid #6666aa'
+}

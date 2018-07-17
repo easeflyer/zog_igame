@@ -5,24 +5,18 @@ import Card from '../game/Card'
 
 class TestCard extends React.Component {
     state = {
-        left:100,
-        top:0,
+        x:100,
+        y:100,
 
     }
     constructor(props) {
         super(props)
-        this.state.card = <Card
-            index={1}
-            size={80}
-            card={'5D'}
-        />
-
     }
     onclick = () => {
 
             this.setState({
-                left: 100,
-                top:110,
+                x:200,
+                y:200,
 
             })
 
@@ -31,18 +25,20 @@ class TestCard extends React.Component {
         return (
             <div>
                 <Card
+                    key={1}
                     animation={{
-                        top:200,
-                        left:200,
+                        left:this.state.x,
+                        top:this.state.y,
                         rotate:90,
                         delay:1,
                         duration:1800,
                     }}
+                    resetStyle={true}
                     index={1}
                     size={80}
                     card={'5S'}
-                    left={100}
-                    top={100}
+                    // left={10}
+                    // top={10}
                 />
                 <button onClick={this.onclick}>测试2222222222222222222222222222222</button>
             </div>
