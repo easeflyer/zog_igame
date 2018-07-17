@@ -5,7 +5,6 @@ import Session from '../User/session'
 import Board from '../OdooRpc/Board'
 import Channel from '../OdooRpc/Channel'
 import Models from '../OdooRpc/OdooRpc'
-import Initial from './Initial';
 
 const columns = [
     { title: 'N', dataIndex: 'N', key: 'N'},
@@ -27,60 +26,58 @@ const suitWord = ['S','H','D','C']
 let count=0
 let pollingId=1
 export default class PokerTable extends React.Component{
-    state=new Initial().state
-    // state={
-    //     contract:null,//定约
-    //     deal:false, //是否发牌
-    //     call:false, //是否处于叫牌状态
-    //     play:false,  //是否处于打牌状态
-    //     channel_id:null,//频道ID
-    //     board_id:null,  //board id
-    //     border_id_num:null,
-    //     cards:null,   //四个方位的牌
-    //     dataSource:[{  //叫牌表格
-    //         key:count,
-    //         N:'',
-    //         E:'',
-    //         S:'',
-    //         W:'',
-    //     }],
-    //     pass:[],
-    //     declarer:null, //庄家方位 
-    //     dummy:null,  //明手方位
-    //     myDirect:null, //我所在方位
-    //     myName:null,  
-    //     topDirect:null, //对家
-    //     topName:null, //对家
-    //     rightDirect:null, //右侧
-    //     rightName:null, //右侧
-    //     leftDirect:null, //左侧
-    //     leftName:null, //左侧
-    //     myCardsNum:null,//我的牌，全数字
-    //     dummyCardsNum:null,//我的牌，全数字
-    //     callDirect:null, //当前应该哪个方位叫牌  ** 
-    //     openLeader:null, //首攻  
-    //     currentDirect:null, //当前应该哪个方位打牌 
-    //     currentCardB:null, // 我，当前出的牌 
-    //     currentCardT:null, // 我的对家，当前出的牌 
-    //     currentCardL:null, // 左侧，当前出的牌 
-    //     currentCardR:null, // 右侧，当前出的牌 
-    //     piersCount:0, // 墩，计数  ** 
-    //     allPiers:[],  // 所有墩  ** 
-    //     currentPiers:[], // 当前墩 
-    //     scoreSN:0,  //SN方位得分  ** 
-    //     scoreEW:0,  //EW方位得分  ** 
-    //     piersSN:0,  //  ** 
-    //     piersEW:0,   //  ** 
-    //     claimCount:0,
-    // }
+    state={
+        contract:null,//定约
+        deal:false, //是否发牌
+        call:false, //是否处于叫牌状态
+        play:false,  //是否处于打牌状态
+        channel_id:null,//频道ID
+        board_id:null,  //board id
+        border_id_num:null,
+        cards:null,   //四个方位的牌
+        dataSource:[{  //叫牌表格
+            key:count,
+            N:'',
+            E:'',
+            S:'',
+            W:'',
+        }],
+        pass:[],
+        declarer:null, //庄家方位 
+        dummy:null,  //明手方位
+        myDirect:null, //我所在方位
+        myName:null,  
+        topDirect:null, //对家
+        topName:null, //对家
+        rightDirect:null, //右侧
+        rightName:null, //右侧
+        leftDirect:null, //左侧
+        leftName:null, //左侧
+        myCardsNum:null,//我的牌，全数字
+        dummyCardsNum:null,//我的牌，全数字
+        callDirect:null, //当前应该哪个方位叫牌  ** 
+        openLeader:null, //首攻  
+        currentDirect:null, //当前应该哪个方位打牌 
+        currentCardB:null, // 我，当前出的牌 
+        currentCardT:null, // 我的对家，当前出的牌 
+        currentCardL:null, // 左侧，当前出的牌 
+        currentCardR:null, // 右侧，当前出的牌 
+        piersCount:0, // 墩，计数  ** 
+        allPiers:[],  // 所有墩  ** 
+        currentPiers:[], // 当前墩 
+        scoreSN:0,  //SN方位得分  ** 
+        scoreEW:0,  //EW方位得分  ** 
+        piersSN:0,  //  ** 
+        piersEW:0,   //  ** 
+        claimCount:0,
+    }
 
     componentDidMount(){
-        console.log(this.state.contract)
         // 建立连接
-        // this.polling()
+        this.polling()
         //加入当前比赛的频道
         const JoinChannel = new Channel(this.sucChannel,this.failChannel);
-        // JoinChannel.join_channel(1);   // 6 : table_id
+        JoinChannel.join_channel(6);   // 6 : table_id
     }
     polling(){
         const Poll = new Models(this.sucPolling,this.failPolling);
@@ -91,7 +88,7 @@ export default class PokerTable extends React.Component{
         //[42,[44, 40, 41, 38, 43, 39, 45, 42]] [channel_id,[board_id1,board_id2,board_id3...]]
         this.setState({
             channel_id:data[0],
-            board_id_num:data[1],
+            board_id_num:data[1].length,
             board_id:data[1][0],
         })
         this.post('init',this.state.board_id,this.state.channel_id)   //初始化牌桌
@@ -209,44 +206,7 @@ export default class PokerTable extends React.Component{
                     },2000)
                 }
                 this.setState({  currentDirect:body.nextplayer  })
-                // if(body.number===52&&this.state.board_id_num.indexOf(this.state.board_id)<=this.state.border_id_num.length-1){
-                //     this.setState({
-                //         contract:null,//定约
-                //         deal:false, //是否发牌
-                //         call:false, //是否处于叫牌状态
-                //         play:false,  //是否处于打牌状态
-                //         board_id:this.state.board_id_num[this.state.board_id_num.indexOf(this.state.board_id)+1],  //board id
-                //         cards:null,   //四个方位的牌
-                //         dataSource:[{  //叫牌表格
-                //             key:count,
-                //             N:'',
-                //             E:'',
-                //             S:'',
-                //             W:'',
-                //         }],
-                //         pass:[],
-                //         declarer:null, //庄家方位 
-                //         dummy:null,  //明手方位
-                //         myCardsNum:null,//我的牌，全数字
-                //         dummyCardsNum:null,//我的牌，全数字
-                //         callDirect:null, //当前应该哪个方位叫牌  ** 
-                //         openLeader:null, //首攻  
-                //         currentDirect:null, //当前应该哪个方位打牌 
-                //         currentCardB:null, // 我，当前出的牌 
-                //         currentCardT:null, // 我的对家，当前出的牌 
-                //         currentCardL:null, // 左侧，当前出的牌 
-                //         currentCardR:null, // 右侧，当前出的牌 
-                //         piersCount:0, // 墩，计数  ** 
-                //         allPiers:[],  // 所有墩  ** 
-                //         currentPiers:[], // 当前墩 
-                //         scoreSN:0,  //SN方位得分  ** 
-                //         scoreEW:0,  //EW方位得分  ** 
-                //         piersSN:0,  //  ** 
-                //         piersEW:0,   //  ** 
-                //         claimCount:0,
-                //     })
-                //     this.post('init',this.state.board_id,this.state.channel_id)
-                // }
+
             }    
         } 
         this.polling();
