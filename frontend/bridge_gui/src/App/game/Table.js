@@ -24,10 +24,57 @@ class Table extends Component {
     constructor(props) {
 
         super(props);
-        this.cards = [];
-        this.zindex = 10;
         this.width = window.screen.width;
         this.height = window.screen.height;
+        this.css = {
+            table: {
+                width: this.width,
+                height: this.height,
+            },
+            header: {
+                width: this.width,
+                height: this.width * 0.2,
+            },
+            body: {
+                width: this.width,
+                height: this.width,
+            },
+            footer: {
+                width: this.width,
+                height: '40px',
+            },
+            east: {
+                top: this.width * 0.2,
+                width: this.width * 0.2,
+                height: this.width * 0.6,
+            },
+            south: {
+                width: this.width,
+                height: this.width * 0.2,
+            },
+            west: {
+                top: this.width * 0.2,
+                width: this.width * 0.2,
+                height: this.width * 0.6,
+            },
+            north: {
+                width: this.width,
+                height: this.width * 0.2,
+            },
+            re: {
+                width: this.width*0.19,
+                height: this.width*0.19,
+            },
+            board: {
+                width: this.width * 0.6,
+                height: this.width * 0.6,
+                top: this.width * 0.2,
+                left: this.width * 0.2,
+            }
+    
+        }
+        this.cards = [];
+        this.zindex = 10;
         this.center = null; // 桌子的中心 {x,y}
         this._csize = null; // 牌的大小
         this.deals = 'XXXXXXXXXXXXX QJ98.A5.J853.QT4 XXXXXXXXXXXXX XXXXXXXXXXXXX'
@@ -155,7 +202,7 @@ class Table extends Component {
             let seat = Table.seats[index]
             let [x, y] = [this.seat[seat][0].x, this.seat[seat][0].y]
             if ('02'.indexOf(index) != -1) rotate = -90;
-            x = x + 5; y = y + 5;
+            x = x + this.width/16/5; y = y + this.width/16/5; // margin
             item.forEach((item1, index1) => {
                 item1.forEach((item2, index2) => {
                     cards[index][index1][index2].animation = {
@@ -235,86 +282,8 @@ class Table extends Component {
         });
     }
     render() {
-        const css = {
-            table: {
-                //position: 'relative',
-                width: this.width,
-                height: this.height,
-            },
-            header: {
-                width: this.width,
-                height: this.width * 0.2,
-                backgroundColor: '#552211'
-            },
-            body: {
-                position: 'relative',
-                width: this.width,
-                height: this.width,
-                backgroundImage: 'url(/imgs/bg1.png)',
-                backgroundSize: '100% 100%',
-
-                //backgroundColor:'#552211'
-            },
-            footer: {
-                position: 'absolute',
-                bottom: '0',
-                width: this.width,
-                height: '40px',
-                backgroundColor: '#552211'
-            },
-            east: {
-                position: 'absolute',
-                right: '0',
-                top: this.width * 0.2,
-                width: this.width * 0.2,
-                height: this.width * 0.6,
-                backgroundColor: '#880000'
-            },
-            south: {
-                position: 'absolute',
-                bottom: '0px',
-                width: this.width,
-                height: this.width * 0.2,
-                backgroundColor: '#008800'
-            },
-            west: {
-                position: 'absolute',
-                top: this.width * 0.2,
-                width: this.width * 0.2,
-                height: this.width * 0.6,
-                backgroundColor: '#880000'
-            },
-            north: {
-                position: 'absolute',
-                top: '0',
-                width: this.width,
-                height: this.width * 0.2,
-                backgroundColor: '#008800'
-            },
-            re: {
-                width: '86px',
-                height: '86px',
-                backgroundColor: '#ee88ee',
-                float: 'left',
-                margin: '2px'
-            },
-            board: {
-                position: 'absolute',
-                width: this.width * 0.6,
-                height: this.width * 0.6,
-                top: this.width * 0.2,
-                left: this.width * 0.2,
-                backgroundColor:'#333333',
-                opacity: '0.5'
-                //border: '1px solid #6666aa'
-            }
-
-        }
-
+        const css = this.css;
         // cards 从 state.cards 遍历获得。不要重复构造，而所有操作只操作数据。
-        // console.log('cards................')
-        // console.log(this.state.cards)
-
         const cards = this.state.cards.map((item1, index1) => {
             return item1.map((item2, index2) => {
                 return item2.map((item3, index3) => {

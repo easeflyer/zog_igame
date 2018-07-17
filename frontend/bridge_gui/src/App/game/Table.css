@@ -1,41 +1,45 @@
 .table{
-    position: 'relative';
+    position: relative;
 }
 .header{
-    background-color: '#552211'
+    background-color: #552211;
 }
 .body{
-    position: 'relative';
-    background-image: 'url(/imgs/bg1.png)';
-    background-size: '100% 100%';
+    position: relative;
+    background-image: url(/imgs/bg1.png);
+    background-size: 100% 100%;
 }
 .footer{
-    position: 'absolute';
-    bottom: '0';
-    background-color: '#552211'
+    position: absolute;
+    bottom: 0;
+    background-color: #552211;
 }
 .east {
-    position: 'absolute';
-    right: '0';
+    position: absolute;
+    right: 0;
+    background-color: #880000;
 }
 .south {
-    position: 'absolute';
-    bottom: '0px';
+    position: absolute;
+    bottom: 0;
+    background-color: #008800;
 }
 .west {
-    position: 'absolute';
-    top: '90px';
+    position: absolute;
+    background-color: #880000;
 }
 .north {
-    position: 'absolute';
+    position: absolute;
     top: 0;
+    background-color: #008800
 }
 .re{
-    background-color: '#ee88ee';
+    background-color: #ee88ee;
     float: left;
     margin:2px
 }
 .board {
-    position: 'absolute';
-    border: '1px solid #6666aa'
+    position: absolute;
+    border: 1px solid #6666aa;
+    opacity: 0.5;
 }
