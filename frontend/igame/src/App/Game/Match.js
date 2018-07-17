@@ -78,7 +78,7 @@ export default class PokerTable extends React.Component{
         this.polling()
         //加入当前比赛的频道
         const JoinChannel = new Channel(this.sucChannel,this.failChannel);
-        JoinChannel.join_channel(6);   // 6 : table_id
+        JoinChannel.join_channel(1);   // 6 : table_id
     }
     polling(){
         const Poll = new Models(this.sucPolling,this.failPolling);
@@ -90,7 +90,8 @@ export default class PokerTable extends React.Component{
         this.setState({
             channel_id:data[0],
             board_id_num:data[1].length,
-            board_id:data[1][boardId],
+            board_id:data[1][0],
+            // board_id:data[1][boardId],
         })
         this.post('init',this.state.board_id,this.state.channel_id)   //初始化牌桌
     }
