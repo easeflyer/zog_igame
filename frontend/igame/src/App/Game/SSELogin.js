@@ -2,7 +2,7 @@ import React from 'react'
 import  { WingBlank,WhiteSpace} from 'antd-mobile'
 import { Form, Input, Button } from 'antd';
 import $ from 'jquery';
-import Index from './Index'
+import SSE from './SSE'
 
 class LoginTest extends React.Component{
     state={
@@ -36,7 +36,7 @@ class LoginTest extends React.Component{
         return(
             <WingBlank>
                 <WhiteSpace/>
-                {this.state.login? <Index />:
+                {this.state.login? <SSE />:
                     <div><p>请登录: </p><Input placeholder='请输入用户名'   onPressEnter={this.onClick}/></div>
                  } 
             </WingBlank>
