@@ -7,6 +7,12 @@ class Models{
         '986.J5.AJT93.KT7 Q2.A732.8642.J94 K3.KT8.Q75.A8653 AJT754.Q964.K.Q2',
         'A63.A954.AT4.Q52 QT84.QJ7.K832.AT J95.K862.J97.643 K72.T3.Q65.KJ987']
     }
+    /**
+     * 获得明手的牌，根据规则进行判断。
+     */
+    static openDummy(){
+        return {seat:'north',cards:'K.KJT732.964.A52'}
+    }
 }
 
 export default Models

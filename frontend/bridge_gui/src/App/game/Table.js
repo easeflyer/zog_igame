@@ -78,7 +78,7 @@ class Table extends Component {
         this.center = null; // 桌子的中心 {x,y}
         this._csize = null; // 牌的大小
         this.deals = 'XXXXXXXXXXXXX QJ98.A5.J853.QT4 XXXXXXXXXXXXX XXXXXXXXXXXXX'
-        this.deals = Models.deals()[0];
+        //this.deals = Models.deals()[0];
         this.myseat = 'S'               // 用户坐在 南
         this.seat = {
             'east': [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // seat 用于记录坐标 
@@ -153,6 +153,7 @@ class Table extends Component {
 
     /**
      * initCards 从 this.deals 初始化成 Cards 组件为渲染输出做准备，返回到 this.cards
+     * TODO：把一手牌 变成
      */
     initCards() {
         const suits = Card.suits                    //['S', 'H', 'D', 'C'];
@@ -280,6 +281,20 @@ class Table extends Component {
         this.setState({
             cards: cards
         });
+    }
+    /**
+     * 打开明手的牌
+     *  从 Models 获得 Dummy 的牌，并且显示出来
+     *  如果无权获得，则什么都不做。
+     * 
+     * 返回：
+     *  成功：牌打开
+     *  失败：false 从 model 中调取数据，判断规则。
+     */
+    openDummy(){
+        const dCards = Models.openDummy();
+        const cards = this.state.cards;
+
     }
     render() {
         const css = this.css;

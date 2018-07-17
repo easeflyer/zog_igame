@@ -34,7 +34,8 @@ class Card extends React.Component {
             onclick = this.props.onClick;
             this.props.animation && ( this.props.animation['brightness'] = 1 )
         }
-
+        const card = this.props.card.slice(0,1) == 'X' ? 
+            'back' : this.props.card;
         return (
             <div  // TODO: 这个div定位不理想，只是起到了 zIndex 作用。
                 style={{
@@ -50,7 +51,7 @@ class Card extends React.Component {
                     style={getStyle()}
                 >
                     <img onClick={onclick}
-                        src={`/cards/${this.props.card}.svg`}
+                        src={`/cards/${card}.svg`}
                         style={{
                             position: 'absolute',
                             width: "100%",
