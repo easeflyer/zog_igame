@@ -21,12 +21,12 @@ export default class OneCourseResult extends React.Component{
                 <div>赛队得分</div>
                 <div><button onClick={()=>this.props.showPage('OneCourseRanking')} >本轮排名</button></div>
                 <div><button onClick={()=>this.props.showPage('Ranking_scores')} >排名表(按名次)</button></div>
-                
-                <div><button onClick={()=>this.props.showPage('OneCourseRanking')} >排名(表按序号)</button></div>
-                <div><button onClick={()=>this.props.showPage('OneCourseRanking')} >Datum</button></div>
-                <div><button onClick={()=>this.props.showPage('OneCourseRanking')} >1副牌</button></div>
+
+                {/* <div><button onClick={()=>this.props.showPage('OneCourseRanking')} >排名表(按序号)</button></div> */}
+                <div><button onClick={()=>this.props.showPage('Datum')} >Datum</button></div>
+                {/* <div><button onClick={()=>this.props.showPage('OneCourseRanking')} >1副牌</button></div>
                 <div><button onClick={()=>this.props.showPage('OneCourseRanking')} >一桌牌</button></div>
-                <div><button onClick={()=>this.props.showPage('OneCourseRanking')} >一个队结果</button></div>
+                <div><button onClick={()=>this.props.showPage('OneCourseRanking')} >一个队结果</button></div> */}
 
             </div>
         );

@@ -2,6 +2,7 @@ import React from 'react';
 import OneCourseResult from './OneCourseResult';
 import OneCourseRanking from './OneCourseRanking';
 import Ranking_scores from './Ranking-scores';
+import Datum from './Datum';
 
 export default class MatchResult extends React.Component{
     state={
@@ -36,6 +37,13 @@ export default class MatchResult extends React.Component{
                 break;
             case 'Ranking_scores':
                 page=<Ranking_scores
+                    showPage={this.showPage}
+                    match={this.props.match}        
+                    courseId={this.props.courseId}
+                />
+                break;
+            case 'Datum':
+                page=<Datum
                     showPage={this.showPage}
                     match={this.props.match}        
                     courseId={this.props.courseId}
