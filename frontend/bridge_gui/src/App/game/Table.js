@@ -52,7 +52,7 @@ class Table extends Component {
     get csize() {
         // 短路语法 牌的大小 可以计算在下面的函数内。
         return this._csize || (() => {
-            return 80;
+            return this.width * 0.18;
         })()
     }
     /**
@@ -80,6 +80,8 @@ class Table extends Component {
         center.y = this.ref.board.current.offsetLeft +
             parseInt(this.ref.board.current.style.width.slice(0, -2)) / 2
         this.center = center;
+        // console.log('center......')
+        // console.log(center)
         const offset = this.csize * 0.7 / 2
         for (let key in this.seat) {
             this.seat[key][0]['y'] = this.ref[key].current.offsetTop;
@@ -124,7 +126,7 @@ class Table extends Component {
                         table: this,
                         size: this.csize,                // 牌的大小
                         card: s[i] + suits[index2],
-                        position: { x: 180, y: 450 }     // 考虑一个默认位置。
+                        position: { x: this.width/2, y: this.width*2 }     // 考虑一个默认位置。
                     }
                 }
             });
@@ -165,9 +167,10 @@ class Table extends Component {
                         transformOrigin: `${offset}px ${offset}px`
                     }
                     cards[index][index1][index2].rotate = rotate;
+                    cards[index][index1][index2].active = 2; // 测试用
                     cards[index][index1][index2].onclick=this.play(item2)
-                    if ('02'.indexOf(index) != -1) y = y + 10;
-                    else x = x + 20;
+                    if ('02'.indexOf(index) != -1) y = y + this.csize*0.15;
+                    else x = x + this.csize*0.2;
                 });
             });
         })
@@ -180,6 +183,7 @@ class Table extends Component {
         return () => {
             item['animation']['left'] = this.seat[item.seat][1].x;
             item['animation']['top'] = this.seat[item.seat][1].y;
+
             item['animation']['delay'] = 0;
             item['zIndex'] = this.zindex++
             this.setState({
@@ -239,7 +243,7 @@ class Table extends Component {
             },
             header: {
                 width: this.width,
-                height: '90px',
+                height: this.width * 0.2,
                 backgroundColor: '#552211'
             },
             body: {
@@ -261,31 +265,31 @@ class Table extends Component {
             east: {
                 position: 'absolute',
                 right: '0',
-                top: '90px',
-                width: '90px',
-                height: this.width - 180,
-                //backgroundColor: '#880000'
+                top: this.width * 0.2,
+                width: this.width * 0.2,
+                height: this.width * 0.6,
+                backgroundColor: '#880000'
             },
             south: {
                 position: 'absolute',
                 bottom: '0px',
                 width: this.width,
-                height: '90px',
-                //backgroundColor: '#008800'
+                height: this.width * 0.2,
+                backgroundColor: '#008800'
             },
             west: {
                 position: 'absolute',
-                top: '90px',
-                width: '90px',
-                height: this.width - 180,
-                //backgroundColor: '#880000'
+                top: this.width * 0.2,
+                width: this.width * 0.2,
+                height: this.width * 0.6,
+                backgroundColor: '#880000'
             },
             north: {
                 position: 'absolute',
                 top: '0',
                 width: this.width,
-                height: '90px',
-                //backgroundColor: '#008800'
+                height: this.width * 0.2,
+                backgroundColor: '#008800'
             },
             re: {
                 width: '86px',
@@ -296,18 +300,20 @@ class Table extends Component {
             },
             board: {
                 position: 'absolute',
-                width: this.width - 180 - 2,
-                height: this.width - 180 - 2,
-                top: '90px',
-                left: '90px',
-                border: '1px solid #6666aa'
+                width: this.width * 0.6,
+                height: this.width * 0.6,
+                top: this.width * 0.2,
+                left: this.width * 0.2,
+                backgroundColor:'#333333',
+                opacity: '0.5'
+                //border: '1px solid #6666aa'
             }
 
         }
 
         // cards 从 state.cards 遍历获得。不要重复构造，而所有操作只操作数据。
-        console.log('cards................')
-        console.log(this.state.cards)
+        // console.log('cards................')
+        // console.log(this.state.cards)
 
         const cards = this.state.cards.map((item1, index1) => {
             return item1.map((item2, index2) => {
