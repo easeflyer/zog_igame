@@ -4,17 +4,17 @@ class RoundScore extends Models {
         super(...args);
         this.model='og.ig.team.line';
     }
-    search_round_score(gameId,roundId){       //查询每轮成绩，按桌号排序
-        this.exec('search_round_score',{},gameId,roundId);
-        /**
-         * params:gameId,courseId(或者叫round_id)
-         * return:[
-                {tableId:1, tableNumber:1, 牌的副数：8，赛队:[{主队：海外队},{客队:大陆队}], IMPs:[{主队:10},{客队:9}], VPs:[{主队:10.44},{客队:9.56}]},
-                {tableId:1, tableNumber:1, 牌的副数：8，赛队:[{主队：海外队},{客队:大陆队}], IMPs:[{主队:10},{客队:9}], VPs:[{主队:10.44},{客队:9.56}]}
-            ]
-         * 
-         */
-    }
+    // search_round_score(gameId,roundId){       //查询每轮成绩，按桌号排序  已移至game模型
+    //     this.exec('search_round_score',{},gameId,roundId);
+    //     /**
+    //      * params:gameId,courseId(或者叫round_id)
+    //      * return:[
+    //             {tableId:1, tableNumber:1, 牌的副数：8，赛队:[{主队：海外队},{客队:大陆队}], IMPs:[{主队:10},{客队:9}], VPs:[{主队:10.44},{客队:9.56}]},
+    //             {tableId:1, tableNumber:1, 牌的副数：8，赛队:[{主队：海外队},{客队:大陆队}], IMPs:[{主队:10},{客队:9}], VPs:[{主队:10.44},{客队:9.56}]}
+    //         ]
+    //      * 
+    //      */
+    // }
     search_round_ranking(gameId,roundId){             //查询每轮排名
         this.exec('search_round_ranking',{},gameId,roundId);
         /**

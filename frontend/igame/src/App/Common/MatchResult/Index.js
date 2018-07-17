@@ -1,8 +1,12 @@
 import React from 'react';
 import OneCourseResult from './OneCourseResult';
 import OneCourseRanking from './OneCourseRanking';
-import Ranking_scores from './Ranking-scores';
+import RankingByScores from './Ranking-scores';
 import Datum from './Datum';
+import RankingByTeamNumber from './Ranking-teamNumber';
+import OneBoard from './OneBoard';
+import OneTable from './OneTable';
+import OneTeam from './OneTeam';
 
 export default class MatchResult extends React.Component{
     state={
@@ -18,7 +22,7 @@ export default class MatchResult extends React.Component{
     render() {
         let page = null;
         switch (this.state.show) {
-            case 'OneCourseResult':
+            case 'OneCourseResult':             //一轮比赛的对阵结果
                 page=<OneCourseResult 
                     showPage={this.showPage}
                     toMatchDetails={this.props.toMatchDetails} 
@@ -27,7 +31,7 @@ export default class MatchResult extends React.Component{
                     courseId={this.props.courseId}
                 />
                 break;
-            case 'OneCourseRanking':
+            case 'OneCourseRanking':            //一轮比赛的排名
                 page=<OneCourseRanking
                     showPage={this.showPage}
                     toMatchDetails={this.props.toMatchDetails} 
@@ -35,21 +39,48 @@ export default class MatchResult extends React.Component{
                     courseId={this.props.courseId}
                 />
                 break;
-            case 'Ranking_scores':
-                page=<Ranking_scores
+            case 'Ranking_scores':              //成绩表(按名次)
+                page=<RankingByScores
                     showPage={this.showPage}
                     match={this.props.match}        
                     courseId={this.props.courseId}
                 />
                 break;
-            case 'Datum':
+            case 'Datum':                       //Datum
                 page=<Datum
                     showPage={this.showPage}
                     match={this.props.match}        
                     courseId={this.props.courseId}
                 />
                 break;
-        
+            case 'Ranking_teamNumber':          //成绩表(按赛队序号)
+                page=<RankingByTeamNumber
+                    showPage={this.showPage}
+                    match={this.props.match}        
+                    courseId={this.props.courseId}
+                />
+                break;
+            case 'OneBoard':                    //一副牌的结果
+                page=<OneBoard
+                    showPage={this.showPage}
+                    match={this.props.match}        
+                    courseId={this.props.courseId}
+                />
+                break;
+            case 'OneTable':                    //一桌牌的结果
+                page=<OneTable
+                    showPage={this.showPage}
+                    match={this.props.match}        
+                    courseId={this.props.courseId}
+                />
+                break;
+            case 'OneTeam':                    //一个队伍的成绩
+                page=<OneTeam
+                    showPage={this.showPage}
+                    match={this.props.match}        
+                    courseId={this.props.courseId}
+                />
+                break;
             default:
                 break;
         }
