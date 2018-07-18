@@ -16,8 +16,13 @@ const suit=[
 export default class CallCard extends React.Component{
     state={
         callCards:new Initial().callCards,
-        callDirect:this.props.callDirect||null,
-        myDirect:this.props.callDirect||null,
+    }
+    componentWillReceiveProps(newProps){
+        if(newProps.callCards){
+            this.setState({
+                callCards:newProps.callCards
+            })
+        }
     }
     click=(e)=>{
         let val = e.target.innerHTML;
@@ -35,7 +40,7 @@ export default class CallCard extends React.Component{
         })
         let callDbl = [];
         dbl.map((item,i)=>{
-            callDbl.push(<span key={item} style={{display:'inline-block',width:35,height:25,margin:3,border:'1px solid #ccc',borderRadius:3,textAlign:'center'}} >{item}</span>)
+            callDbl.push(<span key={item} style={{display:'inline-block',width:35,height:25,margin:3,border:'1px solid #ccc',borderRadius:3,textAlign:'center'}} onClick={this.click}>{item}</span>)
         })
 
         return(

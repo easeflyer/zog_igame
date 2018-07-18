@@ -2,6 +2,9 @@ import React from 'react'
 import Session from '../User/session'
 const direct = [ 'N' ,'E','S','W',]
 const suitWord = ['S','H','D','C']
+const pass = [];
+
+let count=0;
 
 export default class Func{
     constructor(props){
@@ -39,6 +42,10 @@ export default class Func{
         })
         return cardMy
     }
+    click=(e)=>{
+        console.log(e.target.innerHTML)
+        console.log('func')
+    }
     // 处理发过来的牌：添加花色
     addColor=(cards)=>{
         let addCards=[[],[],[],[]],colorCards=[[],[],[],[]];
@@ -52,6 +59,7 @@ export default class Func{
                         //     ((this.state.currentDirect!==this.state.dummy&&this.state.currentDirect===this.state.myDirect)||
                         //     (this.state.currentDirect===this.state.dummy&&this.state.declarer===this.state.myDirect))
                         //     ?this.click:null}
+                        onClick={this.click}
                         >
                         {i}{`\n`}{'♠'}
                         </span>)
@@ -66,6 +74,7 @@ export default class Func{
                         //     ((this.state.currentDirect!==this.state.dummy&&this.state.currentDirect===this.state.myDirect)||
                         //     (this.state.currentDirect===this.state.dummy&&this.state.declarer===this.state.myDirect))
                         //     ?this.click:null}
+                        onClick={this.click}
                         >
                         {i}{`\n`}{'♥'}
                         </span>)
@@ -80,6 +89,7 @@ export default class Func{
                         //     ((this.state.currentDirect!==this.state.dummy&&this.state.currentDirect===this.state.myDirect)||
                         //     (this.state.currentDirect===this.state.dummy&&this.state.declarer===this.state.myDirect))
                         //     ?this.click:null}
+                        onClick={this.click}
                         >
                         {i}{`\n`}{'♦'}
                         </span>)
@@ -94,6 +104,7 @@ export default class Func{
                         //     ((this.state.currentDirect!==this.state.dummy&&this.state.currentDirect===this.state.myDirect)||
                         //     (this.state.currentDirect===this.state.dummy&&this.state.declarer===this.state.myDirect))
                         //     ?this.click:null}
+                        onClick={this.click}
                         >
                         {i}{`\n`}{'♣'}</span>)
                 })
@@ -103,6 +114,7 @@ export default class Func{
     }
     //初始化牌桌
     sucPost(data){
+        console.log(data)
         if(data.cards&&data.players){   //初始化牌桌
             let i=null, s = null;
             data.players.map((item,index)=>{ if(item[0]===Session.get_name()){i=index} });
@@ -133,6 +145,62 @@ export default class Func{
             }
             return init_board
         }
+    }
+
+    onCall=(data)=>{
+        
+        let call_result = false;
+        pass.push(data.name)
+        if(pass.length>=3){
+            let length = pass.length;
+            if(pass[length-1]==='Pass'&&pass[length-2]==='Pass'&&pass[length-3]==='Pass'){
+                call_result=true
+            }   
+        }
+        return call_result
+    }
+
+    call_cards=(direct,card,dataSource)=>{   //展示叫牌信息
+        console.log(dataSource)
+        let calls=dataSource;
+        if(direct==='N'){
+            if(!calls[count].N&&!calls[count].E&&!calls[count].S&&!calls[count].W){ calls[count].N=this.re_transfer(card,1,0,false);}else{ count++; calls.push({ key:count, N:'', E:'', S:'', W:'',}); calls[count].N=this.re_transfer(card,1,0,false);}
+        }
+        if(direct==='E'){
+            if(!calls[count].E&&!calls[count].S&&!calls[count].W){ calls[count].E=this.re_transfer(card,1,0,false);}else{ count++; calls.push({ key:count, N:'', E:'', S:'', W:'',}); calls[count].E=this.re_transfer(card,1,0,false);}
+        }
+        if(direct==='S'){
+            if(!calls[count].S&&!calls[count].W){ calls[count].S=this.re_transfer(card,1,0,false);}else{ count++; calls.push({ key:count, N:'', E:'', S:'', W:'',}); calls[count].S=this.re_transfer(card,1,0,false);}
+        }
+        if(direct==='W'){
+            if(!calls[count].W){ calls[count].W=this.re_transfer(card,1,0,false);}else{ count++; calls.push({ key:count, N:'', E:'', S:'', W:'',}); calls[count].W=this.re_transfer(card,1,0,false);}
+        }
+        return calls
+    }
+
+    play_card=(body,myCardList,dummyCardList,playerInfo,playCards)=>{
+        if(body.pos===this.state.myDirect){
+            let j = suitWord.indexOf(body.card.split('')[0]);
+            myCardList.map((item,index)=>{
+                if(index===j){
+                    item.splice(item.indexOf(body.card.split('')[1]),1)
+                }
+            })
+        }
+        if(body.pos===this.state.dummy){
+            let j = suitWord.indexOf(body.card.split('')[0]);
+            dummyCardList.map((item,index)=>{
+                if(index===j){
+                    item.splice(item.indexOf(body.card.split('')[1]),1)
+                }
+            })
+        }
+        body.pos===playerInfo.topDirect?playCards.currentCardT=this.re_transfer(body.card,0,1,true):null;
+        body.pos===playerInfo.myDirect?playCards.currentCardB=this.re_transfer(body.card,0,1,true):null;
+        body.pos===playerInfo.leftDirect?playCards.currentCardL=this.re_transfer(body.card,0,1,true):null;
+        body.pos===playerInfo.rightDirect?playCards.currentCardR=this.re_transfer(body.card,0,1,true):null;
+        playCards.currentPiers.push({pos:body.pos,card:body.card})
+        return myCardList,dummyCardList,playCards
     }
     
 }

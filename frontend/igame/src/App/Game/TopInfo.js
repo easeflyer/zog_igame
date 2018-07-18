@@ -6,7 +6,16 @@ import Func from './Func'
 const DealFunc = new Func()
 export default class TopInfo extends React.Component{
     state={
-        topInfo:new Initial().topInfo
+        topInfo:new Initial().topInfo,
+        topInfo2:new Initial().topInfo2
+    }
+
+    componentWillReceiveProps(newProps){
+        if(newProps.topInfo2){
+            this.setState({
+                topInfo2:newProps.topInfo2,
+            })
+        }
     }
 
     render(){
@@ -29,7 +38,7 @@ export default class TopInfo extends React.Component{
                     <Col span={6} style={{height:65,margin:5}}>
                         <div style={{position:'absolute',width:20,height:65,border:'1px solid #fff',background:'#20B2AA',zIndex:1}}>{this.state.topInfo.piersSN}</div>
                         <div style={{position:'absolute',bottom:0,width:60,height:20,paddingRight:5,border:'1px solid #fff',background:'#20B2AA',textAlign:'right'}}>{this.state.topInfo.piersEW}</div>
-                        <div style={{position:'absolute',right:30,width:35,height:40,padding:'0 5px',borderRadius:3,background:'#B0E0E6',textAlign:'center'}}>{this.state.topInfo.contract?DealFunc.re_transfer(this.state.topInfo.contract,1,0,false):null}{`\n`}{this.state.topInfo.declarer}</div>
+                        <div style={{position:'absolute',right:30,width:35,height:40,padding:'0 5px',borderRadius:3,background:'#B0E0E6',textAlign:'center'}}>{this.state.topInfo2.contract?DealFunc.re_transfer(this.state.topInfo2.contract,1,0,false):null}{`\n`}{this.state.topInfo2.declarer}</div>
                     </Col>
                     <Col span={6}>
                         <Row><span>Claim:</span></Row>

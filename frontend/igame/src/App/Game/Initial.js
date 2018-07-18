@@ -6,8 +6,11 @@ export default class Initial{
         this.topInfo.piersSN=0;           //  ** 
         this.topInfo.piersEW=0;           //  ** 
         this.topInfo.claimCount=0;        // claim值
-        this.topInfo.contract=null;       //定约
 
+        this.topInfo2={}
+        this.topInfo2.contract=null;       //定约
+        this.topInfo2.declarer=null;       //庄家方位
+        
         this.playerInfo={};
         this.playerInfo.myDirect=null;       //我所在方位
         this.playerInfo.myName=null;        //我的名字
@@ -40,26 +43,11 @@ export default class Initial{
             { title: 'W', dataIndex: 'W', key: 'W'},];
 
         this.msg={};
-        this.msg.deal=false;          //是否发牌
         this.msg.call=false;          //是否处于叫牌状态
         this.msg.play=false;          //是否处于打牌状态
-        this.msg.cards=null;          //四个方位的牌
-
-        this.msg.channel_id=null;     //频道ID
-        this.msg.board_id=null;       //board id
-        this.msg.border_id_num=null;
-        
-        this.msg.pass=[];             //叫牌过程
-        this.msg.declarer=null;       //庄家方位 
         this.msg.dummy=null;          //明手方位
-        this.msg.myCardsNum=null;     //我的牌，全数字
         this.msg.dummyCardsNum=null;  //我的牌，全数字
         this.msg.callDirect=null;     //当前应该哪个方位叫牌  ** 
-        this.msg.openLeader=null;     //首攻  
         this.msg.currentDirect=null;  //当前应该哪个方位打牌 
-        
-        this.msg.piersCount=0;        // 墩，计数  ** 
-        this.msg.allPiers=[];         // 所有墩  ** 
-        
     }
 }

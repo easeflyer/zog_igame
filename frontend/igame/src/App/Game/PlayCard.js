@@ -5,27 +5,27 @@ import Func from './Func'
 
 export default class PlayCard extends React.Component{
     state={
-        playCards:new Initial().playCards
+        playCards:this.props.playCards
     }
     render(){
         return(
-            <Col span={20} style={{}}>
+            <Col span={this.props.span} style={{}}>
                 <Row>
                     <Col span={24} style={{textAlign:'center'}}>
-                        <p style={{width:30,border:'1px solid #ddd',borderRadius:5,background:'#ccc',textAlign:'center',padding:10,margin:'0 auto'}}>{this.state.playCards.currentCardT}</p>
+                        <p style={{width:30,border:'1px solid #ddd',borderRadius:5,background:'#ccc',textAlign:'center',padding:10,margin:'0 auto'}}>{this.state.playCards.currentCardT?this.state.playCards.currentCardT:null}</p>
                     </Col>
                 </Row>
                 <Row>
                     <Col span={12} style={{textAlign:'left'}}>
-                        <p style={{width:30,border:'1px solid #ddd',borderRadius:5,background:'#ccc',textAlign:'center',padding:10,margin:'0 auto'}}>{this.state.playCards.currentCardL}</p>
+                        <p style={{width:30,border:'1px solid #ddd',borderRadius:5,background:'#ccc',textAlign:'center',padding:10,margin:'0 auto'}}>{this.state.playCards.currentCardL?this.state.playCards.currentCardL:null}</p>
                     </Col>
                     <Col span={12} style={{textAlign:'right'}}>
-                        <p style={{width:30,border:'1px solid #ddd',borderRadius:5,background:'#ccc',textAlign:'center',padding:10,margin:'0 auto'}}>{this.state.playCards.currentCardR}</p>
+                        <p style={{width:30,border:'1px solid #ddd',borderRadius:5,background:'#ccc',textAlign:'center',padding:10,margin:'0 auto'}}>{this.state.playCards.currentCardR?this.state.playCards.currentCardR:null}</p>
                     </Col>
                 </Row>
                 <Row>
                     <Col span={24} style={{textAlign:'center'}}>
-                        <p style={{width:30,border:'1px solid #ddd',borderRadius:5,background:'#ccc',textAlign:'center',padding:10,margin:'0 auto'}}>{this.state.playCards.currentCardB}</p>
+                        <p style={{width:30,border:'1px solid #ddd',borderRadius:5,background:'#ccc',textAlign:'center',padding:10,margin:'0 auto'}}>{this.state.playCards.currentCardB?this.state.playCards.currentCardB:null}</p>
                     </Col>
                 </Row>
             </Col>
