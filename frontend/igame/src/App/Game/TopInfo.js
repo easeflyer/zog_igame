@@ -16,6 +16,11 @@ export default class TopInfo extends React.Component{
                 topInfo2:newProps.topInfo2,
             })
         }
+        if(newProps.topInfo){
+            this.setState({
+                topInfo:newProps.topInfo,
+            })
+        }
     }
 
     render(){

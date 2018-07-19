@@ -55,10 +55,6 @@ export default class Func{
                     addCards[0].push(<span 
                         key={index+i} 
                         style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5}} 
-                        // onClick={this.state.play&&
-                        //     ((this.state.currentDirect!==this.state.dummy&&this.state.currentDirect===this.state.myDirect)||
-                        //     (this.state.currentDirect===this.state.dummy&&this.state.declarer===this.state.myDirect))
-                        //     ?this.click:null}
                         onClick={this.click}
                         >
                         {i}{`\n`}{'♠'}
@@ -70,10 +66,6 @@ export default class Func{
                     addCards[1].push(<span 
                         key={index+i} 
                         style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5,color:'red'}} 
-                        // onClick={this.state.play&&
-                        //     ((this.state.currentDirect!==this.state.dummy&&this.state.currentDirect===this.state.myDirect)||
-                        //     (this.state.currentDirect===this.state.dummy&&this.state.declarer===this.state.myDirect))
-                        //     ?this.click:null}
                         onClick={this.click}
                         >
                         {i}{`\n`}{'♥'}
@@ -85,10 +77,6 @@ export default class Func{
                      addCards[2].push(<span 
                         key={index+i} 
                         style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5,color:'red'}} 
-                        // onClick={this.state.play&&
-                        //     ((this.state.currentDirect!==this.state.dummy&&this.state.currentDirect===this.state.myDirect)||
-                        //     (this.state.currentDirect===this.state.dummy&&this.state.declarer===this.state.myDirect))
-                        //     ?this.click:null}
                         onClick={this.click}
                         >
                         {i}{`\n`}{'♦'}
@@ -100,10 +88,6 @@ export default class Func{
                      addCards[3].push(<span 
                         key={index+i} 
                         style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5}} 
-                        //  onClick={this.state.play&&
-                        //     ((this.state.currentDirect!==this.state.dummy&&this.state.currentDirect===this.state.myDirect)||
-                        //     (this.state.currentDirect===this.state.dummy&&this.state.declarer===this.state.myDirect))
-                        //     ?this.click:null}
                         onClick={this.click}
                         >
                         {i}{`\n`}{'♣'}</span>)
@@ -178,8 +162,8 @@ export default class Func{
         return calls
     }
 
-    play_card=(body,myCardList,dummyCardList,playerInfo,playCards)=>{
-        if(body.pos===this.state.myDirect){
+    play_card=(body,dummy,myCardList,dummyCardList,playerInfo,playCards,topInfo)=>{
+        if(body.pos===playerInfo.myDirect){
             let j = suitWord.indexOf(body.card.split('')[0]);
             myCardList.map((item,index)=>{
                 if(index===j){
@@ -187,7 +171,7 @@ export default class Func{
                 }
             })
         }
-        if(body.pos===this.state.dummy){
+        if(body.pos===dummy){
             let j = suitWord.indexOf(body.card.split('')[0]);
             dummyCardList.map((item,index)=>{
                 if(index===j){
@@ -200,7 +184,16 @@ export default class Func{
         body.pos===playerInfo.leftDirect?playCards.currentCardL=this.re_transfer(body.card,0,1,true):null;
         body.pos===playerInfo.rightDirect?playCards.currentCardR=this.re_transfer(body.card,0,1,true):null;
         playCards.currentPiers.push({pos:body.pos,card:body.card})
-        return myCardList,dummyCardList,playCards
+        if(body.number%4===0){
+            playCards.currentCardT=null;
+            playCards.currentCardB=null;
+            playCards.currentCardL=null;
+            playCards.currentCardR=null;
+            playCards.currentPiers=[];
+            topInfo.piersSN=body.ns_win;
+            topInfo.piersEW=body.ew_win;
+        }
+        return [myCardList,dummyCardList,playCards,topInfo]
     }
     
 }

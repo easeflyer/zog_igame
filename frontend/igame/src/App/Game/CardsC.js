@@ -7,7 +7,7 @@ export default class Cards extends React.Component{
 
     click=(e)=>{
         let val = e.target.innerHTML;
-        val=DealFunc.transfer(val,2,true);
+        val=DealFunc.transfer(val,2,false);
         this.props.post('play',val)   //发送打牌信息
     }
 
