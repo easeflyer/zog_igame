@@ -10,7 +10,7 @@ export default class OneTable extends React.Component{
                 mode="light"
                 icon={<Icon type="left" />}
                 onLeftClick={()=>this.props.showPage('OneCourseResult')}    //到一轮结果
-                >{this.props.courseId[1]}一张桌子的结果
+                >第{this.props.tableNumber}桌
                 </NavBar>
                 <WhiteSpace size='xl' />
                 <h1>赛事名称：{this.props.match.name}</h1>

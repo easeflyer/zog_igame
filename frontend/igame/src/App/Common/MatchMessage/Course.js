@@ -75,7 +75,7 @@ export default class Course extends React.Component{
                 this.props.toMatchResult();
             }
             this.props.setInitialPage(2);
-            this.props.setCourseId([tempMap[k][i].id,tempMap[k][i].name+'第'+tempMap[k][i].number+'轮']);
+            this.props.setCourseId([tempMap[k][i].id,tempMap[k][i].name,data.length]);
         }
 
         //把数据放到table中
@@ -118,7 +118,7 @@ export default class Course extends React.Component{
         return(
             <div>
                 <Separator />
-                <table>
+                <table className='courseTable' >
                     <thead>
                         <tr>
                             <th>日期</th>
