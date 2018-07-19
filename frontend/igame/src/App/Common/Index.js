@@ -151,10 +151,10 @@ class SortList extends React.Component {       //我的比赛分类列表页组�
         //获取所有比赛列表
         const m = new Game(this.stateList,this.callFail);
         //如果不是从《我》入口进来，调用后面的查询函数
-        this.props.name ? m.search2() : m.search2();
+        // this.props.name ? m.search2() : m.search2();
 
         //      这里是正确的调用接口
-        // this.props.name ? m.search_own_match() : m.search_user_match();
+        this.props.name ? m.search_own_match() : m.search_user_match();
 
         // this.props.name ? m.search_user_match() : m.search_user_match();
         

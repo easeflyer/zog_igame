@@ -36,6 +36,13 @@ export default class Game extends Models {
          * 
          */
     }
+    search_round_details(gameId,roundId){       //查询每轮成绩，按桌号排序
+        this.exec('search_round_details',{},gameId,roundId)
+        /**
+         * params:gameId,roundId
+         * return:
+         */
+    }
     
 
 }
