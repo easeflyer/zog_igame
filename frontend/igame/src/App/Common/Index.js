@@ -177,7 +177,6 @@ class SortList extends React.Component {       //我的比赛分类列表页组�
         //             {arbitrator:false,datetime:"2018-06-30 09:27:45",host_unit:false,id:14,name:"G14",referee:false,sponsor:false,type:"team",state:'conformed'},
         //             {arbitrator:false,datetime:"2018-06-30 06:25:44",host_unit:false,id:15,name:"G15",referee:false,sponsor:false,type:"team",state:'draft'},
         //             {arbitrator:false,datetime:"2018-06-30 16:27:29",host_unit:false,id:16,name:"G16",referee:false,sponsor:false,type:"team",state:'done'},]
-
         let list1 = [];         //即将进行的比赛列表     
         let list2 = [];         //正在进行的比赛列表
         let list3 = [];         //已经完成的比赛列表

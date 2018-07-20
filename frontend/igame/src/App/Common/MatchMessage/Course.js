@@ -116,9 +116,9 @@ export default class Course extends React.Component{
 
     render() {
         return(
-            <div>
+            <div  className='courseTable'>
                 <Separator />
-                <table className='courseTable' >
+                <table>
                     <thead>
                         <tr>
                             <th>日期</th>
