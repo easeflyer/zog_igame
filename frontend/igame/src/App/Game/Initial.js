@@ -8,8 +8,8 @@ export default class Initial{
         this.topInfo.claimCount=0;        // claim值
 
         this.topInfo2={}
-        this.topInfo2.contract='1S';       //定约
-        this.topInfo2.declarer='N';       //庄家方位
+        this.topInfo2.contract=null;       //定约
+        this.topInfo2.declarer=null;       //庄家方位
         
         this.playerInfo={};
         this.playerInfo.myDirect=null;       //我所在方位

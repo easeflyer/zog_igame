@@ -7,14 +7,12 @@ import Initial from './Initial'
 import Func from './Func'
 import TopInfo from './TopInfo'
 import PointModal from './PointModal'
-
 import PlayCard from './PlayCard'
 import CallCard from './CallCard'
 import CardsR from './CardsR'
 import CardsC from './CardsC'
 
 const direct = [ 'N' ,'E','S','W',]
-const suitWord = ['S','H','D','C']
 const DealFunc = new Func();
 export default class PlayerInfo extends React.Component{
     state={
@@ -41,27 +39,25 @@ export default class PlayerInfo extends React.Component{
     }
     componentDidMount(){
         const JoinChannel = new Channel(this.sucChannel,this.failChannel);
-        JoinChannel.join_channel(6);   // 6 : table_id
+        JoinChannel.join_channel(10);   // 6 : table_id
         this.polling();
     }
     sucChannel=(data)=>{   //加入比赛聊天频道成功
         console.log(data)
-        //[42, [39, 40, 41, 42, 43, 44, 45]] [channel_id,[board_id1,board_id2,board_id3...]]
+        //[42, [39, 40, 41, 42, 43, 44, 45],50] [channel_id,[board_id1,board_id2,board_id3...],channel_id]
         this.setState({
             board_id_list:data[1],
             id_msg:{
                 channel_id:data[0],
-                board_id:data[1][5],
+                board_id:data[1][0],
             }
         })
         this.post('init_board',this.state.id_msg.board_id,this.state.id_msg.channel_id)
     }
-
     polling(){
         const Poll = new Models(this.sucPolling,this.failPolling);
         Poll.poll(this.state.pollingId);
     }
- 
     sucPolling=(data)=>{
         console.log(data)
         if (data.length){
@@ -86,7 +82,6 @@ export default class PlayerInfo extends React.Component{
                 }
             }
             if(body.dummy&&body.openlead&&body.declarer){   //收到叫牌结果信息   {dummy:'N',openlead:'W',declarer:'S',nextplayer:'W',contract:'1S'}
-                console.log('叫牌结果')
                 let m=direct.indexOf(body.dummy);
                 this.setState({
                     call:false,
@@ -94,8 +89,6 @@ export default class PlayerInfo extends React.Component{
                     currentDirect:body.openlead,
                     dummy:body.dummy,
                     dummyCardsNum:DealFunc.arrange_my_cards(this.state.cards[m]),
-                })
-                this.setState({
                     topInfo2:{
                         declarer:body.declarer,
                         contract:body.contract
@@ -116,7 +109,6 @@ export default class PlayerInfo extends React.Component{
         }
         this.polling()
     }
-
     post=(method,...data)=>{
         const  board= new Board(this.sucPost,this.failPost); 
         method==='init_board' ? board.init_board(...data) : null;   //初始化牌桌
@@ -124,7 +116,6 @@ export default class PlayerInfo extends React.Component{
         method==='call_result' ? board.call_result(this.state.id_msg.board_id,this.state.id_msg.channel_id) : null;    //查询叫牌结果
         method==='play'&&((this.state.currentDirect!==this.state.dummy&&this.state.currentDirect===this.state.playerInfo.myDirect)||
         (this.state.currentDirect===this.state.dummy&&this.state.topInfo2.declarer===this.state.playerInfo.myDirect)) ? board.play(this.state.id_msg.board_id,this.state.playerInfo.myDirect,...data,this.state.id_msg.channel_id) : null;       //发送打牌消息
-        // method==='board_points'?board.board_points(this.state.id_msg.board_id):null   //查询每一副牌的成绩
         method==='table_points'?board.table_points(6):null    //查询8副牌的成绩
     } 
     sucPost=(data)=>{ 
@@ -140,21 +131,11 @@ export default class PlayerInfo extends React.Component{
                 playerInfo:s.playerInfo
             })
         }
-        if(data.ns_points&&data.ew_points&&data.result){    //{ns_points: 50, ew_points: 0, result: "E 1S -1"}
-            this.setState({
-                point:{
-                    NS:data.ns_points,
-                    EW:data.ew_points,
-                    result:data.result,
-                }
-            })
-        }
     }
     failPost(){ console.log('fail post') }
-
     showModal =() => { this.setState({ modal: true, }); }
     onClose = () => { 
-        if(this.state.board_id_list.indexOf(this.state.id_msg.board_id)<this.state.board_id_list.length){
+        if(this.state.board_id_list.indexOf(this.state.id_msg.board_id)<this.state.board_id_list.length-1){
             this.post('init_board',this.state.board_id_list[this.state.board_id_list.indexOf(this.state.id_msg.board_id)+1],this.state.id_msg.channel_id)
             this.setState({
                 callCards:new Initial().callCards,
@@ -172,7 +153,9 @@ export default class PlayerInfo extends React.Component{
                 modal:false,
             })
         }
-        
+        if(this.state.board_id_list.indexOf(this.state.id_msg.board_id)===this.state.board_id_list.length-1){
+            this.render(<span>比赛结束</span>)
+        }
         this.setState({ modal: false, }); 
     }
 

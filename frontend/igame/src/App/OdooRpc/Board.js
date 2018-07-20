@@ -41,9 +41,20 @@ export default class Board extends Models {
     }
     board_points(...data){    //一副牌的成绩
         this.exec('board_points',{},...data);
-
+         /*
+         * params:[board_id]
+         * return:[
+                {result:[],ns_points:int,ew_points:int}
+            ]
+         */
     }
-    table_points(...data){
-        this.exec('table_points',{},...data)
+    table_points(...data){   //8副牌打完后的总成绩
+        this.exec('table_points',{},...data);
+        /*
+         * params:[table_id]
+         * return:[
+                {}
+            ]
+         */
     }
 }

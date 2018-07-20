@@ -42,60 +42,7 @@ export default class Func{
         })
         return cardMy
     }
-    click=(e)=>{
-        console.log(e.target.innerHTML)
-        console.log('func')
-    }
-    // 处理发过来的牌：添加花色
-    addColor=(cards)=>{
-        let addCards=[[],[],[],[]],colorCards=[[],[],[],[]];
-        cards.map((item,index)=>{
-            if(index===0&&item.length!==0){
-                item.map(i=>{
-                    addCards[0].push(<span 
-                        key={index+i} 
-                        style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5}} 
-                        onClick={this.click}
-                        >
-                        {i}{`\n`}{'♠'}
-                        </span>)
-                })
-            }
-            if(index===1&&item.length!==0){
-                item.map(i=>{
-                    addCards[1].push(<span 
-                        key={index+i} 
-                        style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5,color:'red'}} 
-                        onClick={this.click}
-                        >
-                        {i}{`\n`}{'♥'}
-                        </span>)
-                })
-            }
-            if(index===2&&item.length!==0){
-                item.map(i=>{
-                     addCards[2].push(<span 
-                        key={index+i} 
-                        style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5,color:'red'}} 
-                        onClick={this.click}
-                        >
-                        {i}{`\n`}{'♦'}
-                        </span>)
-                })
-            }
-            if(index===3&&item.length!==0){
-                item.map(i=>{
-                     addCards[3].push(<span 
-                        key={index+i} 
-                        style={{display:'inline-block',height:50,width:25,border:'1px solid #ddd',textAlign:'left',paddingLeft:5}} 
-                        onClick={this.click}
-                        >
-                        {i}{`\n`}{'♣'}</span>)
-                })
-            }
-        })
-        return addCards //两种格式：5♥  5h 
-    }
+
     //初始化牌桌
     sucPost(data){
         console.log(data)
@@ -132,7 +79,6 @@ export default class Func{
     }
 
     onCall=(data)=>{
-        
         let call_result = false;
         pass.push(data.name)
         if(pass.length>=3){
@@ -145,7 +91,6 @@ export default class Func{
     }
 
     call_cards=(direct,card,dataSource)=>{   //展示叫牌信息
-        console.log(dataSource)
         let calls=dataSource;
         if(direct==='N'){
             if(!calls[count].N&&!calls[count].E&&!calls[count].S&&!calls[count].W){ calls[count].N=this.re_transfer(card,1,0,false);}else{ count++; calls.push({ key:count, N:'', E:'', S:'', W:'',}); calls[count].N=this.re_transfer(card,1,0,false);}
@@ -195,5 +140,62 @@ export default class Func{
         }
         return [myCardList,dummyCardList,playCards,topInfo]
     }
-    
+
+    playOrder=(data,i)=>{   //展示出牌顺序
+        let piers = data.slice(4*i,4*(i+1));
+        let plays;
+        if(piers[0][1]==='S'){
+            plays={
+                key:i,
+                pier:i+1,
+                east:'',
+                south:this.re_transfer(piers[0][2],0,1,false),
+                west:this.re_transfer(piers[1][2],0,1,false),
+                north:this.re_transfer(piers[2][2],0,1,false),
+                east_next:this.re_transfer(piers[3][2],0,1,false),
+                south_next:'',
+                west_next:'',
+            }
+        }
+        if(piers[0][1]==='W'){
+            plays={
+                key:i,
+                pier:i+1,
+                east:'',
+                south:'',
+                west:this.re_transfer(piers[0][2],0,1,false),
+                north:this.re_transfer(piers[1][2],0,1,false),
+                east_next:this.re_transfer(piers[2][2],0,1,false),
+                south_next:this.re_transfer(piers[3][2],0,1,false),
+                west_next:'',
+            }
+        }
+        if(piers[0][1]==='N'){
+            plays={
+                key:i,
+                pier:i+1,
+                east:'',
+                south:'',
+                west:'',
+                north:this.re_transfer(piers[0][2],0,1,false),
+                east_next:this.re_transfer(piers[1][2],0,1,false),
+                south_next:this.re_transfer(piers[2][2],0,1,false),
+                west_next:this.re_transfer(piers[3][2],0,1,false),
+            }
+        }
+        if(piers[0][1]==='E'){
+            plays={
+                key:i,
+                pier:i+1,
+                east:this.re_transfer(piers[0][2],0,1,false),
+                south:this.re_transfer(piers[1][2],0,1,false),
+                west:this.re_transfer(piers[2][2],0,1,false),
+                north:this.re_transfer(piers[3][2],0,1,false),
+                east_next:'',
+                south_next:'',
+                west_next:'',
+            }
+        }
+        return plays
+    }
 }

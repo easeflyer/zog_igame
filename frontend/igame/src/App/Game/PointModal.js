@@ -16,7 +16,7 @@ export default class PointModal extends React.Component{
     componentWillReceiveProps(newProps){
         if(newProps.board_id){
             const  board= new Board(this.sucPost,this.failPost); 
-            board.board_points(39)
+            board.board_points(newProps.board_id)
         }
     }
     sucPost=(data)=>{ this.setState({point:data }) }
