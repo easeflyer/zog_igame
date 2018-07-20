@@ -76,7 +76,8 @@ class BidPanel extends Component {
 class BidBlock extends Component {
     render() {
         const suit = this.props.name.slice(-1);
-        const bgcolor = { T: '#eeeeee', S: '#ddddFF', H: '#FFdddd', D: '#ffffcc', C: '#ccffcc' };
+        //const bgcolor = { T: '#eeeeee', S: '#ddddFF', H: '#FFdddd', D: '#ffffcc', C: '#ccffcc' };
+        const bgcolor = { T: '#eeeeee', S: '#eeeeee', H: '#eeeeee', D: '#eeeeee', C: '#eeeeee' };
         const style = {
             backgroundColor: `${bgcolor[suit]}`,
 

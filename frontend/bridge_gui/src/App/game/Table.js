@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 //import settings from '../game/settings';
 import Card from './Card'
 import BidPanel from './BidPanel'
+import Clock from './Clock'
 import './Table.css'
 import Models from '../models/model'
 
@@ -284,6 +286,54 @@ class Table extends Component {
             cards: cards
         });
     }
+
+    /**
+     * 设置牌的 active 状态。
+     * 把编号为 nums 的牌设置长 active 状态
+     * nums 是一个数组
+     * active 是目标状态。
+     */
+    setActive = (nums: Array, active = 0) => {
+        const cards = this.state.cards;
+        cards.forEach((item) => item.forEach((item) => {
+            if (nums.indexOf(item.index) != -1) item.active = active;
+        }))
+        this.setState({
+            cards: this.state.cards
+        })
+    }
+    /**
+     * 给某一个座位倒计时
+     */
+    timing = (seat,time,callback) => {
+        ReactDOM.unmountComponentAtNode(document.querySelector('#clock'));
+        const p = this.width * 0.25;
+        const offset = {
+            east: { x:p , y: 0 },
+            south: { x: 0, y: p },
+            west: { x: -p*0.66, y: 0 },
+            north: { x: 0, y: -p*0.66 }
+        }
+
+        const top = this.seat[seat][1]['y'] + offset[seat].y;
+        const left = this.seat[seat][1]['x'] + offset[seat].x;
+        const style = {
+            position: 'absolute',
+            top: top,
+            left: left,
+            width: '10%'
+        }
+        const clock = (
+            <div style={style}>
+                <Clock time={time} callback={callback} />
+            </div>
+        );
+        ReactDOM.render(
+            clock,
+            document.querySelector('#clock')
+        )
+
+    }
     // /**
     //  * 打开明手的牌
     //  *  从 Models 获得 Dummy 的牌，并且显示出来
@@ -338,37 +388,34 @@ class Table extends Component {
     test3 = () => {
         this.clearBoard();
     }
-    /**
-     * 测试 禁止 活动部分牌。
-     */
-    test2 = () => {
-        console.log('test2.........................')
-        const cards = this.state.cards;
-
-        for (let i = 0; i < cards[1].length; i++) {
-            for (let j = 0; j < cards[1][i].length; j++) {
-                cards[1][i][j]['active'] = 0;
-            }
-        }
-        cards[1][1][0]['active'] = 2;                  // 测试用 2张牌可以出
-        cards[1][1][1]['active'] = 2;
-        this.setState({
-            cards: cards
-        })
-        //this.forceUpdate()
-        // this.setState((preState,props)=>{
-        //     return {
-        //         cards:preState.cards
-        //     }
-        // })
+    // 
+    testActive = () => {
+        // 52 张牌 对应 东南西北 四个人的牌
+        const nums = [
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+            13, 14, 15, 16, //17, 18, 19, 20, 21, 22, 23, 24, 25,
+            26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
+            39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51]
+        this.setActive(nums);
     }
-
+    testClock = () => {
+        this.timing('east',2,
+            ()=>this.timing('south',2,
+                ()=>this.timing('west',2,
+                    ()=>this.timing('north',2,
+                        ()=>console.log('倒计时结束！')
+                    )
+                )
+            )
+        )
+    }
     /**
      * 测试出牌
+     * 简单测试，已无实际用途。
      */
     test1 = () => {
         const cards = this.state.cards;
-        cards[0][0][0].animation = {
+        cards[0][0].animation = {
             top: 200,
             left: 200,
         }
@@ -434,6 +481,7 @@ class Table extends Component {
                         <div className='re' style={css.re}>墩数</div>
                     </div>
                     <div id='body' className='body' style={css.body}>
+                        <div id='clock'></div>
                         <div id='east' className='east' style={css.east} ref={this.ref.east}>east</div>
                         <div id='west' className='west' style={css.west} ref={this.ref.west}>west</div>
                         <div id='south' className='south' style={css.south} ref={this.ref.south}>south</div>
@@ -442,11 +490,10 @@ class Table extends Component {
                         </div>
                         {cards}
                     </div>
-
                     <button onClick={this.deal}>发牌</button>
                     <br />
                     <button onClick={this.test1}>出牌</button>
-                    <button onClick={this.test2}>阻止出牌</button>
+                    <button onClick={this.testActive}>阻止出牌</button>
                     <button onClick={this.test3}>清理桌面</button>
                     <br />
                     <button onClick={this.testDummy.bind(this, 'east')}>明手东</button>
@@ -454,6 +501,7 @@ class Table extends Component {
                     <button onClick={this.testDummy.bind(this, 'north')}>明手北</button>
                     <br />
                     <button onClick={this.testBid}>测试叫牌</button>
+                    <button onClick={this.testClock}>倒计时</button>
                     <div id='test' style={{ position: 'relative' }}>测试区域</div>
                     <div id='footer' className='footer' style={css.footer}>footer</div>
                 </div>
