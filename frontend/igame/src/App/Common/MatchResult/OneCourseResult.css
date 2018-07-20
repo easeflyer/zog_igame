@@ -1,0 +1,18 @@
+ .ant-pagination-next{
+    display: none;
+}
+ .ant-pagination-prev{
+    display: none;
+}
+.ant-pagination {
+    float: none;
+    display: inline-block;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.titleSty{
+    text-align: center;
+    margin-top: 0;
+}
