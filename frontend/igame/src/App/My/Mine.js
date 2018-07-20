@@ -12,10 +12,10 @@ export default class Mine extends React.Component {
         //     text: `name${i}`,
         //   }));
         const data = [
-            {text: <div><p>大师分</p><p>33333</p></div>,},
-            {text: <div><p>智币</p><p>123</p></div>,},
-            {text: <div><p>积分</p><p>123</p></div>,},
-            {text: <div><p>荣誉</p><p>123</p></div>,},
+            { text: <div><p>大师分</p><p>33333</p></div>, },
+            { text: <div><p>智币</p><p>123</p></div>, },
+            { text: <div><p>积分</p><p>123</p></div>, },
+            { text: <div><p>荣誉</p><p>123</p></div>, },
             // {icon: 'https://gw.alipayobjects.com/zos/rmsportal/nywPmnTAvTmLusPxHPSu.png',text: `name`,},
         ];
         return (
@@ -23,52 +23,52 @@ export default class Mine extends React.Component {
                 <NavBar mode="light" >个人中心 </NavBar>
                 <Item
                     multipleLine
-                    align="middle" 
+                    align="middle"
                     thumb={require("../User/963065731.jpg")}
                     arrow="horizontal"
                     onClick={() => this.props.toMySelf()}
-                    >张三丰
+                >张三丰
                     <div>邀请码：12345678</div>
                 </Item>
                 <WhiteSpace size="sm" />
                 <Grid data={data} activeStyle={false} />
                 <WhiteSpace size="sm" />
                 <Item
-                    thumb={<Icon type="flag" style={{fontSize:'22px',color:'red'}} />}   //{require("../User/963065731.jpg")}
+                    thumb={<Icon type="flag" style={{ fontSize: '22px', color: 'red' }} />}   //{require("../User/963065731.jpg")}
                     arrow="horizontal"
                     onClick={() => this.props.toMyMatch()}
-                    >我的比赛
+                >我的比赛
                 </Item>
                 <Item
-                    thumb={<Icon type='usergroup-add' style={{fontSize:'22px',color:'sienna'}} />}
+                    thumb={<Icon type='usergroup-add' style={{ fontSize: '22px', color: 'sienna' }} />}
                     arrow="horizontal"
                     onClick={() => this.props.toMyTeam()}
-                    >我的赛队
+                >我的赛队
                 </Item>
                 <Item
-                    thumb={<Icon type='team' style={{fontSize:'22px',color:'#08c'}} />}
+                    thumb={<Icon type='team' style={{ fontSize: '22px', color: '#08c' }} />}
                     arrow="horizontal"
-                    onClick={() =>this.props.toMyFriend() }
-                    >我的好友
+                    onClick={() => this.props.toMyFriend()}
+                >我的好友
                 </Item>
                 <Item
-                    thumb={<Icon type='heart' style={{fontSize:'22px',color:'red'}} />}
+                    thumb={<Icon type='heart' style={{ fontSize: '22px', color: 'red' }} />}
                     arrow="horizontal"
-                    onClick={() => {}}
-                    >我的收藏
+                    onClick={() => { }}
+                >我的收藏
                 </Item>
                 <WhiteSpace size="xl" />
                 <Item
-                    thumb={<Icon type="schedule" style={{fontSize:'22px',color:'burlywood'}} />}
+                    thumb={<Icon type="schedule" style={{ fontSize: '22px', color: 'burlywood' }} />}
                     arrow="horizontal"
-                    onClick={() => {}}
-                    >每日签到
+                    onClick={() => this.props.toSignin()}
+                >每日签到
                 </Item>
                 <Item
-                    thumb={<Icon type="trophy" style={{fontSize:'22px',color:'blue'}} />}
+                    thumb={<Icon type="trophy" style={{ fontSize: '22px', color: 'blue' }} />}
                     arrow="horizontal"
-                    onClick={() => {}}
-                    >平台奖励政策
+                    onClick={() => { }}
+                >平台奖励政策
                 </Item>
             </div>
         );
