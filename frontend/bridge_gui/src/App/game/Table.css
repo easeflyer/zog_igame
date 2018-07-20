@@ -1,6 +1,14 @@
 .table{
     position: relative;
 }
+.panel{
+    position: absolute;
+    z-index:2;
+    /* filter:alpha(opacity=50);
+    -moz-opacity:0.5;
+    -khtml-opacity: 0.5;
+    opacity: 0.5;     */
+}
 .header{
     background-color: #552211;
 }
@@ -17,21 +25,21 @@
 .east {
     position: absolute;
     right: 0;
-    background-color: #880000;
+    /*background-color: #880000;*/
 }
 .south {
     position: absolute;
     bottom: 0;
-    background-color: #008800;
+    /*background-color: #008800;*/
 }
 .west {
     position: absolute;
-    background-color: #880000;
+    /*background-color: #880000;*/
 }
 .north {
     position: absolute;
     top: 0;
-    background-color: #008800
+    /*background-color: #008800*/
 }
 .re{
     background-color: #ee88ee;

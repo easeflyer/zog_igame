@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import settings from '../game/settings';
 import Table from './Table';
-import Bid from './Bid'
+import Bid from './BidPanel'
 
 /**
  * Game  是一局比赛，涉及到了比赛者，以及和比赛相关的其他信息。重点在于比赛。

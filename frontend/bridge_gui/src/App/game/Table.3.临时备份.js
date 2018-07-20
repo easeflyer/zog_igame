@@ -87,7 +87,7 @@ class Table extends Component {
         this.zindex = 10;
         this.center = null; // 桌子的中心 {x,y}
         this._csize = null; // 牌的大小
-        this.deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX'
+        this.deals = 'XXXXXXXXXXXXX QJ98.A5.J853.QT4 XXXXXXXXXXXXX XXXXXXXXXXXXX'
         //this.deals = Models.deals()[0];
         this.myseat = 'S'               // 用户坐在 南
         this.seat = {
@@ -174,9 +174,9 @@ class Table extends Component {
         deals.forEach((item, index1) => {
             const suit = item.split('.')
             suit.forEach((s, index2) => {           // index2 四个花色  s 'QJ98' 牌点字串
-                //cards[index1][index2] = [];
+                cards[index1][index2] = [];
                 for (var i = 0; i < s.length; i++) {
-                    cards[index1].push({
+                    cards[index1][index2][i] = {
                         onclick: () => false,              // onclick 必须是个函数
                         active: 0,
                         index: index,
@@ -186,12 +186,11 @@ class Table extends Component {
                         size: this.csize,                // 牌的大小
                         card: s[i] + suits[index2],
                         position: { x: this.width / 2, y: this.width * 2 }     // 考虑一个默认位置。
-                    })
+                    }
                 }
             });
         });
-        console.log('cards.......333.............')
-        console.log(cards)
+        //console.log(cards)
         return cards;
     }
     /**
@@ -237,21 +236,21 @@ class Table extends Component {
             if ('02'.indexOf(index) != -1) rotate = -90;
             x = x + this.width / 16 / 5; y = y + this.width / 16 / 5; // margin
             item.forEach((item1, index1) => {
-
-                cards[index][index1].animation = {
-                    top: y,
-                    left: x,
-                    delay: (item1.key % 13) * 80,
-                    duration: 300,
-                    rotate: rotate,
-                    transformOrigin: `${offset}px ${offset}px`
-                }
-                //cards[index][index1][index2].rotate = rotate;
-                cards[index][index1].active = 2; // 测试用
-                cards[index][index1].onclick = this.play(item1)
-                if ('02'.indexOf(index) != -1) y = y + this.csize * 0.15;
-                else x = x + this.csize * 0.2;
-
+                item1.forEach((item2, index2) => {
+                    cards[index][index1][index2].animation = {
+                        top: y,
+                        left: x,
+                        delay: (item2.key % 13) * 80,
+                        duration: 300,
+                        rotate: rotate,
+                        transformOrigin: `${offset}px ${offset}px`
+                    }
+                    //cards[index][index1][index2].rotate = rotate;
+                    cards[index][index1][index2].active = 2; // 测试用
+                    cards[index][index1][index2].onclick = this.play(item2)
+                    if ('02'.indexOf(index) != -1) y = y + this.csize * 0.15;
+                    else x = x + this.csize * 0.2;
+                });
             });
         })
         return cards;
@@ -275,66 +274,6 @@ class Table extends Component {
             if (this.board.length == 4) setTimeout(this.clearBoard, 1000)
         }
     }
-    /**
-     * 发牌
-     */
-    deal = () => {
-        const cards = this.dealCards()
-        this.setState({
-            cards: cards
-        });
-    }
-    // /**
-    //  * 打开明手的牌
-    //  *  从 Models 获得 Dummy 的牌，并且显示出来
-    //  *  如果无权获得，则什么都不做。
-    //  * 
-    //  * 返回：
-    //  *  成功：牌打开
-    //  *  失败：false 从 model 中调取数据，判断规则。
-    //  */
-    // // openDummy1 = () => {
-    // //     const seat = 'north'
-    // //     const dCards = Models.openDummy().cards.split('.');
-
-    // //     const cards = this.state.cards;
-    // //     cards[Table.seats.indexOf(seat)].forEach((item, index) => {
-    // //         item.forEach((item1, index1) => {
-    // //             let card = cards[Table.seats.indexOf(seat)][index][index1];
-    // //             card.card = dCards[index].split('')[index1] + Card.suits[index]
-    // //         });
-    // //     })
-    // //     console.log('openDummy..............')
-    // //     console.log(cards)
-
-    // // }
-    /**
-     * 打开明手的牌。
-     * 从 Models 获得数据。
-     * 修改 seat 方位可以打开不同方位的牌。
-     */
-    testDummy = (seat1) => {
-        const seat = seat1;
-        let index = 0
-        const dCards = Models.openDummy().cards.split('.');
-        let cards = this.state.cards[Table.seats.indexOf(seat)];
-        dCards.forEach((item1, index1) => {
-            item1.split('').forEach((item2, index2) => {
-                // 这里。
-                cards[index].card = item2 + Card.suits[index1]
-                cards[index].onclick = this.play(cards[index1][index2]);
-                index++;
-            })
-        })
-        this.state.cards[Table.seats.indexOf(seat)] = cards;
-        this.setState({
-            cards: this.state.cards
-        })
-        console.log('openDummy..............')
-        console.log(this.state.cards)
-
-    }
-
     test3 = () => {
         this.clearBoard();
     }
@@ -376,32 +315,113 @@ class Table extends Component {
             cards: cards
         })
     }
+    /**
+     * 发牌
+     */
+    deal = () => {
+        const cards = this.dealCards()
+        this.setState({
+            cards: cards
+        });
+    }
     testBid = () => {
         this.setState({
-            scene: !this.state.scene
+            scene:!this.state.scene
         })
     }
+
+
+    // /**
+    //  * 打开明手的牌
+    //  *  从 Models 获得 Dummy 的牌，并且显示出来
+    //  *  如果无权获得，则什么都不做。
+    //  * 
+    //  * 返回：
+    //  *  成功：牌打开
+    //  *  失败：false 从 model 中调取数据，判断规则。
+    //  */
+    // // openDummy1 = () => {
+    // //     const seat = 'north'
+    // //     const dCards = Models.openDummy().cards.split('.');
+
+    // //     const cards = this.state.cards;
+    // //     cards[Table.seats.indexOf(seat)].forEach((item, index) => {
+    // //         item.forEach((item1, index1) => {
+    // //             let card = cards[Table.seats.indexOf(seat)][index][index1];
+    // //             card.card = dCards[index].split('')[index1] + Card.suits[index]
+    // //         });
+    // //     })
+    // //     console.log('openDummy..............')
+    // //     console.log(cards)
+
+    // // }
+    /**
+     * 打开明手的牌。
+     * 从 Models 获得数据。
+     * 注意调整 state 的时候，尽量不要重置，而是需要那个值就修改那个值。
+     * 这样可以保留 动画的连贯性效果。
+     */
+    openDummy = () => {
+        const seat = 'east'
+        let index = 39
+        const dCards = Models.openDummy().cards.split('.');
+        let [x, y] = [this.seat[seat][0].x, this.seat[seat][0].y]
+        x = x + this.width / 16 / 5; y = y + this.width / 16 / 5; // margin
+        let cards = this.state.cards[Table.seats.indexOf(seat)];
+        cards = [[], [], [], []]
+        dCards.forEach((item1, index1) => {
+            item1.split('').forEach((item2, index2) => {
+                // 这里。
+                cards[index1][index2] = {
+                    active: 2,
+                    card: item2 + Card.suits[index1],
+                    key: index++,
+                    seat: seat,
+                    size: this.csize,
+                    animation: {
+                        top: y,
+                        left: x,
+                        delay: 0,
+                        duration: 300,
+                    },
+                    position: { x: x, y: y }
+
+                }
+                cards[index1][index2].onclick = this.play(cards[index1][index2]);
+                x = x + this.csize * 0.2;
+            })
+        })
+        this.state.cards[Table.seats.indexOf(seat)] = cards;
+        this.setState({
+            cards: this.state.cards
+        })
+        console.log('openDummy..............')
+        console.log(this.state.cards)
+
+    }
+
+
     render() {
         const css = this.css;
         // cards 从 state.cards 遍历获得。不要重复构造，而所有操作只操作数据。
         const cards = this.state.cards.map((item1, index1) => {
             return item1.map((item2, index2) => {
-
-                return <Card
-                    active={item2.active}
-                    onClick={item2.onclick}
-                    //onClick={this.play(item3)}
-                    key={item2.key}
-                    index={item2.key}
-                    //table={item3.table}
-                    seat={item2.seat}
-                    animation={item2.animation || ''}
-                    card={item2.card}
-                    size={item2.size}
-                    position={item2.position}
-                    zIndex={item2.zIndex}
-                />
-
+                return item2.map((item3, index3) => {
+                    return <Card
+                        active={item3.active}
+                        onClick={item3.onclick}
+                        //onClick={this.play(item3)}
+                        key={item3.key}
+                        index={item3.key}
+                        //table={item3.table}
+                        seat={item3.seat}
+                        animation={item3.animation || ''}
+                        card={item3.card}
+                        size={item3.size}
+                        position={item3.position}
+                        zIndex={item3.zIndex}
+                    />
+                });
             });
         });
         return (
@@ -444,15 +464,10 @@ class Table extends Component {
                     </div>
 
                     <button onClick={this.deal}>发牌</button>
-                    <br />
                     <button onClick={this.test1}>出牌</button>
                     <button onClick={this.test2}>阻止出牌</button>
                     <button onClick={this.test3}>清理桌面</button>
-                    <br />
-                    <button onClick={this.testDummy.bind(this, 'east')}>明手东</button>
-                    <button onClick={this.testDummy.bind(this, 'west')}>明手西</button>
-                    <button onClick={this.testDummy.bind(this, 'north')}>明手北</button>
-                    <br />
+                    <button onClick={this.openDummy}>打开明手</button>
                     <button onClick={this.testBid}>测试叫牌</button>
                     <div id='test' style={{ position: 'relative' }}>测试区域</div>
                     <div id='footer' className='footer' style={css.footer}>footer</div>

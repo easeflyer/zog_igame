@@ -25,6 +25,12 @@ class Card extends React.Component {
             }
             return style;
         }
+        if(this.props.active == 3) {
+            this.props.animation && ( this.props.animation.onComplete = () => {
+                let cCard = document.querySelector('#card'+this.props.index);
+                cCard.style.display = 'none';
+            } )
+        }
         if(this.props.active == 0)
             this.props.animation && ( this.props.animation['brightness'] = 0.6 )
         if(this.props.active == 1)
@@ -37,7 +43,7 @@ class Card extends React.Component {
         const card = this.props.card.slice(0,1) == 'X' ? 
             'back' : this.props.card;
         return (
-            <div  // TODO: 这个div定位不理想，只是起到了 zIndex 作用。
+            <div id={'card'+this.props.index}  // TODO: 这个div定位不理想，只是起到了 zIndex 作用。
                 style={{
                     position: 'absolute',
                     zIndex: this.props.zIndex,
