@@ -77,7 +77,7 @@ export default class OneCourseResult extends React.Component {
         ]
         let setDealNumber = length => Array.from({ length }, (v, k) => <a style={{ margin: '0px 5px' }} key={k + 1} onClick={() => this.toOneBoard(k + 1)} >{k + 1}</a>)
 
-        // this.props.setCourseId([this.state.thisRoundId, data[0].round_name, this.state.roundNumber])  ???????????????????????????
+        this.props.setCourseId([this.state.thisRoundId, data[0].round_name, this.state.roundNumber]);
 
         // 先判断是否为空
         if (data) {
@@ -97,11 +97,11 @@ export default class OneCourseResult extends React.Component {
             title: "桌",
             dataIndex: "number",
             width: "5%",
-            render: (text) => {
+            render: (text, row) => {
                 return (
                     <span>
                         <a
-                            onClick={() => this.toOneTable(text)}
+                            onClick={() => this.toOneTable(row.number)}
                         >
                             {text}
                         </a>
@@ -121,7 +121,7 @@ export default class OneCourseResult extends React.Component {
                     <div>
                         <span>
                             <a
-                                onClick={() => this.toOneTeam(row.team.host_id, row.team.host_name)}
+                                onClick={() => this.toOneTeam([row.team.host_id, row.team.host_name])}
                             >
                                 {text.host_name}
                             </a>
@@ -129,7 +129,7 @@ export default class OneCourseResult extends React.Component {
                         <hr />
                         <span>
                             <a
-                                onClick={() => this.toOneTeam(row.team.guest_id, row.team.guest_name)}
+                                onClick={() => this.toOneTeam([row.team.guest_id, row.team.guest_name])}
                             >
                                 {text.guest_name}
                             </a>
@@ -194,6 +194,7 @@ export default class OneCourseResult extends React.Component {
                 </Row>
                 <WhiteSpace size='sm' />
                 <Table
+                    rowKey={(row) => row.number}
                     bordered
                     columns={columns}
                     dataSource={this.state.data}
