@@ -169,6 +169,10 @@ class IntelligentGameApi(models.Model):
             host = match.mapped('host_partner_id')
             guest = match.mapped('guest_partner_id')
 
+            host_team_id = self.env['og.igame.team'].search([('partner_id','=',host.id),('igame_id','=',self.id)])
+            guest_team_id = self.env['og.igame.team'].search([('partner_id', '=', guest.id),('igame_id','=',self.id)])
+
+            # return host_team_id,guest_team_id
             # return host.name,guest.name
             open = match.mapped('open_table_id')
             close = match.mapped('close_table_id')
@@ -181,12 +185,13 @@ class IntelligentGameApi(models.Model):
             #                 'host_imp':match.host_imp,'guest_imp':match.guest_imp,
             #                 'host_vp':match.host_vp,
             #                 'guest_vp':match.guest_vp,'deal':deal}])
-            a = []
-            a.append([{'hsot_name':host.name},{'guest_name':guest.name}])
-            b = []
-            b.append([{'host_imp':match.host_imp},{'guest_imp':match.guest_imp}])
-            c = []
-            c.append([{'host_vp':match.host_vp},{'guest_vp':match.guest_vp}])
+            # a = []
+            a = {'hsot_name':host.name,'host_id':host_team_id.id,'guest_name':guest.name,'guest_id':guest_team_id.id}
+            # b = []
+            b = {'host_imp':match.host_imp,'guest_imp':match.guest_imp}
+            # c = []
+            c = {'host_vp':match.host_vp,'guest_vp':match.guest_vp}
+            # c = [{'host_vp': match.host_vp}, {'guest_vp': match.guest_vp}]
 
             # matchs.append([{'open_id':open.id,'number':open.number,'close_id':close.id,'deal':deal,
             #                 [{'hsot_name':host.name},{'guest_name':guest.name}],
@@ -194,8 +199,8 @@ class IntelligentGameApi(models.Model):
             #                 [{'host_vp':match.host_vp},
             #                  {'guest_vp':match.guest_vp}]}])
 
-            matchs.append([{'open_id':open.id,'number':open.number,'close_id':close.id,'deal':deal,
-                            'team':a,'IMPS':b,'VPS':c}])
+            matchs.append({'round_name':round.name,'open_id':open.id,'number':open.number,'close_id':close.id,'deal':deal,
+                            'team':a,'IMPS':b,'VPS':c})
 
 
         return matchs
@@ -240,6 +245,64 @@ class IntelligentGameApi(models.Model):
             self.env['og.igame.team.player'].create(vals)
         return True
 
+    @api.multi
+    def search_game_score(self):
+        self = self.sudo()
+        team_ids = self.env['og.igame.team'].search([('igame_id','=',self.id)])
+        # return team_ids
+        cc = []
+        for team_id in team_ids:
+            team_line = self.env['og.igame.team.line'].search([('team_id','=',team_id.id)])
+
+
+            # return team_line
+
+            tt = []
+            win_round = 0
+            for rec in team_line:
+                round_number = rec.round_id.number
+                match = rec.match_id
+
+                if rec.score > 10:
+                    win_round += 1
+
+                if match.host_partner_id.id == team_id.partner_id.id:
+                    partner = self.env['res.partner'].search([('id', '=', match.guest_partner_id.id)])
+                    partner1 = self.env['res.partner'].search([('id', '=', match.host_partner_id.id)])
+
+                    # tt.append({'round': round_number, 'name': partner.name, match.host_imp: match.guest_imp,
+                    #            match.host_vp: match.guest_vp, })
+                    team = self.env['og.igame.team'].search([('igame_id','=',self.id),('partner_id','=',partner.id)])
+                    team1 = self.env['og.igame.team'].search(
+                        [('igame_id', '=', self.id), ('partner_id', '=', partner1.id)])
+
+
+
+                    tt.append({'win_round':win_round,'team_number':team1.number,'name':partner1.name,
+                               'round': round_number,'opp_team_number': team.number,'score':match.host_vp })
+                    # return team
+                elif match.guest_partner_id.id == team_id.partner_id.id:
+                    partner = self.env['res.partner'].search([('id', '=', match.host_partner_id.id)])
+                    partner1 = self.env['res.partner'].search([('id', '=', match.guest_partner_id.id)])
+                    team = self.env['og.igame.team'].search([('igame_id','=',self.id),('partner_id', '=', partner.id)])
+                    team1 = self.env['og.igame.team'].search(
+                        [('igame_id', '=', self.id), ('partner_id', '=', partner1.id)])
+
+
+                    tt.append({'win_round':win_round,'team_number':team1.number,'name':partner1.name,
+                               'round': round_number, 'opp_team_number': team.number,'score': match.guest_vp })
+            cc.append(tt)
+        return cc
+
+    # @classmethod
+    # @api.model
+    # def test(self):
+    #     c = IntelligentGameTeam()
+    #     c.aa()
+
+
+        # return team_ids
+
 
 class IntelligentGameTeam(models.Model):
     _inherit = "og.igame.team"
@@ -251,6 +314,10 @@ class IntelligentGameTeam(models.Model):
     # and no game_id is added to the og.igame.team in this function which indicates that the team created here
     # only represents a team,where you can add players
     #
+    # @api.model
+    # def aa(self):
+    #     return 'ppppp'
+
     @api.model
     # @api.returns('self')
     # def create_team(self,team_name,kwargs):
@@ -343,14 +410,44 @@ class IntelligentGameTeam(models.Model):
         return team.score
 
     @api.multi
-    def search_combat_team(self):
+    def search_combat_team(self,game_id):
         self = self.sudo()
-        team = self.env['og.igame.team.line'].search([('team_id','=',self.id)])
-        round_id = team.mapped('round_id')
-        match_id = team.mapped('match_id')
-        # partner = self.env['og.']
-        return round_id,match_id
+        team = self.env['og.igame.team.line'].search([('team_id','=',self.id),('igame_id','=',game_id)])
+        # round_ids = team.mapped('round_id')
+        tt = []
+        for rec in team:
+            round_number = rec.round_id.number
+            match = rec.match_id
 
+            if match.host_partner_id.id == self.partner_id.id:
+                partner = self.env['res.partner'].search([('id', '=', match.guest_partner_id.id)])
+                tt.append({'round':round_number,'name': partner.name, match.host_imp: match.guest_imp, match.host_vp: match.guest_vp, })
+
+            elif match.guest_partner_id.id == self.partner_id.id:
+                partner = self.env['res.partner'].search([('id', '=', match.host_partner_id.id)])
+                tt.append({'round':round_number,'name': partner.name, match.guest_imp: match.host_imp, match.guest_vp: match.host_vp,})
+        return tt
+
+        # match_ids = team.mapped('match_id')
+        #         #
+        # # for round_id in round_ids:
+        # #     round = self.env['og.igame.round'].search([('id','=',round_id)])
+        # #
+        # gg = []
+        # for match_id in match_ids:
+        #     match = self.env['og.match'].search([('id','=',match_id.id)])
+        #     # partner = self.env['og.igame.team'].search([('id','=',self.id)])
+        #     tt = []
+        #     if match.host_partner_id.id == self.partner_id.id:
+        #         partner = self.env['res.partner'].search([('id','=',match.guest_partner_id.id)])
+        #         tt.append({'name':partner.name,match.host_imp:match.guest_imp,match.host_vp:match.guest_vp,})
+        #
+        #     elif match.guest_partner_id.id == self.partner_id.id:
+        #         partner = self.env['res.partner'].search([('id','=',match.host_partner_id.id)])
+        #         tt.append({'name':partner.name,match.guest_imp:match.host_imp,match.guest_vp:match.host_vp,})
+        #
+        #     gg.append(tt)
+        # return gg
 
 
 class IntelligentTeamPlayer(models.Model):
@@ -380,7 +477,6 @@ class IntelligentGameTeamLine(models.Model):
                                  ('team_id','=',team_id),('round_id','=',round_id)])
 
         return team_line.score
-
 
 
 class MatchTeam(models.Model):
@@ -610,13 +706,74 @@ class IntelligentGameRound(models.Model):
 
         return self.deal_ids
 
+    @api.multi
+    def round_team_rank(self,game_id):
+        self = self.sudo()
+        team = self.env['og.igame.team.line'].search([('round_id','=',self.id),('igame_id','=',game_id)])
+        team_ids = team.mapped('team_id')
+        tt = []
+        for team_id in team_ids:
+            t = self.env['og.igame.team'].search([('id','=',team_id.id)])
+            partner = self.env['res.partner'].search([('id','=',t.partner_id.id)])
+            tt.append({'name':partner.name,'VPs':t.score})
+
+        # gg = sorted(tt, reverse=True)
+
+        gg = sorted(tt, key=lambda tt : tt['VPs'], reverse=True)
+
+        cc = []
+        number = 1
+        for g in gg:
+
+            g['rank'] = number
+            number = number + 1
+            cc.append(g)
+
+        for i,g in enumerate(cc):
+            for j,k in enumerate(cc):
+                if k['VPs'] == g['VPs']:
+                    cc[j]['rank'] = cc[i]['rank']
+        return cc
+
+
+class Table(models.Model):
+    _inherit = "og.table"
+
     @api.model
-    def round_match(self):
-        tm = self.env['og.igame.group'].search([])
-        # sc = self.env['og.igame'].browse(id)
+    def table_result(self,game_id,round_id,match_id,number):
+        self = self.sudo()
+        team = self.env['og.igame.team.line'].search([('igame_id','=',game_id),('round_id','=',round_id)])
+        # match_ids = team.mapped('match_id')
+        table_ids = self.env['og.table'].search([('number','=',number)])
+        # return match_ids
+        # for match_id in match_ids:
+        match_lines = self.env['og.match.line'].search([('match_id','=',match_id)])
+        dd = []
+        for match_line in match_lines:
+            deal = self.env['og.deal'].search([('id','=',match_line.deal_id.id)])
+            aa = []
+            for table_id in table_ids:
+                if match_line.open_table_id == table_id:
+                    aa.append({'number':deal.number,'table':'open',
+                               'declarer':match_line.open_declarer,
+                               'contract':match_line.open_contract,
+                               'result':match_line.open_result,
+                               'NS':match_line.open_ns_point,
+                               'EW': match_line.open_ew_point,
+                               'host_imp':match_line.host_imp,
+                               'guest_imp':match_line.guest_imp})
 
-        return tm
-
+                if match_line.close_table_id == table_id:
+                    aa.append({'number':deal.number,'table': 'close',
+                               'declarer': match_line.close_declarer,
+                               'contract': match_line.close_contract,
+                               'result': match_line.close_result,
+                               'NS': match_line.close_ns_point,
+                               'EW': match_line.close_ew_point,
+                               'host_imp': match_line.host_imp,
+                               'guest_imp': match_line.guest_imp})
+            dd.append(aa)
+        return dd
 
 # class IntelligentGameTeamLine(models.Model):
 #     _inherit = "og.igame.team.line"

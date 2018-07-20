@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavBar, WhiteSpace } from 'antd-mobile';
 import { Icon, Row, Col, Table } from 'antd';
+import Game from '../../OdooRpc/Game';
 
 const columns = [{
     title: '排名',
@@ -32,6 +33,11 @@ const data = [
 ]
 
 export default class OneCourseRanking extends React.Component {
+    componentWillMount() {
+        //***********接口方法调用**************
+        const mm = new Game(()=>console.log(1111111),()=>console.log(2222222222));
+        mm.round_team_rank(this.props.match.id,this.props.courseId[0])
+    }
     render() {
         return (
             <div>

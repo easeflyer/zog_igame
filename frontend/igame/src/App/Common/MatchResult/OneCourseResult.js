@@ -69,15 +69,15 @@ export default class OneCourseResult extends React.Component {
     }
     success = (datas) => {
         const data = [      //测试数据，连上服务器后更改success方法的参数为data，并注释掉这段数据就好
-            { round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 1, IMPS: { host_imp: 0.00, guest_imp: 0.00 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "牛的一比", host_id: 1, guest_name: "tthf", guest_id: 2 } },
-            { round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 2, IMPS: { host_imp: 0.00, guest_imp: 0.00 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "bagsad", host_id: 3, guest_name: "gththt", guest_id: 4 } },
-            { round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 3, IMPS: { host_imp: 58, guest_imp: 12 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "casgasdg", host_id: 5, guest_name: "名字整的好长好长好长啊", guest_id: 6 } },
-            { round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 4, IMPS: { host_imp: 0.00, guest_imp: 0.00 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "dadgdggd", host_id: 7, guest_name: "thi", guest_id: 8 } },
-            { round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 5, IMPS: { host_imp: 0.00, guest_imp: 0.00 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "dsae", host_id: 9, guest_name: "j", guest_id: 0 } }
+            { namtch_id:1, round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 1, IMPS: { host_imp: 0.00, guest_imp: 0.00 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "牛的一比", host_id: 1, guest_name: "tthf", guest_id: 2 } },
+            { namtch_id:2, round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 2, IMPS: { host_imp: 0.00, guest_imp: 0.00 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "bagsad", host_id: 3, guest_name: "gththt", guest_id: 4 } },
+            { namtch_id:3, round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 3, IMPS: { host_imp: 58, guest_imp: 12 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "casgasdg", host_id: 5, guest_name: "名字整的好长好长好长啊", guest_id: 6 } },
+            { namtch_id:4, round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 4, IMPS: { host_imp: 0.00, guest_imp: 0.00 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "dadgdggd", host_id: 7, guest_name: "thi", guest_id: 8 } },
+            { namtch_id:5, round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 5, IMPS: { host_imp: 0.00, guest_imp: 0.00 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "dsae", host_id: 9, guest_name: "j", guest_id: 0 } }
         ]
         let setDealNumber = length => Array.from({ length }, (v, k) => <a style={{ margin: '0px 5px' }} key={k + 1} onClick={() => this.toOneBoard(k + 1)} >{k + 1}</a>)
 
-        // this.props.setCourseId([this.state.thisRoundId, data[0].round_name, this.state.roundNumber])  ???????????????????????????
+        this.props.setCourseId([this.state.thisRoundId, data[0].round_name, this.state.roundNumber]);
 
         // 先判断是否为空
         if (data) {
@@ -97,11 +97,11 @@ export default class OneCourseResult extends React.Component {
             title: "桌",
             dataIndex: "number",
             width: "5%",
-            render: (text) => {
+            render: (text, row) => {
                 return (
                     <span>
                         <a
-                            onClick={() => this.toOneTable(text)}
+                            onClick={() => this.toOneTable(row.number)}
                         >
                             {text}
                         </a>
@@ -121,7 +121,7 @@ export default class OneCourseResult extends React.Component {
                     <div>
                         <span>
                             <a
-                                onClick={() => this.toOneTeam(row.team.host_id, row.team.host_name)}
+                                onClick={() => this.toOneTeam([row.team.host_id, row.team.host_name])}
                             >
                                 {text.host_name}
                             </a>
@@ -129,7 +129,7 @@ export default class OneCourseResult extends React.Component {
                         <hr />
                         <span>
                             <a
-                                onClick={() => this.toOneTeam(row.team.guest_id, row.team.guest_name)}
+                                onClick={() => this.toOneTeam([row.team.guest_id, row.team.guest_name])}
                             >
                                 {text.guest_name}
                             </a>
@@ -194,6 +194,7 @@ export default class OneCourseResult extends React.Component {
                 </Row>
                 <WhiteSpace size='sm' />
                 <Table
+                    rowKey={(row) => row.number}
                     bordered
                     columns={columns}
                     dataSource={this.state.data}

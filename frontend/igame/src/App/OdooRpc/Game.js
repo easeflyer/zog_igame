@@ -40,9 +40,46 @@ export default class Game extends Models {
         this.exec('search_round_details',{},gameId,roundId)
         /**
          * params:gameId,roundId
-         * return:
+         * return:[
+             { 
+            namtch_id: 5, 
+            round_name: 'GG', 
+            deal: 6, 
+            close_id: 2,
+            open_id: 2, 
+            number: 5, 
+            IMPS: { host_imp: 0.00, guest_imp: 0.00 }, 
+            VPS: { host_vp: 10.00, guest_vp: 10.00 }, 
+            team: { host_name: "dsae", host_id: 9, guest_name: "j", guest_id: 0 } 
+            }  
+         ]
+         */
+    }
+
+    game_score(gameId){         //整个比赛的成绩表（未排序）
+        this.exec('game_score',{},gameId)
+        /**
+         * params:gameId
+         * return:[]
          */
     }
     
+    round_team_rank(roundId){          //某轮比赛的赛队排名
+        const obj = this.with_model('og.igame.round');  //模型名
+        obj.exec('round_team_rank',{},roundId);
+        /**
+         * params:roundId
+         * return:
+        */
+    }
+
+    table_result(gameId,roundId,match_id,number){   //查询某一轮某一桌的成绩
+        const obj = this.with_model('og.table');  //模型名
+        obj.exec('table_result',{},gameId,roundId,match_id,number);
+        /**
+         * params:gameId,roundId,match_id,number
+         * return:
+        */
+    }
 
 }

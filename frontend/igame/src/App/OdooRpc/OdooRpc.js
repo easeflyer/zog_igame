@@ -1,7 +1,7 @@
 import session from '../User/session';
 
-// const HOST = 'http://124.42.117.43:8069';
-const HOST = 'http://192.168.0.20:8069';
+const HOST = 'http://124.42.117.43:8069';
+// const HOST = 'http://192.168.0.20:8069';
 // const HOST = 'http://192.168.0.114:8069';
 class OdooRpc {
     static create(success,error) {
@@ -18,8 +18,8 @@ class OdooRpc {
         const data1 = {
             "jsonrpc":"2.0",
             "method":"call",
-            // "id":Math.floor(Math.random()*100),
-            "id":123,
+            "id":Math.floor(Math.random()*100),
+            // "id":123,
             "params":data
         }
         console.log(data1)
@@ -64,6 +64,12 @@ class Models{       //用于被继承，来接受回调函数success，error
         const url = HOST + '/longpolling/igame?session_id='+session.get_sid();
         const data = {'channels':[], 'last':last, "options": {} }
         return this.m.jsonrpc(url,data);
+    }
+
+    with_model(model_name){
+        const obj = new Models(this.success, this.error)
+        obj.model = model_name
+        return obj
     }
 }
 export default Models;
