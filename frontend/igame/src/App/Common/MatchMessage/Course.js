@@ -15,7 +15,6 @@ const Separator = ()=>(
 export default class Course extends React.Component{
     state = {
         courseData:this.props.course,
-        // courseData:null,
         courseId:null,
     }
     componentWillMount(){
@@ -61,21 +60,24 @@ export default class Course extends React.Component{
             //假定开始前五分钟可以入场准备
             if( start_time>nowtime && start_time-nowtime>300000 ){
                 console.log('比赛尚未开始，开始前五分钟才能入场')
-                this.props.toMatchResult();
+                this.props.toMatchResult();     //测试用，以后注释
 
             }
             if( start_time>nowtime && start_time-nowtime<=300000 ){
                 console.log('比赛马上开始，可以入场等待')
+                this.props.toMatchResult();     //测试用，以后注释
             }
             if( start_time<nowtime && over_time>nowtime ){
                 console.log('比赛进行中，你迟到了')
+                this.props.toMatchResult();     //测试用，以后注释
             }
             if( over_time<nowtime ){
                 console.log('比赛已经结束，进入成绩查询页');
                 this.props.toMatchResult();
             }
             this.props.setInitialPage(2);
-            this.props.setCourseId([tempMap[k][i].id,tempMap[k][i].name,data.length]);
+            // this.props.setCourseId([tempMap[k][i].id,tempMap[k][i].name,data.length]);
+            this.props.setRoundMessage([tempMap[k][i].id,tempMap[k][i].name,tempMap[k][i].number],data);
         }
 
         //把数据放到table中
