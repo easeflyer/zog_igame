@@ -2,6 +2,7 @@ import React from 'react'
 import {Table} from 'antd';
 import {WingBlank,WhiteSpace,NavBar,Icon,} from 'antd-mobile'
 import './table.css'
+import CardSuit from './CardSuit'
 import Func from './Func'
 const DealFunc = new Func();
 const call=[{
@@ -67,18 +68,20 @@ export default class PointDetail extends React.Component{
 		playData:[]
 	}
 	componentDidMount(){
-		let calls =null;
-		this.props.Detail.calls.map(item=>{  //[1, "E", "1S"],[2, "S", "Pass"], [3, "W", "Pass"]，[4, "N", "Pass"]
-			calls = DealFunc.call_cards(item[1],item[2],this.state.callData);
-		})
-		let plays = this.state.playData
-		this.props.Detail.plays.map((item,index)=>{
-			if(item[0]%4===0){
-				plays.push( DealFunc.playOrder(this.props.Detail.plays,i))
-				i++
-			}
-		})
-		this.setState({ callData:calls, playData:plays })
+		if(this.props.Detail){
+			let calls =null;
+			this.props.Detail.calls.map(item=>{  //[1, "E", "1S"],[2, "S", "Pass"], [3, "W", "Pass"]，[4, "N", "Pass"]
+				calls = DealFunc.call_cards(item[1],item[2],this.state.callData);
+			})
+			let plays = this.state.playData
+			this.props.Detail.plays.map((item,index)=>{
+				if(item[0]%4===0){
+					plays.push( DealFunc.playOrder(this.props.Detail.plays,i))
+					i++
+				}
+			})
+			this.setState({ callData:calls, playData:plays })
+		}
 	}
 	onLeftClick=()=>{
 		this.props.toPointResult()
@@ -92,6 +95,8 @@ export default class PointDetail extends React.Component{
                 onLeftClick={this.onLeftClick}
                 >第一副牌详情</NavBar>
                 <WhiteSpace/>
+                <p>牌型分布</p>
+                <CardSuit />
                 <Table 
                 dataSource={this.state.callData} 
                 columns={call}

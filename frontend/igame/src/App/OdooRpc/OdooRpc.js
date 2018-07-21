@@ -1,8 +1,8 @@
 import session from '../User/session';
 
 // const HOST = 'http://124.42.117.43:8069';
-// const HOST = 'http://192.168.0.20:8069';
-const HOST = 'http://192.168.0.113:8069';
+const HOST = 'http://192.168.0.20:8069';
+// const HOST = 'http://192.168.0.113:8069';
 class OdooRpc {
     static create(success,error) {
         // if (OdooRpc.models === null) {
@@ -14,7 +14,7 @@ class OdooRpc {
         return OdooRpc.models;
     }
     jsonrpc(url,data){
-        console.log(url)
+        // console.log(url)
         const data1 = {
             "jsonrpc":"2.0",
             "method":"call",
@@ -34,7 +34,8 @@ class OdooRpc {
             // console.log(response);
             if (response.result){
                 this.success(response.result)
-            }else{
+            }
+            else{
                 this.error(response.result)
             }
         });

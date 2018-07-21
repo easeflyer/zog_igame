@@ -47,14 +47,15 @@ export default class PointResult extends React.Component{
 	state={
 		result:null
 	}
-	componentWillMount(){
+	componentDidMount(){
 		const  board= new Board(this.sucResult,this.failResult); 
-		board.table_points(6);   //params: [table_id]
+		board.table_points(1);   //params: [table_id]
 	}
 	sucResult=(data)=>{
 		this.setState({
 			result:data
 		})
+		console.log(data)
 		data.map((item,index)=>{
 			dataSource.push({
 				key: index,

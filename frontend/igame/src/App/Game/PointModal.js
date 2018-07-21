@@ -14,12 +14,16 @@ export default class PointModal extends React.Component{
         this.props.onClose()
     }
     componentWillReceiveProps(newProps){
+        console.log(newProps)
         if(newProps.board_id){
             const  board= new Board(this.sucPost,this.failPost); 
             board.board_points(newProps.board_id)
         }
     }
-    sucPost=(data)=>{ this.setState({point:data }) }
+    sucPost=(data)=>{
+        console.log(data) 
+        this.setState({point:data }) 
+    }
     render(){
         return(
             <Modal

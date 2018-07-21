@@ -39,21 +39,34 @@ export default class PlayerInfo extends React.Component{
     }
     componentDidMount(){
         const JoinChannel = new Channel(this.sucChannel,this.failChannel);
-        JoinChannel.join_channel(10);   // 6 : table_id
+        JoinChannel.join_channel(1);   // 6 : table_id
         this.polling();
     }
     sucChannel=(data)=>{   //加入比赛聊天频道成功
         console.log(data)
-        //[42, [39, 40, 41, 42, 43, 44, 45],50] [channel_id,[board_id1,board_id2,board_id3...],channel_id]
-        this.setState({
-            board_id_list:data[1],
-            id_msg:{
-                channel_id:data[0],
-                board_id:data[1][0],
-            }
-        })
+        console.log(this.state.board_id_list)
+        // [42, [39, 40, 41, 42, 43, 44, 45],50] [channel_id,[board_id1,board_id2,board_id3...],channel_id]
+        if(this.state.board_id_list){
+            this.setState({
+                board_id_list:data[1],
+                id_msg:{
+                    channel_id:data[0],
+                    board_id:this.state.board_id_list[this.state.board_id_list.indexOf(this.state.id_msg.board_id)+1],
+                }
+            })
+        }else{
+            this.setState({
+                board_id_list:data[1],
+                id_msg:{
+                    channel_id:data[0],
+                    board_id:data[1][0],
+                }
+            })
+        }
         this.post('init_board',this.state.id_msg.board_id,this.state.id_msg.channel_id)
+        this.showModal()
     }
+    failChannel=()=>{console.log('fail channel')}
     polling(){
         const Poll = new Models(this.sucPolling,this.failPolling);
         Poll.poll(this.state.pollingId);
@@ -68,7 +81,6 @@ export default class PlayerInfo extends React.Component{
             body = body.replace(/u'/g,"'").replace(/ /g,'')
             body = eval('('+body.substring(3,body.length-4)+')')
             console.log(body)
-            console.log(this.state.pollingId)
             if(body.board_id&&body.name&&body.pos&&body.number){  //收到叫牌消息   {board_id: 44, number: 1, name: '1S', pos: 'S'}
                 this.setState({
                     callDirect:direct[direct.indexOf(body.pos)+1]||direct[direct.indexOf(body.pos)-3],
@@ -102,6 +114,8 @@ export default class PlayerInfo extends React.Component{
                 })
                 if(body.number===52){
                     if(this.state.board_id_list.indexOf(this.state.id_msg.board_id)<=this.state.board_id_list.length-1){
+                        console.log(this.state.board_id_list.indexOf(this.state.id_msg.board_id))
+                        console.log(this.state.board_id_list.length)
                         this.showModal();
                     }
                 }
@@ -109,10 +123,12 @@ export default class PlayerInfo extends React.Component{
         }
         this.polling()
     }
+    failPolling=()=>{console.log('fail polling')}
     post=(method,...data)=>{
         const  board= new Board(this.sucPost,this.failPost); 
         method==='init_board' ? board.init_board(...data) : null;   //初始化牌桌
-        method==='bid'&&this.state.playerInfo.myDirect===this.state.callDirect ? board.bid(this.state.id_msg.board_id,this.state.playerInfo.myDirect,...data,this.state.id_msg.channel_id) : null;    //发送叫牌消息
+        method==='bid'? board.bid(this.state.id_msg.board_id,this.state.playerInfo.myDirect,...data,this.state.id_msg.channel_id) : null;    //发送叫牌消息
+        // method==='bid'&&this.state.playerInfo.myDirect===this.state.callDirect ? board.bid(this.state.id_msg.board_id,this.state.playerInfo.myDirect,...data,this.state.id_msg.channel_id) : null;    //发送叫牌消息
         method==='call_result' ? board.call_result(this.state.id_msg.board_id,this.state.id_msg.channel_id) : null;    //查询叫牌结果
         method==='play'&&((this.state.currentDirect!==this.state.dummy&&this.state.currentDirect===this.state.playerInfo.myDirect)||
         (this.state.currentDirect===this.state.dummy&&this.state.topInfo2.declarer===this.state.playerInfo.myDirect)) ? board.play(this.state.id_msg.board_id,this.state.playerInfo.myDirect,...data,this.state.id_msg.channel_id) : null;       //发送打牌消息
@@ -122,6 +138,7 @@ export default class PlayerInfo extends React.Component{
         console.log(data) 
         if(data.cards&&data.players){
             let s = DealFunc.sucPost(data)
+            console.log(s)
             this.setState({
                 cards:s.cards,
                 call:s.call,
@@ -130,13 +147,15 @@ export default class PlayerInfo extends React.Component{
                 callDirect:s.callDirect,
                 playerInfo:s.playerInfo
             })
+            console.log(this.state)
         }
     }
-    failPost(){ console.log('fail post') }
+    failPost=()=>{ console.log('fail post') }
     showModal =() => { this.setState({ modal: true, }); }
     onClose = () => { 
-        if(this.state.board_id_list.indexOf(this.state.id_msg.board_id)<this.state.board_id_list.length-1){
-            this.post('init_board',this.state.board_id_list[this.state.board_id_list.indexOf(this.state.id_msg.board_id)+1],this.state.id_msg.channel_id)
+        let i = this.state.board_id_list.indexOf(this.state.id_msg.board_id);
+        let len = this.state.board_id_list.length-1
+        if(i<len){
             this.setState({
                 callCards:new Initial().callCards,
                 playCards:new Initial().playCards,
@@ -152,9 +171,11 @@ export default class PlayerInfo extends React.Component{
                 myCardsNum:null,
                 modal:false,
             })
+            const JoinChannel = new Channel(this.sucChannel,this.failChannel);
+            JoinChannel.join_channel(1);   // 6 : table_id
         }
-        if(this.state.board_id_list.indexOf(this.state.id_msg.board_id)===this.state.board_id_list.length-1){
-            this.render(<span>比赛结束</span>)
+        if(i===len){
+            this.props.toResult();
         }
         this.setState({ modal: false, }); 
     }

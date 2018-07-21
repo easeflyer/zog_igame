@@ -48,7 +48,11 @@ export default class Func{
         console.log(data)
         if(data.cards&&data.players){   //初始化牌桌
             let i=null, s = null;
-            data.players.map((item,index)=>{ if(item[0]===Session.get_name()){i=index} });
+            data.players.map((item,index)=>{ 
+                if(item[0]===Session.get_name()){
+                    i=index
+                } 
+            });
             direct.map((item,index)=>{ if(data.players[i][1]===item){s=index} });
             const init_board={
                 cards:data.cards.split(' '),
