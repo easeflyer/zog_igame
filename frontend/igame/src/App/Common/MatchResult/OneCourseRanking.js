@@ -7,11 +7,13 @@ const columns = [{
     title: '排名',
     children: [{
         title: "名次",
-        dataIndex: "ranking",
+        // dataIndex: "ranking",
+        dataIndex: "rank",
         width: "15%",
     }, {
         title: "参赛队",
-        dataIndex: "team",
+        // dataIndex: "team",
+        dataIndex: "name",
         width: "35%",
     }, {
         title: "VPs",
@@ -24,19 +26,22 @@ const columns = [{
     }]
 }]
 
-const data = [
-    { ranking: 1, team: "杭州锦江队", VPs: "20.00", penaltyPoints: "" },
-    { ranking: 2, team: "天津凯莱英红队", VPs: "20.00", penaltyPoints: "" },
-    { ranking: 3, team: "山东大学", VPs: "20.00", penaltyPoints: "" },
-    { ranking: 4, team: "山西晋", VPs: "20.00", penaltyPoints: "" },
-    { ranking: 5, team: "杭州", VPs: "20.00", penaltyPoints: "" }
-]
+// const data = [
+//     { rank: 1, name: "杭州锦江队", VPs: "20.00", penaltyPoints: "" },
+//     { rank: 2, name: "天津凯莱英红队", VPs: "20.00", penaltyPoints: "" },
+//     { rank: 3, name: "山东大学", VPs: "20.00", penaltyPoints: "" },
+//     { rank: 4, name: "山西晋", VPs: "20.00", penaltyPoints: "" },
+//     { rank: 5, name: "杭州", VPs: "20.00", penaltyPoints: "" }
+// ]
 
 export default class OneCourseRanking extends React.Component {
+    state = {
+        data:null
+    }
     componentWillMount() {
         //***********接口方法调用**************
-        const mm = new Game(()=>console.log(1111111),()=>console.log(2222222222));
-        mm.round_team_rank(this.props.match.id,this.props.courseId[0])
+        const m = new Game((data)=>this.setState({data:data}),()=>console.log('没有拿到本轮排名数据'));
+        m.round_team_rank(this.props.thisOneRound[0],this.props.match.id)
     }
     render() {
         return (
@@ -45,7 +50,8 @@ export default class OneCourseRanking extends React.Component {
                     mode="light"
                     icon={<Icon type="left" />}
                     onLeftClick={() => this.props.toMatchDetails()}    //返回轮次页
-                >{this.props.courseId[1]}排名(每轮排名)
+                >{this.props.thisOneRound[1]}第{this.props.thisOneRound[2]}轮排名(每轮排名)
+                {/* >{this.props.courseId[1]}排名(每轮排名)thisOneRound */}
                 </NavBar>
                 <WhiteSpace size='sm' />
                 <Row>
@@ -58,8 +64,10 @@ export default class OneCourseRanking extends React.Component {
                 </Row>
                 <WhiteSpace size='sm' />
                 <Table
+                    rowKey={(row)=>row.team_id}         //注意：这里需要一个不重复的值
                     columns={columns}
-                    dataSource={data}
+                    dataSource={this.state.data}
+                    // dataSource={data}
                     size="small"
                     pagination={false}
                 />,

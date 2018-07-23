@@ -34,7 +34,7 @@ export default class MatchDetails extends React.Component {    //已完成的比
             { title: <Badge>参赛队</Badge>,                content:<MatchTeam match={this.props.match} /> },
             { title: <Badge dot>赛程</Badge>,              content:<Course match={this.props.match} 
                                                           setCourse={this.props.setCourse}
-                                                          setCourseId={this.props.setCourseId}
+                                                          setRoundMessage={this.props.setRoundMessage}
                                                           setInitialPage={this.props.setInitialPage}
                                                           toMatchResult={this.props.toMatchResult} 
                                                           Course={this.props.course} /> },
