@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavBar, WhiteSpace } from 'antd-mobile';
 import { Icon, Table } from 'antd';
+import GameTeam from '../../OdooRpc/GameTeam';
 
 const columns = [{
     title: "轮次",
@@ -16,6 +17,10 @@ const columns = [{
     dataIndex: "Vps"
 }]
 export default class OneTeam extends React.Component {
+    componentWillMount() {
+        const m = new GameTeam(()=>{console.log('连接成功')},()=>{'连接失败'});
+        m.search_combat_team(this.props.match.id,this.props.team[0])
+    }
     render() {
         // 初始化表格数据
         let data = [];

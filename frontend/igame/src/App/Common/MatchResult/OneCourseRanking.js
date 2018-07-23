@@ -64,7 +64,7 @@ export default class OneCourseRanking extends React.Component {
                 </Row>
                 <WhiteSpace size='sm' />
                 <Table
-                    // rowKey={(row)=>row.}         //注意：这里需要一个不重复的值
+                    rowKey={(row)=>row.team_id}         //注意：这里需要一个不重复的值
                     columns={columns}
                     dataSource={this.state.data}
                     // dataSource={data}

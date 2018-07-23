@@ -145,7 +145,7 @@ export default class OneCourseResult extends React.Component {
                             <a
                                 onClick={() => this.toOneTeam([row.team.host_id, row.team.host_name])}
                             >
-                                {text.hsot_name}
+                                {text.host_name}
                                 {/* {text.host_name} */}
                             </a>
                         </span>
