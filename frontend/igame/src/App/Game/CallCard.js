@@ -1,7 +1,7 @@
 import React from 'react'
 import { Row, Col, Table} from 'antd';
 import Initial from './Initial'
-import Func from './Func'
+import Func from './Models/Func'
 
 const DealFunc = new Func();
 const dbl = ['Pass','X','XX',]

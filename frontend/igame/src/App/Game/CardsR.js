@@ -1,6 +1,6 @@
 import React from 'react'
 import { Col} from 'antd';
-import Func from './Func'
+import Func from './Models/Func'
 const DealFunc = new Func();
 
 export default class Cards extends React.Component{

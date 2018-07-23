@@ -1,7 +1,7 @@
 import React from 'react'
 import { Row, Col} from 'antd';
 import Initial from './Initial'
-import Func from './Func'
+import Func from './Models/Func'
 
 export default class PlayCard extends React.Component{
     state={

@@ -1,11 +1,10 @@
 import React from 'react'
 import PlayerInfo from './PlayerInfo';
-import Result from './Result'
+import Result from './Point/Result'
 
 export default class CardsTable extends React.Component{
     state={
         scene:0,
-        // next:0
     }
 
     toResult=()=>{
@@ -13,13 +12,6 @@ export default class CardsTable extends React.Component{
             scene:1
         })
     }
-    // update=(next)=>{
-    //     this.setState({
-    //         next:next
-    //     })
-    //     this.forceUpdate();
-    // }
-
     render(){
         return(
             <div>

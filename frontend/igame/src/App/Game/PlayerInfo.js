@@ -4,16 +4,16 @@ import Board from '../OdooRpc/Board'
 import Models from '../OdooRpc/OdooRpc'
 import Channel from '../OdooRpc/Channel'
 import Initial from './Initial'
-import Func from './Func'
+import Func from './Models/Func'
 import TopInfo from './TopInfo'
-import PointModal from './PointModal'
+import PointModal from './Point/PointModal'
 import PlayCard from './PlayCard'
 import CallCard from './CallCard'
 import CardsR from './CardsR'
 import CardsC from './CardsC'
 
 const direct = [ 'N' ,'E','S','W',]
-const DealFunc = new Func();
+let DealFunc = new Func();
 export default class PlayerInfo extends React.Component{
     state={
         playerInfo:new Initial().playerInfo,
@@ -44,7 +44,6 @@ export default class PlayerInfo extends React.Component{
     }
     sucChannel=(data)=>{   //加入比赛聊天频道成功
         console.log(data)
-        console.log(this.state.board_id_list)
         // [42, [39, 40, 41, 42, 43, 44, 45],50] [channel_id,[board_id1,board_id2,board_id3...],channel_id]
         if(this.state.board_id_list){
             this.setState({
@@ -63,7 +62,7 @@ export default class PlayerInfo extends React.Component{
                 }
             })
         }
-        this.post('init_board',this.state.id_msg.board_id,this.state.id_msg.channel_id)
+        this.post('init_board',this.state.id_msg.board_id,this.state.id_msg.channel_id);
         this.showModal()
     }
     failChannel=()=>{console.log('fail channel')}
@@ -127,8 +126,8 @@ export default class PlayerInfo extends React.Component{
     post=(method,...data)=>{
         const  board= new Board(this.sucPost,this.failPost); 
         method==='init_board' ? board.init_board(...data) : null;   //初始化牌桌
-        method==='bid'? board.bid(this.state.id_msg.board_id,this.state.playerInfo.myDirect,...data,this.state.id_msg.channel_id) : null;    //发送叫牌消息
-        // method==='bid'&&this.state.playerInfo.myDirect===this.state.callDirect ? board.bid(this.state.id_msg.board_id,this.state.playerInfo.myDirect,...data,this.state.id_msg.channel_id) : null;    //发送叫牌消息
+        // method==='bid'? board.bid(this.state.id_msg.board_id,this.state.playerInfo.myDirect,...data,this.state.id_msg.channel_id) : null;    //发送叫牌消息
+        method==='bid'&&this.state.playerInfo.myDirect===this.state.callDirect ? board.bid(this.state.id_msg.board_id,this.state.playerInfo.myDirect,...data,this.state.id_msg.channel_id) : null;    //发送叫牌消息
         method==='call_result' ? board.call_result(this.state.id_msg.board_id,this.state.id_msg.channel_id) : null;    //查询叫牌结果
         method==='play'&&((this.state.currentDirect!==this.state.dummy&&this.state.currentDirect===this.state.playerInfo.myDirect)||
         (this.state.currentDirect===this.state.dummy&&this.state.topInfo2.declarer===this.state.playerInfo.myDirect)) ? board.play(this.state.id_msg.board_id,this.state.playerInfo.myDirect,...data,this.state.id_msg.channel_id) : null;       //发送打牌消息
@@ -155,6 +154,7 @@ export default class PlayerInfo extends React.Component{
     onClose = () => { 
         let i = this.state.board_id_list.indexOf(this.state.id_msg.board_id);
         let len = this.state.board_id_list.length-1
+        DealFunc = new Func();
         if(i<len){
             this.setState({
                 callCards:new Initial().callCards,
