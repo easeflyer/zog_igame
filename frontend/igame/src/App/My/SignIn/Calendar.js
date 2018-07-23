@@ -17,7 +17,9 @@ if (yearDate % 4 === 0 || yearDate % 100 !== 0 && yearDate % 400 === 0) {
 let monthDate = date.getMonth();
 let todayDate = date.getDate();
 //第一行几个空格
-let monthFirst = new Date(Date.UTC(yearDate, monthDate, todayDate)).getDay();
+var d = new Date();
+d.setDate(1);
+let monthFirst = 6 - d.getDay();
 //每月有多少行 
 let rows = [];
 //最后一行有多少天
@@ -27,6 +29,7 @@ let remainder = (yearDay[monthDate] - (7 - monthFirst)) % 7;  //最后一行有�
 if (remainder > 0) {
     lastRow = remainder;
 }
+
 //渲染第一行
 let keys = 60;  //给日历空白区域定义key值
 let firstRows = [];
@@ -38,6 +41,7 @@ for (let i = 0; i < 7; i++) {
         keys += 1;
     }
 }
+console.log(firstRows);
 //中间行渲染
 let weekRows = [];
 //尾行渲染
