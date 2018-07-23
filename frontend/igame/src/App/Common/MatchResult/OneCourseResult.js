@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavBar, WhiteSpace, Toast } from 'antd-mobile';
-import { Icon, Row, Col, Pagination, Table } from 'antd';
+import { Icon, Row, Col, Table } from 'antd';
 import Game from '../../OdooRpc/Game';
 import './OneCourseResult.css';
 
@@ -18,7 +18,7 @@ const titleIMPSMOD = (<div className="titleSty">
     <span>客队</span>
 </div>);
 const titleVPSMOD = (<div className="titleSty">
-    <span>IMPS</span>
+    <span>VPS</span>
     <hr style={{ textAlign: "center", "marginTop": 0 }} />
     <span>主队</span>
     <br />
@@ -28,19 +28,16 @@ const titleVPSMOD = (<div className="titleSty">
 export default class OneCourseResult extends React.Component {
     state = {
         gameId: this.props.match.id,
-
-        thisRoundId: this.props.courseId[0],
-        roundName: this.props.courseId[1],
-        roundNumber: this.props.courseId[2],
-
+        thisOneRound: this.props.thisOneRound,
+        rounds: this.props.rounds,
         list: null,
         dealNumber: null,
-
         data: [] //用于存放获取到的用与表格的数值
     }
     componentWillMount() {
         const m = new Game(this.success, this.error);
-        m.search_round_details(this.state.gameId, this.props.courseId[0]);
+        m.search_round_details(this.state.gameId, this.props.thisOneRound[0]);
+
     }
     toOneTable = (index) => {
         this.props.showPage('OneTable')
@@ -54,38 +51,63 @@ export default class OneCourseResult extends React.Component {
         this.props.showPage('OneTeam')
         this.props.setTeam(index)
     }
-    gerDatas = (index) => {
-        if (index === 0) {
+    gerUpDatas = (index) => {
+        let bb = [];
+        console.log(bb.length)
+        this.state.rounds.forEach((v,i,a) => {
+            if(v.id===index && a[i-1]){
+                const b = [a[i-1].id,a[i-1].name,a[i-1].number];
+                bb.push(b)
+            }
+        })
+        console.log(bb.length)
+        if(bb.length){
+            console.log(bb)
+            this.setState({
+                thisOneRound:bb[0],
+            })
+            const m = new Game(this.success, this.error);
+            m.search_round_details(this.state.gameId, bb[0][0]);
+        }else{
             return Toast.info('已经是第一轮了！')
         }
-        if (index > this.state.roundNumber) {
+    }
+    gerDownDatas = (index) => {
+        let bb = [];
+        this.state.rounds.forEach((v,i,a) => {
+            if(v.id===index && a[i+1]){
+                const b = [a[i+1].id,a[i+1].name,a[i+1].number];
+                bb.push(b)
+            }
+        })
+        if(bb.length){
+            this.setState({
+                thisOneRound:bb[0],
+            })
+            const m = new Game(this.success, this.error);
+            m.search_round_details(this.state.gameId, bb[0][0]);
+        }else{
             return Toast.info('已经是最后一轮了！')
         }
-        this.setState({
-            thisRoundId: index,
-        })
-        const m = new Game(this.success, this.error);
-        m.search_round_details(this.state.gameId, index);
+        
+            
     }
-    success = (datas) => {
-        const data = [      //测试数据，连上服务器后更改success方法的参数为data，并注释掉这段数据就好
-            { namtch_id:1, round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 1, IMPS: { host_imp: 0.00, guest_imp: 0.00 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "牛的一比", host_id: 1, guest_name: "tthf", guest_id: 2 } },
-            { namtch_id:2, round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 2, IMPS: { host_imp: 0.00, guest_imp: 0.00 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "bagsad", host_id: 3, guest_name: "gththt", guest_id: 4 } },
-            { namtch_id:3, round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 3, IMPS: { host_imp: 58, guest_imp: 12 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "casgasdg", host_id: 5, guest_name: "名字整的好长好长好长啊", guest_id: 6 } },
-            { namtch_id:4, round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 4, IMPS: { host_imp: 0.00, guest_imp: 0.00 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "dadgdggd", host_id: 7, guest_name: "thi", guest_id: 8 } },
-            { namtch_id:5, round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 5, IMPS: { host_imp: 0.00, guest_imp: 0.00 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "dsae", host_id: 9, guest_name: "j", guest_id: 0 } }
-        ]
+    success = (data) => {
+        // const data = [      //测试数据，连上服务器后更改success方法的参数为data，并注释掉这段数据就好
+        //     { namtch_id:1, round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 1, IMPS: { host_imp: 0.00, guest_imp: 0.00 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "牛的一比", host_id: 1, guest_name: "tthf", guest_id: 2 } },
+        //     { namtch_id:2, round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 2, IMPS: { host_imp: 0.00, guest_imp: 0.00 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "bagsad", host_id: 3, guest_name: "gththt", guest_id: 4 } },
+        //     { namtch_id:3, round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 3, IMPS: { host_imp: 58, guest_imp: 12 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "casgasdg", host_id: 5, guest_name: "名字整的好长好长好长啊", guest_id: 6 } },
+        //     { namtch_id:4, round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 4, IMPS: { host_imp: 0.00, guest_imp: 0.00 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "dadgdggd", host_id: 7, guest_name: "thi", guest_id: 8 } },
+        //     { namtch_id:5, round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 5, IMPS: { host_imp: 0.00, guest_imp: 0.00 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "dsae", host_id: 9, guest_name: "j", guest_id: 0 } }
+        // ]
         let setDealNumber = length => Array.from({ length }, (v, k) => <a style={{ margin: '0px 5px' }} key={k + 1} onClick={() => this.toOneBoard(k + 1)} >{k + 1}</a>)
-
-        this.props.setCourseId([this.state.thisRoundId, data[0].round_name, this.state.roundNumber]);
+        this.props.setThisOneRound(this.state.thisOneRound);
 
         // 先判断是否为空
-        if (data) {
-            this.setState({
-                data: data,
-                dealNumber: setDealNumber(data[0].deal),
-            })
-        }
+        this.setState({
+            data: data,
+            dealNumber: data.length ? setDealNumber(data[0].deal) : null,
+        })
     }
     error = () => {
         console.log('has error!')
@@ -96,7 +118,7 @@ export default class OneCourseResult extends React.Component {
         const columns = [{
             title: "桌",
             dataIndex: "number",
-            width: "5%",
+            width: "4%",
             render: (text, row) => {
                 return (
                     <span>
@@ -111,7 +133,7 @@ export default class OneCourseResult extends React.Component {
         }, {
             title: "完成",
             dataIndex: "deal",
-            width: "5%"
+            width: "4%"
         }, {
             title: titleTeam,
             dataIndex: "team",
@@ -124,6 +146,7 @@ export default class OneCourseResult extends React.Component {
                                 onClick={() => this.toOneTeam([row.team.host_id, row.team.host_name])}
                             >
                                 {text.host_name}
+                                {/* {text.host_name} */}
                             </a>
                         </span>
                         <hr />
@@ -140,7 +163,7 @@ export default class OneCourseResult extends React.Component {
         }, {
             title: titleIMPSMOD,
             dataIndex: "IMPS",
-            width: "20%",
+            width: "22%",
             render: (text) => {
                 return (
                     <div>
@@ -166,10 +189,10 @@ export default class OneCourseResult extends React.Component {
         }]
 
         //一共几副牌初始化
-        let dealNumber = 0;
-        if (this.state.dealNumber) {
-            dealNumber = this.state.dealNumber.length;
-        }
+        // let dealNumber = 0;
+        // if (this.state.dealNumber) {
+        //     dealNumber = this.state.dealNumber.length;
+        // }
 
         return (
             <div className='table1'>
@@ -177,10 +200,10 @@ export default class OneCourseResult extends React.Component {
                     mode="light"
                     icon={<Icon type="left" />}
                     onLeftClick={() => this.props.toMatchDetails()} >
-                    {this.state.roundNumber[1]}第{this.state.thisRoundId}轮
+                    {this.state.thisOneRound[1]}第{this.state.thisOneRound[2]}轮
                     <div style={{ width: 35 }} >
-                        <Icon type="caret-up" style={{ fontSize: 5, display: 'block' }} onClick={() => this.gerDatas(this.state.thisRoundId - 1)} />
-                        <Icon type="caret-down" style={{ fontSize: 5, display: 'block' }} onClick={() => this.gerDatas(this.state.thisRoundId + 1)} />
+                        <Icon type="caret-up" style={{ fontSize: 5, display: 'block' }} onClick={() => this.gerUpDatas(this.state.thisOneRound[0])} />
+                        <Icon type="caret-down" style={{ fontSize: 5, display: 'block' }} onClick={() => this.gerDownDatas(this.state.thisOneRound[0])} /> 
                     </div>
                 </NavBar>
                 <WhiteSpace size='sm' />
@@ -194,7 +217,8 @@ export default class OneCourseResult extends React.Component {
                 </Row>
                 <WhiteSpace size='sm' />
                 <Table
-                    rowKey={(row) => row.number}
+                    rowKey={(row) => row.match_id}
+                    // rowKey={(row) => row.number}
                     bordered
                     columns={columns}
                     dataSource={this.state.data}

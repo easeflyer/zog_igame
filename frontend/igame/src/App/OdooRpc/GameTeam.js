@@ -15,8 +15,9 @@ export default class GameTeam extends Models{
         this.exec('get_own_teams',{},[]);
     }
 
-    get_match_teams(gameId){   //请求比赛的参赛队
-        this.exec('get_match_teams',{},gameId);
+    search_game_player(gameId){   //请求比赛的参赛队
+        const obj = this.with_model('og.igame');
+        obj.exec('search_game_player',{},gameId);
         /**
          * params:gameId
          * return:

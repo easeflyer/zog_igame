@@ -64,11 +64,11 @@ export default class Game extends Models {
          */
     }
     
-    round_team_rank(roundId){          //某轮比赛的赛队排名
+    round_team_rank(roundId,gameId){          //某轮比赛的赛队排名
         const obj = this.with_model('og.igame.round');  //模型名
-        obj.exec('round_team_rank',{},roundId);
+        obj.exec('round_team_rank',{},roundId,gameId);
         /**
-         * params:roundId
+         * params:roundId,gameId
          * return:
         */
     }
