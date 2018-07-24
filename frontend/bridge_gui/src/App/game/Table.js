@@ -15,7 +15,8 @@ class Table extends Component {
     state = {
         cards: null, // 考虑这里不用 cards 只用必要的数字
         scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段
-        calldata:[]
+        calldata:[],
+        user:{east:null,south:null,west:null,north:null}
     }
     /**
      * 重构参考： 打牌的几个阶段，应该在规则里面，调入进来。
@@ -107,10 +108,10 @@ class Table extends Component {
         //this.deals = Models.deals()[0];
         this.myseat = 'S'               // 用户坐在 南
         this.seat = {
-            'east': [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // seat 用于记录坐标 
-            'south': [{ x: 0, y: 0 }, { x: 0, y: 0 }], // 第一个xy 是 四个区域左上角坐标
-            'west': [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // 第二个xy 是 出牌4个区域坐标。
-            'north': [{ x: 0, y: 0 }, { x: 0, y: 0 }]   // 也就是牌出到什么地方。
+            east: [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // seat 用于记录坐标 
+            south: [{ x: 0, y: 0 }, { x: 0, y: 0 }], // 第一个xy 是 四个区域左上角坐标
+            west: [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // 第二个xy 是 出牌4个区域坐标。
+            north: [{ x: 0, y: 0 }, { x: 0, y: 0 }]   // 也就是牌出到什么地方。
         }
         // ref 用来记录 四个发牌位置的div引用
         this.ref = {};
@@ -482,7 +483,20 @@ class Table extends Component {
             calldata[calldata.length-1][Table.seats.indexOf(seat)] = bid;
         }
     }
+    testUsersReady = () => {
+        const login = (seat,uname) => {
+            this.state.user[seat] = uname;
+            this.setState({user:this.state.user})
+        }
+        setTimeout(login.bind(this,'east','张三丰'),1000)
+        setTimeout(login.bind(this,'south','lisi'),2000)
+        setTimeout(login.bind(this,'west','wangwu'),3000)
+        setTimeout(login.bind(this,'north','zhaoliu'),4000)
+    }
 
+    /**
+     * 叫牌测试
+     */
     testBid1 = () => {
         const bids = [{seat:'west',bid:'1C'},{seat:'north',bid:'PASS'},
                     {seat:'east',bid:'PASS'},{seat:'south',bid:'2H'},
@@ -640,18 +654,19 @@ class Table extends Component {
                     </div>
                     <div id='body' className='body' style={css.body}>
                         <div id='clock'></div>
-                        <div id='east' className='east' style={css.east} ref={this.ref.east}>east</div>
-                        <div id='west' className='west' style={css.west} ref={this.ref.west}>west</div>
-                        <div id='south' className='south' style={css.south} ref={this.ref.south}>south</div>
-                        <div id='north' className='north' style={css.north} ref={this.ref.north}>north</div>
+                        <div id='east' className='east' style={css.east} ref={this.ref.east}></div>
+                        <div id='west' className='west' style={css.west} ref={this.ref.west}></div>
+                        <div id='south' className='south' style={css.south} ref={this.ref.south}></div>
+                        <div id='north' className='north' style={css.north} ref={this.ref.north}></div>
                         <div id='board' className='board' style={css.board} ref={this.ref.board}>
-                            <div className='userTag'>东</div>
-                            <div className='userTag'>南</div>
-                            <div className='userTag'>西</div>
-                            <div className='userTag'>北</div>
+                            <div className='userTag'><div className='seat'>east:{this.state.user['east']}</div></div>
+                            <div className='userTag'><div className='seat'>south:{this.state.user['south']}</div></div>
+                            <div className='userTag'><div className='seat'>west:{this.state.user['west']}</div></div>
+                            <div className='userTag'><div className='seat'>north:{this.state.user['north']}</div></div>
                         </div>
                         {cards}
                     </div>
+                    <button onClick={this.testUsersReady}>登录</button>
                     <button onClick={this.deal}>发牌</button>
                     <button onClick={this.test1}>出牌</button>
                     <button onClick={this.testActive}>阻止出牌</button>
