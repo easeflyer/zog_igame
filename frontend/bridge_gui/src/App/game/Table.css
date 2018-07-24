@@ -1,4 +1,5 @@
 .table{
+    overflow: hidden;
     position: relative;
 }
 .panel{
@@ -50,4 +51,23 @@
     position: absolute;
     border: 1px solid #6666aa;
     opacity: 0.5;
+}
+.result {
+    position: absolute;
+    background-color:rgba(0, 0, 66, 0.2);
+    opacity:0.8;
+    border:1px solid #eeee99
+}
+.result > div,img {
+    float:left;
+    height:60%;
+}
+.result > img {
+    width:25%;
+}
+.result > div {
+    width:75%
+}
+.result > button {
+    margin:0
 }

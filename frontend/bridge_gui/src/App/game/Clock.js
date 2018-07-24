@@ -6,6 +6,8 @@ import React, { Component } from 'react';
 /**
  * props.time 指定倒计时时间。
  * props.callback 执行倒计时结束的回调函数。
+ * 
+ * 组件大小和位置，由父组件确定。
  */
 class Clock extends Component {
     state = {

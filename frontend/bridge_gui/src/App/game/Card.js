@@ -27,8 +27,10 @@ class Card extends React.Component {
         }
         if(this.props.active == 3) {
             this.props.animation && ( this.props.animation.onComplete = () => {
-                let cCard = document.querySelector('#card'+this.props.index);
-                cCard.style.display = 'none';
+                
+                // 这张牌消失，非受控，不建议。
+                // let cCard = document.querySelector('#card'+this.props.index);
+                // cCard.style.display = 'none';
             } )
         }
         if(this.props.active == 0)

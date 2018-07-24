@@ -14,7 +14,8 @@ import Models from '../models/model'
 class Table extends Component {
     state = {
         cards: null, // 考虑这里不用 cards 只用必要的数字
-        scene: 0     // 0 准备阶段 1 叫牌阶段 2 出牌阶段
+        scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段
+        calldata:[]
     }
     /**
      * 重构参考： 打牌的几个阶段，应该在规则里面，调入进来。
@@ -35,6 +36,7 @@ class Table extends Component {
             table: {
                 width: this.width,
                 height: this.height,
+                //fontSize:this.width * 0.03 + 'px'
             },
             panel: {
                 top: this.width * 0.32,
@@ -81,9 +83,21 @@ class Table extends Component {
                 height: this.width * 0.6,
                 top: this.width * 0.2,
                 left: this.width * 0.2,
+            },
+            result: {
+                width: this.width * 0.6,
+                height: this.width * 0.2,
+                top: this.width * 0.6,
+                left: this.width * 0.2,
+                zIndex:1000,
+                textAlign:'center',
+                fontSize:this.width * 0.06 + 'px',
             }
 
         }
+        console.log(this.width * 0.2)
+        // this.calldata = [['1C','2C','PASS','PASS'],['3H','PASS','PASS','4NT'],
+        //                 ['PASS','PASS','PASS','']]
         this.board = []; // 桌面上的四张牌
         this.cards = [];
         this.zindex = 10;
@@ -198,14 +212,16 @@ class Table extends Component {
     }
     /**
      * 清理桌面上的牌
+     * 定位参考：
+     *  -this.width * 0.2;  计分位置
      */
     clearBoard = () => {
         //if(this.board.length < 4) return false;
         const board = this.board;
         for (let i = 0; i < board.length; i++) {
             board[i].animation.left = this.width / 2;
-            board[i].animation.top = -this.width * 0.2;
-            board[i].animation.rotate = 0;
+            board[i].animation.top = -this.width * 2;
+            //board[i].animation.rotate = 0;
             // board[i].animation.left = 100;
             // board[i].animation.top = 100;
             board[i].active = 3;
@@ -304,15 +320,18 @@ class Table extends Component {
     }
     /**
      * 给某一个座位倒计时
+     * 为了降低组件的耦合性。将本组件动态挂载到 DOM 上。
+     * 利用 unmountComponentAtNode 进行卸载。
+     * p, offset 都是闹钟出现位置的微调。
      */
-    timing = (seat,time,callback) => {
+    timing = (seat, time, callback) => {
         ReactDOM.unmountComponentAtNode(document.querySelector('#clock'));
         const p = this.width * 0.25;
         const offset = {
-            east: { x:p , y: 0 },
+            east: { x: p, y: 0 },
             south: { x: 0, y: p },
-            west: { x: -p*0.66, y: 0 },
-            north: { x: 0, y: -p*0.66 }
+            west: { x: -p * 0.66, y: 0 },
+            north: { x: 0, y: -p * 0.66 }
         }
 
         const top = this.seat[seat][1]['y'] + offset[seat].y;
@@ -359,6 +378,140 @@ class Table extends Component {
 
     // // }
     /**
+     * 通过一张牌的索引，获得具体的 牌数据引用
+     * @param {*} index 
+     */
+    _cardIndexOf(index) {
+        const i1 = Math.floor(index / 13);
+        const i2 = index % 13;
+        return this.state.cards[i1][i2];
+    }
+
+    /**
+     * 显示上一墩牌
+     * 数据格式：
+     * {east:{index:1,card:'5D'}, south:{index:1,card:'5D'}....}
+     */
+    lastTrick1 = () => {
+        ReactDOM.unmountComponentAtNode(document.querySelector('#lastTrick'));
+        const lt = Models.lastTrick();
+        const cards = lt.map((item, index) => {
+            const rotate = ('02'.indexOf(index) > 0) ? 90 : 0
+            return <Card
+                active='1'
+                card={item.card}
+                key={index}
+                index={index}
+                size='80'
+                animation={{
+                    rotate: `${rotate}`
+                }}
+            // position={{
+            //     x:this.seat[Table.seats[index]][1].x,
+            //     y:this.seat[Table.seats[index]][1].y
+            // }}
+            />
+        }
+        )
+        ReactDOM.render(
+            cards,
+            document.querySelector('#lastTrick')
+        )
+
+    }
+
+    showResult = () => {
+        const result = Models.getResult();
+        const re = <div className='result' style={this.css.result}>
+            <img src='/cards/medal.svg' width="20%" />
+            <div style={{lineHeight:this.width * 0.12+'px',}}>{result}</div>
+            <button onClick={this.hideResult}>下一局</button>
+        </div>;
+        ReactDOM.unmountComponentAtNode(document.querySelector('#result'));
+        ReactDOM.render(
+            re,
+            document.querySelector('#result')
+        )
+
+    }
+    hideResult = () => {
+        ReactDOM.unmountComponentAtNode(document.querySelector('#result'));
+    }
+
+    /**
+     * 显示上墩牌
+     * todo：明确了数据接口再改写。
+     * 定位还存在问题。
+     */
+    lastTrick = (show = true) => {
+        // 在模型里 应该先判断当前 trick 编号。然后决定是否能看lasttrick
+
+        const lt = Models.lastTrick();
+        let card = null;
+        lt.forEach((item, index) => {
+            card = this._cardIndexOf(item.index)
+            //card.size = card.size * 0.8
+            card['animation']['left'] = (show == true) ?
+                this.seat[Table.seats[index]][1].x + this.width / 4
+                : this.width / 2;
+            card['animation']['top'] = (show == true) ?
+                this.seat[Table.seats[index]][1].y + this.width / 2.5
+                : -this.width * 2;
+            card['size'] = card['size'] * 0.7
+            // card['animation']['rotate'] = 180;
+            // card['position']['x'] = this.seat[Table.seats[index]][1].x;
+            // card['position']['y'] = this.seat[Table.seats[index]][1].y;
+            //card['animation'] = ''
+            //card['animation']['delay'] = 0;
+            card.active = 1; // 测试用
+        })
+        this.setState({
+            cards: this.state.cards
+        })
+
+    }
+    call = (seat,bid) =>{
+        const calldata = this.state.calldata
+        if(calldata.length == 0){
+            calldata.push(Array(4).fill(null))
+            calldata[0][Table.seats.indexOf(seat)] = bid;
+        }else if(seat == 'east'){
+            calldata.push(Array(4).fill(null))
+            calldata[calldata.length-1][Table.seats.indexOf(seat)] = bid;
+        }else{
+            calldata[calldata.length-1][Table.seats.indexOf(seat)] = bid;
+        }
+    }
+
+    testBid1 = () => {
+        const bids = [{seat:'west',bid:'1C'},{seat:'north',bid:'PASS'},
+                    {seat:'east',bid:'PASS'},{seat:'south',bid:'2H'},
+                    {seat:'west',bid:'PASS'},{seat:'north',bid:'PASS'},
+                    {seat:'east',bid:'3C'},{seat:'south',bid:'PASS'},
+                    {seat:'west',bid:'PASS'},{seat:'north',bid:'3H'},
+                    {seat:'east',bid:'PASS'},{seat:'south',bid:'PASS'},
+                    {seat:'west',bid:'3S'},{seat:'north',bid:'PASS'},
+                    {seat:'east',bid:'PASS'},{seat:'south',bid:'PASS'}]
+        bids.forEach((item)=>{
+            this.call(item.seat,item.bid)
+        })
+        console.log('calldata111....')
+        console.log(this.state.calldata)
+        this.setState({
+            calldata:this.state.calldata
+        })
+    }
+
+    /**
+     * 测试上以墩牌的显示
+     */
+    testLastTrick = () => {
+        this.lastTrick();
+        // if(this._showLastTrick) this._showLastTrick = false;
+        // else this._showLastTrick = true;
+        // this.lastTrick(this._showLastTrick);
+    }
+    /**
      * 打开明手的牌。
      * 从 Models 获得数据。
      * 修改 seat 方位可以打开不同方位的牌。
@@ -372,11 +525,11 @@ class Table extends Component {
             item1.split('').forEach((item2, index2) => {
                 // 这里。
                 cards[index].card = item2 + Card.suits[index1]
-                cards[index].onclick = this.play(cards[index1][index2]);
+                cards[index].onclick = this.play(cards[index]);
                 index++;
             })
         })
-        this.state.cards[Table.seats.indexOf(seat)] = cards;
+        //this.state.cards[Table.seats.indexOf(seat)] = cards;
         this.setState({
             cards: this.state.cards
         })
@@ -396,14 +549,16 @@ class Table extends Component {
             13, 14, 15, 16, //17, 18, 19, 20, 21, 22, 23, 24, 25,
             26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
             39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51]
+        //const nums = [13,14,15,16];
         this.setActive(nums);
     }
+    // 测试 闹钟组件 循环回调
     testClock = () => {
-        this.timing('east',2,
-            ()=>this.timing('south',2,
-                ()=>this.timing('west',2,
-                    ()=>this.timing('north',2,
-                        ()=>console.log('倒计时结束！')
+        this.timing('east', 2,
+            () => this.timing('south', 2,
+                () => this.timing('west', 2,
+                    () => this.timing('north', 2,
+                        () => console.log('倒计时结束！')
                     )
                 )
             )
@@ -471,14 +626,17 @@ class Table extends Component {
              */
             <div>
                 {(this.state.scene == 1) ?
-                    <div className='panel' style={css.panel}><BidPanel /></div>
-                    : null
+                    <div className='panel' style={css.panel}>
+                        <BidPanel calldata={this.state.calldata} />
+                    </div> : null
                 }
                 <div id='table' className='table' style={css.table}>
                     <div id='header' className='header' style={css.header}>
                         <div className='re' style={css.re}>分数</div>
                         <div className='re' style={css.re}>方位</div>
                         <div className='re' style={css.re}>墩数</div>
+                        <div className='re' id='lastTrick' style={css.re}>上墩牌</div>
+                        <div className='re' id='result' style={css.re}>结果</div>
                     </div>
                     <div id='body' className='body' style={css.body}>
                         <div id='clock'></div>
@@ -487,11 +645,14 @@ class Table extends Component {
                         <div id='south' className='south' style={css.south} ref={this.ref.south}>south</div>
                         <div id='north' className='north' style={css.north} ref={this.ref.north}>north</div>
                         <div id='board' className='board' style={css.board} ref={this.ref.board}>
+                            <div className='userTag'>东</div>
+                            <div className='userTag'>南</div>
+                            <div className='userTag'>西</div>
+                            <div className='userTag'>北</div>
                         </div>
                         {cards}
                     </div>
                     <button onClick={this.deal}>发牌</button>
-                    <br />
                     <button onClick={this.test1}>出牌</button>
                     <button onClick={this.testActive}>阻止出牌</button>
                     <button onClick={this.test3}>清理桌面</button>
@@ -500,8 +661,12 @@ class Table extends Component {
                     <button onClick={this.testDummy.bind(this, 'west')}>明手西</button>
                     <button onClick={this.testDummy.bind(this, 'north')}>明手北</button>
                     <br />
-                    <button onClick={this.testBid}>测试叫牌</button>
+                    <button onClick={this.testBid}>显示叫牌</button>
+                    <button onClick={this.testBid1}>叫牌</button>
                     <button onClick={this.testClock}>倒计时</button>
+                    <button onClick={this.testLastTrick}>上一墩牌</button>
+                    <br />
+                    <button onClick={this.showResult}>显示结果</button>
                     <div id='test' style={{ position: 'relative' }}>测试区域</div>
                     <div id='footer' className='footer' style={css.footer}>footer</div>
                 </div>
