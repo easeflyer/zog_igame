@@ -19,8 +19,8 @@
 
   明手的处理
   
-  todo：叫牌结果 显示。
-  todo: 东南西北显示，用户显示。writing-mode:vertical-lr
+  ：叫牌结果 显示。
+  : 东南西北显示，用户显示。writing-mode:vertical-lr
 
 
 

@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import Card from './Card'
 import BidPanel from './BidPanel'
 import Clock from './Clock'
+import {Imps,Seats,Tricks} from './Headers'
 import './Table.css'
 import Models from '../models/model'
 
@@ -15,8 +16,9 @@ class Table extends Component {
     state = {
         cards: null, // 考虑这里不用 cards 只用必要的数字
         scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段
-        calldata:[],
-        user:{east:null,south:null,west:null,north:null}
+        calldata: [],
+        user: { east: null, south: null, west: null, north: null },
+        //playseat:null, // 倒计时解决
     }
     /**
      * 重构参考： 打牌的几个阶段，应该在规则里面，调入进来。
@@ -27,6 +29,10 @@ class Table extends Component {
      *  seat：ESWN 自己做在那个方位。
      *  csize: 牌的大小 手机 80像素比较合适。
      *  board：桌面上打出来的四张牌。用于清理桌面。
+     * 
+     * 其他：
+     * 
+     *  字体大小：fontSize:this.width * 0.04 + 'px'
      */
     constructor(props) {
 
@@ -37,7 +43,7 @@ class Table extends Component {
             table: {
                 width: this.width,
                 height: this.height,
-                //fontSize:this.width * 0.03 + 'px'
+                fontSize:this.width * 0.04 + 'px'
             },
             panel: {
                 top: this.width * 0.32,
@@ -52,6 +58,7 @@ class Table extends Component {
             body: {
                 width: this.width,
                 height: this.width,
+                fontSize:this.width * 0.04 + 'px'
             },
             footer: {
                 width: this.width,
@@ -90,9 +97,9 @@ class Table extends Component {
                 height: this.width * 0.2,
                 top: this.width * 0.6,
                 left: this.width * 0.2,
-                zIndex:1000,
-                textAlign:'center',
-                fontSize:this.width * 0.06 + 'px',
+                zIndex: 1000,
+                textAlign: 'center',
+                fontSize: this.width * 0.06 + 'px',
             }
 
         }
@@ -106,7 +113,7 @@ class Table extends Component {
         this._csize = null; // 牌的大小
         this.deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX'
         //this.deals = Models.deals()[0];
-        this.myseat = 'S'               // 用户坐在 南
+        this.myseat = 'west'               // 用户坐在 南
         this.seat = {
             east: [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // seat 用于记录坐标 
             south: [{ x: 0, y: 0 }, { x: 0, y: 0 }], // 第一个xy 是 四个区域左上角坐标
@@ -128,6 +135,12 @@ class Table extends Component {
         return this._csize || (() => {
             return this.width * 0.18;
         })()
+    }
+    _shift(seat) {
+        const offset = Table.seats.indexOf(this.myseat) - 1
+        const index = Table.seats.indexOf(seat)
+        return Table.seats[(index + offset) % 4]
+        //return 
     }
     /**
      * 完成挂载后，要计算 各个位置的坐标。
@@ -327,7 +340,7 @@ class Table extends Component {
      */
     timing = (seat, time, callback) => {
         ReactDOM.unmountComponentAtNode(document.querySelector('#clock'));
-        const p = this.width * 0.25;
+        const p = this.width * 0.18;
         const offset = {
             east: { x: p, y: 0 },
             south: { x: 0, y: p },
@@ -425,7 +438,7 @@ class Table extends Component {
         const result = Models.getResult();
         const re = <div className='result' style={this.css.result}>
             <img src='/cards/medal.svg' width="20%" />
-            <div style={{lineHeight:this.width * 0.12+'px',}}>{result}</div>
+            <div style={{ lineHeight: this.width * 0.12 + 'px', }}>{result}</div>
             <button onClick={this.hideResult}>下一局</button>
         </div>;
         ReactDOM.unmountComponentAtNode(document.querySelector('#result'));
@@ -471,48 +484,48 @@ class Table extends Component {
         })
 
     }
-    call = (seat,bid) =>{
+    call = (seat, bid) => {
         const calldata = this.state.calldata
-        if(calldata.length == 0){
+        if (calldata.length == 0) {
             calldata.push(Array(4).fill(null))
             calldata[0][Table.seats.indexOf(seat)] = bid;
-        }else if(seat == 'east'){
+        } else if (seat == 'east') {
             calldata.push(Array(4).fill(null))
-            calldata[calldata.length-1][Table.seats.indexOf(seat)] = bid;
-        }else{
-            calldata[calldata.length-1][Table.seats.indexOf(seat)] = bid;
+            calldata[calldata.length - 1][Table.seats.indexOf(seat)] = bid;
+        } else {
+            calldata[calldata.length - 1][Table.seats.indexOf(seat)] = bid;
         }
     }
     testUsersReady = () => {
-        const login = (seat,uname) => {
+        const login = (seat, uname) => {
             this.state.user[seat] = uname;
-            this.setState({user:this.state.user})
+            this.setState({ user: this.state.user })
         }
-        setTimeout(login.bind(this,'east','张三丰'),1000)
-        setTimeout(login.bind(this,'south','lisi'),2000)
-        setTimeout(login.bind(this,'west','wangwu'),3000)
-        setTimeout(login.bind(this,'north','zhaoliu'),4000)
+        setTimeout(login.bind(this, 'east', '张三丰'), 1000)
+        setTimeout(login.bind(this, 'south', '李四'), 2000)
+        setTimeout(login.bind(this, 'west', '王五'), 3000)
+        setTimeout(login.bind(this, 'north', '赵六'), 4000)
     }
 
     /**
      * 叫牌测试
      */
     testBid1 = () => {
-        const bids = [{seat:'west',bid:'1C'},{seat:'north',bid:'PASS'},
-                    {seat:'east',bid:'PASS'},{seat:'south',bid:'2H'},
-                    {seat:'west',bid:'PASS'},{seat:'north',bid:'PASS'},
-                    {seat:'east',bid:'3C'},{seat:'south',bid:'PASS'},
-                    {seat:'west',bid:'PASS'},{seat:'north',bid:'3H'},
-                    {seat:'east',bid:'PASS'},{seat:'south',bid:'PASS'},
-                    {seat:'west',bid:'3S'},{seat:'north',bid:'PASS'},
-                    {seat:'east',bid:'PASS'},{seat:'south',bid:'PASS'}]
-        bids.forEach((item)=>{
-            this.call(item.seat,item.bid)
+        const bids = [{ seat: 'west', bid: '1C' }, { seat: 'north', bid: 'PASS' },
+        { seat: 'east', bid: 'PASS' }, { seat: 'south', bid: '2H' },
+        { seat: 'west', bid: 'PASS' }, { seat: 'north', bid: 'PASS' },
+        { seat: 'east', bid: '3C' }, { seat: 'south', bid: 'PASS' },
+        { seat: 'west', bid: 'PASS' }, { seat: 'north', bid: '3H' },
+        { seat: 'east', bid: 'PASS' }, { seat: 'south', bid: 'PASS' },
+        { seat: 'west', bid: '3S' }, { seat: 'north', bid: 'PASS' },
+        { seat: 'east', bid: 'PASS' }, { seat: 'south', bid: 'PASS' }]
+        bids.forEach((item) => {
+            this.call(item.seat, item.bid)
         })
         console.log('calldata111....')
         console.log(this.state.calldata)
         this.setState({
-            calldata:this.state.calldata
+            calldata: this.state.calldata
         })
     }
 
@@ -646,11 +659,11 @@ class Table extends Component {
                 }
                 <div id='table' className='table' style={css.table}>
                     <div id='header' className='header' style={css.header}>
-                        <div className='re' style={css.re}>分数</div>
-                        <div className='re' style={css.re}>方位</div>
-                        <div className='re' style={css.re}>墩数</div>
-                        <div className='re' id='lastTrick' style={css.re}>上墩牌</div>
-                        <div className='re' id='result' style={css.re}>结果</div>
+                        <div className='re' style={css.re}><Imps /></div>
+                        <div className='re' style={css.re}><Seats /></div>
+                        <div className='re' style={css.re}><Tricks /></div>
+                        {/* <div className='re' id='lastTrick' style={css.re}>上墩牌</div>
+                        <div className='re' id='result' style={css.re}>结果</div> */}
                     </div>
                     <div id='body' className='body' style={css.body}>
                         <div id='clock'></div>
@@ -659,10 +672,18 @@ class Table extends Component {
                         <div id='south' className='south' style={css.south} ref={this.ref.south}></div>
                         <div id='north' className='north' style={css.north} ref={this.ref.north}></div>
                         <div id='board' className='board' style={css.board} ref={this.ref.board}>
-                            <div className='userTag'><div className='seat'>east:{this.state.user['east']}</div></div>
-                            <div className='userTag'><div className='seat'>south:{this.state.user['south']}</div></div>
-                            <div className='userTag'><div className='seat'>west:{this.state.user['west']}</div></div>
-                            <div className='userTag'><div className='seat'>north:{this.state.user['north']}</div></div>
+                            <div className='userTag'><div className='seat'>
+                                {Table.seatscn[ Table.seats.indexOf(this._shift('east')) ]}:
+                            {this.state.user[this._shift('east')]}</div></div>
+                            <div className='userTag'><div className='seat'>
+                                {Table.seatscn[Table.seats.indexOf(this._shift('south'))]}:
+                            {this.state.user[this._shift('south')]}</div></div>
+                            <div className='userTag'><div className='seat'>
+                                {Table.seatscn[Table.seats.indexOf(this._shift('west'))]}:
+                            {this.state.user[this._shift('west')]}</div></div>
+                            <div className='userTag'><div className='seat'>
+                                {Table.seatscn[Table.seats.indexOf(this._shift('north'))]}:
+                            {this.state.user[this._shift('north')]}</div></div>
                         </div>
                         {cards}
                     </div>
@@ -690,5 +711,6 @@ class Table extends Component {
     }
 }
 Table.seats = ['east', 'south', 'west', 'north']
+Table.seatscn = ['东', '南', '西', '北']
 //export default Table
 export default Table
