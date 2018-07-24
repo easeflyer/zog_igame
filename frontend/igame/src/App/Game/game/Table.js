@@ -15,7 +15,9 @@ import  session from '../../User/session'
 class Table extends Component {
     state = {
         cards: null, // 考虑这里不用 cards 只用必要的数字
-        scene: 0     // 0 准备阶段 1 叫牌阶段 2 出牌阶段
+        scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段
+        bidCard:null,  //最新的叫牌消息
+        calldata:[], //叫的牌
     }
     /**
      * 重构参考： 打牌的几个阶段，应该在规则里面，调入进来。
@@ -38,7 +40,8 @@ class Table extends Component {
                 height: this.height,
             },
             panel: {
-                top: this.width * 0.32,
+                top: this.width * 0.2,
+                // top: this.width * 0.32,
                 left: this.width * 0.2,
                 width: this.width * 0.6,
                 height: this.width * 0.6
@@ -156,7 +159,7 @@ class Table extends Component {
         this.deals = 'XXX.XX.XXXX.XXXX '+ data.cards.split(' ')[Table.dir.indexOf(this.myseat)] +' XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
         this.state.cards = this.initCards()
         this.deal()
-        Models.polling(this.sucPolling,this.failPolling,this.pollingId)
+        Models.polling(this.sucPolling,this.failPolling,this.pollingId);
     }
     failInit=()=>{console.log('fail init')}
 
@@ -168,10 +171,32 @@ class Table extends Component {
             body = body.replace(/u'/g,"'").replace(/ /g,'')
             body = eval('('+body.substring(3,body.length-4)+')')
             console.log(body);
+            if(body.board_id&&body.name&&body.pos&&body.number){  //收到叫牌消息   {board_id: 44, number: 1, name: '1S', pos: 'S'}
+                this.setState({
+                    bidCard:body.name
+                })
+                // this.bidCard=body.name
+                // this.setState({
+                //     callDirect:direct[direct.indexOf(body.pos)+1]||direct[direct.indexOf(body.pos)-3],
+                //     callCards:{
+                //         dataSource:DealFunc.call_cards(body.pos,body.name,this.state.callCards.dataSource),
+                //         columns:this.state.callCards.columns,
+                //     }
+                // })
+                // if(DealFunc.onCall(body)){
+                //     this.post('call_result',this.state.id_msg.board_id,this.state.id_msg.channel_id); //查询叫牌结果
+                // }
+            }
         }
         Models.polling(this.sucPolling,this.failPolling,this.pollingId)
     }
     failPolling=()=>{console.log('fail polling')}
+
+    bidCall=(card)=>{
+        Models.bid(this.sucCall,this.failCall,this.board_id,this.myseat,card,this.channel_id);
+    }
+    sucCall=(data)=>{console.log(data)}
+    failCall=()=>{console.log('fail bid')}
     
     /**
     * _initSeat 初始化 发牌位置 出牌位置的坐标。 
@@ -411,6 +436,143 @@ class Table extends Component {
     // //     console.log(cards)
 
     // // }
+
+    /**
+     * 通过一张牌的索引，获得具体的 牌数据引用
+     * @param {*} index 
+     */
+    _cardIndexOf(index) {
+        const i1 = Math.floor(index / 13);
+        const i2 = index % 13;
+        return this.state.cards[i1][i2];
+    }
+
+    /**
+     * 显示上一墩牌
+     * 数据格式：
+     * {east:{index:1,card:'5D'}, south:{index:1,card:'5D'}....}
+     */
+    lastTrick1 = () => {
+        ReactDOM.unmountComponentAtNode(document.querySelector('#lastTrick'));
+        const lt = Models.lastTrick();
+        const cards = lt.map((item, index) => {
+            const rotate = ('02'.indexOf(index) > 0) ? 90 : 0
+            return <Card
+                active='1'
+                card={item.card}
+                key={index}
+                index={index}
+                size='80'
+                animation={{
+                    rotate: `${rotate}`
+                }}
+            // position={{
+            //     x:this.seat[Table.seats[index]][1].x,
+            //     y:this.seat[Table.seats[index]][1].y
+            // }}
+            />
+        }
+        )
+        ReactDOM.render(
+            cards,
+            document.querySelector('#lastTrick')
+        )
+
+    }
+
+    showResult = () => {
+        const result = Models.getResult();
+        const re = <div className='result' style={this.css.result}>
+            <img src='/cards/medal.svg' width="20%" />
+            <div style={{lineHeight:this.width * 0.12+'px',}}>{result}</div>
+            <button onClick={this.hideResult}>下一局</button>
+        </div>;
+        ReactDOM.unmountComponentAtNode(document.querySelector('#result'));
+        ReactDOM.render(
+            re,
+            document.querySelector('#result')
+        )
+
+    }
+    hideResult = () => {
+        ReactDOM.unmountComponentAtNode(document.querySelector('#result'));
+    }
+
+    /**
+     * 显示上墩牌
+     * todo：明确了数据接口再改写。
+     * 定位还存在问题。
+     */
+    lastTrick = (show = true) => {
+        // 在模型里 应该先判断当前 trick 编号。然后决定是否能看lasttrick
+
+        const lt = Models.lastTrick();
+        let card = null;
+        lt.forEach((item, index) => {
+            card = this._cardIndexOf(item.index)
+            //card.size = card.size * 0.8
+            card['animation']['left'] = (show == true) ?
+                this.seat[Table.seats[index]][1].x + this.width / 4
+                : this.width / 2;
+            card['animation']['top'] = (show == true) ?
+                this.seat[Table.seats[index]][1].y + this.width / 2.5
+                : -this.width * 2;
+            card['size'] = card['size'] * 0.7
+            // card['animation']['rotate'] = 180;
+            // card['position']['x'] = this.seat[Table.seats[index]][1].x;
+            // card['position']['y'] = this.seat[Table.seats[index]][1].y;
+            //card['animation'] = ''
+            //card['animation']['delay'] = 0;
+            card.active = 1; // 测试用
+        })
+        this.setState({
+            cards: this.state.cards
+        })
+
+    }
+    call = (seat,bid) =>{
+        const calldata = this.state.calldata
+        if(calldata.length == 0){
+            calldata.push(Array(4).fill(null))
+            calldata[0][Table.seats.indexOf(seat)] = bid;
+        }else if(seat == 'east'){
+            calldata.push(Array(4).fill(null))
+            calldata[calldata.length-1][Table.seats.indexOf(seat)] = bid;
+        }else{
+            calldata[calldata.length-1][Table.seats.indexOf(seat)] = bid;
+        }
+    }
+
+    testBid1 = () => {
+        const bids = [{seat:'west',bid:'1C'},{seat:'north',bid:'PASS'},
+                    {seat:'east',bid:'PASS'},{seat:'south',bid:'2H'},
+                    {seat:'west',bid:'PASS'},{seat:'north',bid:'PASS'},
+                    {seat:'east',bid:'3C'},{seat:'south',bid:'PASS'},
+                    {seat:'west',bid:'PASS'},{seat:'north',bid:'3H'},
+                    {seat:'east',bid:'PASS'},{seat:'south',bid:'PASS'},
+                    {seat:'west',bid:'3S'},{seat:'north',bid:'PASS'},
+                    {seat:'east',bid:'PASS'},{seat:'south',bid:'PASS'}]
+        bids.forEach((item)=>{
+            this.call(item.seat,item.bid)
+        })
+        console.log('calldata111....')
+        console.log(this.state.calldata)
+        this.setState({
+            calldata:this.state.calldata
+        })
+    }
+
+    /**
+     * 测试上以墩牌的显示
+     */
+    testLastTrick = () => {
+        this.lastTrick();
+        // if(this._showLastTrick) this._showLastTrick = false;
+        // else this._showLastTrick = true;
+        // this.lastTrick(this._showLastTrick);
+    }
+
+
     /**
      * 打开明手的牌。
      * 从 Models 获得数据。
@@ -478,8 +640,10 @@ class Table extends Component {
     }
     testBid = () => {
         this.setState({
-            scene: !this.state.scene
+            scene: 1
+            // scene: !this.state.scene
         })
+        console.log(this.state.scene)
     }
     render() {
         const css = this.css;
@@ -523,17 +687,25 @@ class Table extends Component {
              * 
              */
             <div>
-                {(this.state.scene == 1) ?
-                    <div className='panel' style={css.panel}><BidPanel /></div>
-                    : null
-                }
                 <div id='table' className='table' style={css.table}>
                     <div id='header' className='header' style={css.header}>
                         <div className='re' style={css.re}>分数</div>
                         <div className='re' style={css.re}>方位</div>
                         <div className='re' style={css.re}>墩数</div>
+                        <div className='re' id='lastTrick' style={css.re}>上墩牌</div>
+                        <div className='re' id='result' style={css.re}>结果</div>
                     </div>
                     <div id='body' className='body' style={css.body}>
+                        {(this.state.scene === 1) ?
+                            <div className='panel' style={css.panel}>
+                                <BidPanel 
+                                bidCall={this.bidCall} 
+                                bidCard={this.state.bidCard}
+                                calldata={this.state.calldata} 
+                                />
+                            </div>
+                            : null
+                        }
                         <div id='clock'></div>
                         <div id='east' className='east' style={css.east} ref={this.ref.east}>east</div>
                         <div id='west' className='west' style={css.west} ref={this.ref.west}>west</div>
@@ -544,7 +716,6 @@ class Table extends Component {
                         {cards}
                     </div>
                     <button onClick={this.deal}>发牌</button>
-                    <br />
                     <button onClick={this.test1}>出牌</button>
                     <button onClick={this.testActive}>阻止出牌</button>
                     <button onClick={this.test3}>清理桌面</button>
@@ -553,8 +724,12 @@ class Table extends Component {
                     <button onClick={this.testDummy.bind(this, 'west')}>明手西</button>
                     <button onClick={this.testDummy.bind(this, 'north')}>明手北</button>
                     <br />
-                    <button onClick={this.testBid}>测试叫牌</button>
+                    <button onClick={this.testBid}>显示叫牌</button>
+                    <button onClick={this.testBid1}>叫牌</button>
                     <button onClick={this.testClock}>倒计时</button>
+                    <button onClick={this.testLastTrick}>上一墩牌</button>
+                    <br />
+                    <button onClick={this.showResult}>显示结果</button>
                     <div id='test' style={{ position: 'relative' }}>测试区域</div>
                     <div id='footer' className='footer' style={css.footer}>footer</div>
                 </div>

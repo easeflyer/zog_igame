@@ -3,11 +3,18 @@
     background-color:rgba(0, 0, 66, 0.2);
     opacity:0.8;
 }
+.bidpanel table{
+    width:100%;
+    border-collapse: collapse;
+}
+.bidpanel tr{
+    border-bottom: 1px solid #666699;
+}
 .bidblock{
     position: relative;
     float: left;
     width: 19%;
-    height:11%;
+    height:9%;
     margin-left: 0.8%;
     margin-top: 0.8%;
     box-shadow: 2px 2px 1px #888888;

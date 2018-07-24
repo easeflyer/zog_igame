@@ -63,7 +63,7 @@ export default class PlayerInfo extends React.Component{
             })
         }
         this.post('init_board',this.state.id_msg.board_id,this.state.id_msg.channel_id);
-        this.showModal()
+        // this.showModal()
     }
     failChannel=()=>{console.log('fail channel')}
     polling(){
@@ -195,7 +195,8 @@ export default class PlayerInfo extends React.Component{
                     <Col span={2}>
                         <Row style={{height:300,writingMode: 'vertical-lr'}}>
                             <Col span={24} style={{height:60,background:'#0f0'}}>{this.state.playerInfo.leftDirect}</Col>
-                            <Col span={24} style={{height:240,background:'#ff0'}}>{this.state.playerInfo.leftName}{this.state.call&&this.state.callDirect===this.state.playerInfo.leftDirect?'该你叫牌啦！':null}{this.state.play&&this.state.topInfo2.declarer===this.state.playerInfo.leftDirect?' 庄家':null}{this.state.currentDirect===this.state.playerInfo.leftDirect?'★':null}</Col>
+                             {/*<Col span={24} style={{height:240,background:'#ff0'}}>庄家该你教派啦</Col>*/}
+                           <Col span={24} style={{height:240,background:'#ff0'}}>{this.state.playerInfo.leftName}{this.state.call&&this.state.callDirect===this.state.playerInfo.leftDirect?'该你叫牌啦！':null}{this.state.play&&this.state.topInfo2.declarer===this.state.playerInfo.leftDirect?' 庄家':null}{this.state.currentDirect===this.state.playerInfo.leftDirect?'★':null}</Col>
                         </Row>
                     </Col>
                     {this.state.play&&this.state.dummy===this.state.playerInfo.leftDirect?<CardsC cards={this.state.dummyCardsNum?this.state.dummyCardsNum:null} post={this.post}></CardsC>:null}

@@ -29,6 +29,11 @@ class Models{
         const Poll = new OdooModel(success,error);
         Poll.poll(pollingId);
     }
+
+    static bid=(success,error,board_id,pos,card,channel_id)=>{
+        const board= new Board(success,error); 
+        board.bid(board_id,pos,card,channel_id);
+    }
     
 
     /**
