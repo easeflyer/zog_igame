@@ -18,7 +18,7 @@ class Seats extends Component{
     render(){
         return(
             <div className='seats'>
-                <div className='s1'></div>
+                <div className='s1'>D</div>
                 <div className='s2'></div>
                 <div className='s3'></div>
                 <div className='s4'></div>
@@ -31,7 +31,7 @@ class Tricks extends Component{
     render(){
         return(
             <div className='tricks'>
-                <div className='s1'>1</div>
+                <div className='s1'><br />1</div>
                 <div className='s2'>2</div>
                 <div className='s3'>3</div>
             </div>

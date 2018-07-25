@@ -21,7 +21,7 @@
   
   ：叫牌结果 显示。
   : 东南西北显示，用户显示。writing-mode:vertical-lr
-
+todo：上以盾牌。
 
 
 ## 核心分析

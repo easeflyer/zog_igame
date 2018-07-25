@@ -18,6 +18,7 @@ class Table extends Component {
         scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段
         calldata: [],
         user: { east: null, south: null, west: null, north: null },
+        lastTrick:false,
         //playseat:null, // 倒计时解决
     }
     /**
@@ -457,21 +458,25 @@ class Table extends Component {
      * todo：明确了数据接口再改写。
      * 定位还存在问题。
      */
-    lastTrick = (show = true) => {
+    lastTrick = () => {
         // 在模型里 应该先判断当前 trick 编号。然后决定是否能看lasttrick
+        let show = true;
+        if(this.state.lastTrick) show = false;
+        //this.state.lastTrick = !this.state.lastTrick;
 
+        //const show = true
         const lt = Models.lastTrick();
         let card = null;
         lt.forEach((item, index) => {
             card = this._cardIndexOf(item.index)
             //card.size = card.size * 0.8
             card['animation']['left'] = (show == true) ?
-                this.seat[Table.seats[index]][1].x + this.width / 4
+                this.seat[Table.seats[index]][1].x - this.width / 2.9
                 : this.width / 2;
             card['animation']['top'] = (show == true) ?
-                this.seat[Table.seats[index]][1].y + this.width / 2.5
+                this.seat[Table.seats[index]][1].y - this.width / 2.9
                 : -this.width * 2;
-            card['size'] = card['size'] * 0.7
+            //card['size'] = card['size'] * 0.7
             // card['animation']['rotate'] = 180;
             // card['position']['x'] = this.seat[Table.seats[index]][1].x;
             // card['position']['y'] = this.seat[Table.seats[index]][1].y;
@@ -480,7 +485,8 @@ class Table extends Component {
             card.active = 1; // 测试用
         })
         this.setState({
-            cards: this.state.cards
+            cards: this.state.cards,
+            lastTrick:!this.state.lastTrick
         })
 
     }
@@ -533,7 +539,7 @@ class Table extends Component {
      * 测试上以墩牌的显示
      */
     testLastTrick = () => {
-        this.lastTrick();
+        this.lastTrick(false);
         // if(this._showLastTrick) this._showLastTrick = false;
         // else this._showLastTrick = true;
         // this.lastTrick(this._showLastTrick);
@@ -661,11 +667,12 @@ class Table extends Component {
                     <div id='header' className='header' style={css.header}>
                         <div className='re' style={css.re}><Imps /></div>
                         <div className='re' style={css.re}><Seats /></div>
-                        <div className='re' style={css.re}><Tricks /></div>
+                        <div onClick={this.testLastTrick} className='re' style={css.re}><Tricks /></div>
                         {/* <div className='re' id='lastTrick' style={css.re}>上墩牌</div>
                         <div className='re' id='result' style={css.re}>结果</div> */}
                     </div>
                     <div id='body' className='body' style={css.body}>
+                        {this.state.lastTrick ? <div id='lastTrick' className='lastTrick'></div> : null}
                         <div id='clock'></div>
                         <div id='east' className='east' style={css.east} ref={this.ref.east}></div>
                         <div id='west' className='west' style={css.west} ref={this.ref.west}></div>
