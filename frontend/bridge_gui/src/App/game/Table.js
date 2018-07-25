@@ -4,7 +4,9 @@ import ReactDOM from 'react-dom';
 import Card from './Card'
 import BidPanel from './BidPanel'
 import Clock from './Clock'
-import {Imps,Seats,Tricks} from './Headers'
+import { Imps, Seats, Tricks } from './Headers'
+import Prepare from './Prepare'
+import Debug from './Debug'
 import './Table.css'
 import Models from '../models/model'
 
@@ -17,9 +19,13 @@ class Table extends Component {
         cards: null, // 考虑这里不用 cards 只用必要的数字
         scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段
         calldata: [],
-        user: { east: null, south: null, west: null, north: null },
-        lastTrick:false,
+        user: {
+            east: { ready: 0, name: null }, south: { ready: 0, name: null },
+            west: { ready: 0, name: null }, north: { ready: 0, name: null }
+        },
+        lastTrick: false,
         //playseat:null, // 倒计时解决
+        debug: false,
     }
     /**
      * 重构参考： 打牌的几个阶段，应该在规则里面，调入进来。
@@ -44,7 +50,7 @@ class Table extends Component {
             table: {
                 width: this.width,
                 height: this.height,
-                fontSize:this.width * 0.04 + 'px'
+                fontSize: this.width * 0.04 + 'px'
             },
             panel: {
                 top: this.width * 0.32,
@@ -59,7 +65,7 @@ class Table extends Component {
             body: {
                 width: this.width,
                 height: this.width,
-                fontSize:this.width * 0.04 + 'px'
+                fontSize: this.width * 0.04 + 'px'
             },
             footer: {
                 width: this.width,
@@ -309,6 +315,29 @@ class Table extends Component {
         }
     }
     /**
+     * 接受一个编号。
+     */
+    handleReady = (se) => {
+        const seat = Table.seats[se];
+        this.state.user[seat].ready = 1;
+        if (this._userAllReady()) {
+            this.state.scene = 1;
+            this.deal(); // 这里也有 setState 但是 它是异步的。只执行一次
+        }
+        this.setState({
+            user: this.state.user,
+            scene: this.state.scene
+        })
+    }
+    _userAllReady() {
+        const user = this.state.user;
+        let ready = true;
+        Object.values(user).forEach(el => {
+            if (el.ready == 0) ready = false
+        })
+        return ready;
+    }
+    /**
      * 发牌
      */
     deal = () => {
@@ -461,7 +490,7 @@ class Table extends Component {
     lastTrick = () => {
         // 在模型里 应该先判断当前 trick 编号。然后决定是否能看lasttrick
         let show = true;
-        if(this.state.lastTrick) show = false;
+        if (this.state.lastTrick) show = false;
         //this.state.lastTrick = !this.state.lastTrick;
 
         //const show = true
@@ -486,7 +515,7 @@ class Table extends Component {
         })
         this.setState({
             cards: this.state.cards,
-            lastTrick:!this.state.lastTrick
+            lastTrick: !this.state.lastTrick
         })
 
     }
@@ -504,7 +533,7 @@ class Table extends Component {
     }
     testUsersReady = () => {
         const login = (seat, uname) => {
-            this.state.user[seat] = uname;
+            this.state.user[seat].name = uname;
             this.setState({ user: this.state.user })
         }
         setTimeout(login.bind(this, 'east', '张三丰'), 1000)
@@ -513,6 +542,12 @@ class Table extends Component {
         setTimeout(login.bind(this, 'north', '赵六'), 4000)
     }
 
+    testChat = () => {
+        const elMsg = document.querySelector('#message')
+        const elSay = document.querySelector('#say')
+        elMsg.innerHTML = 
+            "<div>" + this.myseat + ':' + elSay.value + "</div>" + elMsg.innerHTML
+    }
     /**
      * 叫牌测试
      */
@@ -570,7 +605,11 @@ class Table extends Component {
         console.log(this.state.cards)
 
     }
-
+    openDebug = () =>{
+        this.setState({
+            debug:!this.state.debug
+        })
+    }
     test3 = () => {
         this.clearBoard();
     }
@@ -618,10 +657,10 @@ class Table extends Component {
     }
     render() {
         const css = this.css;
+        const stat = Object.values(this.state.user).map(e => e.ready)
         // cards 从 state.cards 遍历获得。不要重复构造，而所有操作只操作数据。
         const cards = this.state.cards.map((item1, index1) => {
             return item1.map((item2, index2) => {
-
                 return <Card
                     active={item2.active}
                     onClick={item2.onclick}
@@ -666,7 +705,7 @@ class Table extends Component {
                 <div id='table' className='table' style={css.table}>
                     <div id='header' className='header' style={css.header}>
                         <div className='re' style={css.re}><Imps /></div>
-                        <div className='re' style={css.re}><Seats /></div>
+                        <div onClick={this.openDebug} className='re' style={css.re}><Seats /></div>
                         <div onClick={this.testLastTrick} className='re' style={css.re}><Tricks /></div>
                         {/* <div className='re' id='lastTrick' style={css.re}>上墩牌</div>
                         <div className='re' id='result' style={css.re}>结果</div> */}
@@ -680,38 +719,27 @@ class Table extends Component {
                         <div id='north' className='north' style={css.north} ref={this.ref.north}></div>
                         <div id='board' className='board' style={css.board} ref={this.ref.board}>
                             <div className='userTag'><div className='seat'>
-                                {Table.seatscn[ Table.seats.indexOf(this._shift('east')) ]}:
-                            {this.state.user[this._shift('east')]}</div></div>
+                                {Table.seatscn[Table.seats.indexOf(this._shift('east'))]}:
+                            {this.state.user[this._shift('east')].name}</div></div>
                             <div className='userTag'><div className='seat'>
                                 {Table.seatscn[Table.seats.indexOf(this._shift('south'))]}:
-                            {this.state.user[this._shift('south')]}</div></div>
+                            {this.state.user[this._shift('south')].name}</div></div>
                             <div className='userTag'><div className='seat'>
                                 {Table.seatscn[Table.seats.indexOf(this._shift('west'))]}:
-                            {this.state.user[this._shift('west')]}</div></div>
+                            {this.state.user[this._shift('west')].name}</div></div>
                             <div className='userTag'><div className='seat'>
                                 {Table.seatscn[Table.seats.indexOf(this._shift('north'))]}:
-                            {this.state.user[this._shift('north')]}</div></div>
+                            {this.state.user[this._shift('north')].name}</div></div>
+                            {this.state.scene == 0 ? <Prepare stat={stat} ready={this.handleReady} /> : null}
                         </div>
                         {cards}
                     </div>
-                    <button onClick={this.testUsersReady}>登录</button>
-                    <button onClick={this.deal}>发牌</button>
-                    <button onClick={this.test1}>出牌</button>
-                    <button onClick={this.testActive}>阻止出牌</button>
-                    <button onClick={this.test3}>清理桌面</button>
-                    <br />
-                    <button onClick={this.testDummy.bind(this, 'east')}>明手东</button>
-                    <button onClick={this.testDummy.bind(this, 'west')}>明手西</button>
-                    <button onClick={this.testDummy.bind(this, 'north')}>明手北</button>
-                    <br />
-                    <button onClick={this.testBid}>显示叫牌</button>
-                    <button onClick={this.testBid1}>叫牌</button>
-                    <button onClick={this.testClock}>倒计时</button>
-                    <button onClick={this.testLastTrick}>上一墩牌</button>
-                    <br />
-                    <button onClick={this.showResult}>显示结果</button>
-                    <div id='test' style={{ position: 'relative' }}>测试区域</div>
-                    <div id='footer' className='footer' style={css.footer}>footer</div>
+                    {this.state.debug ? <Debug o={this} /> : null}
+                    <div id='message' className='message'></div>
+                    <div id='footer' className='footer' style={css.footer}>
+                        <input id='say' type='text' />
+                        <input type='button' value='发送' onClick={this.testChat} />
+                    </div>
                 </div>
             </div >
         );

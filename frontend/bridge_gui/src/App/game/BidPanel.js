@@ -55,16 +55,16 @@ class BidPanel extends Component {
         const bidblocks = this.state.bidblocks.map((e1, i1) => e1.map((e2, i2) => {
             const animation = {}
             if (e2.active == 0) animation['brightness'] = 0.6;
-            return <BidBlock name={e2.name} animation={animation}
+            return <BidBlock key={e2.name} name={e2.name} animation={animation}
                 onclick={this.handleCall.bind(this, { row: i1, col: i2 })} />
         }))
         //console.log(bidblocks)
         const rows = this.props.calldata.map((item,index)=>{
             console.log(item)
             return <tr key={index}>
-                <td>{index+1}</td>
+                <td key='0'>{index+1}</td>
                 {item.map((item1,index1)=>(
-                    <td key={index+index1} style={{width:'20%',height:`${this.width*0.05}px`}}>
+                    <td key={index+index1 + 1} style={{width:'20%',height:`${this.width*0.05}px`}}>
                         {item1?
                             <img className='suit' src={`/cards/bids/${item1}.svg`} />
                             :' '

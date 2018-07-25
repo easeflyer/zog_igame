@@ -33,6 +33,23 @@
     position: absolute;
     bottom: 0;
     background-color: #552211;
+    /* vertical-align:top;
+    display: table-cell; */
+}
+.footer > input[type=text]{
+    position: absolute;
+    border:0px;
+    margin:0px;
+    padding:0px;
+    width:80%;
+    height:100%;
+}
+.footer > input[type=button]{
+    position: absolute;
+    top:0px;
+    right:0px;
+    width:19%;
+    height:100%;
 }
 .east {
     position: absolute;
@@ -63,6 +80,11 @@
     border: 1px solid #6666aa;
     opacity: 0.8;
 }
+
+/*
+.userTag    用户名称显示的黄色长条
+.seat       在里面显示为换色，这两个div 可以省略一个。
+*/
 .board > .userTag{
     position: absolute;
     background-color: #eeeeee;
@@ -112,4 +134,9 @@
 }
 .result > button {
     margin:0
+}
+
+.message{
+    padding:2%;
+    color:#FFFFFF;
 }

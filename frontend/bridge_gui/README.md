@@ -21,7 +21,12 @@
   
   ：叫牌结果 显示。
   : 东南西北显示，用户显示。writing-mode:vertical-lr
-todo：上以盾牌。
+：上以盾牌。
+
+todo：登录
+todo:扑克的位置计算：
+todo：庄家显示。
+todo：事件监听机制。
 
 
 ## 核心分析

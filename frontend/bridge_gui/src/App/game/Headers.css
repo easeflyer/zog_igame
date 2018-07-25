@@ -14,7 +14,7 @@
 }
 .imps > .ibody {
     height:75%;
-    background-color: #aaaaff;
+    background-color: #0099cc;
 }
 
 
@@ -22,7 +22,7 @@
 .seats{
     width:100%;
     height:100%;
-    background-color: #aaaaff;
+    background-color: #0099cc;
 }
 .seats > div {float:left;text-align: center}
 .seats > .s1{
@@ -54,7 +54,7 @@
 .tricks{
     width:100%;
     height:100%;
-    background-color: #aaaaff;
+    background-color: #0099cc;
 }
 .tricks > div {float:left;text-align: center}
 .tricks > .s1{
