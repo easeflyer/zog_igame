@@ -1,7 +1,10 @@
 .bidpanel{
     position: absolute;
-    background-color:rgba(0, 0, 66, 0.2);
-    opacity:0.8;
+    /** background-color:rgba(0, 0, 66, 0.2); 透明 */
+    /*background-color:#1111cc;*/
+    background-color: #0077cc;
+    color:#FFFFFF;
+    opacity:1;
 }
 .bidpanel table{
     width:100%;

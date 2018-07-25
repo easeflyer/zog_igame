@@ -737,7 +737,7 @@ class Table extends Component {
                     {this.state.debug ? <Debug o={this} /> : null}
                     <div id='message' className='message'></div>
                     <div id='footer' className='footer' style={css.footer}>
-                        <input id='say' type='text' />
+                        <input id='say' type='text' defaultValue='请输入……' />
                         <input type='button' value='发送' onClick={this.testChat} />
                     </div>
                 </div>
