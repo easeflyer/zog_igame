@@ -47,6 +47,11 @@ class Models{
          board.play(board_id,mydir,card,channel_id);
         //   : null;       //发送打牌消息
     }
+
+    static board_points=(success,error,board_id)=>{
+        const  board= new Board(success,error); 
+        board.board_points(board_id);
+    }
     
 
     /**

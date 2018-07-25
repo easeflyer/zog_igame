@@ -1,7 +1,7 @@
 .bidpanel{
     position: absolute;
     background-color:rgba(0, 0, 66, 0.2);
-    opacity:0.8;
+    /* opacity:0.8; */
 }
 .bidpanel table{
     width:100%;
