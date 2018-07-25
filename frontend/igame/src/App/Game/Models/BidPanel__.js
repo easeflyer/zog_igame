@@ -5,7 +5,7 @@ let css1 = {
     bidpanel: {
         width: '100%',
         height: '100%',
-        //fontSize: '22px'
+        // fontSize: '22px'
     },
 }
 
@@ -18,7 +18,6 @@ class BidPanel extends Component {
     }
     constructor(props) {
         super(props)
-        this.width = window.screen.width;
         const suits = ['NT', 'S', 'H', 'D', 'C'];
         const rank = [1, 2, 3, 4, 5, 6, 7];
         const bids = rank.map((i) => suits.map((j) => i + j))
@@ -28,13 +27,9 @@ class BidPanel extends Component {
             return { name: e1, active: 1 }
         }))
         this.state.bidblocks = bidblocks;
-        this.ref = React.createRef();
-     
     }
-    // componentDidMount(){
-    //     this.width = this.ref.current.clientWidth;
-    // }
     componentWillReceiveProps(newProps){
+        console.log(this.state.bidblocks)
         console.log(newProps)
         const bidblocks = this.state.bidblocks;
         if(newProps.bidCard){
@@ -58,7 +53,6 @@ class BidPanel extends Component {
      * item 点击的叫品 行列坐标。{row,col}
      */
     handleCall = (item) => {
-        console.log(item)
         this.props.bidCall(item.name);
         // const bidblocks = this.state.bidblocks;
         // for (let i = 0; i < bidblocks.length; i++) {
@@ -72,12 +66,12 @@ class BidPanel extends Component {
         // })
     }
     render() {
-        // console.log('ffff:'+this.width)
         const bidblocks = this.state.bidblocks.map((e1, i1) => e1.map((e2, i2) => {
             const animation = {}
             if (e2.active == 0) animation['brightness'] = 0.6;
             return <BidBlock key={i1+i2} name={e2.name} animation={animation}
-                onclick={this.handleCall.bind(this, {name:e2.name})} />
+                onclick={this.handleCall.bind(this, { name:e2.name})} />
+                // onclick={this.handleCall.bind(this, { row: i1, col: i2 , name:e2.name})} />
         }))
         //console.log(bidblocks)
         const rows = this.props.calldata.map((item,index)=>{
@@ -85,11 +79,9 @@ class BidPanel extends Component {
             return <tr key={index}>
                 <td>{index+1}</td>
                 {item.map((item1,index1)=>(
-                    <td key={index+index1} style={{width:'20%'}}>
-                    {/* <td key={index+index1} style={{width:'20%',height:`${this.width*0.05}px`}}> */}
+                    <td key={index+index1} style={{width:'20%',height:`${this.width*0.05}px`}}>
                         {item1?
-                            <img src={`/cards/bids/${item1}.svg`} style={{height:'45%',width:'100%'}}/>
-                            // <img className='suit' src={`/cards/bids/${item1}.svg`} style={{height:'60%'}}/>
+                            <img className='suit' src={`/cards/bids/${item1}.svg`} />
                             :' '
                         }
                     </td>
@@ -97,28 +89,28 @@ class BidPanel extends Component {
             </tr>
         })
         return (
-            <div id='bidpanel' className='bidpanel' style={css1.bidpanel} ref={this.ref}>
+            <div  id='bidpanel' className='bidpanel' style={css1.bidpanel}>
                 <div>
                     <table>
                         <thead>
                             <tr>
-                            <td> </td><td>北</td><td>东</td><td>南</td><td>西</td>
+                            <td> </td><td>东</td><td>南</td><td>西</td><td>北</td>
                             </tr>
                         </thead>
                         <tbody>
                             {rows}
                         </tbody>
                     </table>
-                </div>
+                </div>    
                 {bidblocks}
                 <div className='pass'>
-                    <img className='suit' src={`/cards/bids/PASS.svg`}  onClick={this.handleCall.bind(this, {name:'Pass'})} />
+                    <img className='suit' src={`/cards/bids/PASS.svg`} />
                 </div>
                 <div className='double'>
-                    <img className='suit' src={`/cards/bids/X.svg`} onClick={this.handleCall.bind(this, {name:'x'})}/>
+                    <img className='suit' src={`/cards/bids/X.svg`} />
                 </div>
                 <div className='redouble'>
-                    <img className='suit' src={`/cards/bids/XX.svg`} onClick={this.handleCall.bind(this, {name:'xx'})}/>
+                    <img className='suit' src={`/cards/bids/XX.svg`} />
                 </div>
             </div>
         );

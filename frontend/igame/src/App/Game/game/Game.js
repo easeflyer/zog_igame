@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import settings from './settings';
+import settings from '../game/settings';
 import Table from './Table';
 import Bid from './BidPanel'
-import Models from '../Models/model'
 
 /**
  * Game  是一局比赛，涉及到了比赛者，以及和比赛相关的其他信息。重点在于比赛。
@@ -22,9 +21,6 @@ class Game extends Component {
         console.log('width:'+this.width)
         console.log('height:'+this.height)
         if(this.width < 400) settings.scale = 0.5;
-    }
-    componentDidMount(){
-        Models.deals()
     }
     render(){
         return(

@@ -24,7 +24,7 @@ class TabBarExample extends React.Component {
       selectedTab: 'blueTab',
       hidden: false,
       fullScreen: true,  // 是否全屏显示
-      haslogin:true,
+      haslogin:false,
       others:null,
     };
     if (session.get_sid()){

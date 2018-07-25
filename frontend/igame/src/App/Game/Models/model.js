@@ -34,13 +34,40 @@ class Models{
         const board= new Board(success,error); 
         board.bid(board_id,pos,card,channel_id);
     }
+
+    static call_result=(success,error,board_id,channel_id)=>{
+        const board= new Board(success,error); 
+        board.call_result(board_id,channel_id);
+    }
+
+    static play=(success,error,board_id,mydir,card,channel_id)=>{
+        const board= new Board(success,error); 
+        // ((this.state.currentDirect!==this.state.dummy&&this.state.currentDirect===this.state.playerInfo.myDirect)||
+        // (this.state.currentDirect===this.state.dummy&&this.state.topInfo2.declarer===this.state.playerInfo.myDirect)) ?
+         board.play(board_id,mydir,card,channel_id);
+        //   : null;       //发送打牌消息
+    }
     
 
     /**
      * 获得明手的牌，根据规则进行判断。
+     * todo:正确的牌
      */
     static openDummy(){
         return {seat:'north',cards:'K.KJT732.964.A52'}
+    }
+    /**
+     * 获得上一墩牌，这里应该进行必要的判断。不能随便获得。
+     * [东，南，西，北]
+     */
+    static lastTrick(){
+        return [{index:1,card:'7S'},
+                {index:14,card:'9S'},
+                {index:28,card:'2S'},
+                {index:41,card:'KS'}]
+    }
+    static getResult(){
+        return "N3D +2 NS 600";
     }
 }
 
