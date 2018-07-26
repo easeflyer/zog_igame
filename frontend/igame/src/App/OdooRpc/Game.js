@@ -99,6 +99,15 @@ export default class Game extends Models {
         * return:
        */
     }
+    search_game_score(game_id) {
+        //查询第几副牌
+        const obj = this.with_model('og.igame');  //模型名
+        obj.exec('search_game_score', {}, game_id);
+        /**
+        * params:game_id,round_id,deal_id(牌ID))
+        * return:
+       */
+    }
 
 
 
