@@ -22,37 +22,37 @@ export default class MatchTeam extends React.Component{
         const m = new GameTeam(this.success,this.error);
         m.search_game_player(this.props.match.id);
     }
-    success=(data)=>{
-        console.log('*********参赛队信息**********')
+    success=(datas)=>{
+        // console.log('*********参赛队信息**********')
         // console.log(data)
         
-        const datas = [
-            {number:'12',
-            ranking:'2',
-            coach:'李四',
-            leader:'张三',
-            name:'白鲨1队',
-            member:[{id:1,name:'蒋周伟',others:'56%'},{id:1,name:'蒋周伟',others:'56%'},
-                    {id:1,name:'蒋周伟',others:'56%'},{id:1,name:'蒋周伟',others:'56%'},],
-            pay:true},
-            {number:'25',
-            ranking:'3',
-            coach:'李四',
-            leader:'张三',
-            name:'白鲨2队',
-            member:[{id:1,name:'张三',others:'56%'},{id:1,name:'李四',others:'56%'},
-                    {id:1,name:'李四',others:'56%'},{id:1,name:'李四',others:'56%'},],
-            pay:false},
-            {number:'32',
-            ranking:'1',
-            coach:'李四',
-            leader:'张三',
-            name:'白鲨5队',
-            member:[{id:1,name:'王麻子',others:'56%'},{id:1,name:'王麻子',others:'56%'},
-                    {id:1,name:'王麻子',others:'56%'},{id:1,name:'王麻子',others:'56%'},],
-            pay:true},
-        ]
-        console.log(datas)
+        // const datas = [
+        //     {number:'12',
+        //     ranking:'2',
+        //     coach:'李四',
+        //     leader:'张三',
+        //     name:'白鲨1队',
+        //     member:[{id:1,name:'蒋周伟',others:'56%'},{id:1,name:'蒋周伟',others:'56%'},
+        //             {id:1,name:'蒋周伟',others:'56%'},{id:1,name:'蒋周伟',others:'56%'},],
+        //     pay:true},
+        //     {number:'25',
+        //     ranking:'3',
+        //     coach:'李四',
+        //     leader:'张三',
+        //     name:'白鲨2队',
+        //     member:[{id:1,name:'张三',others:'56%'},{id:1,name:'李四',others:'56%'},
+        //             {id:1,name:'李四',others:'56%'},{id:1,name:'李四',others:'56%'},],
+        //     pay:false},
+        //     {number:'32',
+        //     ranking:'1',
+        //     coach:'李四',
+        //     leader:'张三',
+        //     name:'白鲨5队',
+        //     member:[{id:1,name:'王麻子',others:'56%'},{id:1,name:'王麻子',others:'56%'},
+        //             {id:1,name:'王麻子',others:'56%'},{id:1,name:'王麻子',others:'56%'},],
+        //     pay:true},
+        // ]
+        // console.log(datas)
         let data1 = null;
         if(datas){
             data1 = datas.map((item,index)=>{ //后端数据完善后这里还需作调整

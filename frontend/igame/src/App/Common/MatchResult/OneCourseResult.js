@@ -102,7 +102,12 @@ export default class OneCourseResult extends React.Component {
         // ]
         let setDealNumber = length => Array.from({ length }, (v, k) => <a style={{ margin: '0px 5px' }} key={k + 1} onClick={() => this.toOneBoard(k + 1)} >{k + 1}</a>)
         this.props.setThisOneRound(this.state.thisOneRound);
-
+        
+        let match_ids=[];
+        data.forEach(element => {
+            match_ids.push(element.match_id)
+        });
+        this.props.setMatchIds([data[0].match_id,match_ids])
         // 先判断是否为空
         this.setState({
             data: data,
@@ -123,7 +128,7 @@ export default class OneCourseResult extends React.Component {
                 return (
                     <span>
                         <a
-                            onClick={() => this.toOneTable(row.number)}
+                            onClick={() => this.toOneTable([row.match_id,row.number])}
                         >
                             {text}
                         </a>

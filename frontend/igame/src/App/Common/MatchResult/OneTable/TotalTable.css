@@ -1,0 +1,19 @@
+.talbeText span{
+    font-size: 12px !important;
+}
+
+.impsp{
+    margin:  0px;
+}
+.talbeText .ant-table-thead th{
+    padding: 4px 0px !important;
+    text-align: center !important;
+}
+.talbeText .ant-table-row td{
+    padding:  4px 0px !important;
+    text-align: center !important;
+    /* border:  1px !important; */
+}
+.talbeText tr:nth-child(2n) td:last-child{
+ border-right: 1px solid rgba(232, 232, 232) !important;
+}

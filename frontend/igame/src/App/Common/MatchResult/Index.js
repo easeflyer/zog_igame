@@ -17,6 +17,12 @@ export default class MatchResult extends React.Component{
         tableNumber:null,
         boardId:null,
         team:null,
+        match_ids:null
+    }
+    setMatchIds=(index)=>{
+        this.setState({
+            match_ids:index,
+        })
     }
     setThisOneRound=(index)=>{
         this.setState({
@@ -54,6 +60,7 @@ export default class MatchResult extends React.Component{
                     match={this.props.match}                //当前比赛
                     thisOneRound={this.state.thisOneRound}  //当前伦次ID和name
                     rounds={this.state.rounds}              //所有轮次基本信息
+                    setMatchIds={this.setMatchIds}          //设置对抗的match_id
                     setThisOneRound={this.setThisOneRound}  //设置当前轮次
                     setTableNumber={this.setTableNumber}    //设置桌号
                     setBoardId={this.setBoardId}            //设置牌的ID
@@ -78,7 +85,8 @@ export default class MatchResult extends React.Component{
             case 'Datum':                       //Datum
                 page=<Datum
                     showPage={this.showPage}
-                    match={this.props.match}        
+                    match={this.props.match}
+                    match_ids={this.state.match_ids}        
                     thisOneRound={this.state.thisOneRound}
                 />
                 break;
