@@ -1,30 +1,37 @@
 import React from 'react';
 import { NavBar, WhiteSpace } from 'antd-mobile';
 import { Icon, Table } from 'antd';
+import GameTeam from '../../OdooRpc/GameTeam';
 
 const columns = [{
     title: "轮次",
-    dataIndex: "rounds"
+    dataIndex: "round"
 }, {
     title: "对阵方",
-    dataIndex: "opponent"
+    dataIndex: "name"
 }, {
     title: "IMPs",
     dataIndex: "IMPs"
 }, {
     title: "VPs",
-    dataIndex: "Vps"
+    dataIndex: "VPs"
 }]
 export default class OneTeam extends React.Component {
+    state = ({
+        data: [],
+    });
+    componentWillMount() {
+        // const m = new GameTeam(()=>{console.log('连接成功')},()=>{'连接失败'});
+        const m = new GameTeam((data) => this.setState({ data: data }), () => console.log('没有拿到数据'));
+        m.search_combat_team(this.props.team[0], this.props.match.id)
+    }
     render() {
         // 初始化表格数据
-        let data = [];
-        data = [
-            { "rounds": "vs 北京", "opponent": "vs 北京", "IMPs": "6:13", "VPs": "6.12 : 13.88" },
-            { "rounds": "vs 北京", "opponent": "vs 北京", "IMPs": "6:13", "VPs": "6.12 : 13.88" },
-            { "rounds": "vs 北京", "opponent": "vs 北京", "IMPs": "6:13", "VPs": "6.12 : 13.88" },
-            { "rounds": "vs 北京", "opponent": "vs 北京", "IMPs": "6:13", "VPs": "6.12 : 13.88" }
-        ]
+        // console.log('111', this.state.data);
+
+        // {0: 5, name: "W", round: 0, 5.0: 15}
+        let data = this.state.data
+       
         return (
             <div>
                 <NavBar
@@ -35,13 +42,15 @@ export default class OneTeam extends React.Component {
                 </NavBar>
                 <WhiteSpace size='xl' />
                 <Table
+                    rowKey={row => { console.log(row) }}
                     columns={columns}
                     dataSource={data}
                 />
                 <h1>赛事名称：{this.props.match.name}</h1>
                 <h1>赛事ID：{this.props.match.id}</h1>
-                <h1>轮次ID：{this.props.courseId[0]}</h1>
-                <h1>队伍IDzzzz：{this.props.team[0]}</h1>
+                <h1>轮次ID：{this.props.thisOneRound[0]}</h1>
+                {/* <h1>轮次ID：{this.props.courseId[0]}</h1> */}
+                <h1>队伍ID：{this.props.team[0]}</h1>
 
             </div>
         );
