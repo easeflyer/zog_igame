@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-//import settings from '../game/settings';
 import Card from './Card'
 import BidPanel from './BidPanel'
 import Clock from './Clock'
 import {Imps,Seats,Tricks} from './Headers'
+import Prepare from './Prepare'
+import Debug from './Debug'
+import Claim from './Claim'
 import  session from '../../User/session'
 import './Table.css'
 import Models from '../Models/model'
-import PlayCard from '../PlayCard';
 
 /**
  * Game  是一局比赛，涉及到了比赛者，以及和比赛相关的其他信息。重点在于比赛。
@@ -17,7 +18,7 @@ import PlayCard from '../PlayCard';
 class Table extends Component {
     state = {
         cards: null, // 考虑这里不用 cards 只用必要的数字 ,方位按照Table.seats
-        scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段
+        scene: 0,    // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
         calldata:[],
         bidCard: null,
         user: { east: null, south: null, west: null, north: null },
@@ -27,6 +28,7 @@ class Table extends Component {
         ns_win:null,
         ew_win:null,
         lastTrick:false,
+        debug: false,
     }
     /**
      * 重构参考： 打牌的几个阶段，应该在规则里面，调入进来。
@@ -107,7 +109,7 @@ class Table extends Component {
             }
 
         }
-        console.log(this.width * 0.2)
+        // console.log(this.width * 0.2)
         // this.calldata = [['1C','2C','PASS','PASS'],['3H','PASS','PASS','4NT'],
         //                 ['PASS','PASS','PASS','']]
         this.board_id_list = null;
@@ -116,7 +118,9 @@ class Table extends Component {
 		this.pollingId = 1;
         this.callResult = 0;
         this.dealer = null;
+        this.claimseat = 'S'; // east,south...
         this.board = []; // 桌面上的四张牌
+        this.lastTrickCard = [];
         this.cards = [];  //原始牌
         this.zindex = 10;
         this.center = null; // 桌子的中心 {x,y}
@@ -157,6 +161,7 @@ class Table extends Component {
      * 完成挂载后，要计算 各个位置的坐标。
      */
     componentDidMount() {
+
         Models.deals(this.sucChannel,this.failChannel);
         this._initSeat(); // 初始化 发牌位置 出牌位置等坐标
         //console.log(parseInt(center.y) - parseInt(this.csize) * 0.7 / 2)
@@ -174,8 +179,12 @@ class Table extends Component {
             this.board_id = data[1][0];
         }
         Models.init_board(this.sucInit,this.failInit,this.board_id,this.channel_id);
+        // Models.claim1(this.sucClaim,this.failClaim,this.board_id,'W',3,this.channel_id);
     }
-
+    sucClaim=(data)=>{
+        console.log(data)
+    }
+    failClaim=()=>{console.log('fail claim')}
     failChannel=()=>{
         console.log('fail channel')
     }
@@ -209,28 +218,34 @@ class Table extends Component {
 
     sucPolling=(data)=>{
         console.log(data)
-        if (data.length){
+        if (data.length&& data.slice(-1)[0]['id']!==this.pollingId){
             this.pollingId=data.slice(-1)[0]['id']
+            console.log(this.pollingId)
             let body = data[data.length-1].message.body;    //"<p>{'board_id': 44, 'number': 1, 'name': u'1S', 'pos': u'S'}</p>"
             body = body.replace(/u'/g,"'").replace(/ /g,'')
             body = eval('('+body.substring(3,body.length-4)+')')
             console.log(body);
+            if(body.pos&&body.send_msg){         //收到聊天消息  {pos:'W',send_msg:'msg'}
+                const elMsg = document.querySelector('#message')
+                elMsg.innerHTML = 
+                    elMsg.innerHTML+ "<div>" + body.pos + ' : ' + body.send_msg + "</div>" 
+            }
             if(body.board_id&&body.name&&body.pos&&body.number){  //收到叫牌消息   {board_id: 44, number: 1, name: '1S', pos: 'S'}
                 let nextBidder = Table.seats[this.state.userdir.indexOf(body.pos)+1]||Table.seats[this.state.userdir.indexOf(body.pos)-3]
                 this.timing(nextBidder,10,()=>{})    
-				this.call(body.pos,body.name)
-				this.setState({
-					bidCard:body.name,
-					calldata:this.state.calldata
-				});
-				body.name==='Pass'?this.callResult += 1: this.callResult = 0;
-				if(this.callResult===3){
-					Models.call_result(this.sucCall,this.failCall,this.board_id,this.channel_id);
-					this.setState({
-						scene:0
+                this.call(body.pos,body.name)
+                this.setState({
+                    bidCard:body.name,
+                    calldata:this.state.calldata
+                });
+                body.name==='Pass'?this.callResult ++ : this.callResult = 0;
+                if(this.callResult===3){
+                    Models.call_result(this.sucCall,this.failCall,this.board_id,this.channel_id);
+                    this.setState({
+                        scene:0
                     })
                     this.callResult=0
-				}
+                }
 			}
 			if(body.dummy&&body.openlead&&body.declarer){   //收到叫牌结果信息   {dummy:'N',openlead:'W',declarer:'S',nextplayer:'W',contract:'1S'}
                 this.timing(Table.seats[this.state.userdir.indexOf(body.openlead)],10,()=>{});        
@@ -264,13 +279,19 @@ class Table extends Component {
                     ew_win:body.ew_win,
                     ns_win:body.ns_win,
                 })
-                if (this.board.length == 4) setTimeout(this.clearBoard, 1000)
+                if (this.board.length == 4){
+                    this.lastTrickCard = this.board;
+                    setTimeout(this.clearBoard, 1000)
+                } 
                 if(body.number===52){
                     if(this.board_id_list.indexOf(this.board_id)<=this.board_id_list.length-1){
                         Models.board_points(this.sucBoardPoints,this.failBoardPoints,this.board_id)
                     }
                 }
-            }    
+            }  
+            if(body.pos&&body.num&&body,board){   //收到claim消息  {pos:'W', num:3, board:['SQ','ST']}
+                //处理claim消息
+            }  
         }
         Models.polling(this.sucPolling,this.failPolling,this.pollingId)
     }
@@ -282,7 +303,7 @@ class Table extends Component {
     failBoardPoints=()=>{console.log('fail Board points')}
 
     bidCall=(card)=>{
-		console.log(card)
+        console.log(card)
         Models.bid(this.sucBid,this.failBid,this.board_id,this.myseat,card,this.channel_id);
     }
     sucBid=(data)=>{console.log(data)}
@@ -368,8 +389,8 @@ class Table extends Component {
                 }
             });
         });
-        console.log('cards.......333.............')
-        console.log(cards)
+        // console.log('cards.......333.............')
+        // console.log(cards)
         return cards;
     }
     /**
@@ -446,6 +467,7 @@ class Table extends Component {
             Models.play(this.sucPlay,this.failPlay,this.board_id,this.myseat,card,this.channel_id);
             // this.board.push(item);
             // //console.log(this.board)
+            // console.log(item)
             // item['animation']['left'] = this.seat[item.seat][1].x;
             // item['animation']['top'] = this.seat[item.seat][1].y;
             // item['animation']['delay'] = 0;
@@ -459,6 +481,42 @@ class Table extends Component {
     }
     sucPlay=(data)=>{console.log(data)}
     failPlay=()=>{console.log('fail play')}
+
+
+        /**
+     * 考虑增加参数为 seat
+     */
+    claim = () =>{
+        this.setState({
+            scene:3
+        })
+    }
+    handleClaim = (data) =>{
+        Models.claim1(this.sucClaim,this.failClaim,this.board_id,this.myseat,data,this.channel_id);
+        console.log(data)
+        console.log('发送　claim 请求。')
+        console.log('接收到，同意设置　scene=4,不同意，设置为２')
+    }
+    cancelClaim = ()=>{
+        this.setState({
+            scene:2
+        })
+    }
+    /**
+     * 接受一个编号。
+     */
+    handleReady = (se) => {
+        const seat = Table.seats[se];
+        // this.state.user[seat].ready = 1;
+        // if (this._userAllReady()) {
+        //     this.state.scene = 1;
+        //     this.deal(); // 这里也有 setState 但是 它是异步的。只执行一次
+        // }
+        this.setState({
+            user: this.state.user,
+            scene: this.state.scene
+        })
+    }
     /**
      * 发牌
      */
@@ -589,7 +647,6 @@ class Table extends Component {
     }
 
     showResult = (data) => {
-        // const result = Models.getResult();
         let result = null ;
         data.ew_points?result = data.result+'  EW '+data.ew_points:result = data.result+'  NS '+data.ns_points;
         const re = <div className='result' style={this.css.result}>
@@ -635,34 +692,41 @@ class Table extends Component {
      */
     lastTrick = () => {
         // 在模型里 应该先判断当前 trick 编号。然后决定是否能看lasttrick
-        let show = true;
-        if(this.state.lastTrick) show = false;
-        //this.state.lastTrick = !this.state.lastTrick;
+        if(this.lastTrickCard){
+            let show = true;
+            if(this.state.lastTrick) show = false;
+            //this.state.lastTrick = !this.state.lastTrick;
 
-        //const show = true
-        const lt = Models.lastTrick();
-        let card = null;
-        lt.forEach((item, index) => {
-            card = this._cardIndexOf(item.index)
-            //card.size = card.size * 0.8
-            card['animation']['left'] = (show == true) ?
-                this.seat[Table.seats[index]][1].x - this.width / 2.9
-                : this.width / 2;
-            card['animation']['top'] = (show == true) ?
-                this.seat[Table.seats[index]][1].y - this.width / 2.9
-                : -this.width * 2;
-            //card['size'] = card['size'] * 0.7
-            // card['animation']['rotate'] = 180;
-            // card['position']['x'] = this.seat[Table.seats[index]][1].x;
-            // card['position']['y'] = this.seat[Table.seats[index]][1].y;
-            //card['animation'] = ''
-            //card['animation']['delay'] = 0;
-            card.active = 1; // 测试用
-        })
-        this.setState({
-            cards: this.state.cards,
-            lastTrick:!this.state.lastTrick
-        })
+            //const show = true
+            const lt = this.lastTrickCard;
+            // const lt = Models.lastTrick();
+            let card = null;
+            // if(this.lastTrickCard)
+            lt.forEach((item, index) => {
+                card = this._cardIndexOf(item.index)
+                //card.size = card.size * 0.8
+                card['animation']['left'] = (show == true) ?
+                    this.seat[Table.seats[index]][1].x - this.width / 2.9
+                    : this.width / 2;
+                card['animation']['top'] = (show == true) ?
+                    this.seat[Table.seats[index]][1].y - this.width / 2.9
+                    : -this.width * 2;
+                card['zIndex']=this.zindex++
+                // item1['zIndex'] = this.zindex++
+                //card['size'] = card['size'] * 0.7
+                // card['animation']['rotate'] = 180;
+                // card['position']['x'] = this.seat[Table.seats[index]][1].x;
+                // card['position']['y'] = this.seat[Table.seats[index]][1].y;
+                //card['animation'] = ''
+                //card['animation']['delay'] = 0;
+                card.active = 1; // 测试用
+            })
+            this.setState({
+                cards: this.state.cards,
+                lastTrick:!this.state.lastTrick
+            })
+        }
+        
 
     }
     call = (seat,bid) =>{
@@ -687,6 +751,17 @@ class Table extends Component {
         setTimeout(login.bind(this, 'west', '王五'), 3000)
         setTimeout(login.bind(this, 'north', '赵六'), 4000)
     }
+
+    testChat = () => {
+        const elSay = document.querySelector('#say')
+        const msg ={
+            pos:this.myseat,
+            send_msg:elSay.value
+        }
+        Models.send_message(this.sucSend,this.failSend,this.channel_id,msg);
+    }
+    sucSend=(data)=>{console.log(data)}
+    failSend=()=>{console.log('fail send')}
 /**
      * 叫牌测试
      */
@@ -702,8 +777,8 @@ class Table extends Component {
         bids.forEach((item)=>{
             this.call(item.seat,item.bid)
         })
-        console.log('calldata111....')
-        console.log(this.state.calldata)
+        // console.log('calldata111....')
+        // console.log(this.state.calldata)
         this.setState({
             calldata:this.state.calldata
         })
@@ -713,6 +788,7 @@ class Table extends Component {
      * 测试上以墩牌的显示
      */
     testLastTrick = () => {
+        console.log('last trick')
         this.lastTrick();
         // if(this._showLastTrick) this._showLastTrick = false;
         // else this._showLastTrick = true;
@@ -724,7 +800,7 @@ class Table extends Component {
      * 修改 seat 方位可以打开不同方位的牌。
      */
     testDummy = (seat1,dummycards) => {
-		console.log(this.state.cards)
+		// console.log(this.state.cards)
         const seat = seat1;
         let index = 0
         const dCards = dummycards.split('.');
@@ -742,9 +818,16 @@ class Table extends Component {
         this.setState({
             cards: this.state.cards
         })
-        console.log('openDummy..............')
-        console.log(this.state.cards)
+        // console.log('openDummy..............')
+        // console.log(this.state.cards)
 
+    }
+
+    openDebug = () =>{
+        this.setState({
+            debug:!this.state.debug
+        })
+        console.log(this.state.debug)
     }
 
     test3 = () => {
@@ -777,23 +860,24 @@ class Table extends Component {
      * 测试出牌
      * 简单测试，已无实际用途。
      */
-    test1 = () => {
-        const cards = this.state.cards;
-        cards[0][0].animation = {
-            top: 200,
-            left: 200,
-        }
-        this.setState({
-            cards: cards
-        })
-    }
-    testBid = () => {
-        this.setState({
-            scene: !this.state.scene
-        })
-    }
+    // test1 = () => {
+    //     const cards = this.state.cards;
+    //     cards[0][0].animation = {
+    //         top: 200,
+    //         left: 200,
+    //     }
+    //     this.setState({
+    //         cards: cards
+    //     })
+    // }
+    // testBid = () => {
+    //     this.setState({
+    //         scene: !this.state.scene
+    //     })
+    // }
     render() {
         const css = this.css;
+        // const stat = Object.values(this.state.user).map(e => e.ready)
         // cards 从 state.cards 遍历获得。不要重复构造，而所有操作只操作数据。
         const cards = this.state.cards.map((item1, index1) => {
             return item1.map((item2, index2) => {
@@ -835,36 +919,29 @@ class Table extends Component {
              */
             <div>
                 <div id='table' className='table' style={css.table}>
-                    {/*<div id='header' className='header' style={css.header}>
-                        <div className='re' style={css.re}>分数</div>
-                        <div className='re' style={css.re}>方位</div>
-                        <div className='re' style={css.re}>墩数</div>
-                        <div className='re' id='lastTrick' style={css.re}>上墩牌</div>
-                        <div className='re' id='result' style={css.re}>结果</div>
-                    </div>*/}
                     <div id='header' className='header' style={css.header}>
                         <div className='re' style={css.re}><Imps /></div>
-                        <div className='re' style={css.re}>
+                        <div className='re' style={css.re}  onClick={this.openDebug}>
                         <Seats 
                         dealer={Table.seats[this.state.userdir.indexOf(this.dealer)]} 
                         board_id={this.board_id_list?this.board_id_list.indexOf(this.board_id)+1:null}
                         />
                         </div>
-                        <div className='re' style={css.re}>
+                        <div className='re' style={css.re} onClick={this.lastTrick}>
                         <Tricks 
-                        onClick={this.testLastTrick}
                         contract={this.state.contract}
                         declarer={this.state.declarer}
                         vertical={this.myseat==='N'||this.myseat==='S'?this.state.ns_win:this.state.ew_win}
                         transverse={this.myseat==='N'||this.myseat==='S'?this.state.ew_win:this.state.ns_win}
                         />
                         </div>
+                        {this.state.declarer===this.myseat?<button onTouchEnd={this.claim} className="claimbtn">摊牌</button>:null}
+                        {/* <button onTouchEnd={this.claim} className="claimbtn">摊牌</button> */}
                         {/*<div className='re' id='lastTrick' style={css.re}>上墩牌</div>*/}
                         <div id='result' style={css.re}>结果</div> 
                     </div>
                     <div id='body' className='body' style={css.body}>
-                        {/* {this.state.lastTrick ? <div id='lastTrick' className='lastTrick'></div> : null} */}
-                        <div id='clock'></div>
+                        {this.state.lastTrick ? <div id='lastTrick' className='lastTrick'></div> : null}
                         {(this.state.scene == 1) ?
                             <div className='panel' style={css.panel}>
 								<BidPanel 
@@ -874,6 +951,9 @@ class Table extends Component {
 								/>
                             </div> : null
                         }
+                        {this.state.scene==3 ? <Claim number='8' onSubmit={this.handleClaim} cancelClaim={this.cancelClaim} /> : null}
+                        {/* {this.state.scene==3 ? <Claim number='8' myclaim={this.claimseat==this.myseat} onSubmit={this.handleClaim} /> : null} */}
+                        <div id='clock'></div>
                         <div id='east' className='east' style={css.east} ref={this.ref.east}>east</div>
                         <div id='west' className='west' style={css.west} ref={this.ref.west}>west</div>
                         <div id='south' className='south' style={css.south} ref={this.ref.south}>south</div>
@@ -891,27 +971,17 @@ class Table extends Component {
                             <div className='userTag'><div className='seat'>
                                 {Table.seatscn[Table.seats.indexOf(this._shift('north'))]}:
                             {this.state.user[this._shift('north')]}</div></div>
+                            {this.state.scene == 0 ? <Prepare ready={this.handleReady} /> : null}
+                            {/* {this.state.scene == 0 ? <Prepare stat={stat} ready={this.handleReady} /> : null} */}
                         </div>
                         {cards}
                     </div>
-                    <button onClick={this.testUsersReady}>登录</button>
-                    <button onClick={this.deal}>发牌</button>
-                    <button onClick={this.test1}>出牌</button>
-                    <button onClick={this.testActive}>阻止出牌</button>
-                    <button onClick={this.test3}>清理桌面</button>
-                    <br />
-                    <button onClick={this.testDummy.bind(this, 'east')}>明手东</button>
-                    <button onClick={this.testDummy.bind(this, 'west')}>明手西</button>
-                    <button onClick={this.testDummy.bind(this, 'north')}>明手北</button>
-                    <br />
-                    <button onClick={this.testBid}>显示叫牌</button>
-                    <button onClick={this.testBid1}>叫牌</button>
-                    <button onClick={this.testClock}>倒计时</button>
-                    <button onClick={this.testLastTrick}>上一墩牌</button>
-                    <br />
-                    <button onClick={this.showResult}>显示结果</button>
-                    <div id='test' style={{ position: 'relative' }}>测试区域</div>
-                    <div id='footer' className='footer' style={css.footer}>footer</div>
+                    {this.state.debug ? <Debug o={this} /> : null}
+                    <div id='message' className='message'></div>
+                    <div id='footer' className='footer' style={css.footer}>
+                        <input id='say' type='text' />
+                        <input type='button' value='发送' onClick={this.testChat} />
+                    </div>
                 </div>
             </div >
         );

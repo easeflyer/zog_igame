@@ -52,6 +52,21 @@ class Models{
         const  board= new Board(success,error); 
         board.board_points(board_id);
     }
+
+    static table_points=(success,error,table_id)=>{
+        const  board= new Board(success,error); 
+        board.table_points(1);   //params: [table_id]
+    }
+    static claim1=(success,error,board_id,pos,num,channel_id)=>{
+        const  board= new Board(success,error); 
+        board.claim1(board_id,pos,num,channel_id);   //params: [table_id]
+    }
+
+    static send_message=(success,error,channel_id,msg)=>{
+        const  board= new Board(success,error); 
+        board.send_message(channel_id,msg);   //params: [table_id]
+    }
+    
     
 
     /**

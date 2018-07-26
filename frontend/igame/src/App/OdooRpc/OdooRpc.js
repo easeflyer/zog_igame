@@ -14,14 +14,14 @@ class OdooRpc {
         return OdooRpc.models;
     }
     jsonrpc(url,data){
-        // console.log(url)
+        console.log(url)
         const data1 = {
             "jsonrpc":"2.0",
             "method":"call",
             "id":Math.floor(Math.random()*100),
             "params":data
         }
-        // console.log(data1)
+        console.log(data1)
         fetch(url,{
             method:'POST',
             body:JSON.stringify(data1),

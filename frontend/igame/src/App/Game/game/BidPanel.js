@@ -35,7 +35,7 @@ class BidPanel extends Component {
     //     this.width = this.ref.current.clientWidth;
     // }
     componentWillReceiveProps(newProps){
-        console.log(newProps)
+        // console.log(newProps)
         const bidblocks = this.state.bidblocks;
         if(newProps.bidCard){
             bidblocks.map((item1, i1) => item1.map((item2, i2) => {
@@ -59,6 +59,7 @@ class BidPanel extends Component {
      */
     handleCall = (item) => {
         console.log(item)
+        console.log(11111111111)
         this.props.bidCall(item.name);
         // const bidblocks = this.state.bidblocks;
         // for (let i = 0; i < bidblocks.length; i++) {

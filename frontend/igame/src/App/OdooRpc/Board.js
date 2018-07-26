@@ -57,4 +57,12 @@ export default class Board extends Models {
             ]
          */
     }
+
+    claim1(...data){   //claim
+        this.exec('claim1',{},...data);
+    }
+
+    send_message(...data){
+        this.exec('send_message',{},...data);
+    }
 }

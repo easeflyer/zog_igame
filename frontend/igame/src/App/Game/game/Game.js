@@ -31,6 +31,9 @@ class Game extends Component {
             scene:1
         })
     }
+    componentDidMount(){
+        this.props.setHiddenState(true);
+    }
     render(){
         return(
             <div>

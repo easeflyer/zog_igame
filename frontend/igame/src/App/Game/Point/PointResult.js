@@ -4,6 +4,7 @@ import {WingBlank,NavBar,Icon,WhiteSpace} from 'antd-mobile'
 import '../table.css'
 import Board from '../../OdooRpc/Board'
 import PointDetail from './PointDetail';
+import Models from '../Models/model'
 const columns = [{
     title: '副数',
     dataIndex: 'number',
@@ -49,16 +50,13 @@ export default class PointResult extends React.Component{
 	}
 	componentDidMount(){
 			dataSource=[];
-			const  board= new Board(this.sucResult,this.failResult); 
-			board.table_points(1);   //params: [table_id]
+			Models.table_points(this.sucResult,this.failResult,1)
 	}
 	sucResult=(data)=>{
 		this.setState({
-			result:data
+			result:data.reverse()
 		})
-		console.log(data)
-		console.log(this.state.result)
-		data.map((item,index)=>{
+		data.reverse().map((item,index)=>{
 			dataSource.push({
 				key: index,
 				number:index+1,
