@@ -6,6 +6,7 @@ import BidPanel from './BidPanel'
 import Clock from './Clock'
 import { Imps, Seats, Tricks } from './Headers'
 import Prepare from './Prepare'
+import Claim from './Claim'
 import Debug from './Debug'
 import './Table.css'
 import Models from '../models/model'
@@ -17,7 +18,7 @@ import Models from '../models/model'
 class Table extends Component {
     state = {
         cards: null, // 考虑这里不用 cards 只用必要的数字
-        scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段
+        scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
         calldata: [],
         user: {
             east: { ready: 0, name: null }, south: { ready: 0, name: null },
@@ -115,6 +116,7 @@ class Table extends Component {
         //                 ['PASS','PASS','PASS','']]
         this.board = []; // 桌面上的四张牌
         this.cards = [];
+        this.claimseat = 'east'; // east,south...
         this.zindex = 10;
         this.center = null; // 桌子的中心 {x,y}
         this._csize = null; // 牌的大小
@@ -315,7 +317,20 @@ class Table extends Component {
         }
     }
     /**
-     * 接受一个编号。
+     * 考虑增加参数为 seat
+     */
+    claim = () =>{
+        this.setState({
+            scene:3
+        })
+    }
+    handleClaim = () =>{
+        console.log('发送　claim 请求。')
+        console.log('接收到，同意设置　scene=4,不同意，设置为２')
+    }
+    /**
+     * 接受一个用户编号。
+     * 考虑修改为座位
      */
     handleReady = (se) => {
         const seat = Table.seats[se];
@@ -651,8 +666,10 @@ class Table extends Component {
         })
     }
     testBid = () => {
+        if(this.state.scene!=1) this.state.scene = 1;
+        else this.state.scene = 2;
         this.setState({
-            scene: !this.state.scene
+            scene: this.state.scene
         })
     }
     render() {
@@ -707,11 +724,14 @@ class Table extends Component {
                         <div className='re' style={css.re}><Imps /></div>
                         <div onClick={this.openDebug} className='re' style={css.re}><Seats /></div>
                         <div onClick={this.testLastTrick} className='re' style={css.re}><Tricks /></div>
-                        {/* <div className='re' id='lastTrick' style={css.re}>上墩牌</div>
-                        <div className='re' id='result' style={css.re}>结果</div> */}
+                        <button onTouchEnd={this.claim} className="claimbtn">摊牌</button>
+                        {/* <div className='re' id='lastTrick' style={css.re}>上墩牌</div>*/}
+                        {/* 注意比赛结果会挂载到下面的div */}
+                        <div id='result' style={css.re}></div> 
                     </div>
                     <div id='body' className='body' style={css.body}>
                         {this.state.lastTrick ? <div id='lastTrick' className='lastTrick'></div> : null}
+                        {this.state.scene==3 ? <Claim number='8' myclaim={this.claimseat==this.myseat} onSubmit={this.handleClaim} /> : null}
                         <div id='clock'></div>
                         <div id='east' className='east' style={css.east} ref={this.ref.east}></div>
                         <div id='west' className='west' style={css.west} ref={this.ref.west}></div>

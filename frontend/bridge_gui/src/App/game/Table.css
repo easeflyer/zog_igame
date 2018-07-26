@@ -12,8 +12,18 @@
     opacity: 0.5;     */
 }
 .header{
-    
+    position: relative;
 }
+.claimbtn{
+    position: absolute;
+    bottom: 0%;
+}
+.re{
+    background-color: #ee88ee;
+    float: left;
+    margin:2px;
+}
+
 .body{
     position: relative;
     background-image: url(/imgs/bg1.png);
@@ -69,11 +79,6 @@
     position: absolute;
     top: 0;
     /*background-color: #008800*/
-}
-.re{
-    background-color: #ee88ee;
-    float: left;
-    margin:2px;
 }
 .board {
     position: absolute;

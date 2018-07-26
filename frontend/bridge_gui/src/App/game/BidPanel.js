@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import TweenOne from 'rc-tween-one';
 import './BidPanel.css'
-let css1 = {
-    bidpanel: {
-        width: '100%',
-        height: '100%',
-        //fontSize: '22px'
-    },
-}
+// let css1 = {
+//     bidpanel: {
+//         width: '100%',
+//         height: '100%',
+//         //fontSize: '22px'
+//     },
+// }
 
 /**
  * 
@@ -64,7 +64,7 @@ class BidPanel extends Component {
             return <tr key={index}>
                 <td key='0'>{index+1}</td>
                 {item.map((item1,index1)=>(
-                    <td key={index+index1 + 1} style={{width:'20%',height:`${this.width*0.05}px`}}>
+                    <td key={index+index1 + 1} style={{height:`${this.width*0.05}px`}}>
                         {item1?
                             <img className='suit' src={`/cards/bids/${item1}.svg`} />
                             :' '
@@ -74,12 +74,12 @@ class BidPanel extends Component {
             </tr>
         })
         return (
-            <div id='bidpanel' className='bidpanel' style={css1.bidpanel} ref={this.ref}>
+            <div id='bidpanel' className='bidpanel' ref={this.ref}>
                 <div>
                     <table>
                         <thead>
                             <tr>
-                            <td> </td><td>东</td><td>南</td><td>西</td><td>北</td>
+                            <td>&nbsp;</td><td>东</td><td>南</td><td>西</td><td>北</td>
                             </tr>
                         </thead>
                         <tbody>

@@ -27,6 +27,7 @@ todo：登录
 todo:扑克的位置计算：
 todo：庄家显示。
 todo：事件监听机制。
+todo: claim
 
 
 ## 核心分析
