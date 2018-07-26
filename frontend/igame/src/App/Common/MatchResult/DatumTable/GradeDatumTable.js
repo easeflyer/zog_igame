@@ -166,7 +166,7 @@ class GradeDatumTable extends Component {
                     </div>
                     : ''
                 }
-            </div>
+            </div> 
         )
     }
 }
