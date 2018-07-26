@@ -289,7 +289,7 @@ class Table extends Component {
                     }
                 }
             }  
-            if(body.pos&&body.num&&body,board){   //收到claim消息  {pos:'W', num:3, board:['SQ','ST']}
+            if(body.pos&&body.num&&body.board){   //收到claim消息  {pos:'W', num:3, board:['SQ','ST']}
                 //处理claim消息
             }  
         }
