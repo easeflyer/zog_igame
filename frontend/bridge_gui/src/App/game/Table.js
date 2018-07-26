@@ -184,16 +184,22 @@ class Table extends Component {
             this.seat[key][0]['x'] = this.ref[key].current.offsetLeft;
 
             if (key == 'east') {
+                this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.width * 0.06
+                // 下面是处理　牌的叠放顺序　联合参考：dealCards
+                //this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.width * 0.4
                 this.seat[key][1]['y'] = center.y - offset
                 this.seat[key][1]['x'] = center.x - offset
             } else if (key == 'south') {
+                this.seat[key][0]['x'] = this.seat[key][0]['x'] + this.width * 0.21
                 //this.seat[key][1]['y'] = center.y + offset - this.csize / 2;
                 this.seat[key][1]['y'] = center.y - offset
                 this.seat[key][1]['x'] = center.x - this.csize * 0.7 / 2;
             } else if (key == 'west') {
+                this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.width * 0.06
                 this.seat[key][1]['y'] = center.y - offset
                 this.seat[key][1]['x'] = center.x + offset - this.csize;
             } else {
+                this.seat[key][0]['x'] = this.seat[key][0]['x'] + this.width * 0.21
                 this.seat[key][1]['y'] = center.y + offset - this.csize;
                 this.seat[key][1]['x'] = center.x - this.csize * 0.7 / 2;
             }
@@ -319,12 +325,12 @@ class Table extends Component {
     /**
      * 考虑增加参数为 seat
      */
-    claim = () =>{
+    claim = () => {
         this.setState({
-            scene:3
+            scene: 3
         })
     }
-    handleClaim = () =>{
+    handleClaim = () => {
         console.log('发送　claim 请求。')
         console.log('接收到，同意设置　scene=4,不同意，设置为２')
     }
@@ -560,7 +566,7 @@ class Table extends Component {
     testChat = () => {
         const elMsg = document.querySelector('#message')
         const elSay = document.querySelector('#say')
-        elMsg.innerHTML = 
+        elMsg.innerHTML =
             "<div>" + this.myseat + ':' + elSay.value + "</div>" + elMsg.innerHTML
     }
     /**
@@ -620,9 +626,9 @@ class Table extends Component {
         console.log(this.state.cards)
 
     }
-    openDebug = () =>{
+    openDebug = () => {
         this.setState({
-            debug:!this.state.debug
+            debug: !this.state.debug
         })
     }
     test3 = () => {
@@ -666,7 +672,7 @@ class Table extends Component {
         })
     }
     testBid = () => {
-        if(this.state.scene!=1) this.state.scene = 1;
+        if (this.state.scene != 1) this.state.scene = 1;
         else this.state.scene = 2;
         this.setState({
             scene: this.state.scene
@@ -727,11 +733,11 @@ class Table extends Component {
                         <button onTouchEnd={this.claim} className="claimbtn">摊牌</button>
                         {/* <div className='re' id='lastTrick' style={css.re}>上墩牌</div>*/}
                         {/* 注意比赛结果会挂载到下面的div */}
-                        <div id='result' style={css.re}></div> 
+                        <div id='result' style={css.re}></div>
                     </div>
                     <div id='body' className='body' style={css.body}>
                         {this.state.lastTrick ? <div id='lastTrick' className='lastTrick'></div> : null}
-                        {this.state.scene==3 ? <Claim number='8' myclaim={this.claimseat==this.myseat} onSubmit={this.handleClaim} /> : null}
+                        {this.state.scene == 3 ? <Claim number='8' myclaim={this.claimseat == this.myseat} onSubmit={this.handleClaim} /> : null}
                         <div id='clock'></div>
                         <div id='east' className='east' style={css.east} ref={this.ref.east}></div>
                         <div id='west' className='west' style={css.west} ref={this.ref.west}></div>
