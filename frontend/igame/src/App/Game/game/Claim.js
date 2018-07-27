@@ -13,12 +13,13 @@ export default class Claim extends Component {
         value: 0,
         submit: 0
     }
+    componentWillReceiveProps(newProps){
+        console.log(newProps)
+    }
     handleClick = (value) => {
-        console.log('ccc...')
         this.setState({
             value: value
         })
-        console.log(this.state.value)
     }
     handleCancel=()=>{
         this.props.cancelClaim()
@@ -29,8 +30,9 @@ export default class Claim extends Component {
         })
         this.props.onSubmit(this.state.value);
     }
-    handleSubmit1 = () => {
-        
+    handleSubmit1 = (data) => {
+        console.log(data)
+        this.props.onSubmit1(data)
     }
     render() {
         const cblocks = Array(this.props.number / 1).fill('').map((_, index) =>
@@ -45,20 +47,20 @@ export default class Claim extends Component {
             {this.state.submit ?
                 <button  className='waitingClaim' disabled='true' onClick={this.handleSubmit}>等待确认..</button> :
                 <div>
-                    <button className='cancelClaim' onClick={this.handleCancel}>　取 消　</button>
-                    <button className='sureClaim' onClick={this.handleSubmit}>　确 认　</button>
+                    <button className='cancelClaim'  onClick={this.handleCancel}>　取 消　</button>
+                    <button className='sureClaim' disabled={!this.state.value} onClick={this.handleSubmit}>　确 认　</button>
                 </div>
             }
         </div>
         const otherClaim = <div id='otherclaim' className='claim'>
-            别人claim
-            <button onClick={this.handleSubmit}>同意</button>
-            <button onClick={this.handleSubmit}>拒绝</button>
+            庄家 claim {this.props.claimnum?this.props.claimnum.num:null} 墩
+            <button onClick={this.handleSubmit1.bind(this,true)}>同意</button>
+            <button onClick={this.handleSubmit1.bind(this,false)}>拒绝</button>
         </div>
 
         return (
-            // this.props.myclaim ? myClaim : otherClaim
-            myClaim
+            this.props.claimseat===0 ? myClaim : otherClaim
+            // myClaim
         )
     }
 }

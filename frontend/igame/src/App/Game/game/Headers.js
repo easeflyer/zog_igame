@@ -8,7 +8,7 @@ class Imps extends Component {
         return(
             <div className='imps'>
                 <div className='iheader'>IMPs</div>
-                <div className='ibody'>NS:-4.8<br />EW:4.8</div>
+                <div className='ibody'>NS : 0<br />EW : 0</div>
             </div>
         )
     }
