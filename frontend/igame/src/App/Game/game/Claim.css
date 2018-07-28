@@ -38,8 +38,8 @@
     width:30%;
     height:15%;
 }
-#otherclaim.claim button:nth-child(1){ left:18%}
-#otherclaim.claim button:nth-child(2){ left:52%}
+#otherclaim.claim button:nth-child(2){ left:18%}
+#otherclaim.claim button:nth-child(3){ left:52%}
 
 .cblock{
     position: relative;

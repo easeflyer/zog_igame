@@ -30,6 +30,7 @@ class Table extends Component {
         ew_win:null,
         lastTrick:false,
         debug: false,
+        // declarerClaim:null,
     }
     /**
      * 重构参考： 打牌的几个阶段，应该在规则里面，调入进来。
@@ -66,6 +67,7 @@ class Table extends Component {
             body: {
                 width: this.width,
                 height: this.width,
+                // fontSize: this.width * 0.04 + 'px'
             },
             footer: {
                 width: this.width,
@@ -121,14 +123,14 @@ class Table extends Component {
         this.dealer = null;     //发牌人
         this.claimnum = 0;      //claim的墩数、方位、庄家剩余的牌
         this.agreeClaim = 0;    //claim时，对防守方是否同意claim计数
+        this.claimtrick = 13;    //可claim的数目
+        this.playnum = null; //出牌顺序
         this.originData = null; //初始化牌桌时的所有数据
-        this.claimseat = 'S'; // east,south...
+        // this.claimseat = 'S'; // east,south...
         this.board = []; // 桌面上的四张牌
         this.lastTrickCard = [];    //上墩牌
         this.lastTrickPos = [];  //上墩牌的方位
         // this.trickCount = 0;    //墩计数
-        this.claimtrick = 13;    //可claim的数目
-        this.playnum = null; //出牌顺序
         this.cards = [];  //原始牌
         this.zindex = 10;
         this.center = null; // 桌子的中心 {x,y}
@@ -189,10 +191,10 @@ class Table extends Component {
         Models.init_board(this.sucInit,this.failInit,this.board_id,this.channel_id);
         // Models.claim1(this.sucClaim,this.failClaim,this.board_id,'W',3,this.channel_id);
     }
-    sucClaim=(data)=>{
+    sucClaim1=(data)=>{
         console.log(data)
     }
-    failClaim=()=>{console.log('fail claim')}
+    failClaim1=()=>{console.log('fail claim')}
     failChannel=()=>{
         console.log('fail channel')
     }
@@ -214,22 +216,45 @@ class Table extends Component {
         this.transfer(this.myseat);
         this.originData = data;
         if(this.board_id_list.indexOf(this.board_id)>0){
-            this.cards = data.cards.split(' ');
-            this.dealer=data.dealer;
-            this.timing(Table.seats[this.state.userdir.indexOf(data.dealer)],10,()=>{});
-            this.deals = 'XXX.XX.XXXX.XXXX '+ data.cards.split(' ')[Table.dir.indexOf(this.myseat)] +' XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
-            this.state.cards = this.initCards()
-            this.deal();
-            this.setState({scene:1})    
+            this.splitCards(data); 
         }
-        
+        // Models.board_points(this.sucBoardPoints,this.failBoardPoints,this.board_id)
         Models.polling(this.sucPolling,this.failPolling,this.pollingId); 
     }
     failInit=()=>{console.log('fail init')}
 
+    splitCards=(data)=>{
+        this.cards = data.cards.split(' ');
+        this.dealer=data.dealer;
+        this.timing(Table.seats[this.state.userdir.indexOf(data.dealer)],10,()=>{});
+        this.deals = 'XXX.XX.XXXX.XXXX '+ data.cards.split(' ')[Table.dir.indexOf(this.myseat)] +' XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
+        this.state.cards = this.initCards()
+        this.deal();
+        this.setState({scene:1})  
+    }
+
     sucPolling=(data)=>{
+        if(data.length&&this.pollingId===1){
+            let startIndex = null;
+            data.map((item)=>{
+                let body = item.message.body;    //"<p>{'board_id': 44, 'number': 1, 'name': u'1S', 'pos': u'S'}</p>"
+                if(body.indexOf('data-oe-id')>-1){
+                    startIndex = item.id;
+                }
+            })
+            data.map(item=>{
+                if(item.id>startIndex){
+                    let body = item.message.body;    
+                    body = body.replace(/u'/g,"'").replace(/ /g,'');
+                    body = eval('('+body.substring(3,body.length-4)+')')
+                    if(body.pos&&body.iAmReady){   //收到牌手准备就绪的消息
+                        this.validatePrepare(body);
+                    }
+                }
+            })
+        }
         console.log(data)
-        if (data.length && data.slice(-1)[0]['id']!==this.pollingId){
+        if(data.length&&data.slice(-1)[0]['id']!==this.pollingId){
             this.pollingId=data.slice(-1)[0]['id']
             console.log(this.pollingId)
             let body = data[data.length-1].message.body;    //"<p>{'board_id': 44, 'number': 1, 'name': u'1S', 'pos': u'S'}</p>"
@@ -239,7 +264,7 @@ class Table extends Component {
             if(body.pos&&body.send_msg){         //收到聊天消息  {pos:'W',send_msg:'msg'}
                 const elMsg = document.querySelector('#message')
                 elMsg.innerHTML = 
-                    elMsg.innerHTML+ "<div>" + body.pos + ' : ' + body.send_msg + "</div>" 
+                    "<div>" + body.pos + ' : ' + body.send_msg + "</div>" + elMsg.innerHTML
             }
             if(body.board_id&&body.name&&body.pos&&body.number){  //收到叫牌消息   {board_id: 44, number: 1, name: '1S', pos: 'S'}
                 let nextBidder = Table.seats[this.state.userdir.indexOf(body.pos)+1]||Table.seats[this.state.userdir.indexOf(body.pos)-3]
@@ -324,51 +349,49 @@ class Table extends Component {
                     this.agreeClaim=0;
                     const elMsg = document.querySelector('#message');
                     elMsg.innerHTML = 
-                        elMsg.innerHTML+ "<div>系统消息： " + this.state.user[agreeClaimPos]  + " 拒绝了庄家的claim请求，请继续打牌</div>" 
+                        "<div>系统消息： " + this.state.user[agreeClaimPos]  + " 拒绝了庄家的claim请求，请继续打牌</div>" +  elMsg.innerHTML
                     this.setState({scene:2});
                 }else if(body.agreeClaim==='true'){
                     this.agreeClaim++;
                     const elMsg = document.querySelector('#message');
                     elMsg.innerHTML = 
-                        elMsg.innerHTML+ "<div>系统消息： " + this.state.user[agreeClaimPos]  + " 同意了庄家的claim请求</div>" 
+                         "<div>系统消息： " + this.state.user[agreeClaimPos]  + " 同意了庄家的claim请求</div>" +elMsg.innerHTML
                     if(this.agreeClaim===2){ //调取claim方法
+                        this.agreeClaim=0;
                         this.setState({scene:2});
                         elMsg.innerHTML = 
-                        elMsg.innerHTML+ "<div>系统消息： 庄家claim成功，正在为您计算本副牌成绩...</div>"
-                        Models.board_points(this.sucBoardPoints,this.failBoardPoints,this.board_id)
+                             "<div>系统消息： 庄家claim成功，正在为您计算本副牌成绩...</div>" +elMsg.innerHTML
+                        Models.claim(this.sucClaim,this.failClaim,this.board_id,this.claimnum.pos,this.claimnum.num,this.channel_id);
                     }
                 }
             }
             if(body.pos&&body.iAmReady){   //收到牌手准备就绪的消息
-                const seat = Table.seats[this.state.userdir.indexOf(body.pos)]
-                const readyPos = Table.dirAll[Table.dir.indexOf(body.pos)]
-                const elMsg = document.querySelector('#message')
-                this.state.ready[seat]='ready'
-                this.setState({
-                    ready:this.state.ready
-                });
-                console.log(this.state.ready)
-                elMsg.innerHTML = 
-                    elMsg.innerHTML+ "<div>系统消息： " + this.state.user[readyPos]  + " 已就绪</div>" 
-                let countReady = 0;
-                Table.dirAll.map(item=>{
-                    if(this.state.ready[item]==='ready')countReady+=1
-                    if(countReady===4){
-                        this.cards = this.originData.cards.split(' ');
-                        this.dealer = this.originData.dealer;
-                        this.timing(Table.seats[this.state.userdir.indexOf(this.originData.dealer)],10,()=>{});
-                        this.deals = 'XXX.XX.XXXX.XXXX '+ this.originData.cards.split(' ')[Table.dir.indexOf(this.myseat)] +' XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
-                        this.state.cards = this.initCards()
-                        this.deal();
-                        this.setState({scene:1})    
-                    }
-                })
+                this.validatePrepare(body)
             }
         }
+        
         Models.polling(this.sucPolling,this.failPolling,this.pollingId)
     }
     failPolling=()=>{console.log('fail polling')}
-
+    validatePrepare=(body)=>{
+        const seat = Table.seats[this.state.userdir.indexOf(body.pos)]
+        const readyPos = Table.dirAll[Table.dir.indexOf(body.pos)]
+        const elMsg = document.querySelector('#message')
+        this.state.ready[seat]='ready'
+        this.setState({
+            ready:this.state.ready
+        });
+        console.log(this.state.ready)
+        elMsg.innerHTML = 
+           "<div>系统消息： " + this.state.user[readyPos]  + " 已就绪</div>" + elMsg.innerHTML
+        let countReady = 0;
+        Table.dirAll.map(item=>{
+            if(this.state.ready[item]==='ready')countReady+=1
+            if(countReady===4){
+                this.splitCards(this.originData)
+            }
+        })
+    }
     sucBoardPoints=(data)=>{
         this.showResult(data);
     }
@@ -382,7 +405,12 @@ class Table extends Component {
 	failBid=()=>{console.log('fail bid')}
 
 	sucCall = (data)=>{console.log(data)}
-	failCall=()=>{console.log('fail call')}
+    failCall=()=>{console.log('fail call')}
+    
+    sucClaim=(data)=>{
+        Models.board_points(this.sucBoardPoints,this.failBoardPoints,this.board_id);
+    }
+    failClaim=()=>{}
 	
 	transfer=(pos)=>{
 		if(pos==='N')this.setState({userdir:['W','N','E','S']})
@@ -408,24 +436,28 @@ class Table extends Component {
         center.y = this.ref.board.current.offsetLeft +
             parseInt(this.ref.board.current.style.width.slice(0, -2)) / 2
         this.center = center;
-        // console.log('center......')
-        // console.log(center)
+
         const offset = this.csize * 0.7 / 2
         for (let key in this.seat) {
             this.seat[key][0]['y'] = this.ref[key].current.offsetTop;
             this.seat[key][0]['x'] = this.ref[key].current.offsetLeft;
-
             if (key == 'east') {
+                this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.width * 0.06
+                // 下面是处理　牌的叠放顺序　联合参考：dealCards
+                //this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.width * 0.4
                 this.seat[key][1]['y'] = center.y - offset
                 this.seat[key][1]['x'] = center.x - offset
             } else if (key == 'south') {
+                this.seat[key][0]['x'] = this.seat[key][0]['x'] + this.width * 0.21
                 //this.seat[key][1]['y'] = center.y + offset - this.csize / 2;
                 this.seat[key][1]['y'] = center.y - offset
                 this.seat[key][1]['x'] = center.x - this.csize * 0.7 / 2;
             } else if (key == 'west') {
+                this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.width * 0.06
                 this.seat[key][1]['y'] = center.y - offset
                 this.seat[key][1]['x'] = center.x + offset - this.csize;
             } else {
+                this.seat[key][0]['x'] = this.seat[key][0]['x'] + this.width * 0.21
                 this.seat[key][1]['y'] = center.y + offset - this.csize;
                 this.seat[key][1]['x'] = center.x - this.csize * 0.7 / 2;
             }
@@ -474,6 +506,7 @@ class Table extends Component {
         //if(this.board.length < 4) return false;
         const board = this.board;
         for (let i = 0; i < board.length; i++) {
+            console.log(board)
             board[i].animation.left = this.width / 2;
             board[i].animation.top = -this.width * 2;
             //board[i].animation.rotate = 0;
@@ -483,7 +516,7 @@ class Table extends Component {
         }
         this.setState({
             cards: this.state.cards
-        }, () => {this.board = [];this.lastTrickPos = [];})
+        }, () => {this.board = [];this.lastTrickPos=[]});
     }
 
 
@@ -537,18 +570,6 @@ class Table extends Component {
         return () => {
             const card = item.card.split('')[1]+item.card.split('')[0];
             Models.play(this.sucPlay,this.failPlay,this.board_id,this.myseat,card,this.channel_id);
-            // this.board.push(item);
-            // //console.log(this.board)
-            // console.log(item)
-            // item['animation']['left'] = this.seat[item.seat][1].x;
-            // item['animation']['top'] = this.seat[item.seat][1].y;
-            // item['animation']['delay'] = 0;
-            // item['zIndex'] = this.zindex++
-            // this.setState({
-            //     cards: this.state.cards
-            // })
-
-            // if (this.board.length == 4) setTimeout(this.clearBoard, 1000)
         }
     }
     sucPlay=(data)=>{console.log(data)}
@@ -564,7 +585,7 @@ class Table extends Component {
         })
     }
     handleClaim = (data) =>{
-        Models.claim1(this.sucClaim,this.failClaim,this.board_id,this.myseat,data,this.channel_id);
+        Models.claim1(this.sucClaim1,this.failClaim1,this.board_id,this.myseat,data,this.channel_id);
         console.log(data)
         console.log('发送　claim 请求。')
     }
@@ -710,10 +731,6 @@ class Table extends Component {
                 animation={{
                     rotate: `${rotate}`
                 }}
-            // position={{
-            //     x:this.seat[Table.seats[index]][1].x,
-            //     y:this.seat[Table.seats[index]][1].y
-            // }}
             />
         }
         )
@@ -726,6 +743,15 @@ class Table extends Component {
 
     showResult = (data) => {
         let result = null ;
+        this.state.cards.map(itemSeat=>{
+            itemSeat.map(item=>{
+                item.position.x = this.width / 2;
+                item.position.y = -this.width / 2;
+                // board[i].animation.left = this.width / 2;
+        // board[i].animation.top = -this.width * 2;
+            })
+        })
+        this.setState({cards:this.state.cards})
         data.ew_points?result = data.result+'  EW '+data.ew_points:result = data.result+'  NS '+data.ns_points;
         const re = <div className='result' style={this.css.result}>
             <img src='/cards/medal.svg' width="20%" />
@@ -742,12 +768,10 @@ class Table extends Component {
     hideResult = () => {
         if(this.board_id_list.indexOf(this.board_id)<this.board_id_list.length-1){
             this.setState({
-                // cards: null, // 考虑这里不用 cards 只用必要的数字 ,方位按照Table.seats
+                // cards:this.state.cards,
                 scene: 1,    // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
                 calldata:[],
                 bidCard: null,
-                // user: { east: null, south: null, west: null, north: null },
-                // ready:{east: null, south: null, west: null, north: null },
                 userdir:[],
                 contract:null,
                 declarer:null,
@@ -756,9 +780,14 @@ class Table extends Component {
                 lastTrick:false,
                 debug: false,
             })
+            this.claimnum = 0;      //claim的墩数、方位、庄家剩余的牌
+            this.agreeClaim = 0;    //claim时，对防守方是否同意claim计数
+            this.claimtrick = 13;    //可claim的数目
+            this.playnum = null; //出牌顺序
+            this.originData = null;
+            // this.deals = 'XXXXXXXXXXXXX XXXXXXXXXXXXX XXXXXXXXXXXXX XXXXXXXXXXXXX'
+            this.state.cards = this.initCards()
             Models.deals(this.sucChannel,this.failChannel);
-            this._initSeat(); // 初始化 发牌位置 出牌位置等坐标
-            // this.state.cards = this.initCards()
         }
         if(this.board_id_list.indexOf(this.board_id)===this.board_id_list.length-1){
             this.props.toResult();
@@ -1021,9 +1050,10 @@ class Table extends Component {
 								/>
                             </div> : null
                         }
-                        {this.state.scene==3&&this.myseat!==this.state.dummy ? 
+                        {this.state.scene==3 ? 
                         <Claim 
                         claimseat={this.state.declarer===this.myseat?0:2}
+                        isDummy={this.state.dummy===this.myseat}
                         claimnum={this.claimnum}
                         number={this.claimtrick} 
                         onSubmit={this.handleClaim} 

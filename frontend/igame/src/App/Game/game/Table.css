@@ -140,7 +140,8 @@
     width:25%;
 }
 .result > div {
-    width:75%
+    width:75%;
+    font-size:smaller;
 }
 .result > button {
     margin:0
@@ -149,4 +150,5 @@
 .message{
     padding:2%;
     color:#FFFFFF;
+    overflow-y: scroll;
 }

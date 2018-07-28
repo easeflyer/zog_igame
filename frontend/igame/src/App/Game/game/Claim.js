@@ -53,14 +53,14 @@ export default class Claim extends Component {
             }
         </div>
         const otherClaim = <div id='otherclaim' className='claim'>
-            庄家 claim {this.props.claimnum?this.props.claimnum.num:null} 墩
-            <button onClick={this.handleSubmit1.bind(this,true)}>同意</button>
-            <button onClick={this.handleSubmit1.bind(this,false)}>拒绝</button>
+            <span>庄家 claim {this.props.claimnum?this.props.claimnum.num:null} 墩</span>
+            {!this.props.isDummy?<button onClick={this.handleSubmit1.bind(this,true)}>同意</button>:null}
+            {!this.props.isDummy?<button onClick={this.handleSubmit1.bind(this,false)}>拒绝</button>:null}
+            {this.props.isDummy?<p>正在等待防守方同意...</p>:null}
         </div>
 
         return (
             this.props.claimseat===0 ? myClaim : otherClaim
-            // myClaim
         )
     }
 }

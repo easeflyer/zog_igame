@@ -49,6 +49,11 @@ class Models{
         board.claim1(board_id,pos,num,channel_id);   //params: [board_id,pos,num,channel_id]
     }
 
+    static claim=(success,error,board_id,pos,num,channel_id)=>{  //claim
+        const  board= new Board(success,error); 
+        board.claim(board_id,pos,num,channel_id);   //params: [board_id,pos,num,channel_id]
+    }
+
     static send_message=(success,error,channel_id,msg)=>{  //直接向频道发送消息
         const  board= new Board(success,error); 
         board.send_message(channel_id,msg);   //params: [channel_id,msg]
@@ -56,26 +61,27 @@ class Models{
     
     
 
-    /**
-     * 获得明手的牌，根据规则进行判断。
-     * todo:正确的牌
-     */
-    static openDummy(){
-        return {seat:'north',cards:'K.KJT732.964.A52'}
-    }
-    /**
-     * 获得上一墩牌，这里应该进行必要的判断。不能随便获得。
-     * [东，南，西，北]
-     */
-    static lastTrick(){
-        return [{index:1,card:'7S'},
-                {index:14,card:'9S'},
-                {index:28,card:'2S'},
-                {index:41,card:'KS'}]
-    }
-    static getResult(){
-        return "N3D +2 NS 600";
-    }
+    // 
+    // /**
+    //  * 获得明手的牌，根据规则进行判断。
+    //  * todo:正确的牌
+    //  */
+    // static openDummy(){
+    //     return {seat:'north',cards:'K.KJT732.964.A52'}
+    // }
+    // /**
+    //  * 获得上一墩牌，这里应该进行必要的判断。不能随便获得。
+    //  * [东，南，西，北]
+    //  */
+    // static lastTrick(){
+    //     return [{index:1,card:'7S'},
+    //             {index:14,card:'9S'},
+    //             {index:28,card:'2S'},
+    //             {index:41,card:'KS'}]
+    // }
+    // static getResult(){
+    //     return "N3D +2 NS 600";
+    // }
 }
 
 export default Models

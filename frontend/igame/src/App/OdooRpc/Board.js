@@ -73,13 +73,23 @@ export default class Board extends Models {
          */
     }
 
-    claim1(...data){   //庄家发送claim 请求
+    claim1(...data){   //庄家发送claim消息
         this.exec('claim1',{},...data);
         /*
          * params:[board_id,pos,num,channel_id]
          * return:[
                  {pos:'W', num:3, board:['SQ','ST']}
                  //claim方位，claim墩数,claim方的牌
+            ]
+         */
+    }
+
+    claim(...data){   //claim
+        this.exec('claim',{},...data);
+        /*
+         * params:[board_id,pos,num,channel_id]
+         * return:[
+                 
             ]
          */
     }
