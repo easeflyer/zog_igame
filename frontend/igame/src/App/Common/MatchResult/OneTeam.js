@@ -31,7 +31,7 @@ export default class OneTeam extends React.Component {
 
         // {0: 5, name: "W", round: 0, 5.0: 15}
         let data = this.state.data
-       
+
         return (
             <div>
                 <NavBar
@@ -45,6 +45,7 @@ export default class OneTeam extends React.Component {
                     rowKey={row => { console.log(row) }}
                     columns={columns}
                     dataSource={data}
+                    pagination={false}
                 />
                 <h1>赛事名称：{this.props.match.name}</h1>
                 <h1>赛事ID：{this.props.match.id}</h1>

@@ -140,7 +140,7 @@ class TotalTable extends Component {
         return (
             <div>
                 <table
-                 className="impsTable">
+                    className="impsTable">
                     <tbody>
                         <tr>
                             <td>IMPs</td>
@@ -158,6 +158,7 @@ class TotalTable extends Component {
                     columns={columns}
                     dataSource={datas}
                     bordered
+                    pagination={false}
                 />
             </div>
         )

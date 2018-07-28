@@ -99,8 +99,8 @@ export default class OneCourseResult extends React.Component {
         //     { namtch_id:5, round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 5, IMPS: { host_imp: 0.00, guest_imp: 0.00 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "dsae", host_id: 9, guest_name: "j", guest_id: 0 } }
         // ]
         let setDealNumber = data[0].deal.map(
-            (value,index,array)=>{
-                return <a key={index} style={{ margin: '0px 5px' }} onClick={ ()=>this.toOneBoard([value,array,index+1]) } >{index+1}</a>
+            (value, index, array) => {
+                return <a key={index} style={{ margin: '0px 5px' }} onClick={() => this.toOneBoard([value, array, index + 1])} >{index + 1}</a>
             }
         )
         // let setDealNumber = length => Array.from({ length }, (v, k) => <a style={{ margin: '0px 5px' }} key={k + 1} onClick={() => this.toOneBoard(k + 1)} >{k + 1}</a>)
@@ -233,6 +233,7 @@ export default class OneCourseResult extends React.Component {
                     bordered
                     columns={columns}
                     dataSource={this.state.data}
+                    pagination={false}
                 />
                 <ul>
                     <li>点击桌号 查看计分表</li>
