@@ -11,6 +11,8 @@ export default class Datum extends React.Component {
         guest: null,
         gradeArr: null,
         directionArr: null,
+        match_ids: this.props.match_ids[1],
+        match_id: this.props.match_ids[0]
     })
     componentWillMount() {
         //***********接口方法调用**************
@@ -25,46 +27,43 @@ export default class Datum extends React.Component {
     }
 
     gerUpDatas = (index) => {
-        //升序排序
-        let tableNum = 1;
-        const match_ids = index.sort();
-        if (this.state.tableNum) {
-            tableNum = this.state.tableNum;
-        }
-        let tablleArr = []
-        //整合桌号和match_id
-        match_ids.map((child, index) => {
-            tablleArr[index] = { tableNum: tableNum, match_ids: child }
-            tableNum + 1
+        let number = null;
+        let id = null;
+        this.state.match_ids.forEach((v, i, a) => {
+            if (v === index && a[i - 1]) {
+                number = this.state.tableNum - 1;
+                id = a[i - 1];
+            }
         })
-        if (tableNum >= 0) {
+        if (id) {
             this.setState({
-                tableNum: tableNum - 1
+                tableNum: number,
+                match_id: id,
             })
+            const m = new Game((data) => this.success(data), () => console.log('没有拿数据'));
+            m.round_deal_info(this.props.match.id, this.props.thisOneRound[0], this.state.match_id)
         } else {
-            return Toast.info('已经是最后一轮了！')
+            return Toast.info('已经是第一桌了！')
         }
-
     }
     gerDownDatas = (index) => {
-        //升序排序
-        const match_ids = index.sort();
-        let tableNum = 1;
-        if (this.state.tableNum.table_num) {
-            tableNum = this.state.tableNum.table_num;
-        }
-        let tablleArr = []
-        //整合桌号和match_id
-        match_ids.map((child, index) => {
-            tablleArr[index] = { tableNum: tableNum, match_ids: child }
-            tableNum + 1
+        let number = null;
+        let id = null;
+        this.state.match_ids.forEach((v, i, a) => {
+            if (v === index && a[i + 1]) {
+                number = this.state.tableNum - 1;
+                id = a[i + 1];
+            }
         })
-        if (tableNum <= match_ids.length) {
+        if (id) {
             this.setState({
-                tableNum: tableNum + 1
+                tableNum: number,
+                match_id: id,
             })
+            const m = new Game((data) => this.success(data), () => console.log('没有拿数据'));
+            m.round_deal_info(this.props.match.id, this.props.thisOneRound[0], this.state.match_id)
         } else {
-            return Toast.info('已经是第一轮了！')
+            return Toast.info('已经是最后一桌了！')
         }
     }
     success = (data) => {
@@ -113,7 +112,7 @@ export default class Datum extends React.Component {
                     onLeftClick={() => this.props.showPage('OneCourseResult')}    //到一轮结果
                 >排位赛第{table_num}桌
                 <div style={{ width: 35 }} >
-                        <Icon type="caret-up" style={{ fontSize: 5, display: 'block' }} onClick={() => this.gerUpDatas(this.props.match_ids[1])} />
+                        <Icon type="caret-up" style={{ fontSize: 5, display: 'block' }} onClick={() => this.gerUpDatas(this.props.match_ids[0])} />
                         <Icon type="caret-down" style={{ fontSize: 5, display: 'block' }} onClick={() => this.gerDownDatas(this.state.match_ids[0])} />
                     </div>
                 </NavBar>

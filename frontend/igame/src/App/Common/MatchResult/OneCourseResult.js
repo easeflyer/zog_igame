@@ -89,8 +89,6 @@ export default class OneCourseResult extends React.Component {
         } else {
             return Toast.info('已经是最后一轮了！')
         }
-
-
     }
     success = (data) => {
         // const data = [      //测试数据，连上服务器后更改success方法的参数为data，并注释掉这段数据就好
