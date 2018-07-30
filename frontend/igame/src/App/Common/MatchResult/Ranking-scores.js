@@ -47,9 +47,10 @@ export default class RankingByScores extends React.Component {
             sortOrder: sortedInfo.columnKey === 'rank' && sortedInfo.order
         }
         ];
-        let datas = [{ "win_round": 0, "Penalty": null, "team_number": "1", "IMP.Q": null, "name": "YYY", "band_score": null, "score": 10.0, "average_score_opp": null, "rank": 2 },
-        { "win_round": 0, "Penalty": null, "team_number": "3", "IMP.Q": null, "name": "1", "band_score": null, "score": 10.0, "average_score_opp": null, "rank": 1 },
-        { "win_round": 0, "Penalty": null, "team_number": "2", "IMP.Q": null, "name": "EAM1", "band_score": null, "score": 10.0, "average_score_opp": null, "rank": 3 }];
+        let data = [];
+        if (this.state.data) {
+            data = this.state.data;
+        }
         return (
             <div>
                 <NavBar
@@ -64,7 +65,7 @@ export default class RankingByScores extends React.Component {
                     className='scoresTabls'
                     columns={columns}
                     // dataSource={this.state.data}
-                    dataSource={datas}
+                    dataSource={data}
                     scroll={{ x: 562 }}
                     pagination={false}
                     size="small"
