@@ -12,14 +12,21 @@ export default class MatchResult extends React.Component{
     state={
         // match:this.props.match,     //????????
         show:'OneCourseResult',
-        courseId:this.props.courseId,
+        thisOneRound:this.props.thisOneRound,
+        rounds:this.props.rounds,
         tableNumber:null,
         boardId:null,
         team:null,
+        match_ids:null
     }
-    setCourseId=(index)=>{
+    setMatchIds=(index)=>{
         this.setState({
-            courseId:index,
+            match_ids:index,
+        })
+    }
+    setThisOneRound=(index)=>{
+        this.setState({
+            thisOneRound:index,
         })
     }
     setTableNumber=(index)=>{
@@ -50,10 +57,11 @@ export default class MatchResult extends React.Component{
                 page=<OneCourseResult 
                     showPage={this.showPage}
                     toMatchDetails={this.props.toMatchDetails} 
-                    // match={this.state.match}        //??????????
                     match={this.props.match}                //当前比赛
-                    courseId={this.state.courseId}          //当前轮次ID
-                    setCourseId={this.setCourseId}          //设置轮次ID
+                    thisOneRound={this.state.thisOneRound}  //当前伦次ID和name
+                    rounds={this.state.rounds}              //所有轮次基本信息
+                    setMatchIds={this.setMatchIds}          //设置对抗的match_id
+                    setThisOneRound={this.setThisOneRound}  //设置当前轮次
                     setTableNumber={this.setTableNumber}    //设置桌号
                     setBoardId={this.setBoardId}            //设置牌的ID
                     setTeam={this.setTeam}              //设置队伍ID
@@ -64,35 +72,36 @@ export default class MatchResult extends React.Component{
                     showPage={this.showPage}
                     toMatchDetails={this.props.toMatchDetails} 
                     match={this.props.match}        
-                    courseId={this.state.courseId}
+                    thisOneRound={this.state.thisOneRound}
                 />
                 break;
             case 'Ranking_scores':              //成绩表(按名次)
                 page=<RankingByScores
                     showPage={this.showPage}
                     match={this.props.match}        
-                    courseId={this.state.courseId}
+                    thisOneRound={this.state.thisOneRound}
                 />
                 break;
             case 'Datum':                       //Datum
                 page=<Datum
                     showPage={this.showPage}
-                    match={this.props.match}        
-                    courseId={this.state.courseId}
+                    match={this.props.match}
+                    match_ids={this.state.match_ids}        
+                    thisOneRound={this.state.thisOneRound}
                 />
                 break;
             case 'Ranking_teamNumber':          //成绩表(按赛队序号)
                 page=<RankingByTeamNumber
                     showPage={this.showPage}
                     match={this.props.match}        
-                    courseId={this.state.courseId}
+                    thisOneRound={this.state.thisOneRound}
                 />
                 break;
             case 'OneBoard':                    //一副牌的结果
                 page=<OneBoard
                     showPage={this.showPage}
                     match={this.props.match}        
-                    courseId={this.state.courseId}
+                    thisOneRound={this.state.thisOneRound}
                     boardId={this.state.boardId}
                 />
                 break;
@@ -100,7 +109,7 @@ export default class MatchResult extends React.Component{
                 page=<OneTable
                     showPage={this.showPage}
                     match={this.props.match}        
-                    courseId={this.state.courseId}
+                    thisOneRound={this.state.thisOneRound}
                     tableNumber={this.state.tableNumber}
                 />
                 break;
@@ -108,7 +117,7 @@ export default class MatchResult extends React.Component{
                 page=<OneTeam
                     showPage={this.showPage}
                     match={this.props.match}        
-                    courseId={this.state.courseId}
+                    thisOneRound={this.state.thisOneRound}
                     team={this.state.team}
                 />
                 break;
