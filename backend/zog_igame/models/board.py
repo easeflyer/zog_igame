@@ -205,10 +205,12 @@ class Board(models.Model):
 
         dclr, opp = self.claimer==self.declarer and (fst, scd
                                                ) or (scd, fst)
-        ns, ew = self.declarer in 'NS' and (dclr, opp
+        if self.declarer:
+            ns, ew = self.declarer in 'NS' and (dclr, opp
                                       ) or (opp, dclr)
+        else:
+            ns,ew = 0,0
         return dclr, opp, ns, ew
-
 
     trick_count = fields.Integer(compute='_compute_trick_cnt')
 
@@ -267,6 +269,8 @@ class Board(models.Model):
         if self.contract == PASS:
             return 0, 0, 0
 
+        if not self.declarer:
+            return 0, 0, 0
 
         vs = {  'BO': lambda d: 1,
                 'NO': lambda d: 0,
@@ -280,7 +284,6 @@ class Board(models.Model):
         num = self.result
 
         point = get_point(vul,rank,trump,risk,num)
-
 
         dclr = point > 0 and point or 0
         opp  = point < 0 and -point or 0

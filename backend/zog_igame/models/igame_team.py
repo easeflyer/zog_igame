@@ -69,7 +69,6 @@ class IntelligentGameTeamPlayer(models.Model):
 
     partner_id = fields.Many2one('res.partner', string='Partner', ondelete='restrict')
 
-
     role = fields.Selection([
         ('coach',      'Coach'),
         ('leader',  'Leader'),
