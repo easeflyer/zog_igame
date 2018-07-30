@@ -107,7 +107,5 @@ export default class Board extends Models {
          */
     }
 
-    get_matches(){
-        this.exec('get_matches',{});
-    }
+   
 }

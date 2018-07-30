@@ -115,6 +115,8 @@ class Table extends Component {
         // console.log(this.width * 0.2)
         // this.calldata = [['1C','2C','PASS','PASS'],['3H','PASS','PASS','4NT'],
         //                 ['PASS','PASS','PASS','']]
+        this.table_id_list =null;
+        this.table_id = null;
         this.board_id_list = null;  //牌号列表
         this.board_id = null;   //当前牌号
         this.channel_id = null;     //频道号
@@ -125,6 +127,7 @@ class Table extends Component {
         this.agreeClaim = 0;    //claim时，对防守方是否同意claim计数
         this.claimtrick = 13;    //可claim的数目
         this.playnum = null; //出牌顺序
+        this.playSuit = null;
         this.originData = null; //初始化牌桌时的所有数据
         // this.claimseat = 'S'; // east,south...
         this.board = []; // 桌面上的四张牌
@@ -171,12 +174,18 @@ class Table extends Component {
      * 完成挂载后，要计算 各个位置的坐标。
      */
     componentDidMount() {
-        // Models.get_matches(this.sucGetMatch,this.failGetMatch)
-        Models.join_channel(this.sucChannel,this.failChannel);
-        this._initSeat(); // 初始化 发牌位置 出牌位置等坐标
+        Models.get_matches(this.sucGetMatch,this.failGetMatch)
         //console.log(parseInt(center.y) - parseInt(this.csize) * 0.7 / 2)
     }
-    sucGetMatch=(data)=>{console.log(data)}
+    sucGetMatch=(data)=>{
+        console.log(data)
+        //查询到所有未开始的table_id
+        this.table_id_list = data;
+        this.table_id = data[0];
+        Models.join_channel(this.sucChannel,this.failChannel,this.table_id);
+        this._initSeat(); // 初始化 发牌位置 出牌位置等坐标
+        // this.props.toResult();
+    }
     failGetMatch=()=>{}
     sucChannel=(data)=>{
         console.log(data)
@@ -286,7 +295,7 @@ class Table extends Component {
                 const dummyCards = this.cards[Table.dir.indexOf(body.dummy)];
 				const dummySeat = Table.seats[this.state.userdir.indexOf(body.dummy)]
                 this.testDummy(dummySeat,dummyCards)
-                // this.playRules(body.nextplayer,null);
+                this.playRules(body.nextplayer,null,null);
                 this.setState({
                     cards:this.state.cards,
                     contract:body.contract,
@@ -296,7 +305,10 @@ class Table extends Component {
                 })
             }
             if(body.number&&body.rank&&body.card){   //收到打牌消息 {ns_win:0,number:1,rank:'5',pos:'W',suit:'C',nextplayer:'W',card:'C5',ew_win:0}
-                // this.playRules(body.nextplayer,body.suit);    
+                if(body.number%4===1){
+                    this.playSuit = body.suit;   
+                }
+                this.playRules(body.nextplayer,this.playSuit,body.number);    
                 this.playnum = body.number;
                 if(body.pos===this.state.declarer){this.claimtrick = this.claimtrick-1;}
                 this.timing(Table.seats[this.state.userdir.indexOf(body.nextplayer)],10,()=>{});    
@@ -321,11 +333,7 @@ class Table extends Component {
                     ns_win:body.ns_win,
                 })
                 if (this.board.length == 4){
-                    // this.state.cards.map(item=>{
-                    //     item.map(item1=>{
-                    //         item1.active = 2;
-                    //     })
-                    // })
+                    // this.state.cards.map(item=>{item.map(item1=>{item1.active = 2;}) })
                     this.lastTrickCard = {pos:this.lastTrickPos,card:this.board};
                     setTimeout(this.clearBoard, 1000)
                 } 
@@ -398,7 +406,12 @@ class Table extends Component {
             }
         })
     }
-    playRules=(nextplayer,suit)=>{
+    playRules=(nextplayer,suit,number)=>{
+        //从未打出去的牌中验证打牌规则
+        // item.position.x = this.width / 2;
+                // item.position.y = -this.width / 2;
+                // item1['animation']['left'] = this.seat[item1.seat][1].x;
+                        // item1['animation']['top'] = this.seat[item1.seat][1].y;
         this.state.cards.map(item=>{
             item.map(item1=>{
                 item1.onclick =  () => false;
@@ -406,26 +419,35 @@ class Table extends Component {
             })
         });
         if(nextplayer!==this.state.dummy&&this.myseat===nextplayer){
-            // let haveSuit = 0;
-            // this.state.cards[1].map((item,index)=>{
-            //     item.cards
-            // })
-           this.state.cards[1].map((item,index)=>{
-               if(suit!==null&&suit!==item.card.split('')[1]){
-                   item.active=0;
-                }else{
-                    item.onclick =  this.play(item);
-               }
-           }) 
+            let haveSuit = 0;
+            this.state.cards[1].map((item,index)=>{
+                if(item['animation']['top']===(this.seat['south'][0]['y']+this.width / 16 / 5)){
+                    if(suit!==null&&suit!==item.card.split('')[1]){
+                        item.active=0;
+                    }else{
+                        haveSuit+=1;
+                        item.onclick =  this.play(item);
+                    }
+                }
+                return haveSuit;
+            }) 
+            if(haveSuit===0||number%4===0){this.state.cards[1].map(item=>{item.active=2;item.onclick =  this.play(item);})}
+            console.log(haveSuit);
         }else if(nextplayer===this.state.dummy&&this.myseat===this.state.declarer){
-            console.log(2222222222222)
+    
+            let haveSuit = 0;
             this.state.cards[3].map((item,index)=>{
-                if(suit!==null&&suit!==item.card.split('')[1]){
-                    item.active=0;
-               }else{
-                    item.onclick =  this.play(item);
-               }
+                if(item['animation']['top']===(this.seat['north'][0]['y']+this.width / 16 / 5)){
+                    if(suit!==null&&suit!==item.card.split('')[1]){
+                        item.active=0;
+                    }else{
+                        haveSuit+=1;
+                        item.onclick =  this.play(item);
+                    }
+                }
             })  
+            if(haveSuit===0||number%4===0){this.state.cards[3].map(item=>{item.active=2;item.onclick =  this.play(item);})}
+            console.log(haveSuit);
         }
     }
     sucBoardPoints=(data)=>{
@@ -477,8 +499,8 @@ class Table extends Component {
         for (let key in this.seat) {
             this.seat[key][0]['y'] = this.ref[key].current.offsetTop;
             this.seat[key][0]['x'] = this.ref[key].current.offsetLeft;
-            console.log('seat................')
-            console.log(this.seat)
+            // console.log('seat................')
+            // console.log(this.seat)
             if (key == 'east') {
                 this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.width * 0.06
                 // 下面是处理　牌的叠放顺序　联合参考：dealCards
@@ -592,8 +614,8 @@ class Table extends Component {
                 }
                 //cards[index][index1][index2].rotate = rotate;
                 cards[index][index1].active = 2; // 测试用
-                // cards[index][index1].onclick =  () => false;
-                cards[index][index1].onclick = this.play(item1)
+                cards[index][index1].onclick =  () => false;
+                // cards[index][index1].onclick = this.play(item1)
                 if ('02'.indexOf(index) != -1) y = y + this.csize * 0.15;
                 else x = x + this.csize * 0.2;
 
@@ -612,11 +634,11 @@ class Table extends Component {
         }
     }
     sucPlay=(data)=>{
-        console.log(data)
-        // Models.sendplay(this.sucSearchPlay,this.failSearchPlay,this.board_id,data,this.channel_id);
+        Models.sendplay(this.sucSearchPlay,this.failSearchPlay, this.board_id, data, this.channel_id);
     }
     failPlay=()=>{console.log('fail play')}
-
+    sucSearchPlay=(data)=>{console.log(data)}
+    failSearchPlay=()=>{}
 
     /*
         考虑增加参数为 seat

@@ -1,10 +1,9 @@
 import React from 'react'
 import {Table} from 'antd';
 import {WingBlank,NavBar,Icon,WhiteSpace} from 'antd-mobile'
-import '../table.css'
-import Board from '../../OdooRpc/Board'
-import PointDetail from './PointDetail';
+import './table.css'
 import Models from '../Models/model'
+import './pointResult.css'
 const columns = [{
     title: '副数',
     dataIndex: 'number',
@@ -56,7 +55,8 @@ export default class PointResult extends React.Component{
 		this.setState({
 			result:data.reverse()
 		})
-		data.reverse().map((item,index)=>{
+		data.map((item,index)=>{
+		// data.reverse().map((item,index)=>{
 			dataSource.push({
 				key: index,
 				number:index+1,
@@ -94,7 +94,8 @@ export default class PointResult extends React.Component{
                 onLeftClick={() => console.log('onLeftClick')}
 				>本局累计得分</NavBar>
 				<WhiteSpace/>
-                <Table 
+				<Table 
+				className='pan_pointResultTable'
                 dataSource={dataSource} 
                 columns={columns}
 				size="middle"
@@ -104,6 +105,7 @@ export default class PointResult extends React.Component{
 					  onClick: () => {this.searchResultDetail(record)},       // 点击行
 					};
 				  }}
+				pagination={false}
                 />
 			</WingBlank>
         )

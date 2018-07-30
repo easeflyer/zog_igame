@@ -1,7 +1,7 @@
 import React from 'react'
 import {Table} from 'antd';
 import {WingBlank,WhiteSpace,NavBar,Icon,} from 'antd-mobile'
-import '../table.css'
+import './table.css'
 import CardSuit from './CardSuit'
 import Func from '../Models/Func'
 const DealFunc = new Func();
@@ -91,7 +91,7 @@ export default class PointDetail extends React.Component{
 	}
     render(){
         return(
-            <WingBlank>
+            <WingBlank size='md' >
                 <NavBar
                 mode="light"
                 icon={<Icon type="left" />}
@@ -105,12 +105,14 @@ export default class PointDetail extends React.Component{
                 columns={call}
                 size="middle"
                 title={() => '叫牌过程'}
+                pagination={false}
                 />
                 <Table 
                 dataSource={this.state.playData} 
                 columns={play}
                 size="middle"
                 title={() => '出牌顺序'}
+                pagination={false}
                 />
             </WingBlank>
         )

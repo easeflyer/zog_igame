@@ -1,6 +1,5 @@
 import React from 'react'
 import PointResult from './PointResult'
-import Board from '../../OdooRpc/Board'
 import PointDetail from './PointDetail'
 
 export default class Result extends React.Component{

@@ -1,16 +1,19 @@
 import Board from '../../OdooRpc/Board'
 import OdooModel from '../../OdooRpc/OdooRpc'
 import Channel from '../../OdooRpc/Channel'
+import GameTeamPlayer from '../../OdooRpc/GameTeamPlayer'
 
 class Models{
-    static get_matches(success,error){
-        const  board= new Board(success,error); 
-        board.get_matches()   //params: [board_id,channel_id]
+    static get_matches(success,error){  //查询桌号
+        const gameTeamPlayer= new GameTeamPlayer(success,error);
+        console.log(gameTeamPlayer); 
+        gameTeamPlayer.get_matches();   //params: []
     }
 
-    static join_channel(sucChannel,failChannel){ //加入频道
+    static join_channel(sucChannel,failChannel,table_id){ //加入频道
         const JoinChannel = new Channel(sucChannel,failChannel);
-        JoinChannel.join_channel(1);   //params: [table_id]
+        console.log(JoinChannel)
+        JoinChannel.join_channel(table_id);   //params: [table_id]
     }
     static init_board=(success,error,board_id,channel_id)=>{ //初始化牌桌
         const  board= new Board(success,error); 
@@ -39,9 +42,9 @@ class Models{
          board.play(board_id,mydir,card,channel_id);         //params: [board_id,mydir,card,channel_id]
         //   : null;       //发送打牌消息
     }
-    static sendplay =(success,error,cardid,channel_id)=>{
+    static sendplay =(success,error,boardid,cardid,channel_id)=>{
         const board= new Board(success,error);  
-        board.sendplay(cardid,channel_id)
+        board.sendplay(boardid,cardid,channel_id)
     }
 
     static board_points=(success,error,board_id)=>{   //查询单副牌的成绩
