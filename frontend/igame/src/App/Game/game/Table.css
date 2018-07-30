@@ -66,7 +66,7 @@
     right: 0;
     /*background-color: #880000;*/
 }
-.south {
+.pan_south {
     position: absolute;
     bottom: 0;
     /*background-color: #008800;*/
@@ -75,7 +75,7 @@
     position: absolute;
     /*background-color: #880000;*/
 }
-.north {
+.pan_north {
     position: absolute;
     top: 0;
     /*background-color: #008800*/

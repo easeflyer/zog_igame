@@ -477,6 +477,8 @@ class Table extends Component {
         for (let key in this.seat) {
             this.seat[key][0]['y'] = this.ref[key].current.offsetTop;
             this.seat[key][0]['x'] = this.ref[key].current.offsetLeft;
+            console.log('seat................')
+            console.log(this.seat)
             if (key == 'east') {
                 this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.width * 0.06
                 // 下面是处理　牌的叠放顺序　联合参考：dealCards
@@ -578,15 +580,6 @@ class Table extends Component {
             let [x, y] = [this.seat[seat][0].x, this.seat[seat][0].y]
             if ('02'.indexOf(index) != -1) rotate = -90;
             x = x + this.width / 16 / 5; y = y + this.width / 16 / 5; // margin
-            // if(this.state.userdir.indexOf(this.myseat)===index || (this.myseat===this.state.declarer && '13'.indexOf(index)!==-1)){
-            //     item.map((item1,index1)=>{
-            //         cards[index][index1].onclick = this.play(item1)
-            //     })
-            // }else{
-            //     item.map((item1,index1)=>{
-            //         cards[index][index1].onclick = () => false;
-            //     })
-            // }
             item.forEach((item1, index1) => {
 
                 cards[index][index1].animation = {
@@ -620,7 +613,7 @@ class Table extends Component {
     }
     sucPlay=(data)=>{
         console.log(data)
-        // Models.sendplay(this.sucSearchPlay,this.failSearchPlay,data,this.channel_id);
+        // Models.sendplay(this.sucSearchPlay,this.failSearchPlay,this.board_id,data,this.channel_id);
     }
     failPlay=()=>{console.log('fail play')}
 
@@ -1118,8 +1111,8 @@ class Table extends Component {
                         <div id='clock'></div>
                         <div id='east' className='east' style={css.east} ref={this.ref.east}>east</div>
                         <div id='west' className='west' style={css.west} ref={this.ref.west}>west</div>
-                        <div id='south' className='south' style={css.south} ref={this.ref.south}>south</div>
-                        <div id='north' className='north' style={css.north} ref={this.ref.north}>north</div>
+                        <div id='south' className='pan_south' style={css.south} ref={this.ref.south}>south</div>
+                        <div id='north' className='pan_north' style={css.north} ref={this.ref.north}>north</div>
                         <div id='board' className='board' style={css.board} ref={this.ref.board}>
                         <div className='userTag'><div className='seat'>
                                 {Table.seatscn[ Table.seats.indexOf(this._shift('east')) ]}:
