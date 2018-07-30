@@ -18,13 +18,15 @@ export default class Match extends React.Component {
         title:'',           //分类列表页的标题
         matchList:null,     //当前分类的比赛列表
         match:null,         //选中的单个比赛
-        course:null,        //轮次信息
+        course:null,        //轮次信息(整理好的DOM))
         initialPage:0,      //赛事详细信息默认展示的页面
-        courseId:null,      //轮次id
+        thisOneRound:null,  //当前轮次的ID和轮次名
+        rounds:null,        //所有轮次数据，在选择下一轮和上一轮的时候使用
     }
-    setCourseId = (index)=>{             //设置所选轮次id
+    setRoundMessage=(one,all)=>{
         this.setState({
-            courseId:index,
+            thisOneRound:one,
+            rounds:all
         })
     }
     setInitialPage = (index)=>{     //设置赛事详细信息的显示页
@@ -103,7 +105,7 @@ export default class Match extends React.Component {
                 page = <MatchDetails
                     name = {this.props.name}
                     toSignMatch={this.toSignMatch}
-                    setCourseId={this.setCourseId}
+                    setRoundMessage={this.setRoundMessage}
                     setInitialPage={this.setInitialPage}
                     setCourse={this.setCourse}
                     toMatchList={this.toMatchList} 
@@ -115,16 +117,13 @@ export default class Match extends React.Component {
             case 3:     //所选比赛的详细
                 page = <MatchResult
                 match={this.state.match}
-                courseId={this.state.courseId}
+                thisOneRound={this.state.thisOneRound}
+                rounds={this.state.rounds}
                 toMatchDetails={this.toMatchDetails} />
                 break;
             case 4:     //赛事报名页
                 page = <SignEvent match={this.state.match}
                 toMatchDetails={this.toMatchDetails} />
-                // page = <MatchResult
-                // match={this.state.match}
-                // courseId={this.state.courseId}
-                // toMatchDetails={this.toMatchDetails} 
                 break;
             default:
                 // page = <Match toMine={this.props.toMine} />;
@@ -177,7 +176,6 @@ class SortList extends React.Component {       //我的比赛分类列表页组�
         //             {arbitrator:false,datetime:"2018-06-30 09:27:45",host_unit:false,id:14,name:"G14",referee:false,sponsor:false,type:"team",state:'conformed'},
         //             {arbitrator:false,datetime:"2018-06-30 06:25:44",host_unit:false,id:15,name:"G15",referee:false,sponsor:false,type:"team",state:'draft'},
         //             {arbitrator:false,datetime:"2018-06-30 16:27:29",host_unit:false,id:16,name:"G16",referee:false,sponsor:false,type:"team",state:'done'},]
-
         let list1 = [];         //即将进行的比赛列表     
         let list2 = [];         //正在进行的比赛列表
         let list3 = [];         //已经完成的比赛列表

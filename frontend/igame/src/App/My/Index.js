@@ -5,42 +5,48 @@ import MySelf from './MySelf/Index';
 import MyMatch from './MyMatch/Index';
 import MyFriend from './MyFriend/Index';
 import MyTeam from './MyTeam/Index';
-
+import SignIn from './SignIn/Index';
 export default class My extends React.Component {
     state = {
-        page:'mine',
+        page: 'mine',
     }
-    toMyTeam = ()=>{
+    toMyTeam = () => {
         this.props.setHiddenState(true);
-        this.setState({page:'myteam'})
+        this.setState({ page: 'myteam' })
     }
-    toMyFriend = ()=>{
+    toMyFriend = () => {
         this.props.setHiddenState(true);
-        this.setState({page:'myfriend'})
+        this.setState({ page: 'myfriend' })
     }
-    toMySelf = ()=>{
+    toMySelf = () => {
         this.props.setHiddenState(true);
-        this.setState({page:'myself'})
+        this.setState({ page: 'myself' })
     }
-    toMyMatch = ()=>{
+    toMyMatch = () => {
         this.props.setHiddenState(true);
-        this.setState({page:'mymatch'})
+        this.setState({ page: 'mymatch' })
     }
-    toMine = ()=>{
+    toSignin = () => {
+        this.props.setHiddenState(true);
+        this.setState({ page: 'signin' })
+    }
+    toMine = () => {
         this.props.setHiddenState(false);
-        this.setState({page:'mine'})
+        this.setState({ page: 'mine' })
     }
+    
     render() {
         let now = null;
         switch (this.state.page) {
             case 'mine':
-                now = <Mine toMySelf={this.toMySelf} 
-                toMyFriend={this.toMyFriend}
-                toMyTeam={this.toMyTeam}
-                toMyMatch={this.toMyMatch} />
+                now = <Mine toMySelf={this.toMySelf}
+                    toMyFriend={this.toMyFriend}
+                    toMyTeam={this.toMyTeam}
+                    toSignin={this.toSignin}
+                    toMyMatch={this.toMyMatch} />
                 break;
             case 'myself':
-                now = <MySelf toMine={this.toMine}  loginOut={this.props.loginOut} />
+                now = <MySelf toMine={this.toMine} loginOut={this.props.loginOut} />
                 break;
             case 'mymatch':
                 now = <MyMatch toMine={this.toMine} />
@@ -50,6 +56,9 @@ export default class My extends React.Component {
                 break;
             case 'myteam':
                 now = <MyTeam toMine={this.toMine} />
+                break;
+            case 'signin':
+                now = <SignIn toMine={this.toMine} />
                 break;
             default:
                 break;
