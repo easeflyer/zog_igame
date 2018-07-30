@@ -2,7 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models
-
+import json
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -11,41 +11,43 @@ import random
 class Board(models.Model):
     _inherit = "og.board"
 
-    # for testing
+
+#for testing
     @api.multi
-    def init_board(self, channel_id):
-        self = self.sudo()
+    def init_board(self,channel_id):
+        self = self.sudo()  
         players = self.table_id.player_ids
         players_info = []
         for rec in players:
-            vals = [rec.name, rec.position, rec.partner_id.id]
+            vals=[rec.name,rec.position,rec.partner_id.id]
             players_info.append(vals)
-        vals = {'cards': self.name, 'dealer': self.dealer, 'vulnerable': self.vulnerable,
-                'players': players_info}
+        vals = {'cards':self.name,'dealer':self.dealer,'vulnerable':self.vulnerable,
+                    'players':players_info}
         self.env['og.channel'].browse(channel_id).message_post(body=str(vals))
         return vals
 
-    # new func
-    def _send_play(self, channel_id, bidinfo):
+
+#new func
+    def _send_play(self,channel_id,bidinfo):
         self.env['og.channel'].browse(channel_id).message_post(body=str(bidinfo))
 
-    # modified
+#modified
     @api.multi
-    def play(self, pos, card, channel_id):
+    def play(self,pos,card,channel_id):
         self = self.sudo()
         ret, ccdd = self._check_play(pos, card)
         if ret:
             return ret, ccdd
-        # self.env['og.board.card'].browse(ccdd.id).write({'number': 1 + max(self.card_ids.mapped('number'))})
+        # self.env['og.board.card'].browse(ccdd.id).write({'number':1 + max(self.card_ids.mapped('number') )})
         ccdd.number = 1 + max(self.card_ids.mapped('number') )
-        # fccdd = self.env['og.board.card'].browse(ccdd.id)
-        # board = self.browse(fccdd.board_id.id)
-
-        vals = {'number': ccdd.number, 'card': ccdd.name, 'pos': ccdd.pos, 'suit': ccdd.suit,
-                'rank': ccdd.rank, 'ns_win': self.ns_win, 'ew_win': self.ew_win,
-                'nextplayer': self.player}
-        self._send_play(channel_id, vals)
+        self.env['og.board'].clear_caches()
+        self.env['og.board.card'].clear_caches()
+        vals={'number':ccdd.number,'card':ccdd.name,'pos':ccdd.pos,'suit':ccdd.suit,
+            'rank':ccdd.rank,'ns_win':self.ns_win,'ew_win':self.ew_win,
+                'nextplayer':self.player}
+        self._send_play(channel_id,vals)
         return vals
+
 
     def _check_play(self, pos, card):
         if not ( self.contract and self.declarer):
@@ -84,18 +86,53 @@ class Board(models.Model):
 
         return (0, cs[0])
 
-    def claim(self,pos,num):
+    @api.multi
+    def claim1(self,pos,num,channel_id):
+        self = self.sudo()
+        boards = self.env['og.board.card'].search([('board_id','=',self.id),('pos','=',pos)])
+        bo = []
+        for board in boards:
+            if board.cardno == 0:
+                bo.append(board.name)
+            # return board.name,board.cardno
+
+        vals={'board':bo,'pos':pos,'num':num,}
+        self._send_play(channel_id,vals)
+        return vals
+
+    # def claim2(self,channel_id,agree):
+    #     if agree == True:
+    #         self._send_play(channel_id, agree)
+    #         # self.claim2()
+    #     if agree == False:
+    #         self._send_play(channel_id, agree)
+    #
+
+    @api.model
+    def send_message(self,channel_id,args):
+
+        self._send_play(channel_id,args)
+        return args
+
+    @api.multi
+    def claim(self,pos,num,channel_id):
         """ 
         num :  the number to get from unplayed tricks by pos
         """
+        self = self.sudo()
         ret = self._check_claim(pos, num)
+
         if ret:
             return ret
 
         self.claimer = pos
         self.claim_result = num
         #self.refresh()
-        return 0
+        vals = {'result':self.result2,'ns_point':self.ns_point,'ew_point':self.ew_point}
+        self._send_play(channel_id, vals)
+
+        return self.result2,self.ns_point,self.ew_point
+        # return 0
 
     def _check_claim(self,pos, num):
         if self.claimer:
@@ -113,6 +150,7 @@ class Board(models.Model):
         if pos in [self.dummy]:
             return (-3,'Claimed position is dummy')
         return 0
+
 
     def undo(self):
         #self.refresh()

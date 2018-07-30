@@ -9,6 +9,7 @@ _logger = logging.getLogger(__name__)
 from .bridge_tools import POSITIONS
 from .bridge_tools import SUITS,RANKS,CARDS
 
+
 class BoardCard(models.Model):
     _name = "og.board.card"
     _description = "Board Card"
@@ -27,14 +28,12 @@ class BoardCard(models.Model):
     trickno = fields.Integer(compute='_compute_number')
     cardno  = fields.Integer(compute='_compute_number')
 
-
     @api.multi
     def _compute_number(self):
         for rec in self:
             num = rec.number
             rec.trickno = num and (num-1)//4 + 1 or 0
             rec.cardno  = num and (num-1)%4 + 1 or 0
-
 
     @api.multi
     def get_winner( self, trump):
