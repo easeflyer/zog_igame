@@ -10,7 +10,7 @@ class RsgisterForm extends React.Component{
     onSubmit = () => {   //表单提交方法
         this.props.form.validateFields({ force: true }, (error) => {  //输入验证，符合规则才向后后端交数据
             var formData = this.props.form.getFieldsValue();  //表单数据
-                // console.log(formData.password)
+                // console.log(formData.nickname)
                 // console.log(formData.password2)
             if (!error) {
                 if (formData.password!==formData.password2){
@@ -24,7 +24,7 @@ class RsgisterForm extends React.Component{
                         Toast.fail('注册失败，请稍后重试！',1);
                     }
                     const m = new User(successCallback,errorCallback);
-                    m.register(formData.phone, formData.password );
+                    m.register(formData.phone, formData.password, formData.nickname);
                 }
             } else {
                 Toast.fail('您的输入有误！');
@@ -34,6 +34,13 @@ class RsgisterForm extends React.Component{
     validateAccount = (rule, value, callback) => {  //手机号输入验证规则
         if (value && value.replace(/\s/g, '').length < 11) {
             callback(new Error('Please enter 11 digits'));
+        } else {
+            callback();
+        }
+    }
+    validateNickName = (rule, value, callback) => {  //手机号输入验证规则
+        if (value && value.length > 8) {
+            callback(new Error('昵称8个字以内'));
         } else {
             callback();
         }
@@ -59,6 +66,21 @@ class RsgisterForm extends React.Component{
             <WhiteSpace size="xl" />
             <WhiteSpace size="xl" />
             <Flex direction='column'>
+            <InputItem
+            {...getFieldProps('nickname',{
+                rules: [
+                    { required: true, message: '昵称尚未填写！' },
+                    { validator: this.validateNickName },
+                ],
+            })}
+            clear
+            error={!!getFieldError('nickname')}
+            onErrorClick={() => {
+                Toast.info(getFieldError('nickname').join('、'));
+            }}
+            // type="phone"
+            placeholder="请输入您的昵称"
+        >昵称</InputItem>
             <InputItem
                 {...getFieldProps('phone',{
                     rules: [
