@@ -9,7 +9,13 @@ export default class User extends Models {
     createData = (login,password)=>({
         'db':DATABASE,
         'login':login,
+        'password':password, 
+    });
+    createData1 = (login,password,nickName=null)=>({
+        'db':DATABASE,
+        'login':login,
         'password':password,
+        'nickName':nickName, 
     });
 
     login(login,password){
@@ -17,9 +23,10 @@ export default class User extends Models {
         const data = this.createData(login,password);
         return this.m.jsonrpc(url,data)
     }
-    register(login,password){
+    register(login,password,nickName){
         const url = HOST+'/json/user/register';
-        const data = this.createData(login,password);
+        const data = this.createData1(login,password,nickName);
+        console.log(data)
         return this.m.jsonrpc(url,data)
     }
     resetPassword(login,password){
