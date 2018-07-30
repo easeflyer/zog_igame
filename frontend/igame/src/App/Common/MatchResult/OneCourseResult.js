@@ -54,43 +54,41 @@ export default class OneCourseResult extends React.Component {
     gerUpDatas = (index) => {
         let bb = [];
         console.log(bb.length)
-        this.state.rounds.forEach((v,i,a) => {
-            if(v.id===index && a[i-1]){
-                const b = [a[i-1].id,a[i-1].name,a[i-1].number];
+        this.state.rounds.forEach((v, i, a) => {
+            if (v.id === index && a[i - 1]) {
+                const b = [a[i - 1].id, a[i - 1].name, a[i - 1].number];
                 bb.push(b)
             }
         })
         console.log(bb.length)
-        if(bb.length){
+        if (bb.length) {
             console.log(bb)
             this.setState({
-                thisOneRound:bb[0],
+                thisOneRound: bb[0],
             })
             const m = new Game(this.success, this.error);
             m.search_round_details(this.state.gameId, bb[0][0]);
-        }else{
+        } else {
             return Toast.info('已经是第一轮了！')
         }
     }
     gerDownDatas = (index) => {
         let bb = [];
-        this.state.rounds.forEach((v,i,a) => {
-            if(v.id===index && a[i+1]){
-                const b = [a[i+1].id,a[i+1].name,a[i+1].number];
+        this.state.rounds.forEach((v, i, a) => {
+            if (v.id === index && a[i + 1]) {
+                const b = [a[i + 1].id, a[i + 1].name, a[i + 1].number];
                 bb.push(b)
             }
         })
-        if(bb.length){
+        if (bb.length) {
             this.setState({
-                thisOneRound:bb[0],
+                thisOneRound: bb[0],
             })
             const m = new Game(this.success, this.error);
             m.search_round_details(this.state.gameId, bb[0][0]);
-        }else{
+        } else {
             return Toast.info('已经是最后一轮了！')
         }
-        
-            
     }
     success = (data) => {
         // const data = [      //测试数据，连上服务器后更改success方法的参数为data，并注释掉这段数据就好
@@ -100,18 +98,23 @@ export default class OneCourseResult extends React.Component {
         //     { namtch_id:4, round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 4, IMPS: { host_imp: 0.00, guest_imp: 0.00 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "dadgdggd", host_id: 7, guest_name: "thi", guest_id: 8 } },
         //     { namtch_id:5, round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 5, IMPS: { host_imp: 0.00, guest_imp: 0.00 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "dsae", host_id: 9, guest_name: "j", guest_id: 0 } }
         // ]
-        let setDealNumber = length => Array.from({ length }, (v, k) => <a style={{ margin: '0px 5px' }} key={k + 1} onClick={() => this.toOneBoard(k + 1)} >{k + 1}</a>)
+        let setDealNumber = data[0].deal.map(
+            (value, index, array) => {
+                return <a key={index} style={{ margin: '0px 5px' }} onClick={() => this.toOneBoard([value, array, index + 1])} >{index + 1}</a>
+            }
+        )
+        // let setDealNumber = length => Array.from({ length }, (v, k) => <a style={{ margin: '0px 5px' }} key={k + 1} onClick={() => this.toOneBoard(k + 1)} >{k + 1}</a>)
         this.props.setThisOneRound(this.state.thisOneRound);
-        
-        let match_ids=[];
+
+        let match_ids = [];
         data.forEach(element => {
             match_ids.push(element.match_id)
         });
-        this.props.setMatchIds([data[0].match_id,match_ids])
+        this.props.setMatchIds([data[0].match_id, match_ids])
         // 先判断是否为空
         this.setState({
             data: data,
-            dealNumber: data.length ? setDealNumber(data[0].deal) : null,
+            dealNumber: data.length ? setDealNumber : null,
         })
     }
     error = () => {
@@ -128,7 +131,7 @@ export default class OneCourseResult extends React.Component {
                 return (
                     <span>
                         <a
-                            onClick={() => this.toOneTable([row.match_id,row.number])}
+                            onClick={() => this.toOneTable([row.match_id, row.number])}
                         >
                             {text}
                         </a>
@@ -138,7 +141,10 @@ export default class OneCourseResult extends React.Component {
         }, {
             title: "完成",
             dataIndex: "deal",
-            width: "4%"
+            width: "4%",
+            render: (text) => {
+                return text.length
+            }
         }, {
             title: titleTeam,
             dataIndex: "team",
@@ -208,7 +214,7 @@ export default class OneCourseResult extends React.Component {
                     {this.state.thisOneRound[1]}第{this.state.thisOneRound[2]}轮
                     <div style={{ width: 35 }} >
                         <Icon type="caret-up" style={{ fontSize: 5, display: 'block' }} onClick={() => this.gerUpDatas(this.state.thisOneRound[0])} />
-                        <Icon type="caret-down" style={{ fontSize: 5, display: 'block' }} onClick={() => this.gerDownDatas(this.state.thisOneRound[0])} /> 
+                        <Icon type="caret-down" style={{ fontSize: 5, display: 'block' }} onClick={() => this.gerDownDatas(this.state.thisOneRound[0])} />
                     </div>
                 </NavBar>
                 <WhiteSpace size='sm' />
@@ -227,6 +233,7 @@ export default class OneCourseResult extends React.Component {
                     bordered
                     columns={columns}
                     dataSource={this.state.data}
+                    pagination={false}
                 />
                 <ul>
                     <li>点击桌号 查看计分表</li>

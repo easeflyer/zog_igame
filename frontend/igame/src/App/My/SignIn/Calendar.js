@@ -167,7 +167,7 @@ class Calendar extends Component {
                 </div>
                 <div className="yearmonth">
                     <p>
-                        {yearDate}年{monthDate}月
+                        {yearDate}年{monthDate+1}月
                     </p>
                 </div>
                 <table className="calendartable">
