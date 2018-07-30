@@ -3,6 +3,11 @@ import OdooModel from '../../OdooRpc/OdooRpc'
 import Channel from '../../OdooRpc/Channel'
 
 class Models{
+    static get_matches(success,error){
+        const  board= new Board(success,error); 
+        board.get_matches()   //params: [board_id,channel_id]
+    }
+
     static join_channel(sucChannel,failChannel){ //加入频道
         const JoinChannel = new Channel(sucChannel,failChannel);
         JoinChannel.join_channel(1);   //params: [table_id]
@@ -33,6 +38,10 @@ class Models{
         // (this.state.currentDirect===this.state.dummy&&this.state.topInfo2.declarer===this.state.playerInfo.myDirect)) ?
          board.play(board_id,mydir,card,channel_id);         //params: [board_id,mydir,card,channel_id]
         //   : null;       //发送打牌消息
+    }
+    static sendplay =(success,error,cardid,channel_id)=>{
+        const board= new Board(success,error);  
+        board.sendplay(cardid,channel_id)
     }
 
     static board_points=(success,error,board_id)=>{   //查询单副牌的成绩

@@ -47,8 +47,8 @@ export default class Claim extends Component {
             {this.state.submit ?
                 <button  className='waitingClaim' disabled='true' onClick={this.handleSubmit}>等待确认..</button> :
                 <div>
-                    <button className='cancelClaim'  onClick={this.handleCancel}>　取 消　</button>
-                    <button className='sureClaim' disabled={!this.state.value} onClick={this.handleSubmit}>　确 认　</button>
+                    <button className='cancelClaim'  onClick={this.handleCancel}>　取消　</button>
+                    <button className='sureClaim' disabled={!this.state.value} onClick={this.handleSubmit}>　确认　</button>
                 </div>
             }
         </div>

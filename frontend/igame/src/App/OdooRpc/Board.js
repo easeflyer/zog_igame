@@ -53,6 +53,9 @@ export default class Board extends Models {
             ]
          */
     }
+    sendplay(...data){
+        this.exec('sendplay',{},...data);
+    }
     board_points(...data){    //一副牌的成绩
         this.exec('board_points',{},...data);
          /*
@@ -102,5 +105,9 @@ export default class Board extends Models {
                 {msg}
             ]
          */
+    }
+
+    get_matches(){
+        this.exec('get_matches',{});
     }
 }

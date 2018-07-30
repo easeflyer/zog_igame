@@ -171,12 +171,13 @@ class Table extends Component {
      * 完成挂载后，要计算 各个位置的坐标。
      */
     componentDidMount() {
-
+        // Models.get_matches(this.sucGetMatch,this.failGetMatch)
         Models.join_channel(this.sucChannel,this.failChannel);
         this._initSeat(); // 初始化 发牌位置 出牌位置等坐标
         //console.log(parseInt(center.y) - parseInt(this.csize) * 0.7 / 2)
     }
-    
+    sucGetMatch=(data)=>{console.log(data)}
+    failGetMatch=()=>{}
     sucChannel=(data)=>{
         console.log(data)
         if(this.board_id_list){
@@ -277,7 +278,6 @@ class Table extends Component {
                 body.name==='Pass'?this.callResult ++ : this.callResult = 0;
                 if(this.callResult===3){
                     Models.call_result(this.sucCall,this.failCall,this.board_id,this.channel_id);
-                    
                     this.callResult=0
                 }
 			}
@@ -286,15 +286,17 @@ class Table extends Component {
                 const dummyCards = this.cards[Table.dir.indexOf(body.dummy)];
 				const dummySeat = Table.seats[this.state.userdir.indexOf(body.dummy)]
                 this.testDummy(dummySeat,dummyCards)
+                // this.playRules(body.nextplayer,null);
                 this.setState({
+                    cards:this.state.cards,
                     contract:body.contract,
                     declarer:body.declarer,
                     dummy:body.dummy,
                     scene:2
                 })
-                // Models.board_points(this.sucBoardPoints,this.failBoardPoints,this.board_id)
             }
             if(body.number&&body.rank&&body.card){   //收到打牌消息 {ns_win:0,number:1,rank:'5',pos:'W',suit:'C',nextplayer:'W',card:'C5',ew_win:0}
+                // this.playRules(body.nextplayer,body.suit);    
                 this.playnum = body.number;
                 if(body.pos===this.state.declarer){this.claimtrick = this.claimtrick-1;}
                 this.timing(Table.seats[this.state.userdir.indexOf(body.nextplayer)],10,()=>{});    
@@ -319,8 +321,12 @@ class Table extends Component {
                     ns_win:body.ns_win,
                 })
                 if (this.board.length == 4){
+                    // this.state.cards.map(item=>{
+                    //     item.map(item1=>{
+                    //         item1.active = 2;
+                    //     })
+                    // })
                     this.lastTrickCard = {pos:this.lastTrickPos,card:this.board};
-                    console.log(this.lastTrickCard)
                     setTimeout(this.clearBoard, 1000)
                 } 
                 if(body.number===52){
@@ -391,6 +397,36 @@ class Table extends Component {
                 this.splitCards(this.originData)
             }
         })
+    }
+    playRules=(nextplayer,suit)=>{
+        this.state.cards.map(item=>{
+            item.map(item1=>{
+                item1.onclick =  () => false;
+                item1.active = 2;
+            })
+        });
+        if(nextplayer!==this.state.dummy&&this.myseat===nextplayer){
+            // let haveSuit = 0;
+            // this.state.cards[1].map((item,index)=>{
+            //     item.cards
+            // })
+           this.state.cards[1].map((item,index)=>{
+               if(suit!==null&&suit!==item.card.split('')[1]){
+                   item.active=0;
+                }else{
+                    item.onclick =  this.play(item);
+               }
+           }) 
+        }else if(nextplayer===this.state.dummy&&this.myseat===this.state.declarer){
+            console.log(2222222222222)
+            this.state.cards[3].map((item,index)=>{
+                if(suit!==null&&suit!==item.card.split('')[1]){
+                    item.active=0;
+               }else{
+                    item.onclick =  this.play(item);
+               }
+            })  
+        }
     }
     sucBoardPoints=(data)=>{
         this.showResult(data);
@@ -542,6 +578,15 @@ class Table extends Component {
             let [x, y] = [this.seat[seat][0].x, this.seat[seat][0].y]
             if ('02'.indexOf(index) != -1) rotate = -90;
             x = x + this.width / 16 / 5; y = y + this.width / 16 / 5; // margin
+            // if(this.state.userdir.indexOf(this.myseat)===index || (this.myseat===this.state.declarer && '13'.indexOf(index)!==-1)){
+            //     item.map((item1,index1)=>{
+            //         cards[index][index1].onclick = this.play(item1)
+            //     })
+            // }else{
+            //     item.map((item1,index1)=>{
+            //         cards[index][index1].onclick = () => false;
+            //     })
+            // }
             item.forEach((item1, index1) => {
 
                 cards[index][index1].animation = {
@@ -554,6 +599,7 @@ class Table extends Component {
                 }
                 //cards[index][index1][index2].rotate = rotate;
                 cards[index][index1].active = 2; // 测试用
+                // cards[index][index1].onclick =  () => false;
                 cards[index][index1].onclick = this.play(item1)
                 if ('02'.indexOf(index) != -1) y = y + this.csize * 0.15;
                 else x = x + this.csize * 0.2;
@@ -572,13 +618,16 @@ class Table extends Component {
             Models.play(this.sucPlay,this.failPlay,this.board_id,this.myseat,card,this.channel_id);
         }
     }
-    sucPlay=(data)=>{console.log(data)}
+    sucPlay=(data)=>{
+        console.log(data)
+        // Models.sendplay(this.sucSearchPlay,this.failSearchPlay,data,this.channel_id);
+    }
     failPlay=()=>{console.log('fail play')}
 
 
-        /**
-     * 考虑增加参数为 seat
-     */
+    /*
+        考虑增加参数为 seat
+    */
     claim = () =>{
         this.setState({
             scene:3
@@ -785,9 +834,12 @@ class Table extends Component {
             this.claimtrick = 13;    //可claim的数目
             this.playnum = null; //出牌顺序
             this.originData = null;
+            this.board = [];
+            this.lastTrickCard = []; 
+            this.lastTrickPos = []; 
             // this.deals = 'XXXXXXXXXXXXX XXXXXXXXXXXXX XXXXXXXXXXXXX XXXXXXXXXXXXX'
             this.state.cards = this.initCards()
-            Models.deals(this.sucChannel,this.failChannel);
+            Models.join_channel(this.sucChannel,this.failChannel);
         }
         if(this.board_id_list.indexOf(this.board_id)===this.board_id_list.length-1){
             this.props.toResult();

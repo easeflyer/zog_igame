@@ -112,14 +112,14 @@ class BidPanel extends Component {
                     </table>
                 </div>
                 {bidblocks}
-                <div className='pass'>
-                    <img className='suit' src={`/cards/bids/PASS.svg`}  onClick={this.handleCall.bind(this, {name:'Pass'})} />
+                <div className='pass' onClick={this.handleCall.bind(this, {name:'Pass'})} >
+                    <img className='suit' src={`/cards/bids/PASS.svg`} />
                 </div>
-                <div className='double'>
-                    <img className='suit' src={`/cards/bids/X.svg`} onClick={this.handleCall.bind(this, {name:'x'})}/>
+                <div className='double' onClick={this.handleCall.bind(this, {name:'x'})}>
+                    <img className='suit' src={`/cards/bids/X.svg`}/>
                 </div>
-                <div className='redouble'>
-                    <img className='suit' src={`/cards/bids/XX.svg`} onClick={this.handleCall.bind(this, {name:'xx'})}/>
+                <div className='redouble' onClick={this.handleCall.bind(this, {name:'xx'})}>
+                    <img className='suit' src={`/cards/bids/XX.svg`}/>
                 </div>
             </div>
         );
