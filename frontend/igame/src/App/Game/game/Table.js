@@ -172,7 +172,7 @@ class Table extends Component {
      */
     componentDidMount() {
 
-        Models.deals(this.sucChannel,this.failChannel);
+        Models.join_channel(this.sucChannel,this.failChannel);
         this._initSeat(); // 初始化 发牌位置 出牌位置等坐标
         //console.log(parseInt(center.y) - parseInt(this.csize) * 0.7 / 2)
     }
@@ -717,29 +717,29 @@ class Table extends Component {
      * 数据格式：
      * {east:{index:1,card:'5D'}, south:{index:1,card:'5D'}....}
      */
-    lastTrick1 = () => {
-        ReactDOM.unmountComponentAtNode(document.querySelector('#lastTrick'));
-        const lt = Models.lastTrick();
-        const cards = lt.map((item, index) => {
-            const rotate = ('02'.indexOf(index) > 0) ? 90 : 0
-            return <Card
-                active='1'
-                card={item.card}
-                key={index}
-                index={index}
-                size='80'
-                animation={{
-                    rotate: `${rotate}`
-                }}
-            />
-        }
-        )
-        ReactDOM.render(
-            cards,
-            document.querySelector('#lastTrick')
-        )
+    // lastTrick1 = () => {
+    //     ReactDOM.unmountComponentAtNode(document.querySelector('#lastTrick'));
+    //     const lt = Models.lastTrick();
+    //     const cards = lt.map((item, index) => {
+    //         const rotate = ('02'.indexOf(index) > 0) ? 90 : 0
+    //         return <Card
+    //             active='1'
+    //             card={item.card}
+    //             key={index}
+    //             index={index}
+    //             size='80'
+    //             animation={{
+    //                 rotate: `${rotate}`
+    //             }}
+    //         />
+    //     }
+    //     )
+    //     ReactDOM.render(
+    //         cards,
+    //         document.querySelector('#lastTrick')
+    //     )
 
-    }
+    // }
 
     showResult = (data) => {
         let result = null ;
@@ -837,16 +837,16 @@ class Table extends Component {
             calldata[calldata.length-1][Table.dir.indexOf(seat)] = bid;
         }
     }
-    testUsersReady = () => {
-        const login = (seat, uname) => {
-            this.state.user[seat] = uname;
-            this.setState({ user: this.state.user })
-        }
-        setTimeout(login.bind(this, 'east', '张三丰'), 1000)
-        setTimeout(login.bind(this, 'south', '李四'), 2000)
-        setTimeout(login.bind(this, 'west', '王五'), 3000)
-        setTimeout(login.bind(this, 'north', '赵六'), 4000)
-    }
+    // testUsersReady = () => {
+    //     const login = (seat, uname) => {
+    //         this.state.user[seat] = uname;
+    //         this.setState({ user: this.state.user })
+    //     }
+    //     setTimeout(login.bind(this, 'east', '张三丰'), 1000)
+    //     setTimeout(login.bind(this, 'south', '李四'), 2000)
+    //     setTimeout(login.bind(this, 'west', '王五'), 3000)
+    //     setTimeout(login.bind(this, 'north', '赵六'), 4000)
+    // }
 
     testChat = () => {
         const elSay = document.querySelector('#say')
@@ -865,30 +865,30 @@ class Table extends Component {
 /**
      * 叫牌测试
      */
-    testBid1 = () => {
-        const bids = [{seat:'west',bid:'1C'},{seat:'north',bid:'PASS'},
-                    {seat:'east',bid:'PASS'},{seat:'south',bid:'2H'},
-                    {seat:'west',bid:'PASS'},{seat:'north',bid:'PASS'},
-                    {seat:'east',bid:'3C'},{seat:'south',bid:'PASS'},
-                    {seat:'west',bid:'PASS'},{seat:'north',bid:'3H'},
-                    {seat:'east',bid:'PASS'},{seat:'south',bid:'PASS'},
-                    {seat:'west',bid:'3S'},{seat:'north',bid:'PASS'},
-                    {seat:'east',bid:'PASS'},{seat:'south',bid:'PASS'}]
-        bids.forEach((item)=>{
-            this.call(item.seat,item.bid)
-        })
-        // console.log('calldata111....')
-        // console.log(this.state.calldata)
-        this.setState({
-            calldata:this.state.calldata
-        })
-    }
+    // testBid1 = () => {
+    //     const bids = [{seat:'west',bid:'1C'},{seat:'north',bid:'PASS'},
+    //                 {seat:'east',bid:'PASS'},{seat:'south',bid:'2H'},
+    //                 {seat:'west',bid:'PASS'},{seat:'north',bid:'PASS'},
+    //                 {seat:'east',bid:'3C'},{seat:'south',bid:'PASS'},
+    //                 {seat:'west',bid:'PASS'},{seat:'north',bid:'3H'},
+    //                 {seat:'east',bid:'PASS'},{seat:'south',bid:'PASS'},
+    //                 {seat:'west',bid:'3S'},{seat:'north',bid:'PASS'},
+    //                 {seat:'east',bid:'PASS'},{seat:'south',bid:'PASS'}]
+    //     bids.forEach((item)=>{
+    //         this.call(item.seat,item.bid)
+    //     })
+    //     // console.log('calldata111....')
+    //     // console.log(this.state.calldata)
+    //     this.setState({
+    //         calldata:this.state.calldata
+    //     })
+    // }
 
     /**
      * 测试上以墩牌的显示
      */
     testLastTrick = () => {
-        console.log('last trick')
+        // console.log('last trick')
         this.lastTrick();
         // if(this._showLastTrick) this._showLastTrick = false;
         // else this._showLastTrick = true;
@@ -923,39 +923,39 @@ class Table extends Component {
 
     }
 
-    openDebug = () =>{
-        this.setState({
-            debug:!this.state.debug
-        })
-        console.log(this.state.debug)
-    }
+    // openDebug = () =>{
+    //     this.setState({
+    //         debug:!this.state.debug
+    //     })
+    //     console.log(this.state.debug)
+    // }
 
-    test3 = () => {
-        this.clearBoard();
-    }
+    // test3 = () => {
+    //     this.clearBoard();
+    // }
     // 
-    testActive = () => {
-        // 52 张牌 对应 东南西北 四个人的牌
-        const nums = [
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
-            13, 14, 15, 16, //17, 18, 19, 20, 21, 22, 23, 24, 25,
-            26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
-            39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51]
-        //const nums = [13,14,15,16];
-        this.setActive(nums);
-    }
+    // testActive = () => {
+    //     // 52 张牌 对应 东南西北 四个人的牌
+    //     const nums = [
+    //         0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+    //         13, 14, 15, 16, //17, 18, 19, 20, 21, 22, 23, 24, 25,
+    //         26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
+    //         39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51]
+    //     //const nums = [13,14,15,16];
+    //     this.setActive(nums);
+    // }
     // 测试 闹钟组件 循环回调
-    testClock = () => {
-        this.timing('east', 2,
-            () => this.timing('south', 2,
-                () => this.timing('west', 2,
-                    () => this.timing('north', 2,
-                        () => console.log('倒计时结束！')
-                    )
-                )
-            )
-        )
-    }
+    // testClock = () => {
+    //     this.timing('east', 2,
+    //         () => this.timing('south', 2,
+    //             () => this.timing('west', 2,
+    //                 () => this.timing('north', 2,
+    //                     () => console.log('倒计时结束！')
+    //                 )
+    //             )
+    //         )
+    //     )
+    // }
     /**
      * 测试出牌
      * 简单测试，已无实际用途。
@@ -1021,7 +1021,9 @@ class Table extends Component {
                 <div id='table' className='table' style={css.table}>
                     <div id='header' className='header' style={css.header}>
                         <div className='re' style={css.re}><Imps /></div>
-                        <div className='re' style={css.re}  onClick={this.openDebug}>
+                        <div className='re' style={css.re}  
+                        // onClick={this.openDebug}
+                        >
                         <Seats 
                         dealer={Table.seats[this.state.userdir.indexOf(this.dealer)]} 
                         board_id={this.board_id_list?this.board_id_list.indexOf(this.board_id)+1:null}

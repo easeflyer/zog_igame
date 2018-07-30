@@ -3,7 +3,7 @@ import OdooModel from '../../OdooRpc/OdooRpc'
 import Channel from '../../OdooRpc/Channel'
 
 class Models{
-    static deals(sucChannel,failChannel){ //加入频道
+    static join_channel(sucChannel,failChannel){ //加入频道
         const JoinChannel = new Channel(sucChannel,failChannel);
         JoinChannel.join_channel(1);   //params: [table_id]
     }
