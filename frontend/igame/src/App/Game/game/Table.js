@@ -1070,7 +1070,7 @@ class Table extends Component {
              * 
              */
             <div>
-                <div id='table' className='table' style={css.table}>
+                <div id='table' className='match_table' style={css.table}>
                     <div id='header' className='header' style={css.header}>
                         <div className='re' style={css.re}><Imps /></div>
                         <div className='re' style={css.re}  
