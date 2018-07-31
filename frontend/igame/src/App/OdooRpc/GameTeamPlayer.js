@@ -6,7 +6,14 @@ export default class GameTeamPlayer extends Models {
         this.model = 'og.igame.team.player';
     }
 
-    get_matches(){
+    get_matches(){  //查询所有自己报名了但未开始的比赛桌号
         this.exec('get_matches', {}, []);
+        /*
+         * params:[]
+         * return:[
+                [table_id1,tble_id2,table_id3]
+                // 桌号，桌号，桌号
+            ]
+         */
     }
 }

@@ -25,7 +25,7 @@ class Card extends React.Component {
             }
             return style;
         }
-        if(this.props.active == 3) {
+        if(this.props.active === 3) {
             this.props.animation && ( this.props.animation.onComplete = () => {
                 
                 // 这张牌消失，非受控，不建议。
@@ -33,16 +33,16 @@ class Card extends React.Component {
                 // cCard.style.display = 'none';
             } )
         }
-        if(this.props.active == 0)
+        if(this.props.active === 0)
             this.props.animation && ( this.props.animation['brightness'] = 0.6 )
-        if(this.props.active == 1)
+        if(this.props.active === 1)
             this.props.animation && ( this.props.animation['brightness'] = 1 )
         let onclick = ()=>false;
-        if(this.props.active == 2){
+        if(this.props.active === 2){
             onclick = this.props.onClick;
             this.props.animation && ( this.props.animation['brightness'] = 1 )
         }
-        const card = this.props.card.slice(0,1) == 'X' ? 
+        const card = this.props.card.slice(0,1) === 'X' ? 
             'back' : this.props.card;
         return (
             <div id={'card'+this.props.index}  // TODO: 这个div定位不理想，只是起到了 zIndex 作用。

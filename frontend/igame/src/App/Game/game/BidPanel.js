@@ -43,7 +43,7 @@ class BidPanel extends Component {
                     for (let i = 0; i < bidblocks.length; i++) {
                         for (let j = 0; j < bidblocks[i].length; j++) {
                             if (i < i1 ||
-                                (i == i1 && j >= i2)) bidblocks[i][j].active = 0;
+                                (i === i1 && j >= i2)) bidblocks[i][j].active = 0;
                         }
                     }
                 }
@@ -76,7 +76,7 @@ class BidPanel extends Component {
         // console.log('ffff:'+this.width)
         const bidblocks = this.state.bidblocks.map((e1, i1) => e1.map((e2, i2) => {
             const animation = {}
-            if (e2.active == 0) animation['brightness'] = 0.6;
+            if (e2.active === 0) animation['brightness'] = 0.6;
             return <BidBlock key={i1+i2} name={e2.name} animation={animation}
                 onclick={this.handleCall.bind(this, {name:e2.name})} />
         }))
@@ -89,7 +89,7 @@ class BidPanel extends Component {
                     <td key={index+index1} style={{width:'20%'}}>
                     {/* <td key={index+index1} style={{width:'20%',height:`${this.width*0.05}px`}}> */}
                         {item1?
-                            <img src={`/cards/bids/${item1}.svg`} style={{height:'45%',width:'100%'}}/>
+                            <img src={`/cards/bids/${item1}.svg`} style={{height:'45%',width:'100%'}} alt=''/>
                             // <img className='suit' src={`/cards/bids/${item1}.svg`} style={{height:'60%'}}/>
                             :' '
                         }
@@ -113,13 +113,13 @@ class BidPanel extends Component {
                 </div>
                 {bidblocks}
                 <div className='pass' onClick={this.handleCall.bind(this, {name:'Pass'})} >
-                    <img className='suit' src={`/cards/bids/PASS.svg`} />
+                    <img className='suit' src={`/cards/bids/PASS.svg`}  alt=''/>
                 </div>
                 <div className='double' onClick={this.handleCall.bind(this, {name:'x'})}>
-                    <img className='suit' src={`/cards/bids/X.svg`}/>
+                    <img className='suit' src={`/cards/bids/X.svg`}  alt=''/>
                 </div>
                 <div className='redouble' onClick={this.handleCall.bind(this, {name:'xx'})}>
-                    <img className='suit' src={`/cards/bids/XX.svg`}/>
+                    <img className='suit' src={`/cards/bids/XX.svg`}  alt=''/>
                 </div>
             </div>
         );
@@ -139,7 +139,7 @@ class BidBlock extends Component {
             backgroundColor: `${bgcolor[suit]}`,
 
         }
-        if (this.props.active == 0)
+        if (this.props.active === 0)
             this.props.animation && (this.props.animation['brightness'] = 0.6)
         return (
             <TweenOne

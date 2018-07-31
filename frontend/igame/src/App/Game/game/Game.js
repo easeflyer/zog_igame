@@ -11,14 +11,11 @@ import Result from '../Point/Result'
 
 class Game extends Component {
     state={
-        scene:0
+        scene:0,
+        table_id: null,
     }
     constructor(props){
-        /**
-         * 属性列表：
-         *  屏幕大小
-         * 
-         */
+        /* 属性列表：屏幕大小 */
         super(props);
         this.width = window.screen.width;
         this.height = window.screen.height;
@@ -26,12 +23,14 @@ class Game extends Component {
         console.log('height:'+this.height)
         if(this.width < 400) settings.scale = 0.5;
     }
-    toResult=()=>{
+    toResult=(table_id)=>{
         this.setState({
-            scene:1
+            scene:1,
+            table_id:table_id
         })
+        console.log(table_id);
     }
-    componentDidMount(){
+    componentDidMount(){    //隐藏底部tabBar
         this.props.setHiddenState(true);
     }
     render(){
@@ -43,14 +42,11 @@ class Game extends Component {
                 </Table>
                 :null}
                 {this.state.scene===1?
-                <Result />
+                <Result table_id={this.state.table_id}/>
                 :null
                 }
             </div>
-            
         );
     }
 }
-
-//export default Table
 export default Game

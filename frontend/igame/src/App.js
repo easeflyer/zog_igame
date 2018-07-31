@@ -124,7 +124,7 @@ class TabBarExample extends React.Component {
               : null} */}
             {this.state.selectedTab==='redTab'? 
             this.renderContent(this.state.haslogin? 
-            this.renderContent(<App2 />)
+            this.renderContent(<App2 setHiddenState={this.setHiddenState} />)
             :<User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />)
             :null}
           </TabBar.Item>

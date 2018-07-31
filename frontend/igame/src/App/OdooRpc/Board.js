@@ -71,8 +71,8 @@ export default class Board extends Models {
         /*
          * params:[table_id]
          * return:[
-                {}
-            ]
+            //8副牌的成绩及每副牌的牌型，叫牌信息和打牌信息
+        ]
          */
     }
 

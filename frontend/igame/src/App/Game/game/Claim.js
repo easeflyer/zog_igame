@@ -37,7 +37,7 @@ export default class Claim extends Component {
     render() {
         const cblocks = Array(this.props.number / 1).fill('').map((_, index) =>
             <Cblock key={index} number={index + 1}
-                active={this.state.value == index + 1 ? 0 : 1}
+                active={this.state.value === index + 1 ? 0 : 1}
                 onClick={this.state.submit ? null : this.handleClick.bind(this, index + 1)} />
         )
         console.log(cblocks)
@@ -47,8 +47,8 @@ export default class Claim extends Component {
             {this.state.submit ?
                 <button  className='waitingClaim' disabled='true' onClick={this.handleSubmit}>等待确认..</button> :
                 <div>
-                    <button className='cancelClaim'  onClick={this.handleCancel}>　取消　</button>
-                    <button className='sureClaim' disabled={!this.state.value} onClick={this.handleSubmit}>　确认　</button>
+                    <button className='cancelClaim'  onClick={this.handleCancel}>取消</button>
+                    <button className='sureClaim' disabled={!this.state.value} onClick={this.handleSubmit}>确认</button>
                 </div>
             }
         </div>
@@ -74,7 +74,7 @@ class Cblock extends Component {
      * props.number 数字
      */
     render() {
-        const animation = (this.props.active == 0) ?
+        const animation = (this.props.active === 0) ?
             { brightness: 0.6 } : { brightness: 1 }
         return (
             <TweenOne

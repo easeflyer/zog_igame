@@ -7,11 +7,18 @@ export default class Result extends React.Component{
         scene:0,   //0, 8副牌成绩; 1, 每一副牌成绩详情
         result:null,
         oneResult:null,
-    }   
-    searchOneResult=(data)=>{
+        table_id:this.props.table_id,
+        result_key:null,
+    } 
+    componentDidMount(){
+        console.log(this.state.table_id)
+        console.log(this.props.table_id)
+    }
+    searchOneResult=(data,key)=>{
         this.setState({
             oneResult:data,
             scene:1,
+            result_key:key
         });
     }
     toPointResult=()=>{
@@ -22,8 +29,8 @@ export default class Result extends React.Component{
     render(){
         return(
             <div>
-                {this.state.scene===0?<PointResult searchOneResult={this.searchOneResult}></PointResult>:null}
-                {this.state.scene===1?<PointDetail Detail={this.state.oneResult} toPointResult={this.toPointResult}></PointDetail>:null}
+                {this.state.scene===0?<PointResult searchOneResult={this.searchOneResult} table_id={this.props.table_id}></PointResult>:null}
+                {this.state.scene===1?<PointDetail Detail={this.state.oneResult} result_key={this.state.result_key} toPointResult={this.toPointResult}></PointDetail>:null}
             </div>
         )
     }

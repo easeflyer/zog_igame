@@ -96,7 +96,7 @@ export default class PointDetail extends React.Component{
                 mode="light"
                 icon={<Icon type="left" />}
                 onLeftClick={this.onLeftClick}
-                >第一副牌详情</NavBar>
+                >第{this.props.result_key+1}副牌详情</NavBar>
                 <WhiteSpace/>
                 <p>牌型分布</p>
                 <CardSuit cards={this.props.Detail.cards} vulnerable={this.props.Detail.vulnerable} table_information={this.props.Detail.table_information}/>

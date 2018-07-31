@@ -48,15 +48,18 @@ export default class PointResult extends React.Component{
 		result:null
 	}
 	componentDidMount(){
+		console.log(this.props.table_id)
 			dataSource=[];
-			Models.table_points(this.sucResult,this.failResult,1)
+			Models.table_points(this.sucResult,this.failResult,this.props.table_id);
 	}
 	sucResult=(data)=>{
 		this.setState({
-			result:data.reverse()
+			result:data
+			// result:data.reverse()
 		})
 		data.map((item,index)=>{
 		// data.reverse().map((item,index)=>{
+			// 顺序：从 1 到 8
 			dataSource.push({
 				key: index,
 				number:index+1,
@@ -82,7 +85,7 @@ export default class PointResult extends React.Component{
 				return oneResult;
 			}
 		});
-		this.props.searchOneResult(oneResult);
+		this.props.searchOneResult(oneResult,record.key);
 	}
 
     render(){
