@@ -51,7 +51,7 @@ class Table extends Component {
                 //fontSize:this.width * 0.03 + 'px'
             },
             panel: {
-                top: this.width * 0.22,
+                top: this.width * 0.15,
                 // top: this.width * 0.32,
                 left: this.width * 0.2,
                 width: this.width * 0.6,
@@ -516,7 +516,7 @@ class Table extends Component {
         //return 
     }
 
-    playRules=(nextplayer,suit,number)=>{
+    playRules=(nextplayer,suit,number)=>{   //可提出公共部分？？？？？？
         //从未打出去的牌中验证打牌规则
         this.state.cards.map(item=>{
             item.map(item1=>{
