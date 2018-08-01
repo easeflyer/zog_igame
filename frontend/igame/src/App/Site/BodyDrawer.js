@@ -1,13 +1,17 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom';
 import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 import './BodyDrawer.css'
 import Home from './Home/Index'
 import Test from './Test/Index2'
 import Navbar from './Navbar'
 
+
+import { session } from './Models/Models'
+
 import { Drawer, List } from 'antd-mobile';
-import { Icon } from 'antd'
+import { Icon } from 'antd';
+// import Safety from './Safety/Index';
 
 /**
  * BodyDrawer 是整个网站的外层包裹。
@@ -22,8 +26,19 @@ import { Icon } from 'antd'
 class BodyDrawer extends React.Component {
     state = {
         page: 0, // 默认显示第一页
-        open: false
+        open: false,
+        hasLogin:false
     }
+    constructor(){
+        super();
+        if(session.get_sid()) this.state.hasLogin = true;
+    }
+    // toggleHasLogin =()=>{
+    //     this.setState({
+    //         hasLogin:!this.state.hasLogin
+    //     })
+    // }
+
     onMenuClick = (id) => {
         //alert("点击菜单："+id);
         this.setState({
@@ -39,7 +54,7 @@ class BodyDrawer extends React.Component {
     render() {
         // 根据点击的菜单不同，渲染不同的页面内容。这里考虑页面内容，应该动态加载。
         const menu = [
-            { text: '主页',     icon: <Icon type="home" />,             page:<Home /> },
+            { text: '主页',     icon: <Icon type="home" />,             page:<Home setOthers={this.props.setOthers} /> },
             { text: '加入会员', icon: <Icon type="user-add" />,         page:<Home /> },
             { text: '大型赛事', icon: <Icon type="trophy" />,           page:<h1>page1</h1> },
             { text: '积分赛',   icon: <Icon type="coffee" />,           page:<h1>page2</h1> },
@@ -47,6 +62,7 @@ class BodyDrawer extends React.Component {
             { text: '俱乐部',   icon: <Icon type="usergroup-add" />,    page:<h1>page4</h1> },
             { text: '学习资料', icon: <Icon type="solution" />,         page:<h1>page5</h1> },
             { text: '测试页',   icon: <Icon type="solution" />,         page:<Test /> },
+            // { text: '安全管理',   icon: <Icon type="solution" />,         page:<Safety toggleHasLogin={this.toggleHasLogin} /> },
         ]
         //if(!this.props.open) return null; // 如果 open=false 不渲染任何东西（没用了）
         // fix in codepen 这里定义了列表的内容。 注意下面的语法。List 标签之间就是一个数组。 数组又 map 构造。
@@ -65,7 +81,10 @@ class BodyDrawer extends React.Component {
         // 这里定义屏幕整体效果。 包括顶部导航和抽屉菜单。其中抽屉菜单的sidebar 在上面用 list 定义。
         return (
             <div>
-                <Navbar toggleMenuBar={this.toggleMenuBar} />
+                <Navbar toggleMenuBar={this.toggleMenuBar} 
+                        // hasLogin={this.state.hasLogin} 
+                        // toggleHasLogin={this.toggleHasLogin} 
+                />
                 <Drawer
                     className="my-drawer"
 

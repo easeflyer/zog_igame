@@ -4,8 +4,11 @@ import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 import 'antd/dist/antd.css'; // 这一句是从哪里引入的？
 import './App.css'
 import { TabBar } from 'antd-mobile';
-import { Site,App2 } from './App/Loadable';
+import { Site,App2,My,Learn } from './App/Loadable';
 import { Icon } from 'antd'
+import session from './App/User/session';
+import User from './App/User/Index';
+import Match from './App/Common/Index';
 /**
  * 本页面是将来程序的入口，功能包括：
  * １）加载　loadable.js 也就是需要动态载入的所有　子程序。
@@ -14,9 +17,6 @@ import { Icon } from 'antd'
  * ４）State: 当前子程序，上一级页面等。
  */
 
-
-
-
 class TabBarExample extends React.Component {
   constructor(props) {
     super(props);
@@ -24,9 +24,42 @@ class TabBarExample extends React.Component {
       selectedTab: 'blueTab',
       hidden: false,
       fullScreen: true,  // 是否全屏显示
+      haslogin:false,
+      others:null,
     };
+    if (session.get_sid()){
+      this.state.haslogin = true
+    }
   }
 
+  setOthers = (index)=>{
+    this.setState({
+      others:index,
+    })
+  }
+  setHiddenState = (index)=>{
+    this.setState({
+      hidden:index,
+    })
+  }
+  goHome=()=>{
+    this.setState({
+      selectedTab: 'blueTab',
+      hidden: false,
+    });
+  }
+  toggleLoginState = ()=>{
+    this.setState({
+      haslogin:!this.state.haslogin,
+      hidden:false
+    })
+  }
+  loginOut = ()=>{
+    this.setState({
+      haslogin:!this.state.haslogin,
+      hidden:true
+    })
+  }
   renderContent(app) {
     return app;
   }
@@ -57,7 +90,12 @@ class TabBarExample extends React.Component {
             }}
             data-seed="logId"
           >
-            {this.state.selectedTab=='blueTab'?this.renderContent(<Site />):null}
+            {/* {this.state.selectedTab==='blueTab'?this.renderContent(<Site />):null} */}
+            {this.state.selectedTab==='blueTab'?
+              this.state.others==='match'? 
+                  <Match setHiddenState={this.setHiddenState} setOthers={this.setOthers} /> 
+                :this.renderContent(<Site setOthers={this.setOthers} />)
+            :null}
           </TabBar.Item>
           <TabBar.Item
             icon={<Icon type="rocket" style={{fontSize:'22px'}} />}
@@ -67,6 +105,11 @@ class TabBarExample extends React.Component {
             badge={'new'}
             selected={this.state.selectedTab === 'redTab'}
             onPress={() => {
+              if (!this.state.haslogin){
+                this.setState({
+                  hidden:true
+                })
+              }
               this.setState({
                 selectedTab: 'redTab',
               });
@@ -74,7 +117,16 @@ class TabBarExample extends React.Component {
             data-seed="logId1"
           >
             {/*动态加载 应该考虑 在这里执行。*/}
-            {this.state.selectedTab=='redTab'?this.renderContent(<App2 />):null}
+            {/* {this.state.selectedTab==='redTab' ? 
+              this.renderContent(this.state.haslogin ? 
+                this.renderContent(<Match setHiddenState={this.setHiddenState} />)
+                : <User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />)
+              : null} */}
+            {this.state.selectedTab==='redTab'? 
+            this.renderContent(this.state.haslogin? 
+            this.renderContent(<App2 setHiddenState={this.setHiddenState} />)
+            :<User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />)
+            :null}
           </TabBar.Item>
           <TabBar.Item
             icon={<Icon type="form" style={{fontSize:'22px'}} />}
@@ -89,7 +141,11 @@ class TabBarExample extends React.Component {
               });
             }}
           >
-            {this.state.selectedTab=='greenTab'?this.renderContent(<Site />):null}
+            {this.state.selectedTab==='greenTab'? 
+            this.renderContent(this.state.haslogin? 
+            this.renderContent(<Learn  setHiddenState={this.setHiddenState} />)
+            :<User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />)
+            :null}
           </TabBar.Item>
           <TabBar.Item
             icon={<Icon type="user" style={{fontSize:'22px'}} />}
@@ -98,12 +154,23 @@ class TabBarExample extends React.Component {
             key="my"
             selected={this.state.selectedTab === 'yellowTab'}
             onPress={() => {
+              if (!this.state.haslogin){
+                this.setState({
+                  // selectedTab: 'yellowTab',
+                  hidden: true
+                });
+              }
               this.setState({
                 selectedTab: 'yellowTab',
+                // hidden: true
               });
             }}
           >
-             {this.state.selectedTab=='yellowTab'?this.renderContent(<App2 />):null}
+              {this.state.selectedTab==='yellowTab'?
+                this.renderContent(this.state.haslogin?<My loginOut={this.loginOut} setHiddenState={this.setHiddenState} />:
+                <User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />)
+              :null}
+             {/* {this.state.selectedTab=='yellowTab'?this.renderContent(this.state.haslogin?<My />:<FlexExample toggleLogin={this.toggleLogin} />):null} */}
           </TabBar.Item>
         </TabBar>
       </div>
