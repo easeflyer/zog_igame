@@ -71,8 +71,8 @@ export default class Board extends Models {
         /*
          * params:[table_id]
          * return:[
-                {}
-            ]
+            //8副牌的成绩及每副牌的牌型，叫牌信息和打牌信息
+        ]
          */
     }
 
@@ -107,7 +107,5 @@ export default class Board extends Models {
          */
     }
 
-    get_matches(){
-        this.exec('get_matches',{});
-    }
+   
 }

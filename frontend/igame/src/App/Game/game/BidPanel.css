@@ -1,6 +1,7 @@
 .bidpanel{
     position: absolute;
-    background-color:rgba(0, 0, 66, 0.2);
+    background-color:rgba(255, 255, 255, 0.8);
+    /* background-color:rgba(0, 0, 66, 0.2); */
     /* opacity:0.8; */
 }
 .bidpanel table{
@@ -9,6 +10,9 @@
 }
 .bidpanel tr{
     border-bottom: 1px solid #666699;
+}
+.bidpanel tr td{
+    border:1px solid #000000;
 }
 .bidblock{
     position: relative;

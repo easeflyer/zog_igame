@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import './Prepare.css'
 export default class Prepare extends Component {
-    componentWillReceiveProps(newProps){
-        console.log(newProps)
-    }
     render() {
         return (
             <div className='prepare'>
