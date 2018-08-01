@@ -154,7 +154,9 @@ class Table extends Component {
 
     /* 完成挂载后，要计算 各个位置的坐标。 */
     componentDidMount() {
+        this.props.setHiddenState(true)
         Models.get_matches(this.sucGetMatch,this.failGetMatch)  //查询桌号
+        // this.props.toResult(1)
     }
 
     sucGetMatch=(data)=>{   //查询到所有未开始的table_id
@@ -198,22 +200,9 @@ class Table extends Component {
         })
         this.transfer(this.myseat);  //根据我的方位，计算界面中“上下左右”对应的实际方位
         this.originData = data;     
-        if(this.board_id_list.indexOf(this.board_id)>0){
-            this.splitCards(data);  //拿到我的牌，发牌
-        }
         Models.polling(this.sucPolling,this.failPolling,this.pollingId); 
     }
     failInit=()=>{console.log('fail init')}
-
-    splitCards=(data)=>{
-        this.cards = data.cards.split(' ');
-        this.dealer=data.dealer;
-        this.timing(Table.seats[this.state.userdir.indexOf(data.dealer)],10,()=>{});
-        this.deals = 'XXX.XX.XXXX.XXXX '+ data.cards.split(' ')[Table.dir.indexOf(this.myseat)] +' XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
-        this.state.cards = this.initCards()
-        this.deal();
-        this.setState({scene:1})  
-    }
 
     sucPolling=(data)=>{
         if(data.length&&this.pollingId===1){    //从历史消息中查询其他用户的准备状态
@@ -437,7 +426,6 @@ class Table extends Component {
     *          因此可以以中心点考虑四个方位的位移 再加减相同的 位置差即可。
     *          注：0.7 是扑克的横竖比例。
     */
-        //this.deals = Models.deals()[0];
     _initSeat() {
         const center = { x: 0, y: 0 };
         center.x = this.ref.board.current.offsetTop +
@@ -449,8 +437,6 @@ class Table extends Component {
         for (let key in this.seat) {
             this.seat[key][0]['y'] = this.ref[key].current.offsetTop;
             this.seat[key][0]['x'] = this.ref[key].current.offsetLeft;
-            // console.log('seat................')
-            // console.log(this.seat)
             if (key === 'east') {
                 this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.width * 0.06
                 // 下面是处理　牌的叠放顺序　联合参考：dealCards
@@ -503,8 +489,6 @@ class Table extends Component {
                 }
             });
         });
-        // console.log('cards.......333.............')
-        // console.log(cards)
         return cards;
     }
     //计算每个人所坐的位置
@@ -513,11 +497,9 @@ class Table extends Component {
         const offset = Table.dir.indexOf(this.myseat)-1||Table.dir.indexOf(this.myseat)+3
         const index = Table.seats.indexOf(seat)
         return Table.seats[(index + offset) % 4-1]||Table.seats[(index + offset) % 4+3]
-        //return 
     }
-
-    playRules=(nextplayer,suit,number)=>{   //可提出公共部分？？？？？？
-        //从未打出去的牌中验证打牌规则
+    //从未打出去的牌中验证打牌规则  可提出公共部分？？？？？？
+    playRules=(nextplayer,suit,number)=>{   
         this.state.cards.map(item=>{
             item.map(item1=>{
                 item1.onclick =  () => false;
@@ -538,7 +520,6 @@ class Table extends Component {
                 return haveSuit;
             }) 
             if(haveSuit===0||number%4===0){this.state.cards[1].map(item=>{item.active=2;item.onclick =  this.play(item);})}
-            console.log(haveSuit);
         }else if(nextplayer===this.state.dummy&&this.myseat===this.state.declarer){
             let haveSuit = 0;
             this.state.cards[3].map((item,index)=>{
@@ -552,9 +533,10 @@ class Table extends Component {
                 }
             })  
             if(haveSuit===0||number%4===0){this.state.cards[3].map(item=>{item.active=2;item.onclick =  this.play(item);})}
-            console.log(haveSuit);
         }
+        this.setState({cards:this.state.cards})
     }
+ 
     validatePrepare=(body)=>{   //验证牌手准备消息
         const seat = Table.seats[this.state.userdir.indexOf(body.pos)]
         const readyPos = Table.dirAll[Table.dir.indexOf(body.pos)]
@@ -575,17 +557,23 @@ class Table extends Component {
         })
     }
 
-	transfer=(pos)=>{   //根据“我”的方位按照“右，下，左，上”的顺序计算对应的实际方位
-		if(pos==='N')this.setState({userdir:['W','N','E','S']})
-		if(pos==='E')this.setState({userdir:['N','E','S','W']})
-		if(pos==='S')this.setState({userdir:['E','S','W','N',]})
-		if(pos==='W')this.setState({userdir:['S','W','N','E']})
-	}
+    transfer=(pos)=>{   //根据“我”的方位按照“右，下，左，上”的顺序计算对应的实际方位
+        if(pos==='N')this.setState({userdir:['W','N','E','S']})
+        if(pos==='E')this.setState({userdir:['N','E','S','W']})
+        if(pos==='S')this.setState({userdir:['E','S','W','N',]})
+        if(pos==='W')this.setState({userdir:['S','W','N','E']})
+    }
 
-    
-       /**
-     * 发牌
-     */
+    splitCards=(data)=>{
+        this.cards = data.cards.split(' ');
+        this.dealer=data.dealer;
+        this.timing(Table.seats[this.state.userdir.indexOf(data.dealer)],10,()=>{});
+        this.deals = 'XXX.XX.XXXX.XXXX '+ data.cards.split(' ')[Table.dir.indexOf(this.myseat)] +' XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
+        this.state.cards = this.initCards()
+        this.deal();
+        this.setState({scene:1})  
+    }
+
     deal = () => {
         const cards = this.dealCards()
         this.setState({
@@ -594,7 +582,6 @@ class Table extends Component {
     }
     /**
      * 发牌
-     * 
      * 算法注解：
      *  1） 东西方向牌是横向的，因此要确定旋转的圆心。旋转后保证左上角坐标就是牌
      *      的左上角如果按照中心旋转则还需要计算偏移量。利用 transformOrigin
@@ -624,10 +611,8 @@ class Table extends Component {
                     rotate: rotate,
                     transformOrigin: `${offset}px ${offset}px`
                 }
-                //cards[index][index1][index2].rotate = rotate;
-                cards[index][index1].active = 2; // 测试用
+                cards[index][index1].active = 2; 
                 cards[index][index1].onclick =  () => false;
-                // cards[index][index1].onclick = this.play(item1)
                 if ('02'.indexOf(index) !== -1) y = y + this.csize * 0.15;
                 else x = x + this.csize * 0.2;
 
@@ -744,9 +729,6 @@ class Table extends Component {
             console.log(board)
             board[i].animation.left = this.width / 2;
             board[i].animation.top = -this.width * 2;
-            //board[i].animation.rotate = 0;
-            // board[i].animation.left = 100;
-            // board[i].animation.top = 100;
             board[i].active = 3;
         }
         this.setState({
@@ -768,7 +750,6 @@ class Table extends Component {
             west: { x: -p * 0.66, y: 0 },
             north: { x: 0, y: -p * 0.66 }
         }
-
         const top = this.seat[seat][1]['y'] + offset[seat].y;
         const left = this.seat[seat][1]['x'] + offset[seat].x;
         const style = {
@@ -787,7 +768,6 @@ class Table extends Component {
             clock,
             document.querySelector('#clock')
         )
-
     }
  
     showResult = (data) => {
@@ -796,8 +776,6 @@ class Table extends Component {
             itemSeat.map(item=>{
                 item.position.x = this.width / 2;
                 item.position.y = -this.width / 2;
-                // board[i].animation.left = this.width / 2;
-        // board[i].animation.top = -this.width * 2;
             })
         })
         this.setState({cards:this.state.cards})
@@ -817,7 +795,6 @@ class Table extends Component {
     hideResult = () => {
         if(this.board_id_list.indexOf(this.board_id)<this.board_id_list.length-1){
             this.setState({
-                // cards:this.state.cards,
                 scene: 1,    // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
                 calldata:[],
                 bidCard: null,
