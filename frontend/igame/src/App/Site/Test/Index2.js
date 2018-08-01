@@ -3,7 +3,7 @@ import { List, } from 'antd-mobile';
 // import { Icon } from 'antd'
 // import './GridSection.css'
 //import './Index1.js' // 用于测试。
-import Models from '../Models/Models'
+import { Models } from '../Models/Models'
 const Item = List.Item;
 const Brief = Item.Brief;
 
