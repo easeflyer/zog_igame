@@ -1,8 +1,8 @@
 import Models from './OdooRpc';
 // const HOST = 'http://124.42.117.43:8069';
-const HOST = 'http://192.168.0.20:8069';
+// const HOST = 'http://192.168.0.20:8069';
 // const HOST = 'http://192.168.0.113:8069';
-
+const HOST = 'http://192.168.0.114:8069';
 const DATABASE = 'TT';
 
 export default class User extends Models {
@@ -34,4 +34,5 @@ export default class User extends Models {
         const data = this.createData(login,password);
         return this.m.jsonrpc(url,data)
     }
+    
 }

@@ -14,6 +14,10 @@ import Password from './MySelf/Password';
 import BankCard from './MySelf/BankCard';
 import Email from './MySelf/Email';
 import ToVersion from './MySelf/ToVersion';
+import BindPhone from './MySelf/BindUser/BindPhone';
+import BindIdCard from './MySelf/BindUser/BindIdCard';
+import BindPassword from './MySelf/BindUser/BindPassword';
+import BindBankCard from './MySelf/BindUser/BindBankCard';
 export default class My extends React.Component {
     state = {
         page: 'mine',
@@ -47,23 +51,23 @@ export default class My extends React.Component {
         this.setState({ page: 'mine' })
     }
     toUserName = () => {
-        this.props.setHiddenState(false);
+        // this.props.setHiddenState(false);
         this.setState({ page: 'username' })
     }
     ToPhone = () => {
-        this.props.setHiddenState(false);
+        // this.props.setHiddenState(false);
         this.setState({ page: 'phone' })
     }
     ToIdCard = () => {
-        this.props.setHiddenState(false);
+        // this.props.setHiddenState(false);
         this.setState({ page: 'idcard' })
     }
     ToPassword = () => {
-        this.props.setHiddenState(false);
+        // this.props.setHiddenState(false);
         this.setState({ page: 'password' })
     }
     ToBankCard = () => {
-        this.props.setHiddenState(false);
+        // this.props.setHiddenState(false);
         this.setState({ page: 'ToBankCard' })
     }
     ToEmail = () => {
@@ -72,6 +76,19 @@ export default class My extends React.Component {
     ToVersion = () => {
         this.setState({ page: 'ToVersion' })
     }
+    ToBindPhone = () => {
+        this.setState({ page: 'BindPhone' })
+    }
+    ToBindIdCard = () => {
+        this.setState({ page: 'BindIdCard' })
+    }
+    ToBindPassword = () => {
+        this.setState({ page: 'BindPassword' })
+    }
+    ToBindBankCard = () => {
+        this.setState({ page: 'BinkBandCard' })
+    }
+    
     render() {
         let now = null;
         switch (this.state.page) {
@@ -117,16 +134,24 @@ export default class My extends React.Component {
                 now = <UserName toMySelf={this.toMySelf} />
                 break;
             case 'phone':
-                now = <Phone toMySelf={this.toMySelf} />
+                now = <Phone toMySelf={this.toMySelf}
+                    ToBindPhone={this.ToBindPhone}
+                />
                 break;
             case 'idcard':
-                now = <IdCard toMySelf={this.toMySelf} />
+                now = <IdCard toMySelf={this.toMySelf}
+                    ToBindIdCard={this.ToBindIdCard}
+                />
                 break;
             case 'password':
-                now = <Password toMySelf={this.toMySelf} />
+                now = <Password toMySelf={this.toMySelf}
+                    ToBindPassword={this.ToBindPassword}
+                />
                 break;
             case 'ToBankCard':
-                now = <BankCard toMySelf={this.toMySelf} />
+                now = <BankCard toMySelf={this.toMySelf}
+                    ToBindBankCard={this.ToBindBankCard}
+                />
                 break;
             case 'ToEmail':
                 now = <Email toMySelf={this.toMySelf} />
@@ -134,6 +159,17 @@ export default class My extends React.Component {
             case 'ToVersion':
                 now = <ToVersion toMySelf={this.toMySelf} />
                 break;
+            case 'BindPhone':
+                now = <BindPhone ToPhone={this.ToPhone} />
+                break;
+            case 'BindIdCard':
+                now = <BindIdCard ToIdCard={this.ToIdCard} />
+                break;
+            case 'BindPassword':
+                now = <BindPassword ToPassword={this.ToPassword} />
+                break;
+            case 'BinkBankCard':
+                now = <BindBankCard ToBankCard={this.ToBankCard} />
             default:
                 break;
         }
