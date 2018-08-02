@@ -10,6 +10,7 @@ import Claim from './Claim'
 import Debug from './Debug'
 import './Table.css'
 import Models from '../models/model'
+import Sound from './Sound'
 
 /**
  * Game  是一局比赛，涉及到了比赛者，以及和比赛相关的其他信息。重点在于比赛。
@@ -258,6 +259,7 @@ class Table extends Component {
         this.setState({
             cards: this.state.cards
         }, () => this.board = [])
+        Sound.play('clear')
     }
 
 
@@ -318,7 +320,7 @@ class Table extends Component {
             this.setState({
                 cards: this.state.cards
             })
-
+            Sound.play('play');
             if (this.board.length == 4) setTimeout(this.clearBoard, 1000)
         }
     }
@@ -366,6 +368,7 @@ class Table extends Component {
         this.setState({
             cards: cards
         });
+        Sound.play('deal')
     }
 
     /**
@@ -734,6 +737,7 @@ class Table extends Component {
                         {/* <div className='re' id='lastTrick' style={css.re}>上墩牌</div>*/}
                         {/* 注意比赛结果会挂载到下面的div */}
                         <div id='result' style={css.re}></div>
+                        <div id='sound'></div>
                     </div>
                     <div id='body' className='body' style={css.body}>
                         {this.state.lastTrick ? <div id='lastTrick' className='lastTrick'></div> : null}
