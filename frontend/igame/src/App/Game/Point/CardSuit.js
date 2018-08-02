@@ -1,5 +1,5 @@
 import React from 'react'
-import {WingBlank,Flex,WhiteSpace,Grid} from 'antd-mobile'
+import {WingBlank,Flex,WhiteSpace} from 'antd-mobile'
 export default class CardSuit extends React.Component{
     state={
         vulnerable:null,
