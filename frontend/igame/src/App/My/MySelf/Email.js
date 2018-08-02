@@ -20,9 +20,8 @@ class BasicInput extends React.Component {
             if (!error) {
                 var formData = this.props.form.getFieldsValue();  //表单数据
                 console.log('zzzz', formData)
-                const m = new My((data) => this.setState({ data: data }), () => console.log('没有拿数据'));
-                console.log(this.state.data,'1111')
-                m.email(formData.user_email)
+                const m = new My(() => this.success(), () => this.error());
+                m.my_email1(formData.user_email)
 
                 const errorCallback = () => {
                     Toast.fail('修改失败，请稍后重试！', 1);
@@ -35,6 +34,12 @@ class BasicInput extends React.Component {
                 Toast.fail('您的输入不完整！');
             }
         });
+    }
+    success() {
+        Toast.fail('修改成功');
+    }
+    error() {
+        Toast.error('修改失败');
     }
     render() {
         const { getFieldProps, getFieldError } = this.props.form;

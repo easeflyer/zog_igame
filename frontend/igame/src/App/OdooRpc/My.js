@@ -13,7 +13,7 @@ export default class My extends Models {
 
 
     personal_info() {
-        //查询第几副牌
+        //查询个人信息
         this.exec('personal_info', {}, []);
         // const obj = this.with_model('res.users');  //模型名
         // obj.exec('personal_info', {},[]);
@@ -22,10 +22,10 @@ export default class My extends Models {
         * return:
        */
     }
-    bind_phone() {
-        //绑定修改手机号
+    // bind_phone() {
+    //     //绑定修改手机号
 
-    }
+    // }
 
     email(email) {
         //邮箱绑定修改
@@ -49,6 +49,24 @@ export default class My extends Models {
     //保存手机号
     bind_phone(login, code1) {
         this.exec('bind_phone', {}, login, code1)
+    }
+    //保存邮箱 
+    my_email1(email) {
+        this.exec('my_email1', {}, email)
+    }
+    //修改密码
+    change_password(old_passwd, new_passwd) {
+        this.exec('change_password', {}, old_passwd, new_passwd);
+    }
+
+    //绑定身份证
+    idcard_info(name, id_card) {
+        this.exec('idcard_info', {}, name, id_card);
+    }
+
+    //绑定 银行卡
+    bank_card_info(bank_card) {
+        this.exec("bank_card_info", {}, bank_card)
     }
 
 }

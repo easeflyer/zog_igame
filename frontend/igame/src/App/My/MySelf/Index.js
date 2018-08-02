@@ -23,7 +23,6 @@ export default class MySelf extends React.Component {
         const m = new My((data) => this.setState({ data: data }), () => console.log('没有拿数据'));
         m.personal_info()
     }
-
     render() {
         let bank_card, email, head_portrait, idcard, nickname, phone, version;
         if (this.state.data) {

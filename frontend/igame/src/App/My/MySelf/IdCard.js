@@ -20,7 +20,7 @@ class CodeForm extends React.Component {
                 //  注意：此处应该先把手机号和验证码提交到后端做验证
                 clearInterval(this.state.timer);    //清除发送验证码的计时器
                 this.props.setUser(formData.phone);
-                this.props.tooglePages();
+                // this.props.tooglePages();
             } else {
                 Toast.fail('您的输入有误！');
             }
@@ -29,7 +29,8 @@ class CodeForm extends React.Component {
     onSubmitNumber = () => {   //表单提交方法
         this.props.form.validateFields({ force: true }, (error) => {  //输入验证，符合规则才向后后端交数据
             var formData = this.props.form.getFieldsValue();  //表单数据
-            console.log(formData);
+            console.log(this.props);
+
             if (!error) {
                 console.log(formData.phone)
                 console.log(formData.code)
@@ -38,11 +39,18 @@ class CodeForm extends React.Component {
                 //  注意：此处应该先把手机号和验证码提交到后端做验证
                 // clearInterval(this.state.timer);    //清除发送验证码的计时器
                 // this.props.setUser(formData.phone);
-                this.props.tooglePages();
+                // this.props.tooglePages();
             } else {
                 Toast.fail('您的输入有误！');
             }
         });
+    }
+    success(data) {
+        if (data) {
+            this.props.ToBindIdCard();
+        } else {
+            Toast.fail('您的输入有误！');
+        }
     }
     getCode = () => {   //表单提交方法
         this.props.form.validateFields({ force: true }, (error) => {  //输入验证，符合规则才向后后端交数据

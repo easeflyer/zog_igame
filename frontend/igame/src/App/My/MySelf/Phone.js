@@ -10,27 +10,38 @@ class CodeForm extends React.Component {
     onSubmit = () => {   //表单提交方法
         this.props.form.validateFields({ force: true }, (error) => {  //输入验证，符合规则才向后后端交数据
             var formData = this.props.form.getFieldsValue();  //表单数据
+            console.log(formData, 'zzzzzzzzzzzzzzzzzzz')
             if (!error) {
                 console.log(formData.phone)
                 console.log(formData.code)
-
+                const m = new My((data) => this.success2(data), () => console.log('没有发送'));
+                m.bind_phone(formData.phone, formData.code);
                 //  注意：此处应该先把手机号和验证码提交到后端做验证
                 clearInterval(this.state.timer);    //清除发送验证码的计时器
-                this.props.setUser(formData.phone);
+                this.props.setUser(formData.phone, formData.code1);
                 this.props.tooglePages();
             } else {
                 Toast.fail('您的输入有误！');
             }
         });
     }
+    success2 = (data) => {
+        Toast.fail('修改成功！');
+        this.props.loginOut();
+        this.props.toMine();
+    }
+    error = (data) => {
+        Toast.fail('修改失败');
+    }
     onSubmitNumber = () => {   //表单提交方法
 
         this.props.form.validateFields({ force: true }, (error) => {  //输入验证，符合规则才向后后端交数据
             var formData = this.props.form.getFieldsValue();  //表单数据
             if (!error) {
+
                 // const m = new My(((result) =>this.success(result), () => console.log('没有发送')));
-                const m = new My((data) => this.success(data), () => console.log('没有发送'));
-                m.verification_code(formData.code);
+                const m = new My((data) => this.success2(data), (data) => this.error(data));
+                m.bind_phone(formData.phone, formData.code);
             } else {
                 Toast.fail('您的输入有误！');
             }
@@ -38,7 +49,7 @@ class CodeForm extends React.Component {
     }
     success = (data) => {
         if (data) {
-            this.props.ToBindPhone();
+            Toast.fail(' 修改成功');
         } else {
             Toast.fail('验证码错误或账号错误')
         }
@@ -109,7 +120,7 @@ class CodeForm extends React.Component {
                             Toast.info(getFieldError('phone').join('、'));
                         }}
                         type="phone"
-                        placeholder="请输入手机号"
+                        placeholder="请输入新手机号"
                     >手机号</InputItem>
                     <Button type="" className='code-btn' onClick={() => this.getCode(this)}
                         value={this.state.msg}
@@ -133,7 +144,7 @@ class CodeForm extends React.Component {
                     type="number"
                     placeholder="请输入验证码"
                 >验证码</InputItem>
-                <Button type="" onClick={this.onSubmitNumber} className='login-btn'>下一步</Button>
+                <Button type="" onClick={this.onSubmitNumber} className='login-btn'>完成</Button>
             </div>
         )
     }
