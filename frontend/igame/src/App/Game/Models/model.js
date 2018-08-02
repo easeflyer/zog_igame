@@ -35,7 +35,7 @@ class Models{
 
     static play=(success,error,board_id,mydir,card,channel_id)=>{   //发送打牌消息
         const board= new Board(success,error);  
-         board.play(board_id,mydir,card,channel_id);         //params: [board_id,mydir,card,channel_id]
+         board.play(board_id,mydir,card);         //params: [board_id,mydir,card,channel_id]
     }
     static sendplay =(success,error,board_id,card_id,channel_id)=>{   //接收打牌消息
         const board= new Board(success,error);      
