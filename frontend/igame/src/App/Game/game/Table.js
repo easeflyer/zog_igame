@@ -715,12 +715,12 @@ class Table extends Component {
         const calldata = this.state.calldata
         if(calldata.length === 0){
             calldata.push(Array(4).fill(null))
-            calldata[0][Table.dir.indexOf(seat)] = bid;
+            calldata[0][Table.dir.indexOf(seat)] = bid.toUpperCase();
         }else if(seat === 'N'){
             calldata.push(Array(4).fill(null))
-            calldata[calldata.length-1][Table.dir.indexOf(seat)] = bid;
+            calldata[calldata.length-1][Table.dir.indexOf(seat)] = bid.toUpperCase();
         }else{
-            calldata[calldata.length-1][Table.dir.indexOf(seat)] = bid;
+            calldata[calldata.length-1][Table.dir.indexOf(seat)] = bid.toUpperCase();
         }
     }
      /**
@@ -884,7 +884,7 @@ class Table extends Component {
             this.lastTrickPos = []; 
             this.dummyCards = null;
             this.dummySeat = null;
-            this.state.cards = this.initCards()
+            this.state.cards = this.initCards();
             Models.join_channel(this.sucChannel,this.failChannel,this.table_id);
         }
         if(this.board_id_list.indexOf(this.board_id)===this.board_id_list.length-1){
