@@ -33,7 +33,7 @@ class OdooRpc {
         }).then(res => res.json()
         ).catch(error => console.error('Error:', error)
         ).then(response => {
-            console.log('response',response)
+            console.log('response', response)
             if (response.result) {
                 this.success(response.result)
             } else {
