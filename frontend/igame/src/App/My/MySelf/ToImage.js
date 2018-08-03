@@ -1,10 +1,10 @@
 import React from 'react';
 import { NavBar } from 'antd-mobile';
 import { Upload, Icon, message } from 'antd';
-// const HOST = 'http://124.42.117.43:8069';
+const HOST = 'http://124.42.117.43:8069';
 // const HOST = 'http://192.168.0.20:8069';
 // const HOST = 'http://192.168.0.21:8069';
-const HOST = 'http://192.168.0.114:8069';
+// const HOST = 'http://192.168.0.114:8069';
 
 function getBase64(img, callback) {
     const reader = new FileReader();
