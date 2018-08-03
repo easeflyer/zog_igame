@@ -77,14 +77,19 @@ export default class Datum extends React.Component {
                 switch (index) {
                     case 0:
                         tableNum = child[0].table_num;
+                        break;
                     case 1:
                         host = child[1].host;
+                        break;
                     case 2:
                         guest = child[2].guest;
+                        break;
                     case 3:
                         gradeArr = child[3];
+                        break;
                     case 4:
                         directionArr = child[4];
+                        break;
                     default:
                         break;
                 }

@@ -11,6 +11,7 @@ export default class Result extends React.Component{
         result_key:null,
     } 
     componentDidMount(){
+        this.props.setHiddenState(false)
         console.log(this.state.table_id)
         console.log(this.props.table_id)
     }

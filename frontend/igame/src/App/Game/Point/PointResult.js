@@ -93,8 +93,8 @@ export default class PointResult extends React.Component{
           	<WingBlank>
              	<NavBar
                 mode="light"
-                icon={<Icon type="left" />}
-                onLeftClick={() => console.log('onLeftClick')}
+                // icon={<Icon type="left" />}
+                // onLeftClick={() => console.log('onLeftClick')}
 				>本局累计得分</NavBar>
 				<WhiteSpace/>
 				<Table 

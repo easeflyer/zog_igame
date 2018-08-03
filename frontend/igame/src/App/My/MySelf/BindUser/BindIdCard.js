@@ -2,15 +2,14 @@ import React from 'react';
 import { NavBar, Icon, InputItem, Toast, Button, WhiteSpace } from 'antd-mobile';
 import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
 import { createForm } from 'rc-form';
-import My from '../../OdooRpc/My';
+import My from '../../../OdooRpc/My';
 class BasicInput extends React.Component {
     state = {
         data: null
     }
     validateAccount = (rule, value, callback) => {  //输入验证规则
-        const reg = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$");
-        if (!reg.test(value)) {
-            callback(new Error('格式错误'));
+        if (value.length > 25) {
+            callback(new Error('Please enter 25 digits'));
         } else {
             callback();
         }
@@ -21,7 +20,7 @@ class BasicInput extends React.Component {
                 var formData = this.props.form.getFieldsValue();  //表单数据
                 console.log('zzzz', formData)
                 const m = new My(() => this.success(), () => this.error());
-                m.my_email1(formData.user_email)
+                m.idcard_info(formData.name, formData.id_card)
 
                 const errorCallback = () => {
                     Toast.fail('修改失败，请稍后重试！', 1);
@@ -49,33 +48,47 @@ class BasicInput extends React.Component {
                 <NavBar
                     mode="light"
                     icon={<Icon type="left" />}
-                    onLeftClick={() => this.props.toMySelf()}
-                >邮箱
+                    onLeftClick={() => this.props.ToIdCard()}
+                >身份证
             </NavBar>
                 <form>
                     <InputItem
-                        {...getFieldProps('user_email', {
+                        {...getFieldProps('name', {
                             rules: [
                                 { required: true, message: '姓名尚未填写！' },
                                 { validator: this.validateAccount },
                             ],
                         })}
                         clear
-                        error={!!getFieldError('user_email')}
+                        error={!!getFieldError('name')}
                         onErrorClick={() => {
-                            Toast.info(getFieldError('user_email').join('、'));
+                            Toast.info(getFieldError('name').join('、'));
                         }}
                         type="string"
-                        placeholder="请输入邮箱"
-                    >邮箱</InputItem>
-
+                        placeholder="姓名"
+                    ></InputItem>
+                    <InputItem
+                        {...getFieldProps('id_card', {
+                            rules: [
+                                { required: true, message: '身份证尚未填写！' },
+                                { validator: this.validateAccount },
+                            ],
+                        })}
+                        clear
+                        error={!!getFieldError('id_card')}
+                        onErrorClick={() => {
+                            Toast.info(getFieldError('id_card').join('、'));
+                        }}
+                        type="number"
+                        placeholder="身份证"
+                    ></InputItem>
                     <WhiteSpace size="xl" />
                     <WhiteSpace size="xl" />
-                    <Button type="" onClick={this.onSubmit} className='login-btn'>保存</Button>
+                    <Button type="" onClick={this.onSubmit} className='login-btn'>提交</Button>
                 </form>
             </div>
         )
     }
 }
-const Email = createForm()(BasicInput);  //表单组件
-export default Email;
+const BindIdCard = createForm()(BasicInput);  //表单组件
+export default BindIdCard;
