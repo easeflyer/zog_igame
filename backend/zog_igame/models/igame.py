@@ -24,6 +24,16 @@ class IntelligentGame(models.Model):
         index=True, copy=False, default=fields.Datetime.now,
         help="game date")
 
+    start_time = fields.Datetime('Start Time', required=True,
+        DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S",
+        help="Start Time")
+
+    over_time = fields.Datetime('Over Time', required=True,
+        DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S",
+        help="Over Time")
+
+    game_level = fields.Integer()
+
     referee = fields.Char('referee')
 
     arbitrator = fields.Char('arbitrator')
