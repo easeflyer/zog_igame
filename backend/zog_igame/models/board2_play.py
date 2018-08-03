@@ -32,20 +32,27 @@ class Board(models.Model):
         self.env['og.channel'].browse(channel_id).message_post(body=str(bidinfo))
 
 #modified
+
     @api.multi
-    def play(self,pos,card,channel_id):
+    def play(self, pos, card):
         self = self.sudo()
         ret, ccdd = self._check_play(pos, card)
         if ret:
             return ret, ccdd
         # self.env['og.board.card'].browse(ccdd.id).write({'number':1 + max(self.card_ids.mapped('number') )})
-        ccdd.number = 1 + max(self.card_ids.mapped('number') )
-        self.env['og.board'].clear_caches()
-        self.env['og.board.card'].clear_caches()
-        vals={'number':ccdd.number,'card':ccdd.name,'pos':ccdd.pos,'suit':ccdd.suit,
-            'rank':ccdd.rank,'ns_win':self.ns_win,'ew_win':self.ew_win,
-                'nextplayer':self.player}
-        self._send_play(channel_id,vals)
+        ccdd.number = 1 + max(self.card_ids.mapped('number'))
+        return ccdd.id
+
+    @api.multi
+    def sendplay(self, ccdd_id, channel_id):
+        self = self.sudo()
+        ccdd = self.env['og.board.card'].browse(ccdd_id)
+
+        vals = {'number': ccdd.number, 'card': ccdd.name, 'pos': ccdd.pos, 'suit': ccdd.suit,
+                'rank': ccdd.rank, 'ns_win': self.ns_win, 'ew_win': self.ew_win,
+                'nextplayer': self.player}
+        self._send_play(channel_id, vals)
+
         return vals
 
 

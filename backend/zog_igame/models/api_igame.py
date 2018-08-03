@@ -316,8 +316,11 @@ class IntelligentGameTeam(models.Model):
     # @api.returns('self')
     # def create_team(self,team_name,kwargs):
     def create_team(self, team_name, kwargs):
+
         user_id = self.env.user.id
+
         user = self.env['res.users'].search([('id', '=', user_id)])
+
         partner = user.partner_id
         # user's partner info
         self = self.sudo()
@@ -383,6 +386,8 @@ class IntelligentGameTeam(models.Model):
         res = []
         user = self.env.user.partner_id  # get user'partner
         self = self.sudo()
+
+
         own_team = self.env['res.partner'].search([('parent_id', '=', user.id)])
 
         for rec in own_team:
@@ -447,6 +452,39 @@ class IntelligentTeamPlayer(models.Model):
         info = {'team_id': iteam_id.id, 'partner_id': player_id.id, 'role': role}
         pid = self.create(info)
         return pid
+
+    @api.model
+    def get_matches(self):
+        partner_id = self.env.user.partner_id.id
+        self = self.sudo()
+        inteams = self.env['og.igame.team.player'].search([('partner_id','=',partner_id)])
+        tables = []
+        for me in inteams:
+            lines = me.team_id.line_ids
+            for line in lines:
+                close_table_id = line.match_id.close_table_id
+                open_table_id = line.match_id.open_table_id
+                close_table = line.match_id.close_table_id.partner_ids.mapped('id')
+                open_table = line.match_id.open_table_id.partner_ids.mapped('id')
+                if partner_id in close_table:
+                    if self.check_matches(line,close_table_id):
+                        tables.append(line.match_id.close_table_id.id)
+                    continue
+                if partner_id in open_table:
+                    if self.check_matches(open_table_id):
+                        tables.append(line.match_id.open_table_id.id)
+                    continue
+        return tables
+
+    def check_matches(self,table):
+
+        board_undone = []
+        for board in table.board_ids:
+            if board.result == None:
+                board_undone.append(board.id)
+        if board_undone != None:
+            return True
+        else: return False
 
 
 class IntelligentGameTeamLine(models.Model):
@@ -953,6 +991,16 @@ class Table(models.Model):
         return kk
 
 
-
+# class User2(models.Model):
+#     _inherit = "res.users"
+#
+#     @api.model
+#     def phone1(self):
+#
+#         user_phone = self.env.user
+#         self = self.sudo()
+#         # self = self.sudo()
+#         # user_phone = phone
+#         return user_phone
 
 
