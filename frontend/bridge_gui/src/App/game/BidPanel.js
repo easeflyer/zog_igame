@@ -66,7 +66,7 @@ class BidPanel extends Component {
                 {item.map((item1,index1)=>(
                     <td key={index+index1 + 1} style={{height:`${this.width*0.05}px`}}>
                         {item1?
-                            <img className='suit' src={`/cards/bids/${item1}.svg`} />
+                            <img className='suit' src={`/cards/bids/${item1.toUpperCase()}.svg`} />
                             :' '
                         }
                     </td>
