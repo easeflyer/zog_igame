@@ -46,7 +46,7 @@ export default class Board extends Models {
     play(...data){       //发送打牌消息
         this.exec('play',{},...data);
         /*
-         * params:[board_id,pos,card,channel_id]
+         * params:[board_id,pos,card]
          * return:[
                 {ns_win:0,number:1,rank:'5',pos:'W',suit:'C',nextplayer:'W',card:'C5',ew_win:0}
                 //南北赢墩，出牌顺序，出牌点，出牌方位，出牌花色，下一个出牌方，出的牌，东西赢墩
@@ -71,8 +71,8 @@ export default class Board extends Models {
         /*
          * params:[table_id]
          * return:[
-                {}
-            ]
+            //8副牌的成绩及每副牌的牌型，叫牌信息和打牌信息
+        ]
          */
     }
 
@@ -107,7 +107,5 @@ export default class Board extends Models {
          */
     }
 
-    get_matches(){
-        this.exec('get_matches',{});
-    }
+   
 }

@@ -1,10 +1,9 @@
 import React from 'react'
 import {Table} from 'antd';
 import {WingBlank,NavBar,Icon,WhiteSpace} from 'antd-mobile'
-import '../table.css'
-import Board from '../../OdooRpc/Board'
-import PointDetail from './PointDetail';
+import './table.css'
 import Models from '../Models/model'
+import './pointResult.css'
 const columns = [{
     title: '副数',
     dataIndex: 'number',
@@ -49,14 +48,18 @@ export default class PointResult extends React.Component{
 		result:null
 	}
 	componentDidMount(){
+		console.log(this.props.table_id)
 			dataSource=[];
-			Models.table_points(this.sucResult,this.failResult,1)
+			Models.table_points(this.sucResult,this.failResult,this.props.table_id);
 	}
 	sucResult=(data)=>{
 		this.setState({
-			result:data.reverse()
+			result:data
+			// result:data.reverse()
 		})
-		data.reverse().map((item,index)=>{
+		data.map((item,index)=>{
+		// data.reverse().map((item,index)=>{
+			// 顺序：从 1 到 8
 			dataSource.push({
 				key: index,
 				number:index+1,
@@ -82,7 +85,7 @@ export default class PointResult extends React.Component{
 				return oneResult;
 			}
 		});
-		this.props.searchOneResult(oneResult);
+		this.props.searchOneResult(oneResult,record.key);
 	}
 
     render(){
@@ -90,11 +93,12 @@ export default class PointResult extends React.Component{
           	<WingBlank>
              	<NavBar
                 mode="light"
-                icon={<Icon type="left" />}
-                onLeftClick={() => console.log('onLeftClick')}
+                // icon={<Icon type="left" />}
+                // onLeftClick={() => console.log('onLeftClick')}
 				>本局累计得分</NavBar>
 				<WhiteSpace/>
-                <Table 
+				<Table 
+				className='pan_pointResultTable'
                 dataSource={dataSource} 
                 columns={columns}
 				size="middle"
@@ -104,6 +108,7 @@ export default class PointResult extends React.Component{
 					  onClick: () => {this.searchResultDetail(record)},       // 点击行
 					};
 				  }}
+				pagination={false}
                 />
 			</WingBlank>
         )

@@ -91,6 +91,7 @@ export default class OneCourseResult extends React.Component {
         }
     }
     success = (data) => {
+        console.log(data)
         // const data = [      //测试数据，连上服务器后更改success方法的参数为data，并注释掉这段数据就好
         //     { namtch_id:1, round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 1, IMPS: { host_imp: 0.00, guest_imp: 0.00 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "牛的一比", host_id: 1, guest_name: "tthf", guest_id: 2 } },
         //     { namtch_id:2, round_name: 'GG', deal: 6, close_id: 2, open_id: 2, number: 2, IMPS: { host_imp: 0.00, guest_imp: 0.00 }, VPS: { host_vp: 10.00, guest_vp: 10.00 }, team: { host_name: "bagsad", host_id: 3, guest_name: "gththt", guest_id: 4 } },

@@ -1,16 +1,17 @@
 import Board from '../../OdooRpc/Board'
 import OdooModel from '../../OdooRpc/OdooRpc'
 import Channel from '../../OdooRpc/Channel'
+import GameTeamPlayer from '../../OdooRpc/GameTeamPlayer'
 
 class Models{
-    static get_matches(success,error){
-        const  board= new Board(success,error); 
-        board.get_matches()   //params: [board_id,channel_id]
+    static get_matches(success,error){  //查询桌号
+        const gameTeamPlayer= new GameTeamPlayer(success,error);
+        gameTeamPlayer.get_matches();   //params: []
     }
 
-    static join_channel(sucChannel,failChannel){ //加入频道
+    static join_channel(sucChannel,failChannel,table_id){ //加入频道
         const JoinChannel = new Channel(sucChannel,failChannel);
-        JoinChannel.join_channel(1);   //params: [table_id]
+        JoinChannel.join_channel(table_id);   //params: [table_id]
     }
     static init_board=(success,error,board_id,channel_id)=>{ //初始化牌桌
         const  board= new Board(success,error); 
@@ -34,14 +35,11 @@ class Models{
 
     static play=(success,error,board_id,mydir,card,channel_id)=>{   //发送打牌消息
         const board= new Board(success,error);  
-        // ((this.state.currentDirect!==this.state.dummy&&this.state.currentDirect===this.state.playerInfo.myDirect)||
-        // (this.state.currentDirect===this.state.dummy&&this.state.topInfo2.declarer===this.state.playerInfo.myDirect)) ?
-         board.play(board_id,mydir,card,channel_id);         //params: [board_id,mydir,card,channel_id]
-        //   : null;       //发送打牌消息
+         board.play(board_id,mydir,card);         //params: [board_id,mydir,card,channel_id]
     }
-    static sendplay =(success,error,cardid,channel_id)=>{
-        const board= new Board(success,error);  
-        board.sendplay(cardid,channel_id)
+    static sendplay =(success,error,board_id,card_id,channel_id)=>{   //接收打牌消息
+        const board= new Board(success,error);      
+        board.sendplay(board_id,card_id,channel_id);      //params: [board_id,card_id,channel_id]
     }
 
     static board_points=(success,error,board_id)=>{   //查询单副牌的成绩
@@ -51,7 +49,7 @@ class Models{
 
     static table_points=(success,error,table_id)=>{     //查询一桌所有牌的成绩
         const  board= new Board(success,error); 
-        board.table_points(1);   //params: [table_id]
+        board.table_points(table_id);   //params: [table_id]
     }
     static claim1=(success,error,board_id,pos,num,channel_id)=>{  //庄家发送claim请求
         const  board= new Board(success,error); 
@@ -67,30 +65,6 @@ class Models{
         const  board= new Board(success,error); 
         board.send_message(channel_id,msg);   //params: [channel_id,msg]
     }
-    
-    
-
-    // 
-    // /**
-    //  * 获得明手的牌，根据规则进行判断。
-    //  * todo:正确的牌
-    //  */
-    // static openDummy(){
-    //     return {seat:'north',cards:'K.KJT732.964.A52'}
-    // }
-    // /**
-    //  * 获得上一墩牌，这里应该进行必要的判断。不能随便获得。
-    //  * [东，南，西，北]
-    //  */
-    // static lastTrick(){
-    //     return [{index:1,card:'7S'},
-    //             {index:14,card:'9S'},
-    //             {index:28,card:'2S'},
-    //             {index:41,card:'KS'}]
-    // }
-    // static getResult(){
-    //     return "N3D +2 NS 600";
-    // }
 }
 
 export default Models
