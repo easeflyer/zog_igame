@@ -32,18 +32,18 @@ export default class OneBoard extends React.Component {
         let id = null;
         this.state.boardIds.forEach((v, i, a) => {
             if (v === index && a[i - 1]) {
-                number=this.state.boardNumber-1;
-                id=a[i-1];
+                number = this.state.boardNumber - 1;
+                id = a[i - 1];
             }
         })
-        if(id){
+        if (id) {
             this.setState({
-                boardNumber:number,
-                boardId:id,
+                boardNumber: number,
+                boardId: id,
             })
             const m = new Game((data) => this.success(data), () => console.log('没有拿数据'));
             m.round_deal_info(this.props.match.id, this.props.thisOneRound[0], this.state.boardId)
-        }else{
+        } else {
             return Toast.info('已经是第一副了！')
         }
     }
@@ -52,18 +52,18 @@ export default class OneBoard extends React.Component {
         let id = null;
         this.state.boardIds.forEach((v, i, a) => {
             if (v === index && a[i + 1]) {
-                number=this.state.boardNumber+1;
-                id=a[i+1];
+                number = this.state.boardNumber + 1;
+                id = a[i + 1];
             }
         })
-        if(id){
+        if (id) {
             this.setState({
-                boardNumber:number,
-                boardId:id,
+                boardNumber: number,
+                boardId: id,
             })
             const m = new Game((data) => this.success(data), () => console.log('没有拿数据'));
             m.round_deal_info(this.props.match.id, this.props.thisOneRound[0], this.state.boardId)
-        }else{
+        } else {
             return Toast.info('已经是最后一副了！')
         }
     }
@@ -85,11 +85,14 @@ export default class OneBoard extends React.Component {
                 <OneBoardPos direction={this.state.data[1]} />
                 <OneBardTable data={this.state.data} />
                 <WhiteSpace size='xl' />
+                {/*
                 <h1>赛事名称：{this.props.match.name}</h1>
                 <h1>赛事ID：{this.props.match.id}</h1>
-                {/* <h1>轮次ID：{this.props.courseId[0]}</h1> */}
+                 <h1>轮次ID：{this.props.courseId[0]}</h1> 
                 <h1>轮次ID：{this.props.thisOneRound[0]}</h1>
                 <h1>牌的IDzzzzz：{this.props.boardId}</h1>
+                */}
+
 
             </div>
         );
