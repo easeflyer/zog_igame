@@ -1,6 +1,10 @@
 import React from 'react';
 import { NavBar } from 'antd-mobile';
 import { Upload, Icon, message } from 'antd';
+const HOST = 'http://124.42.117.43:8069';
+// const HOST = 'http://192.168.0.20:8069';
+// const HOST = 'http://192.168.0.21:8069';
+// const HOST = 'http://192.168.0.114:8069';
 
 function getBase64(img, callback) {
     const reader = new FileReader();
@@ -38,6 +42,7 @@ class Tolmage extends React.Component {
         }
     }
     render() {
+        console.log(HOST)
         const uploadButton = (
             <div>
                 <Icon type={this.state.loading ? 'loading' : 'plus'} />
@@ -58,7 +63,8 @@ class Tolmage extends React.Component {
                     listType="picture-card"
                     className="avatar-uploader"
                     showUploadList={false}
-                    action="//jsonplaceholder.typicode.com/posts/"
+                    action="api/json/api?session_id=f52f52223e220c8bf5c5f5a93572223b709d5ae0"
+                    // action="/api/home/py/Desktop/head_portrait"
                     beforeUpload={beforeUpload}
                     onChange={this.handleChange}
                 >

@@ -14,7 +14,7 @@ export default class User extends Models {
     createData1 = (login, password, nickname = null) => ({
         'db': DATABASE,
         'login': login,
-        'password': password,
+        'password': password, 
         'nickname': nickname,
     });
 

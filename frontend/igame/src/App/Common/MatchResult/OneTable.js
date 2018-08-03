@@ -89,13 +89,13 @@ export default class OneTable extends React.Component {
                     vps={vps}
                 />
                 <WhiteSpace size='xl' />
-                <h1>赛事名称：{this.props.match.name}</h1>
+                {/*
+                 <h1>赛事名称：{this.props.match.name}</h1>
                 <h1>赛事ID：{this.props.match.id}</h1>
-                {/* <h1>轮次ID：{this.props.courseId[0]}</h1> */}
                 <h1>轮次ID111：{this.props.thisOneRound[0]}</h1>
                 <h1>number：{this.props.tableNumber[0]}</h1>
                 <h1>match_id：{this.props.tableNumber[1]}</h1>
-
+                */}
             </div>
         );
     }
