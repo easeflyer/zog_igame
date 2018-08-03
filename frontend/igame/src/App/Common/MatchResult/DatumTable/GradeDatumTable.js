@@ -132,7 +132,7 @@ class GradeDatumTable extends Component {
                 {gradeArrProps ?
                     <div>
                         <Table
-                            style={{ height: 150 }}
+                            // style={{ height: 150 }}
                             dataSource={gradeArrProps}
                             className="datumTable datumborder"
                             bordered
@@ -152,7 +152,7 @@ class GradeDatumTable extends Component {
                                 pagination={false}
                             />
                         </div>
-                        <div></div>
+                        <div>
                         <Table
                             style={{ height: 161 }}
                             dataSource={HostGuest}
@@ -162,7 +162,7 @@ class GradeDatumTable extends Component {
                             size="small"
                             columns={columnsHostGuest}
                             pagination={false}
-                        />
+                        /></div>
                     </div>
                     : ''
                 }

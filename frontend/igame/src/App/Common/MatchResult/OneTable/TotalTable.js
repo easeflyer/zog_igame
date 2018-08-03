@@ -125,10 +125,6 @@ const columns = [{
     }
     //guest_imp host_imp
 }]
-// const data = [{
-//     number: 1, table: '开', declare: "E", "contract": "1NT", "result": 0, "NS": 0, "EW": '0', IMPs: '0:0'
-// }]
-//IMPS VPS表格
 class TotalTable extends Component {
     render() {
         let datas = [];
@@ -143,15 +139,16 @@ class TotalTable extends Component {
         }
         return (
             <div>
-                <table  >
+                <table
+                    className="impsTable">
                     <tbody>
                         <tr>
                             <td>IMPs</td>
-                            <td>11111</td>
+                            <td>{this.props.imps}</td>
                         </tr>
                         <tr>
                             <td>VPs</td>
-                            <td>22222</td>
+                            <td>{this.props.vps}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -161,6 +158,7 @@ class TotalTable extends Component {
                     columns={columns}
                     dataSource={datas}
                     bordered
+                    pagination={false}
                 />
             </div>
         )

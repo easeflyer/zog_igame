@@ -92,7 +92,7 @@ export default class Game extends Models {
     }
     round_deal_info(game_id, round_id, deal_id) {
         //查询第几副牌
-        const obj = this.with_model('og.round');  //模型名
+        const obj = this.with_model('og.igame.round');  //模型名
         obj.exec('round_deal_info', {}, game_id, round_id, deal_id);
         /**
         * params:game_id,round_id,deal_id(牌ID))
