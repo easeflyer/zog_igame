@@ -12,37 +12,40 @@ from .bridge_tools import partner, lho
 from .bridge_tools import cmp_gt_call
 
 
+
 class Board(models.Model):
     _inherit = "og.board"
 
     @api.multi
-    def bid(self, pos, call, channel_id):
+    def bid(self, pos, call,channel_id):
         self = self.sudo()
         ret = self._check_call(pos, call)
         if ret:
             return ret
 
         nums = self.call_ids.mapped('number')
-        num = 1 + (nums and max(nums) or 0)
-        vals = {'name': call, 'pos': pos,
-                'board_id': self.id, 'number': num}
+        num  = 1+(nums and max(nums) or 0)
+        vals = {'name':call, 'pos': pos,
+                'board_id':self.id, 'number': num }
 
         self.sudo().call_ids.create(vals)
-        self._send_bid(channel_id, vals)
+        self._send_bid(channel_id,vals)
         return 0
-
-    # new func
-    def _send_bid(self, channel_id, bidinfo):
+#new func 
+    def _send_bid(self,channel_id,bidinfo):
         res = self.env['og.channel'].browse(channel_id).message_post(body=bidinfo)
-
-    # new func  after biding call this.
+        
+#new func  after biding call this. 
     @api.multi
-    def call_result(self, channel_id):
+    def call_result(self,channel_id):
         self = self.sudo()
-        vals = {'contract': self.contract, 'declarer': self.declarer, 'dummy': self.dummy,
-                'openlead': self.openleader, 'nextplayer': self.player}
-        self._send_bid(channel_id, vals)
+        vals={'contract':self.contract,'declarer':self.declarer,'dummy':self.dummy,
+                        'openlead':self.openleader,'nextplayer':self.player}
+        self._send_bid(channel_id,vals)
         return 0
+
+
+
 
     def _check_call(self, pos, call):
         if self.contract:
@@ -124,6 +127,7 @@ class Board(models.Model):
 
             return 0
 
+
         for ac in auction[::-1]:
             if ac in [PASS,DBL,RDB]:
                 continue
@@ -152,4 +156,16 @@ class Board(models.Model):
         call = str(rank) + suit
         return risk and risk or call
 
+
+
+
+def get_host_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 80))
+        ip = s.getsockname()[0]
+    finally:
+        s.close()
+ 
+    return ip
 

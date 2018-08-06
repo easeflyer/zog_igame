@@ -26,22 +26,15 @@ const columns = [{
     }]
 }]
 
-// const data = [
-//     { rank: 1, name: "杭州锦江队", VPs: "20.00", penaltyPoints: "" },
-//     { rank: 2, name: "天津凯莱英红队", VPs: "20.00", penaltyPoints: "" },
-//     { rank: 3, name: "山东大学", VPs: "20.00", penaltyPoints: "" },
-//     { rank: 4, name: "山西晋", VPs: "20.00", penaltyPoints: "" },
-//     { rank: 5, name: "杭州", VPs: "20.00", penaltyPoints: "" }
-// ]
 
 export default class OneCourseRanking extends React.Component {
     state = {
-        data:null
+        data: null
     }
     componentWillMount() {
         //***********接口方法调用**************
-        const m = new Game((data)=>this.setState({data:data}),()=>console.log('没有拿到本轮排名数据'));
-        m.round_team_rank(this.props.thisOneRound[0],this.props.match.id)
+        const m = new Game((data) => this.setState({ data: data }), () => console.log('没有拿到本轮排名数据'));
+        m.round_team_rank(this.props.thisOneRound[0], this.props.match.id)
     }
     render() {
         return (
@@ -64,7 +57,7 @@ export default class OneCourseRanking extends React.Component {
                 </Row>
                 <WhiteSpace size='sm' />
                 <Table
-                    rowKey={(row)=>row.team_id}         //注意：这里需要一个不重复的值
+                    rowKey={(row) => row.team_id}         //注意：这里需要一个不重复的值
                     columns={columns}
                     dataSource={this.state.data}
                     // dataSource={data}

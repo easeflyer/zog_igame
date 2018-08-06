@@ -122,7 +122,11 @@ class TabBarExample extends React.Component {
                 this.renderContent(<Match setHiddenState={this.setHiddenState} />)
                 : <User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />)
               : null} */}
-            {this.state.selectedTab==='redTab'? this.renderContent(this.state.haslogin? this.renderContent(<App2 />):<User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />):null}
+            {this.state.selectedTab==='redTab'? 
+            this.renderContent(this.state.haslogin? 
+            this.renderContent(<App2 setHiddenState={this.setHiddenState} />)
+            :<User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />)
+            :null}
           </TabBar.Item>
           <TabBar.Item
             icon={<Icon type="form" style={{fontSize:'22px'}} />}
@@ -137,7 +141,11 @@ class TabBarExample extends React.Component {
               });
             }}
           >
-            {this.state.selectedTab==='greenTab'? this.renderContent(this.state.haslogin? this.renderContent(<Learn />):<User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />):null}
+            {this.state.selectedTab==='greenTab'? 
+            this.renderContent(this.state.haslogin? 
+            this.renderContent(<Learn  setHiddenState={this.setHiddenState} />)
+            :<User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />)
+            :null}
           </TabBar.Item>
           <TabBar.Item
             icon={<Icon type="user" style={{fontSize:'22px'}} />}
