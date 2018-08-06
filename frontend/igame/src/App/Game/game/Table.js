@@ -805,12 +805,12 @@ class Table extends Component {
         const calldata = this.state.calldata
         if(calldata.length === 0){
             calldata.push(Array(4).fill(null))
-            calldata[0][Table.dir.indexOf(seat)] = bid.toUpperCase();
+            calldata[0][Table.dir.indexOf(seat)] = bid;
         }else if(seat === 'N'){
             calldata.push(Array(4).fill(null))
-            calldata[calldata.length-1][Table.dir.indexOf(seat)] = bid.toUpperCase();
+            calldata[calldata.length-1][Table.dir.indexOf(seat)] = bid;
         }else{
-            calldata[calldata.length-1][Table.dir.indexOf(seat)] = bid.toUpperCase();
+            calldata[calldata.length-1][Table.dir.indexOf(seat)] = bid;
         }
     }
      /**
