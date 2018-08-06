@@ -166,3 +166,5 @@ typings/
 
 # next.js build output
 .next
+
+frontend/igame/src/config.js
