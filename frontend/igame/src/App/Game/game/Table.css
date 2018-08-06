@@ -1,7 +1,8 @@
 .match_table{
     overflow: hidden;
-    position: relative;
+   /* position: relative;*/
     background-color: #000000;
+    position: absolute;
 }
 .mask{
     position: absolute;
@@ -165,4 +166,5 @@
     padding:2%;
     color:#FFFFFF;
     overflow-y: scroll;
+    height: 171px;
 }

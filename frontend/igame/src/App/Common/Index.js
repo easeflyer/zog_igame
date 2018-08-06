@@ -85,8 +85,10 @@ export default class Match extends React.Component {
             case 0:     //默认页，分类列表
                 page = <SortList 
                     name = {this.props.name}                    //用以验证入口，有这个字段说明是从《我》这个入口进来的
-                    toMine={this.props.toMine}                  //返回个人中心
-                    setTitle={this.setTitle}                    //设置导航标题
+                    toMine={this.props.toMine} //返回个人中心
+                    goHome={this.props.goHome}
+                    goMatch={this.props.goMatch}
+                    setTitle={this.setTitle} //设置导航标题
                     setMatchList={this.setMatchList}            //设置比赛列表数据
                     toMatchList={this.toMatchList} />          //进入比赛列表页
                 break;
@@ -96,6 +98,8 @@ export default class Match extends React.Component {
                     setOthers={this.props.setOthers}
                     name = {this.props.name}
                     title={this.state.title} 
+                    goHome={this.props.goHome}
+                    goMatch={this.props.goMatch}
                     toMatchDetails={this.toMatchDetails}
                     setMatch={this.setMatch} 
                     matchList={this.state.matchList} 
@@ -110,6 +114,7 @@ export default class Match extends React.Component {
                     setCourse={this.setCourse}
                     toMatchList={this.toMatchList} 
                     toMatchResult={this.toMatchResult}
+                    goHome={this.props.goHome}
                     match={this.state.match}
                     initialPage={this.state.initialPage}
                     course={this.state.course} />   
@@ -218,7 +223,7 @@ class SortList extends React.Component {       //我的比赛分类列表页组�
                 <NavBar
                 mode="light"
                 icon={ <Icon type="left" /> }
-                onLeftClick={()=>this.props.toMine() }      //如果有name，认为是从《我》这个入口进来，从而加载不同的数据，设置不同的title
+                onLeftClick={()=>this.props.goHome() }      //如果有name，认为是从《我》这个入口进来，从而加载不同的数据，设置不同的title
                 >{this.state.title}
                 </NavBar>
                 <WhiteSpace size='xl' />
