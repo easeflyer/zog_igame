@@ -2,10 +2,18 @@ import React from 'react';
 import { WhiteSpace, NavBar, List, Grid } from 'antd-mobile';
 import { Icon } from 'antd';
 import 'antd-mobile/dist/antd-mobile.css'; // 这一句是从哪里引入的？
-
+import My from '../OdooRpc/My';
 const Item = List.Item;
 
 export default class Mine extends React.Component {
+    state = {
+        data: ""
+    }
+    componentWillMount() {
+        //***********接口方法调用**************
+        const m = new My((data) => this.setState({ data: data }), () => console.log('没有拿数据'));
+        m.personal_info()
+    }
     render() {
         // const data1 = Array.from(new Array(4)).map((_val, i) => ({
         //     icon: 'https://gw.alipayobjects.com/zos/rmsportal/nywPmnTAvTmLusPxHPSu.png',
@@ -18,6 +26,7 @@ export default class Mine extends React.Component {
             { text: <div><p>荣誉</p><p>123</p></div>, },
             // {icon: 'https://gw.alipayobjects.com/zos/rmsportal/nywPmnTAvTmLusPxHPSu.png',text: `name`,},
         ];
+        // console.log(data, '1111111')
         return (
             <div>
                 <NavBar mode="light" >个人中心 </NavBar>
@@ -27,7 +36,7 @@ export default class Mine extends React.Component {
                     thumb={require("../User/963065731.jpg")}
                     arrow="horizontal"
                     onClick={() => this.props.toMySelf()}
-                >张三丰
+                >{this.state.data.nickname}
                     <div>邀请码：12345678</div>
                 </Item>
                 <WhiteSpace size="sm" />
