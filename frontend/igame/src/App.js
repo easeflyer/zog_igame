@@ -48,6 +48,12 @@ class TabBarExample extends React.Component {
       hidden: false,
     });
   }
+  goMatch=()=>{
+    this.setState({
+      selectedTab: 'redTab',
+      hidden: true,
+    });
+  }
   toggleLoginState = ()=>{
     this.setState({
       haslogin:!this.state.haslogin,
@@ -116,18 +122,20 @@ class TabBarExample extends React.Component {
             }}
             data-seed="logId1"
           >
-            {/*动态加载 应该考虑 在这里执行。*/}
-            {/* {this.state.selectedTab==='redTab' ? 
+           
+            {this.state.selectedTab==='redTab' ? 
               this.renderContent(this.state.haslogin ? 
-                this.renderContent(<Match setHiddenState={this.setHiddenState} />)
+                this.renderContent(<Match setHiddenState={this.setHiddenState} goHome={this.goHome} goMatch={this.goMatch} setOthers={this.setOthers} />)
                 : <User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />)
-              : null} */}
-            {this.state.selectedTab==='redTab'? 
+              : null}
+            {/*this.state.selectedTab==='redTab'? 
             this.renderContent(this.state.haslogin? 
             this.renderContent(<App2 setHiddenState={this.setHiddenState} />)
             :<User toggleLoginState={this.toggleLoginState} goHome={this.goHome} />)
-            :null}
+            :null*/}
           </TabBar.Item>
+
+ 
           <TabBar.Item
             icon={<Icon type="form" style={{fontSize:'22px'}} />}
             selectedIcon={<Icon type="form" style={{fontSize:'22px'}} />}

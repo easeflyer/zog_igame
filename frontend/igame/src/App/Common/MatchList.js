@@ -77,7 +77,9 @@ export default class MatchList extends React.Component {    //已完成的比赛
                 onLeftClick={ this.props.name ? 
                     this.props.toSortList : 
                     ()=>{this.props.setOthers(null);
-                        this.props.setHiddenState(false)} 
+                        this.props.setHiddenState(false);
+                        this.props.goHome();
+                    }
                     }                                       // 返回我的比赛分类页/返回上层(主页)
                 >{this.props.title}
                 </NavBar>

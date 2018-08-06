@@ -11,7 +11,7 @@ import  session from '../../User/session'
 import './Table.css'
 import Models from '../Models/model'
 import Sound from './Sound'
-
+import CountDown from '../../Common/CountDown'
 /**
  * Game  是一局比赛，涉及到了比赛者，以及和比赛相关的其他信息。重点在于比赛。
  * Table 是一桌游戏的界面：重点在于 一桌
@@ -619,6 +619,7 @@ class Table extends Component {
             if(this.state.ready[item]==='ready')countReady+=1
             if(countReady===4){
                 console.log(22222222222222)
+                this.refs.countdown.start()
                 this.splitCards(this.originData)
             }
         })
@@ -957,6 +958,7 @@ class Table extends Component {
                         {this.state.declarer===this.myseat?<button onTouchEnd={this.claim} className="claimbtn">摊牌</button>:null}
                         <div id='result' style={css.re}>结果</div> 
                         <div id='sound'></div>
+                        <CountDown ref = 'countdown' />
                     </div>
                     <div id='body' className='body' style={css.body}>
                         {!this.state.online?<div className='mask' style={css.body}><p style={{marginTop:80,fontSize:20,fontWeight:'bold'}}>牌手{this.state.offlinePlayer}已掉线，请耐心等待......</p></div>:null}
