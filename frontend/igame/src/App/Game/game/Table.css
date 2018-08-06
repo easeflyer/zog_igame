@@ -114,7 +114,8 @@
     background-color: #eeeeee;
 }
 .board .seat {
-    text-align:center;    background-color: #ffff55;
+    text-align:center;   
+    background-color: #ffff55;
 }
 .board > .userTag:nth-child(1) > .seat{
          height:100%;
