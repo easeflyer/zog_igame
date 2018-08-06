@@ -191,7 +191,7 @@ class Table extends Component {
                 this.seat[key][1]['y'] = center.y - offset
                 this.seat[key][1]['x'] = center.x - offset
             } else if (key == 'south') {
-                this.seat[key][0]['x'] = this.seat[key][0]['x'] + this.width * 0.21
+                this.seat[key][0]['x'] = this.seat[key][0]['x'] //+ this.width * 0.21
                 //this.seat[key][1]['y'] = center.y + offset - this.csize / 2;
                 this.seat[key][1]['y'] = center.y - offset
                 this.seat[key][1]['x'] = center.x - this.csize * 0.7 / 2;
@@ -199,8 +199,8 @@ class Table extends Component {
                 this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.width * 0.06
                 this.seat[key][1]['y'] = center.y - offset
                 this.seat[key][1]['x'] = center.x + offset - this.csize;
-            } else {
-                this.seat[key][0]['x'] = this.seat[key][0]['x'] + this.width * 0.21
+            } else if(key=='north'){
+                this.seat[key][0]['x'] = this.seat[key][0]['x'] //+ this.width * 0.21
                 this.seat[key][1]['y'] = center.y + offset - this.csize;
                 this.seat[key][1]['x'] = center.x - this.csize * 0.7 / 2;
             }
@@ -299,7 +299,7 @@ class Table extends Component {
                 cards[index][index1].active = 2; // 测试用
                 cards[index][index1].onclick = this.play(item1)
                 if ('02'.indexOf(index) != -1) y = y + this.csize * 0.15;
-                else x = x + this.csize * 0.2;
+                else x = x + this.csize * 0.39;
 
             });
         })
@@ -311,6 +311,7 @@ class Table extends Component {
      */
     play = (item) => {
         return () => {
+            if(this.board.length==4) return false;
             this.board.push(item);
             //console.log(this.board)
             item['animation']['left'] = this.seat[item.seat][1].x;
