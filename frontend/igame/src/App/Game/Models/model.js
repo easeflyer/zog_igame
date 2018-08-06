@@ -33,7 +33,7 @@ class Models{
         board.call_result(board_id,channel_id);      //params: [board_id,channel_id]
     }
 
-    static play=(success,error,board_id,mydir,card,channel_id)=>{   //发送打牌消息
+    static play=(success,error,board_id,mydir,card)=>{   //发送打牌消息
         const board= new Board(success,error);  
          board.play(board_id,mydir,card);         //params: [board_id,mydir,card,channel_id]
     }

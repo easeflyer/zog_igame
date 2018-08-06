@@ -1,7 +1,8 @@
 .match_table{
     overflow: hidden;
-    position: relative;
+   /* position: relative;*/
     background-color: #000000;
+    position: absolute;
 }
 .mask{
     position: absolute;
@@ -113,7 +114,8 @@
     background-color: #eeeeee;
 }
 .board .seat {
-    text-align:center;    background-color: #ffff55;
+    text-align:center;   
+    background-color: #ffff55;
 }
 .board > .userTag:nth-child(1) > .seat{
          height:100%;
@@ -164,4 +166,5 @@
     padding:2%;
     color:#FFFFFF;
     overflow-y: scroll;
+    height: 171px;
 }
