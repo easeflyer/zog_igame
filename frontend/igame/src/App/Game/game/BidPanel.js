@@ -89,7 +89,7 @@ class BidPanel extends Component {
                     <td key={index+index1} style={{width:'20%'}}>
                     {/* <td key={index+index1} style={{width:'20%',height:`${this.width*0.05}px`}}> */}
                         {item1?
-                            <img src={`/cards/bids/${item1}.svg`} style={{height:'35%',width:'100%'}} alt=''/>
+                            <img src={`/cards/bids/${item1.toUpperCase()}.svg`} style={{height:'35%',width:'100%'}} alt=''/>
                             // <img className='suit' src={`/cards/bids/${item1}.svg`} style={{height:'60%'}}/>
                             :' '
                         }
