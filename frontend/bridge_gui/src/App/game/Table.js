@@ -2,15 +2,16 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 //import settings from '../game/settings';
 import Card from './Card'
-import BidPanel from './BidPanel'
+//import BidPanel from './BidPanel'
 import Clock from './Clock'
 import { Imps, Seats, Tricks } from './Headers'
 import Prepare from './Prepare'
-import Claim from './Claim'
-import Debug from './Debug'
+//import Claim from './Claim'
+//import Debug from './Debug'
 import './Table.css'
 import Models from '../models/model'
 import Sound from './Sound'
+import TableView from './TableView'
 
 /**
  * Game  是一局比赛，涉及到了比赛者，以及和比赛相关的其他信息。重点在于比赛。
@@ -706,73 +707,7 @@ class Table extends Component {
             });
         });
         return (
-            /**
-             * 设计分析：
-             * 桌面布局写在一起，他们是固定不变的。
-             * 而所有的card 不要到 布局的子元素里。这样看起来好像父子关系明确。
-             * 但实际上：桌子 和 牌在不同的 zIndex 上。因此应该分开来写更加清晰。
-             * 牌本身定位 不一定在桌子上，因此应该增加 最外层div
-             * 
-             * 定位：需要参考 布局的位置。可以取到布局的坐标。然后进行定位。
-             *      注意父子组件的 position 设置。
-             * 
-             * <Card size='80' card='3S' rotate='0' position={{x:0,y:550}} />
-             *      size        高度，宽=高×0.7
-             *      card        具体那张牌 小写字母代表反面
-             *      rotate      横向还是纵向摆放 0 纵向 90 横向
-             *      position    定位，以父元素为参考进行绝对定位。
-             * 
-             */
-            <div>
-                {(this.state.scene == 1) ?
-                    <div className='panel' style={css.panel}>
-                        <BidPanel calldata={this.state.calldata} />
-                    </div> : null
-                }
-                <div id='table' className='table' style={css.table}>
-                    <div id='header' className='header' style={css.header}>
-                        <div className='re' style={css.re}><Imps /></div>
-                        <div onClick={this.openDebug} className='re' style={css.re}><Seats /></div>
-                        <div onClick={this.testLastTrick} className='re' style={css.re}><Tricks /></div>
-                        <button onTouchEnd={this.claim} className="claimbtn">摊牌</button>
-                        {/* <div className='re' id='lastTrick' style={css.re}>上墩牌</div>*/}
-                        {/* 注意比赛结果会挂载到下面的div */}
-                        <div id='result' style={css.re}></div>
-                        <div id='sound'></div>
-                    </div>
-                    <div id='body' className='body' style={css.body}>
-                        {this.state.lastTrick ? <div id='lastTrick' className='lastTrick'></div> : null}
-                        {this.state.scene == 3 ? <Claim number='8' myclaim={this.claimseat == this.myseat} onSubmit={this.handleClaim} /> : null}
-                        <div id='clock'></div>
-                        <div id='east' className='east' style={css.east} ref={this.ref.east}></div>
-                        <div id='west' className='west' style={css.west} ref={this.ref.west}></div>
-                        <div id='south' className='south' style={css.south} ref={this.ref.south}></div>
-                        <div id='north' className='north' style={css.north} ref={this.ref.north}></div>
-                        <div id='board' className='board' style={css.board} ref={this.ref.board}>
-                            <div className='userTag'><div className='seat'>
-                                {Table.seatscn[Table.seats.indexOf(this._shift('east'))]}:
-                            {this.state.user[this._shift('east')].name}</div></div>
-                            <div className='userTag'><div className='seat'>
-                                {Table.seatscn[Table.seats.indexOf(this._shift('south'))]}:
-                            {this.state.user[this._shift('south')].name}</div></div>
-                            <div className='userTag'><div className='seat'>
-                                {Table.seatscn[Table.seats.indexOf(this._shift('west'))]}:
-                            {this.state.user[this._shift('west')].name}</div></div>
-                            <div className='userTag'><div className='seat'>
-                                {Table.seatscn[Table.seats.indexOf(this._shift('north'))]}:
-                            {this.state.user[this._shift('north')].name}</div></div>
-                            {this.state.scene == 0 ? <Prepare stat={stat} ready={this.handleReady} /> : null}
-                        </div>
-                        {cards}
-                    </div>
-                    {this.state.debug ? <Debug o={this} /> : null}
-                    <div id='message' className='message'></div>
-                    <div id='footer' className='footer' style={css.footer}>
-                        <input id='say' type='text' defaultValue='请输入……' />
-                        <input type='button' value='发送' onClick={this.testChat} />
-                    </div>
-                </div>
-            </div >
+            <TableView table={this} cards={cards} />
         );
     }
 }
