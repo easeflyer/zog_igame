@@ -33,9 +33,9 @@ class Tricks extends Component{
     render(){
         return(
             <div className='tricks'>
-                <div className='s1'>{this.props.vertical?this.props.vertical:null}</div>
+                <div className='s1'>{this.props.vertical?this.props.vertical:0}</div>
                 <div className='s2' style={{textAlign:'center'}}>{this.props.contract?this.props.contract:null}<br/>{this.props.declarer?this.props.declarer:null}</div>
-                <div className='s3'>{this.props.transverse?this.props.transverse:null}</div>
+                <div className='s3'>{this.props.transverse?this.props.transverse:0}</div>
             </div>
         )
     }
