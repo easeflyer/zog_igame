@@ -151,12 +151,12 @@ class IntelligentGameApi(models.Model):
                 p_id = self.env['res.users'].search([('partner_id','=',p.id)])
 
                 if player.role == 'coach':
-                    co.append(p.name)
+                    co.append(p_id.nickname)
                     # coach = p.name
                 if player.role == 'leader':
-                    co.append(p.name)
+                    co.append(p_id.nickname)
                     # leader = p.name
-                pl.append({'role':player.role,'id':p_id.id,'name':p.name})
+                pl.append({'role':player.role,'id':p_id.id,'name':p_id.nickname})
             ps.append({'coach':co[0],'leader':co[1],'number':'12','ranking':'6','name':part_id.name,'pay':False,'member':pl})
 
         return ps
@@ -252,6 +252,12 @@ class IntelligentGameApi(models.Model):
         if not teams:
             vals = {'igame_id': game_id, 'partner_id': iteam.partner_id.id, 'number':1}
             new_team = self.env['og.igame.team'].create(vals)
+
+            for rec in kwargs:
+                player_id = rec['id']
+                role = rec['role']
+                vals = {'partner_id': player_id, 'role': role, 'team_id': new_team.id}
+                self.env['og.igame.team.player'].create(vals)
             return True
         for team in teams:
             num += 1
