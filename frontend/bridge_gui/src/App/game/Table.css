@@ -17,6 +17,7 @@
 .claimbtn{
     position: absolute;
     bottom: 0%;
+    font-size:3vw;
 }
 .re{
     background-color: #ee88ee;
@@ -27,7 +28,7 @@
 .body{
     position: relative;
     /*background-image: url(/imgs/bg1.png);*/
-    background: linear-gradient(#000000,#000033);
+    background: linear-gradient(#000000,#000055d);
     background-size: 100% 100%;
     border-radius:3%;
 }
@@ -54,6 +55,7 @@
     padding:0px;
     width:80%;
     height:100%;
+    font-size:3vw;
 }
 .footer > input[type=button]{
     position: absolute;
@@ -61,6 +63,7 @@
     right:0px;
     width:19%;
     height:100%;
+    font-size:3vw;
 }
 .east {
     position: absolute;

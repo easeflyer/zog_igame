@@ -5,6 +5,9 @@
     height:84%;
     /*background-color: aqua;*/
 }
+.prepare button{
+    font-size:3vw;
+}
 .prepare > button { position: absolute;width:30%;height:12%}
 .prepare > .ready {
     opacity: 0.5;
