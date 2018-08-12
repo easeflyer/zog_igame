@@ -8,10 +8,10 @@ import { Imps, Seats, Tricks } from './Headers'
 import Prepare from './Prepare'
 //import Claim from './Claim'
 //import Debug from './Debug'
-import './Table.css'
+//import './Table.css'
 import Models from '../models/model'
 import Sound from './Sound'
-import TableView from './TableView'
+import TableView from './TableView' // 包含 TableView.css
 
 /**
  * Game  是一局比赛，涉及到了比赛者，以及和比赛相关的其他信息。重点在于比赛。
@@ -23,8 +23,10 @@ class Table extends Component {
         scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
         calldata: [],
         user: {
-            east: { ready: 0, name: null }, south: { ready: 0, name: null },
-            west: { ready: 0, name: null }, north: { ready: 0, name: null }
+            east: { ready: 0, name: '张三', face: '/imgs/face1.png', rank: '大师' },
+            south: { ready: 0, name: '李四', face: '/imgs/face2.png', rank: '专家' },
+            west: { ready: 0, name: '王五', face: '/imgs/face1.png', rank: '王者' },
+            north: { ready: 0, name: '赵六', face: '/imgs/face2.png', rank: '钻石' }
         },
         lastTrick: false,
         //playseat:null, // 倒计时解决
@@ -42,84 +44,21 @@ class Table extends Component {
      * 
      * 其他：
      * 
-     *  字体大小：fontSize:this.width * 0.04 + 'px'
+     *  字体大小：fontSize:this.height * 0.04 + 'px'
      */
     constructor(props) {
 
         super(props);
-        this.width = window.screen.width;
-        this.height = window.screen.height;
-        this.css = {
-            table: {
-                width: this.width,
-                height: this.height,
-                fontSize: this.width * 0.04 + 'px'
-            },
-            panel: {
-                top: this.width * 0.32,
-                left: this.width * 0.2,
-                width: this.width * 0.6,
-                height: this.width * 0.6
-            },
-            header: {
-                width: this.width,
-                height: this.width * 0.2,
-            },
-            body: {
-                width: this.width,
-                height: this.width,
-                fontSize: this.width * 0.04 + 'px'
-            },
-            footer: {
-                width: this.width,
-                height: '40px',
-            },
-            east: {
-                top: this.width * 0.2,
-                width: this.width * 0.2,
-                height: this.width * 0.6,
-            },
-            south: {
-                width: this.width,
-                height: this.width * 0.2,
-            },
-            west: {
-                top: this.width * 0.2,
-                width: this.width * 0.2,
-                height: this.width * 0.6,
-            },
-            north: {
-                width: this.width,
-                height: this.width * 0.2,
-            },
-            re: {
-                width: this.width * 0.19,
-                height: this.width * 0.19,
-            },
-            board: {
-                width: this.width * 0.6,
-                height: this.width * 0.6,
-                top: this.width * 0.2,
-                left: this.width * 0.2,
-            },
-            result: {
-                width: this.width * 0.6,
-                height: this.width * 0.2,
-                top: this.width * 0.6,
-                left: this.width * 0.2,
-                zIndex: 1000,
-                textAlign: 'center',
-                fontSize: this.width * 0.06 + 'px',
-            }
-
-        }
-        console.log(this.width * 0.2)
+        this.width = window.innerWidth;
+        this.height = window.innerHeight;
+        console.log(this.height * 0.2)
         // this.calldata = [['1C','2C','PASS','PASS'],['3H','PASS','PASS','4NT'],
         //                 ['PASS','PASS','PASS','']]
         this.board = []; // 桌面上的四张牌
         this.cards = [];
         this.claimseat = 'east'; // east,south...
         this.zindex = 10;
+        this.timer = {stop:null,start:null}; // 用于控制 倒计时
         this.center = null; // 桌子的中心 {x,y}
         this._csize = null; // 牌的大小
         this.deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX'
@@ -144,7 +83,7 @@ class Table extends Component {
     get csize() {
         // 短路语法 牌的大小 可以计算在下面的函数内。
         return this._csize || (() => {
-            return this.width * 0.18;
+            return this.height * 0.18;
         })()
     }
     _shift(seat) {
@@ -153,6 +92,8 @@ class Table extends Component {
         return Table.seats[(index + offset) % 4]
         //return 
     }
+
+
     /**
      * 完成挂载后，要计算 各个位置的坐标。
      */
@@ -170,40 +111,47 @@ class Table extends Component {
     *          出牌坐标计算依据：1）扑克牌的中心点和左上角位置差固定。
     *          因此可以以中心点考虑四个方位的位移 再加减相同的 位置差即可。
     *          注：0.7 是扑克的横竖比例。
+    * 
+    * 采用 .css 确定尺寸后 被注释的语句 不起作用了。修改为 clientHeight
+    *        this.ref.board.current.clientHeight / 2
+    *        // parseInt(this.ref.board.current.style.height.slice(0, -2)) / 2
+    * 
     */
     _initSeat() {
         const center = { x: 0, y: 0 };
         center.x = this.ref.board.current.offsetTop +
-            parseInt(this.ref.board.current.style.height.slice(0, -2)) / 2
+            this.ref.board.current.clientHeight / 2
+        // parseInt(this.ref.board.current.style.height.slice(0, -2)) / 2
         center.y = this.ref.board.current.offsetLeft +
-            parseInt(this.ref.board.current.style.width.slice(0, -2)) / 2
+            this.ref.board.current.clientWidth / 2
         this.center = center;
-        // console.log('center......')
+        console.log('center......')
         // console.log(center)
+        console.log(this.ref.board.current.clientHeight)
         const offset = this.csize * 0.7 / 2
         for (let key in this.seat) {
             this.seat[key][0]['y'] = this.ref[key].current.offsetTop;
             this.seat[key][0]['x'] = this.ref[key].current.offsetLeft;
 
             if (key == 'east') {
-                this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.width * 0.06
+                this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.height * 0.06
                 // 下面是处理　牌的叠放顺序　联合参考：dealCards
-                //this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.width * 0.4
+                //this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.height * 0.4
                 this.seat[key][1]['y'] = center.y - offset
-                this.seat[key][1]['x'] = center.x - offset
+                this.seat[key][1]['x'] = center.x - offset * 0.8
             } else if (key == 'south') {
-                this.seat[key][0]['x'] = this.seat[key][0]['x'] //+ this.width * 0.21
+                this.seat[key][0]['x'] = this.seat[key][0]['x'] //+ this.height * 0.21
                 //this.seat[key][1]['y'] = center.y + offset - this.csize / 2;
-                this.seat[key][1]['y'] = center.y - offset
-                this.seat[key][1]['x'] = center.x - this.csize * 0.7 / 2;
+                this.seat[key][1]['y'] = center.y - offset * 0.8
+                this.seat[key][1]['x'] = center.x - offset
             } else if (key == 'west') {
-                this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.width * 0.06
+                this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.height * 0.06
                 this.seat[key][1]['y'] = center.y - offset
-                this.seat[key][1]['x'] = center.x + offset - this.csize;
-            } else if(key=='north'){
-                this.seat[key][0]['x'] = this.seat[key][0]['x'] //+ this.width * 0.21
-                this.seat[key][1]['y'] = center.y + offset - this.csize;
-                this.seat[key][1]['x'] = center.x - this.csize * 0.7 / 2;
+                this.seat[key][1]['x'] = center.x + offset * 0.8 - this.csize;
+            } else if (key == 'north') {
+                this.seat[key][0]['x'] = this.seat[key][0]['x'] //+ this.height * 0.21
+                this.seat[key][1]['y'] = center.y + offset * 0.8 - this.csize;
+                this.seat[key][1]['x'] = center.x - offset
             }
         }
     }
@@ -232,7 +180,7 @@ class Table extends Component {
                         //table: this,
                         size: this.csize,                // 牌的大小
                         card: s[i] + suits[index2],
-                        position: { x: this.width / 2, y: this.width * 2 }     // 考虑一个默认位置。
+                        position: { x: this.height / 2, y: this.height * 2 }     // 考虑一个默认位置。
                     })
                 }
             });
@@ -244,14 +192,14 @@ class Table extends Component {
     /**
      * 清理桌面上的牌
      * 定位参考：
-     *  -this.width * 0.2;  计分位置
+     *  -this.height * 0.2;  计分位置
      */
     clearBoard = () => {
         //if(this.board.length < 4) return false;
         const board = this.board;
         for (let i = 0; i < board.length; i++) {
-            board[i].animation.left = this.width / 2;
-            board[i].animation.top = -this.width * 2;
+            board[i].animation.left = this.height / 2;
+            board[i].animation.top = -this.height * 2;
             //board[i].animation.rotate = 0;
             // board[i].animation.left = 100;
             // board[i].animation.top = 100;
@@ -285,7 +233,7 @@ class Table extends Component {
             let seat = Table.seats[index]
             let [x, y] = [this.seat[seat][0].x, this.seat[seat][0].y]
             if ('02'.indexOf(index) != -1) rotate = -90;
-            x = x + this.width / 16 / 5; y = y + this.width / 16 / 5; // margin
+            x = x + this.height / 16 / 5; y = y + this.height / 16 / 5; // margin
             item.forEach((item1, index1) => {
 
                 cards[index][index1].animation = {
@@ -312,7 +260,7 @@ class Table extends Component {
      */
     play = (item) => {
         return () => {
-            if(this.board.length==4) return false;
+            if (this.board.length == 4) return false;
             this.board.push(item);
             //console.log(this.board)
             item['animation']['left'] = this.seat[item.seat][1].x;
@@ -396,7 +344,7 @@ class Table extends Component {
      */
     timing = (seat, time, callback) => {
         ReactDOM.unmountComponentAtNode(document.querySelector('#clock'));
-        const p = this.width * 0.18;
+        const p = this.height * 0.18;
         const offset = {
             east: { x: p, y: 0 },
             south: { x: 0, y: p },
@@ -492,9 +440,9 @@ class Table extends Component {
 
     showResult = () => {
         const result = Models.getResult();
-        const re = <div className='result' style={this.css.result}>
+        const re = <div className='result'>
             <img src='/cards/medal.svg' width="20%" />
-            <div style={{ lineHeight: this.width * 0.12 + 'px', }}>{result}</div>
+            <div style={{ lineHeight: this.height * 0.12 + 'px', }}>{result}</div>
             <button onClick={this.hideResult}>下一局</button>
         </div>;
         ReactDOM.unmountComponentAtNode(document.querySelector('#result'));
@@ -526,11 +474,11 @@ class Table extends Component {
             card = this._cardIndexOf(item.index)
             //card.size = card.size * 0.8
             card['animation']['left'] = (show == true) ?
-                this.seat[Table.seats[index]][1].x - this.width / 2.9
-                : this.width / 2;
+                this.seat[Table.seats[index]][1].x - this.height / 2.9
+                : this.height / 2;
             card['animation']['top'] = (show == true) ?
-                this.seat[Table.seats[index]][1].y - this.width / 2.9
-                : -this.width * 2;
+                this.seat[Table.seats[index]][1].y - this.height / 2.9
+                : -this.height * 2;
             //card['size'] = card['size'] * 0.7
             // card['animation']['rotate'] = 180;
             // card['position']['x'] = this.seat[Table.seats[index]][1].x;

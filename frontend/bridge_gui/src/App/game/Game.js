@@ -9,21 +9,49 @@ import Bid from './BidPanel'
  */
 
 class Game extends Component {
-    constructor(props){
+    constructor(props) {
         /**
          * 属性列表：
          *  屏幕大小
          * 
          */
-        super(props);
+        super(props);        
+        this._initApp();// 屏蔽鼠标右键
         this.width = window.screen.width;
         this.height = window.screen.height;
-        console.log('width:'+this.width)
-        console.log('height:'+this.height)
-        if(this.width < 400) settings.scale = 0.5;
+        console.log('width:' + this.width)
+        console.log('height:' + this.height)
+        if (this.width < 400) settings.scale = 0.5;
     }
-    render(){
-        return(
+    /**
+     * 做一些初始化操作，比如屏蔽鼠标右键。
+     * 屏蔽下来刷新等。
+     */
+    _initApp() {
+        if (1) return;
+        // 屏蔽右键
+        window.document.oncontextmenu = function () {
+            //alert('请不要点击鼠标右键！');
+            return false;
+        }
+
+        // 屏蔽f5
+        document.onkeydown = function (e) {
+            e = window.event || e;
+            var keycode = e.keyCode || e.which;
+            if (keycode == 116) {
+                if (window.event) {// ie
+                    try { e.keyCode = 0; } catch (e) { }
+                    e.returnValue = false;
+                } else {// firefox
+                    e.preventDefault();
+                }
+            }
+        }
+
+    }
+    render() {
+        return (
             <Table>
                 <Bid />
             </Table>

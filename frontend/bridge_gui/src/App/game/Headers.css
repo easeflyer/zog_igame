@@ -9,11 +9,11 @@
 }
 .imps > .iheader {
     text-align: center;
-    height:25%;
+    height:30%;
     background-color: #eeeeee;
 }
 .imps > .ibody {
-    height:75%;
+    height:70%;
     background-color: #0099cc;
 }
 
