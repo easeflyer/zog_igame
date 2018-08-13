@@ -103,7 +103,7 @@ export default class TableView extends React.Component {
                             <Timer
                                 name='Timer'
                                 handle={table.timer}
-                                time='0:1:2'
+                                time='1:2:5'
                                 callback={()=>console.log('计时结束')} />
                         </div>
                         <button onTouchEnd={table.claim} className="claimbtn disable">摊牌</button>

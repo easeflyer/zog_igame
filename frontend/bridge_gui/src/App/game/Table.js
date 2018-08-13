@@ -21,7 +21,7 @@ class Table extends Component {
     state = {
         cards: null, // 考虑这里不用 cards 只用必要的数字
         scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
-        calldata: [],
+        calldata: [], // todo 补充 calldata 4列（东西南北）若干行的数组参考 call 方法
         user: {
             east: { ready: 0, name: '张三', face: '/imgs/face1.png', rank: '大师' },
             south: { ready: 0, name: '李四', face: '/imgs/face2.png', rank: '专家' },
@@ -58,7 +58,7 @@ class Table extends Component {
         this.cards = [];
         this.claimseat = 'east'; // east,south...
         this.zindex = 10;
-        this.timer = {stop:null,start:null}; // 用于控制 倒计时
+        this.timer = { stop: null, start: null }; // 用于控制 倒计时
         this.center = null; // 桌子的中心 {x,y}
         this._csize = null; // 牌的大小
         this.deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX'
@@ -246,7 +246,8 @@ class Table extends Component {
                 }
                 //cards[index][index1][index2].rotate = rotate;
                 cards[index][index1].active = 2; // 测试用
-                cards[index][index1].onclick = this.play(item1)
+                //cards[index][index1].onclick = this.play(item1)
+                cards[index][index1].onclick = this.play.bind(this, item1)
                 if ('02'.indexOf(index) != -1) y = y + this.csize * 0.15;
                 else x = x + this.csize * 0.39;
 
@@ -255,24 +256,66 @@ class Table extends Component {
         return cards;
     }
     /**
-     * 出牌
-     * 从这里可以看出 item 确实是引用。非常方便。
+     *  点击一张牌
+     * 如果状态是 2 就先弹出突出显示。再点击打出去。
+     * 注意细节：每张 Card 内部有对 active 的判断。
      */
     play = (item) => {
-        return () => {
-            if (this.board.length == 4) return false;
-            this.board.push(item);
-            //console.log(this.board)
-            item['animation']['left'] = this.seat[item.seat][1].x;
-            item['animation']['top'] = this.seat[item.seat][1].y;
-            item['animation']['delay'] = 0;
-            item['zIndex'] = this.zindex++
-            this.setState({
-                cards: this.state.cards
-            })
-            Sound.play('play');
-            if (this.board.length == 4) setTimeout(this.clearBoard, 1000)
+        if (item.active == 2) this.preplay(item);
+        else if (item.active == 3) this._play(item);
+        else return;
+    }
+
+    /**
+     * 点击一张牌 突出显示
+     * 被点击的牌突出显示，其他牌都恢复原样
+     */
+    preplay = (item) => {
+        this.state.cards.forEach((item) => item.forEach((item) => {
+            if (item.active == 3) {
+                item.active = 2;
+                switch (item.seat) {
+                    case 'east': item['animation']['left'] += 20; break;
+                    case 'south': item['animation']['top'] += 20; break;
+                    case 'west': item['animation']['left'] -= 20; break;
+                    case 'north': item['animation']['top'] -= 20; break;
+                }
+        
+            }
+        }))
+
+        item.active = 3;
+        switch (item.seat) {
+            case 'east': item['animation']['left'] -= 20; break;
+            case 'south': item['animation']['top'] -= 20; break;
+            case 'west': item['animation']['left'] += 20; break;
+            case 'north': item['animation']['top'] += 20; break;
         }
+        item['animation']['delay'] = 0;
+        this.setState({
+            cards: this.state.cards
+        });
+    }
+
+    /**
+     * 出牌 打出去
+     * 首先要进行 preplay 然后才能 play
+     */
+    _play = (item) => {
+        // if(item.active != 3) return; // 只有突出的牌能打出去。
+        item.active = 4;    // 已经打出去的牌
+        if (this.board.length == 4) return false;
+        this.board.push(item);
+        //console.log(this.board)
+        item['animation']['left'] = this.seat[item.seat][1].x;
+        item['animation']['top'] = this.seat[item.seat][1].y;
+        item['animation']['delay'] = 0;
+        item['zIndex'] = this.zindex++
+        this.setState({
+            cards: this.state.cards
+        })
+        Sound.play('play');
+        if (this.board.length == 4) setTimeout(this.clearBoard, 1000)
     }
     /**
      * 考虑增加参数为 seat
@@ -323,9 +366,10 @@ class Table extends Component {
 
     /**
      * 设置牌的 active 状态。
-     * 把编号为 nums 的牌设置长 active 状态
+     * 把编号为 nums 的牌设置成 active 状态
      * nums 是一个数组
-     * active 是目标状态。
+     * active 是目标状态。*      
+     * active     0,1,2,3  0 灰色不能点，1 亮色不能点，2 亮色能点, 3 亮色能点突出
      */
     setActive = (nums: Array, active = 0) => {
         const cards = this.state.cards;
@@ -493,6 +537,11 @@ class Table extends Component {
         })
 
     }
+    /**
+     * 叫牌
+     * seat 座位
+     * bid 叫品
+     */
     call = (seat, bid) => {
         const calldata = this.state.calldata
         if (calldata.length == 0) {
@@ -526,13 +575,13 @@ class Table extends Component {
      * 叫牌测试
      */
     testBid1 = () => {
-        const bids = [{ seat: 'west', bid: '1C' }, { seat: 'north', bid: 'PASS' },
+        const bids = [{ seat: 'west', bid: 'A1C' }, { seat: 'north', bid: 'PASS' },
         { seat: 'east', bid: 'PASS' }, { seat: 'south', bid: '2H' },
         { seat: 'west', bid: 'PASS' }, { seat: 'north', bid: 'PASS' },
-        { seat: 'east', bid: '3C' }, { seat: 'south', bid: 'PASS' },
+        { seat: 'east', bid: 'A3C' }, { seat: 'south', bid: 'PASS' },
         { seat: 'west', bid: 'PASS' }, { seat: 'north', bid: '3H' },
         { seat: 'east', bid: 'PASS' }, { seat: 'south', bid: 'PASS' },
-        { seat: 'west', bid: '3S' }, { seat: 'north', bid: 'PASS' },
+        { seat: 'west', bid: 'A3S' }, { seat: 'north', bid: 'PASS' },
         { seat: 'east', bid: 'PASS' }, { seat: 'south', bid: 'PASS' }]
         bids.forEach((item) => {
             this.call(item.seat, item.bid)

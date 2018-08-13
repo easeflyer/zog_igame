@@ -10,12 +10,13 @@
 }
 .bidpanel table{
     width:100%;
+    font-size:3vh;
     border-collapse: collapse;
 }
 .bidpanel tr{
     border-bottom: 1px solid #666699;
 }
-.bidpanel td {width:20%}
+.bidpanel td {width:7vh;height:4vh}
 .bidblock{
     position: relative;
     float: left;
@@ -42,8 +43,21 @@
 }
 .pass{
     height:11%;
-    width:39%;
+    width:38.8%;
     background-color:#88FF88
+}
+.alert{
+    height:11%;
+    width:19%;
+    background-color:#8888FF
+}
+.alertTd{
+    /* background-color:#8888FF; */
+    background-image: url(/cards/bids/ATD.svg);
+    background-size: 50%;
+    background-position: bottom;
+    background-position: right;
+    background-repeat: no-repeat;
 }
 .double{
     height:11%;
@@ -51,13 +65,12 @@
     background-color:#ff8888;
     font-size:100%
 }
-
 .redouble{
     height:11%;
-    width:38.5%;
+    width:19%;
     background-color:#ff3333
 }
-.pass,.double,.redouble{
+.pass,.double,.redouble,.alert{
     position: relative;
     float: left;
     margin-left: 0.8%;

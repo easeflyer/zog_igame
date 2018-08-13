@@ -29,7 +29,7 @@ class BidPanel extends Component {
         }))
         this.state.bidblocks = bidblocks;
         this.ref = React.createRef();
-     
+
     }
     // componentDidMount(){
     //     this.width = this.ref.current.clientWidth;
@@ -51,7 +51,7 @@ class BidPanel extends Component {
         })
     }
     render() {
-        console.log('ffff:'+this.width)
+        console.log('ffff:' + this.width)
         const bidblocks = this.state.bidblocks.map((e1, i1) => e1.map((e2, i2) => {
             const animation = {}
             if (e2.active == 0) animation['brightness'] = 0.6;
@@ -59,18 +59,23 @@ class BidPanel extends Component {
                 onclick={this.handleCall.bind(this, { row: i1, col: i2 })} />
         }))
         //console.log(bidblocks)
-        const rows = this.props.calldata.map((item,index)=>{
+        const rows = this.props.calldata.map((item, index) => {
             console.log(item)
             return <tr key={index}>
-                <td key='0'>{index+1}</td>
-                {item.map((item1,index1)=>(
-                    <td key={index+index1 + 1} style={{height:`${this.width*0.05}px`}}>
-                        {item1?
+                <td key='0'>&nbsp;{index + 1}</td>
+                {item.map((item1, index1) => {
+                    if(!item1) return ' ';
+                    if(item1.slice(0,1)=='A') return (
+                        <td key={index + index1 + 1} className='alertTd'>
+                            <img className='suit' src={`/cards/bids/${item1.slice(1)}.svg`} />
+                        </td>
+                    );
+                    return (
+                        <td key={index + index1 + 1}>
                             <img className='suit' src={`/cards/bids/${item1.toUpperCase()}.svg`} />
-                            :' '
-                        }
-                    </td>
-                ))}
+                        </td>
+                    );
+                })}
             </tr>
         })
         return (
@@ -79,7 +84,7 @@ class BidPanel extends Component {
                     <table>
                         <thead>
                             <tr>
-                            <td>&nbsp;</td><td>东</td><td>南</td><td>西</td><td>北</td>
+                                <td>&nbsp;</td><td>东</td><td>南</td><td>西</td><td>北</td>
                             </tr>
                         </thead>
                         <tbody>
@@ -90,6 +95,9 @@ class BidPanel extends Component {
                 {bidblocks}
                 <div className='pass'>
                     <img className='suit' src={`/cards/bids/PASS.svg`} />
+                </div>
+                <div className='alert'>
+                    <img className='suit' src={`/cards/bids/ALERT.svg`} />
                 </div>
                 <div className='double'>
                     <img className='suit' src={`/cards/bids/X.svg`} />
