@@ -2,7 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models
-
+import re
 
 class GameChannel(models.Model):
     _inherit = "og.channel"
@@ -84,30 +84,47 @@ class GameChannel(models.Model):
 
     def is_playing(self,table_id):
         table = self.env['og.table'].browse(table_id)
-        boards = table.board_ids
+        boards = table.board_ids.sorted(lambda x : x.number)
         tmp_board = self.env['og.board']
+        unplayed_boards= self.env['og.board']
         for board in boards:
-            
-            if board.result2 !=None:
+
+            if board.result2 != False:
                 tmp_board += board
-            
-            if board.call_ids != None and board.result2 == None:
+                if tmp_board.sorted(lambda x:x.number) == boards:
+                    return 'All Done'
+                continue
+
+
+            if board.result2==False and board.call_ids.mapped('id')==[] and board.south_ready==False and board.east_ready==False and board.west_ready==False and board.north_ready==False:
+                unplayed_boards = boards - tmp_board
+                return {'current_board':board.id,'state':'start playing '}
+
+            #the board is playing
+            if (board.call_ids.mapped('id') != [] or board.south_ready =='R' or board.east_ready =='R' or board.north_ready =='R' or board.west_ready =='R') and board.result2 == False:
                 boards_id = boards.mapped('id')
                 played_boards = tmp_board.mapped('id')
-                unplayerd_boards = boards - tmp_board -board
+                unplayed_boards = boards - tmp_board -board
 
-            if board.declarer == None :
+            #calling ready    
+            if ((board.north_ready == "R" or board.south_ready == "R" or board.east_ready == "R" or board.west_ready == "R")
+                 and board.call_ids.mapped('id') == []):
+                vals ={'state':'calling ready','current_board':board.id,'north_ready':board.north_ready,'east_ready':board.east_ready,
+                       'south_ready':board.south_ready,'west_ready':board.west_ready}
+                return vals
+
+            #calling 
+            if board.declarer == False and board.call_ids.mapped('id') != [] :
                 pos = board.call_ids.mapped('pos')
                 number =board.call_ids.mapped('number')
                 name =board.call_ids.mapped('name')
                 call_info = list(zip(number,pos,name))
                 next_bid = board.bidder
-                vals = {'state':'biding','call_info':call_info,'bidder':next_bid}
-                
+                vals = {'state':'biding','current_board':board.id,'call_info':call_info,'bidder':next_bid}
+
                 return vals
-
-            if board.declarer != None:
-
+            #playing
+            if board.declarer != False and board.result2 ==False:
                 unplayed_cards = board.card_ids.filtered(lambda x:x.number == 0 or x.number ==None)
                 unplayed_cards_name = unplayed_cards.mapped('name')
                 unplayed_cards_pos = unplayed_cards.mapped('pos')
@@ -128,17 +145,20 @@ class GameChannel(models.Model):
                 dealer = board.dealer
                 ns_win = board.ns_win
                 ew_win = board.ew_win
-                vals = {'current_board':board.id,'unplayed_card':unplayed_cards_info,'last_trick':last_trick_info,'vulnerable':vulnerable,
-                        'contract':contract,'current_trick':current_trick_info,'player':next_player,'dealer':dealer,
+                vals = {'state':'playing','current_board':board.id,'unplayed_card':unplayed_cards_info,'last_trick':last_trick_info,'vulnerable':vulnerable,
+                        'contract':contract,'current_trick':current_trick_info,'player':next_player,'dealer':dealer,'declarer':board.declarer,'dummy':board.dummy,
                         'ns_win':ns_win,'ew_win':ew_win}
+                if board.claim_state == 'C':
+                #claiming
+                    vals = {'state':'claiming','current_board':board.id,'unplayed_card':unplayed_cards_info,'last_trick':last_trick_info,'vulnerable':vulnerable,
+                            'contract':contract,'current_trick':current_trick_info,'player':next_player,'dealer':dealer,'declarer':board.declarer,'dummy':board.dummy,
+                            'ns_win':ns_win,'ew_win':ew_win,'north_claim':board.north_claimed,'east_claim':board.east_claimed,'south_claim':board.south_claimed,
+                            'west_claim':board.west_claimed,'claim_result':board.claim_result}
+                    return vals                   
                 return vals
 
-
-
-
-
-
         return 'Notplaying'
+
 
 
 #to join a channel
@@ -216,3 +236,26 @@ class GameChannel(models.Model):
             match_list.append(rec.match_id.id)
 
         return match_list
+
+    @api.multi
+    def reg_test(self):
+        message_set = self.mail_channel_id.channel_message_ids
+        list_set= []
+        count1= 0
+        count2 =0
+        count3 =0
+        for m in message_set:
+            count3 = count3+1
+            try:
+                context = re.search('<p>(.*)</p>',m.body).group(1)
+            except:
+                continue
+            try:
+                context= eval(context)
+                context['pos']
+            except KeyError:
+                count2=count2+1
+                continue
+            count1=count1+1
+            list_set.append(m.id)
+        return list_set,count1,count2,count3

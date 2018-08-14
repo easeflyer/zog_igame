@@ -122,18 +122,18 @@ class Board(models.Model):
         return args
 
     @api.multi
-    def claim(self,pos,num,channel_id):
+    def claim(self,pos,channel_id):
         """ 
         num :  the number to get from unplayed tricks by pos
         """
         self = self.sudo()
-        ret = self._check_claim(pos, num)
+        ret = self._check_claim(pos,self.claim_result)
 
         if ret:
             return ret
 
         self.claimer = pos
-        self.claim_result = num
+        #self.claim_result = num
         #self.refresh()
         vals = {'result':self.result2,'ns_point':self.ns_point,'ew_point':self.ew_point}
         self._send_play(channel_id, vals)

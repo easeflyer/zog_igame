@@ -290,3 +290,109 @@ class Board(models.Model):
         ns, ew = self.declarer in 'NS' and (dclr, opp) or (opp,dclr)
         return point, ns, ew
 
+
+    STATE=[('R','Ready'),('N','Not Ready')]
+    north_ready = fields.Selection(STATE)
+    south_ready = fields.Selection(STATE)
+    east_ready  = fields.Selection(STATE)
+    west_ready  = fields.Selection(STATE)
+    all_ready = fields.Selection(STATE,compute ='_check_ready')
+
+    @api.depends('north_ready','south_ready','east_ready','west_ready')
+    # @api.multi
+    def _check_ready(self):
+        for rec in self:
+            if (rec.north_ready =='R' and rec.north_ready =='R'
+            and rec.east_ready =='R' and rec.west_ready == 'R'):
+                table = rec.table_id
+                channel = self.env['og.channel'].search([('table_id','=',table.id),('type','=','all')])
+                info = "all ready"
+                self.env['og.channel'].browse(channel.id).message_post(body =info)
+                rec.all_ready = 'R'
+
+    @api.multi
+    def call_ready(self,pos):
+        self = self.sudo()
+        if pos == 'N':
+            self.north_ready = 'R'
+            all_ready = self.all_ready
+            return 'North Ready'
+        if pos == 'E':
+            self.east_ready = 'R'
+            all_ready = self.all_ready
+            return 'East Ready'
+        if pos == 'S':
+            self.south_ready = 'R'
+            all_ready = self.all_ready
+            return 'South Ready'
+        if pos == 'W':
+            self.west_ready = 'R'
+            all_ready = self.all_ready
+            return 'West Ready'
+        else:return 'fail ready'
+
+    claim_state = fields.Selection([('C','claiming'),('N','not offer claim'),('D','claim done')])
+    north_claimed = fields.Selection([('C','claimed'),('N','not claimed')])
+    south_claimed = fields.Selection([('C','claimed'),('N','not claimed')])
+    east_claimed = fields.Selection([('C','claimed'),('N','not claimed')])
+    west_claimed = fields.Selection([('C','claimed'),('N','not claimed')])
+    claim_agreed =fields.Selection([('Y','claim agreed'),('N','claim disagreed')],compute = '_check_claim_agreed')
+    
+
+    @api.multi
+    def claiming(self,state,rank):
+        self = self.sudo()
+        self.claim_state = state
+        self.claim_result = rank
+
+
+    @api.multi
+    def ask_claim(self,pos,state):
+        self = self.sudo()
+        if self.claim_state == 'N':
+            return 'Nobody claims'
+        if pos =='N':
+            self.north_claimed = state
+            self.claim_agreed
+        if pos =='E':
+            self.east_claimed = state
+            self.claim_agreed
+        if pos =='N':
+            self.south_claimed = state
+            self.claim_agreed
+        if pos =='N':
+            self.west_claimed = state
+            self.claim_agreed
+
+
+    @api.depends('north_claimed','south_claimed','east_claimed','west_claimed')
+    def _check_claim_agreed(self):
+        table =self.table_id
+        channel = self.env['og.channel'].search([('table_id','=',table.id),('type','=','all')])
+        if self.declarer== 'N' or self.declarer == 'S':
+            if self.east_claimed =='C' and self.west_claimed == 'C':
+                self.claim_agreed = 'Y'
+                info ='claim agreed'
+                self.env['og.channel'].browse(channel.id).message_post(body =info)
+                self.claim_state='D'
+
+            if self.east_claimed=='N' or self.west_claimed =='N':
+                self.claim_agreed= 'N'
+                self.claim_state ='N'
+                self.east_claimed = False
+                self.west_claimed = False
+                self.claim_result = 0
+
+        if self.declarer =='E' or self.declarer =='W':
+            if self.south_claimed =='C' and self.north_claimed =='C':
+                self.claim_agreed ='Y'
+                info ='claim agreed'
+                self.env['og.channel'].browse(channel.id).message_post(body =info)
+                self.claim_state='D'
+            if self.south_claimed =='N' or self.north_claimed == 'N':
+                self.claim_agreed = 'N'
+                self.claim_state ='N'
+                self.south_claimed = False
+                self.north_claimed = False
+                self.claim_result = 0
+
