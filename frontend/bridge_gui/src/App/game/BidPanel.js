@@ -37,14 +37,37 @@ class BidPanel extends Component {
         this.ref = React.createRef();
 
     }
-    // componentDidMount(){
-    //     this.width = this.ref.current.clientWidth;
-    // }
+    handleCall = (item) =>{
+        if('row' in item){
+            this._bidblock(item);
+        }else{
+            this._bidcards(item);
+        }
+    }
+
+    /**
+     * 处理 pass,alert,x,xx
+     * 这4个选项应该只能点击一个。
+     */
+    _bidcards = (item) => {
+        if(!this.state.active) return false;
+        console.log('bidcards.........item...........')
+        console.log(item)
+        this.state.bidcards.forEach((e)=>{
+            if(e.name==item.name) e.active=0;
+            else e.active = 1;
+        })
+        console.log(this.state.bidcards)
+        this.setState({
+            bidcards:this.state.bidcards
+        })
+    }
     /**
      * 叫牌
      * item 点击的叫品 行列坐标。{row,col}
+     * 点击某个叫品，其他叫品要联动（active=0/1）
      */
-    handleCall = (item) => {
+    _bidblock = (item) => {
         if(!this.state.active) return false;
         console.log('item........................')
         console.log(item)
@@ -115,10 +138,18 @@ class BidPanel extends Component {
                     </table>
                 </div>
                 {bidblocks}
-                <BidCard name='PASS' />
-                <BidCard name='ALERT' />
-                <BidCard name='X' />
-                <BidCard name='XX' />
+                <BidCard name='PASS' active={this.state.bidcards[0].active}
+                    onclick={this._bidcards.bind(this,{name:'PASS'})}
+                />
+                <BidCard name='ALERT' active={this.state.bidcards[1].active}
+                    onclick={this._bidcards.bind(this,{name:'ALERT'})}
+                />
+                <BidCard name='X' active={this.state.bidcards[2].active}
+                    onclick={this._bidcards.bind(this,{name:'X'})}
+                />
+                <BidCard name='XX' active={this.state.bidcards[3].active}
+                    onclick={this._bidcards.bind(this,{name:'XX'})}
+                />
                 <button onClick={this.handleConfirm}>确认</button>
             </div>
         );
@@ -144,7 +175,7 @@ class BidBlock extends Component {
             animation && (animation['brightness'] = 1);
         }
 
-        console.log(animation);
+        //console.log(animation);
 
         return (
             <TweenOne
@@ -164,14 +195,14 @@ class BidBlock extends Component {
 }
 
 class BidCard extends Component {
-    state={
-        active:1
-    }
-    onclick = ()=>{
-        this.setState({
-            active:!this.state.active
-        })
-    }
+    // state={
+    //     active:1
+    // }
+    // onclick = ()=>{
+    //     this.setState({
+    //         active:!this.state.active
+    //     })
+    // }
     render() {
         const bgcolor = { PASS: '#88FF88', X: '#FF8888', XX: '#FF3333', ALERT: '#8888FF'};
         const width = { PASS: '23.3vh', X: '11.4vh', XX: '11.4vh', ALERT: '11.4vh'};
@@ -180,9 +211,9 @@ class BidCard extends Component {
             width:`${width[this.props.name]}`,
         }
         let animation = {};
-        if (this.state.active == 0)
+        if (this.props.active == 0)
             animation && (animation['brightness'] = 0.6);
-        if (this.state.active == 1){
+        if (this.props.active == 1){
             animation && (animation['brightness'] = 1);
         }
         return (
@@ -193,7 +224,7 @@ class BidCard extends Component {
                 }}
                 className='bidcard'
             >
-                <div className='cn1' onClick={this.onclick} style={style}>
+                <div className='cn1' onClick={this.props.onclick} style={style}>
                     <img className='suit' src={`/cards/bids/${this.props.name}.svg`} />
                 </div>
             </TweenOne>
