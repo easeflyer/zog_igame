@@ -14,7 +14,9 @@ import './BidPanel.css'
  */
 class BidPanel extends Component {
     state = {
-        bidblocks: []
+        bidblocks: [],
+        bidcards:[],
+        active:1
     }
     constructor(props) {
         super(props)
@@ -27,6 +29,10 @@ class BidPanel extends Component {
             //let active = (i<5 && i1<3) ? 1:0;
             return { name: e1, active: 1 }
         }))
+        this.state.bidcards = [ {name:'PASS',active:1},{name:'ALERT',active:1},
+                                {name:'X',active:1},{name:'XX',active:1},]
+        console.log('bbb................')
+        console.log(bidblocks)
         this.state.bidblocks = bidblocks;
         this.ref = React.createRef();
 
@@ -39,23 +45,39 @@ class BidPanel extends Component {
      * item 点击的叫品 行列坐标。{row,col}
      */
     handleCall = (item) => {
+        if(!this.state.active) return false;
+        console.log('item........................')
+        console.log(item)
         const bidblocks = this.state.bidblocks;
         for (let i = 0; i < bidblocks.length; i++) {
             for (let j = 0; j < bidblocks[i].length; j++) {
                 if (i < item.row ||
                     (i == item.row && j >= item.col)) bidblocks[i][j].active = 0;
+                if (i > item.row ||
+                    (i == item.row && j < item.col)) bidblocks[i][j].active = 1;
+
             }
         }
         this.setState({
             bidblocks: this.state.bidblocks
         })
     }
+    /**
+     * 确认提交
+     */
+    handleConfirm = () =>{
+        this.setState({
+            active:0
+        })
+    }
     render() {
         console.log('ffff:' + this.width)
         const bidblocks = this.state.bidblocks.map((e1, i1) => e1.map((e2, i2) => {
             const animation = {}
-            if (e2.active == 0) animation['brightness'] = 0.6;
+            //if (e2.active == 0) animation['brightness'] = 0.6;
+            animation['brightness'] = '';
             return <BidBlock key={e2.name} name={e2.name} animation={animation}
+                active={e2.active}
                 onclick={this.handleCall.bind(this, { row: i1, col: i2 })} />
         }))
         //console.log(bidblocks)
@@ -64,8 +86,8 @@ class BidPanel extends Component {
             return <tr key={index}>
                 <td key='0'>&nbsp;{index + 1}</td>
                 {item.map((item1, index1) => {
-                    if(!item1) return ' ';
-                    if(item1.slice(0,1)=='A') return (
+                    if (!item1) return ' ';
+                    if (item1.slice(0, 1) == 'A') return (
                         <td key={index + index1 + 1} className='alertTd'>
                             <img className='suit' src={`/cards/bids/${item1.slice(1)}.svg`} />
                         </td>
@@ -93,18 +115,11 @@ class BidPanel extends Component {
                     </table>
                 </div>
                 {bidblocks}
-                <div className='pass'>
-                    <img className='suit' src={`/cards/bids/PASS.svg`} />
-                </div>
-                <div className='alert'>
-                    <img className='suit' src={`/cards/bids/ALERT.svg`} />
-                </div>
-                <div className='double'>
-                    <img className='suit' src={`/cards/bids/X.svg`} />
-                </div>
-                <div className='redouble'>
-                    <img className='suit' src={`/cards/bids/XX.svg`} />
-                </div>
+                <BidCard name='PASS' />
+                <BidCard name='ALERT' />
+                <BidCard name='X' />
+                <BidCard name='XX' />
+                <button onClick={this.handleConfirm}>确认</button>
             </div>
         );
     }
@@ -117,18 +132,24 @@ class BidPanel extends Component {
 class BidBlock extends Component {
     render() {
         const suit = this.props.name.slice(-1);
-        //const bgcolor = { T: '#eeeeee', S: '#ddddFF', H: '#FFdddd', D: '#ffffcc', C: '#ccffcc' };
-        const bgcolor = { T: '#eeeeee', S: '#eeeeee', H: '#eeeeee', D: '#eeeeee', C: '#eeeeee' };
+        const bgcolor = { T: '#eeeeee', S: '#ddddFF', H: '#FFdddd', D: '#ffffcc', C: '#ccffcc' };
+        //const bgcolor = { T: '#eeeeee', S: '#eeeeee', H: '#eeeeee', D: '#eeeeee', C: '#eeeeee' };
         const style = {
             backgroundColor: `${bgcolor[suit]}`,
-
         }
+        let animation = this.props.animation;
         if (this.props.active == 0)
-            this.props.animation && (this.props.animation['brightness'] = 0.6)
+            animation && (animation['brightness'] = 0.6);
+        if (this.props.active == 1){
+            animation && (animation['brightness'] = 1);
+        }
+
+        console.log(animation);
+
         return (
             <TweenOne
                 animation={{
-                    ...this.props.animation,
+                    ...animation,
                     ease: 'easeOutQuint',       // 缓动参数 参考蚂蚁手册 easeOutExpo
                 }}
                 className='bidblock'
@@ -141,5 +162,44 @@ class BidBlock extends Component {
         );
     }
 }
+
+class BidCard extends Component {
+    state={
+        active:1
+    }
+    onclick = ()=>{
+        this.setState({
+            active:!this.state.active
+        })
+    }
+    render() {
+        const bgcolor = { PASS: '#88FF88', X: '#FF8888', XX: '#FF3333', ALERT: '#8888FF'};
+        const width = { PASS: '23.3vh', X: '11.4vh', XX: '11.4vh', ALERT: '11.4vh'};
+        const style = {
+            backgroundColor: `${bgcolor[this.props.name]}`,
+            width:`${width[this.props.name]}`,
+        }
+        let animation = {};
+        if (this.state.active == 0)
+            animation && (animation['brightness'] = 0.6);
+        if (this.state.active == 1){
+            animation && (animation['brightness'] = 1);
+        }
+        return (
+            <TweenOne
+                animation={{
+                    ...animation,
+                    ease: 'easeOutQuint',       // 缓动参数 参考蚂蚁手册 easeOutExpo
+                }}
+                className='bidcard'
+            >
+                <div className='cn1' onClick={this.onclick} style={style}>
+                    <img className='suit' src={`/cards/bids/${this.props.name}.svg`} />
+                </div>
+            </TweenOne>
+        );
+    }
+}
+
 
 export default BidPanel;

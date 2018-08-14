@@ -91,7 +91,7 @@ export default class TableView extends React.Component {
             <div>
                 {(table.state.scene == 1) ?
                     <div className='panel'>
-                        <BidPanel calldata={table.state.calldata} />
+                        <BidPanel calldata={table.state.calldata} active='1' />
                     </div> : null
                 }
                 <div id='table' className='table'>
