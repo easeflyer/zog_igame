@@ -37,11 +37,15 @@ class BidPanel extends Component {
         this.ref = React.createRef();
 
     }
+    /**
+     * 处理 叫牌点击事件。
+     * 如果 item 是 row,col 则调用 _bidblock() 否则调用 _bidcard
+     */
     handleCall = (item) =>{
         if('row' in item){
             this._bidblock(item);
         }else{
-            this._bidcards(item);
+            this._bidcard(item);
         }
     }
 
@@ -49,7 +53,7 @@ class BidPanel extends Component {
      * 处理 pass,alert,x,xx
      * 这4个选项应该只能点击一个。
      */
-    _bidcards = (item) => {
+    _bidcard = (item) => {
         if(!this.state.active) return false;
         console.log('bidcards.........item...........')
         console.log(item)
@@ -139,16 +143,16 @@ class BidPanel extends Component {
                 </div>
                 {bidblocks}
                 <BidCard name='PASS' active={this.state.bidcards[0].active}
-                    onclick={this._bidcards.bind(this,{name:'PASS'})}
+                    onclick={this.handleCall.bind(this,{name:'PASS'})}
                 />
                 <BidCard name='ALERT' active={this.state.bidcards[1].active}
-                    onclick={this._bidcards.bind(this,{name:'ALERT'})}
+                    onclick={this.handleCall.bind(this,{name:'ALERT'})}
                 />
                 <BidCard name='X' active={this.state.bidcards[2].active}
-                    onclick={this._bidcards.bind(this,{name:'X'})}
+                    onclick={this.handleCall.bind(this,{name:'X'})}
                 />
                 <BidCard name='XX' active={this.state.bidcards[3].active}
-                    onclick={this._bidcards.bind(this,{name:'XX'})}
+                    onclick={this.handleCall.bind(this,{name:'XX'})}
                 />
                 <button onClick={this.handleConfirm}>确认</button>
             </div>
