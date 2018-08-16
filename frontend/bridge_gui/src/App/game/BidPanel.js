@@ -183,12 +183,8 @@ class BidBlock extends Component {
 
         return (
             <TweenOne
-                animation={{
-                    ...animation,
-                    ease: 'easeOutQuint',       // 缓动参数 参考蚂蚁手册 easeOutExpo
-                }}
-                className='bidblock'
-            >
+                animation={{...animation, ease: 'easeOutQuint'}}       // 缓动参数 参考蚂蚁手册 easeOutExpo
+                className='bidblock'>
 
                 <div className='cn1' onClick={this.props.onclick} style={style}>
                     <img className='suit' src={`/cards/bids/${this.props.name}.svg`} />
@@ -222,12 +218,8 @@ class BidCard extends Component {
         }
         return (
             <TweenOne
-                animation={{
-                    ...animation,
-                    ease: 'easeOutQuint',       // 缓动参数 参考蚂蚁手册 easeOutExpo
-                }}
-                className='bidcard'
-            >
+                animation={{...animation,ease: 'easeOutQuint'}}       // 缓动参数 参考蚂蚁手册 easeOutExpo
+                className='bidcard'>
                 <div className='cn1' onClick={this.props.onclick} style={style}>
                     <img className='suit' src={`/cards/bids/${this.props.name}.svg`} />
                 </div>
@@ -235,6 +227,5 @@ class BidCard extends Component {
         );
     }
 }
-
 
 export default BidPanel;
