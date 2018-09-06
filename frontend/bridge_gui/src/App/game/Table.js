@@ -99,8 +99,12 @@ class Table extends Component {
      */
     componentDidMount() {
         this._initSeat(); // 初始化 发牌位置 出牌位置等坐标
+        this._initVideo('table02open');
         //console.log(parseInt(center.y) - parseInt(this.csize) * 0.7 / 2)
+
     }
+
+
     /**
     * _initSeat 初始化 发牌位置 出牌位置的坐标。 
     * center   桌子的中心
@@ -280,7 +284,7 @@ class Table extends Component {
                     case 'west': item['animation']['left'] -= 20; break;
                     case 'north': item['animation']['top'] -= 20; break;
                 }
-        
+
             }
         }))
 
@@ -659,6 +663,11 @@ class Table extends Component {
             )
         )
     }
+    _initVideo(channel) {
+        // eslint-disable-next-line
+        var api = streamApi();
+    }
+
     /**
      * 测试出牌
      * 简单测试，已无实际用途。
