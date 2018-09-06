@@ -1,7 +1,15 @@
 import React from 'react';
-import TweenOne from 'rc-tween-one';
+import Motion from '../lib/Motion'
+//import TweenOne from 'rc-tween-one';
 
 /**
+ * 一张牌 Card 的功能：
+ *      初始位置：props.position
+ *      如何动画：props.animation
+ *      牌的名称：5S  XS 代表背面
+ *      牌的状态：4个状态：0灰色不能点,1亮色不能点，2亮色能点，3亮色能点突出
+ *      
+ * 
  * props 说明
  *      animation   和 TweenOne 的 animation 同步
  *      position    非动画定位
@@ -10,9 +18,17 @@ import TweenOne from 'rc-tween-one';
  *      zIndex      叠放顺序
  *      onClick     点击绑定到图片上
  *      active      0,1,2  0 灰色不能点，1 亮色不能点，2 亮色能点, 3 亮色能点突出
+ * 
+ * 关于动画：
+ *      分装在 ../lib/Motion
+ * 
+ * 存在问题：
+ * 
+ *      X 代表扣着，可能暴露扣着牌的花色数量，比如：XHXHXH,XDXD,XSXSXS  
 */
 class Card extends React.Component {
     render() {
+        // 非动画样式，如果有给出就调整，如果没有给出，就不变。
         const getStyle = () => {
             let style = { position: 'absolute' }
             if (this.props.position) {
@@ -25,14 +41,19 @@ class Card extends React.Component {
             }
             return style;
         }
-        // if(this.props.active == 3) {
-        //     this.props.animation && ( this.props.animation.onComplete = () => {
+        
+        /**
+        if(this.props.active == 3) {
+            this.props.animation && ( this.props.animation.onComplete = () => {
                 
-        //         // 这张牌消失，非受控，不建议。
-        //         // let cCard = document.querySelector('#card'+this.props.index);
-        //         // cCard.style.display = 'none';
-        //     } )
-        // }
+                // 这张牌消失，非受控，不建议。
+                // let cCard = document.querySelector('#card'+this.props.index);
+                // cCard.style.display = 'none';
+            } )
+        }
+        */
+
+        // 判断处理 active 状态
         if(this.props.active == 0)
             this.props.animation && ( this.props.animation['brightness'] = 0.6 )
         if(this.props.active == 1)
@@ -42,8 +63,9 @@ class Card extends React.Component {
             onclick = this.props.onClick;
             this.props.animation && ( this.props.animation['brightness'] = 1 )
         }
-        const card = this.props.card.slice(0,1) == 'X' ? 
+        const card = this.props.card.slice(0,1) == 'X' ?   // XH  XS XD 都是扣着的
             'back' : this.props.card;
+
         return (
             <div id={'card'+this.props.index}  // TODO: 这个div定位不理想，只是起到了 zIndex 作用。
                 style={{
@@ -51,23 +73,17 @@ class Card extends React.Component {
                     zIndex: this.props.zIndex,
                 }}
             >
-                <TweenOne
-                    animation={{
-                        ...this.props.animation,
-                        ease: 'easeOutQuint',       // 缓动参数 参考蚂蚁手册 easeOutExpo
-                    }}
-                    style={getStyle()}
-                >
+                <Motion animation={this.props.animation} style={getStyle()}>
                     <img onClick={onclick}
                         src={`/cards/${card}.svg`}
                         style={{
                             position: 'absolute',
                             width: "100%",
                             height: "100%",
-                            zIndex: this.props.zIndex,
+                            // zIndex: this.props.zIndex,
                         }}
                     />
-                </TweenOne>
+                </Motion>
             </div>
         )
     }

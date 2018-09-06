@@ -13,6 +13,8 @@ import Models from '../models/model'
 import Sound from './Sound'
 import TableView from './TableView' // 包含 TableView.css
 
+import TableModel from '../models/Table';
+
 /**
  * Game  是一局比赛，涉及到了比赛者，以及和比赛相关的其他信息。重点在于比赛。
  * Table 是一桌游戏的界面：重点在于 一桌
@@ -75,17 +77,22 @@ class Table extends Component {
         for (let key in this.seat) this.ref[key] = React.createRef()
         this.ref.board = React.createRef();
         //this.state.cards = this.initDeals() // 把以上牌初始化放到桌子上(不发牌)
-        this.state.cards = this.initCards() // 把以上牌初始化放到桌子上(不发牌)
+        //this.state.cards = this.initCards() // 把以上牌初始化放到桌子上(不发牌)
+        this.state.cards = TableModel.state.cards;
+        // console.log('this.state.cards:',this.state.cards)
     }
     /**
      * 通过计算获得 Card 的 size
      */
     get csize() {
-        // 短路语法 牌的大小 可以计算在下面的函数内。
+        /*  短路语法 牌的大小 可以计算在下面的函数内。
+            可以考虑用 vh 改造，所有计算都按照比例计算。
+        */
         return this._csize || (() => {
             return this.height * 0.18;
         })()
     }
+    // model
     _shift(seat) {
         const offset = Table.seats.indexOf(this.myseat) - 1
         const index = Table.seats.indexOf(seat)
@@ -121,6 +128,7 @@ class Table extends Component {
     *        // parseInt(this.ref.board.current.style.height.slice(0, -2)) / 2
     * 
     */
+   // model 不是 state 只是某些数据，state 是界面数据，其他是模型数据
     _initSeat() {
         const center = { x: 0, y: 0 };
         center.x = this.ref.board.current.offsetTop +
@@ -161,15 +169,19 @@ class Table extends Component {
     }
 
     /**
-     * initCards 从 this.deals 初始化成 Cards 组件为渲染输出做准备，返回到 this.cards
+     * initCards 从 this.deals 初始化成 cards 数组 为渲染输出做准备，返回到 this.cards
+     * 把 cards 字符串 变为 数组
+     * 
      * TODO：把一手牌 变成
      */
+    // model
     initCards() {
         const suits = Card.suits                    //['S', 'H', 'D', 'C'];
         const deals = this.deals.split(' ')
         let index = 0;                              // 复位index 可以让四个人的牌同时发出来
         const cards = [[], [], [], []];             // 初始化二维数组 保存四个方位的牌
         //deals. [XXXXXXXXXXXXX,QJ98.A5.J853.QT4,XXXXXXXXXXXXX,XXXXXXXXXXXXX]
+        // 注意避免用 X 暴露花色的数量
         deals.forEach((item, index1) => {
             const suit = item.split('.')
             suit.forEach((s, index2) => {           // index2 四个花色  s 'QJ98' 牌点字串
@@ -183,7 +195,7 @@ class Table extends Component {
                         seat: Table.seats[index1],       // 这张牌是那个方位的
                         //table: this,
                         size: this.csize,                // 牌的大小
-                        card: s[i] + suits[index2],
+                        card: s[i] + suits[index2],       //s[i]
                         position: { x: this.height / 2, y: this.height * 2 }     // 考虑一个默认位置。
                     })
                 }
@@ -198,6 +210,7 @@ class Table extends Component {
      * 定位参考：
      *  -this.height * 0.2;  计分位置
      */
+    model
     clearBoard = () => {
         //if(this.board.length < 4) return false;
         const board = this.board;
@@ -265,7 +278,7 @@ class Table extends Component {
      * 注意细节：每张 Card 内部有对 active 的判断。
      */
     play = (item) => {
-        if (item.active == 2) this.preplay(item);
+        if (item.active == 2) this._preplay(item);
         else if (item.active == 3) this._play(item);
         else return;
     }
@@ -274,7 +287,7 @@ class Table extends Component {
      * 点击一张牌 突出显示
      * 被点击的牌突出显示，其他牌都恢复原样
      */
-    preplay = (item) => {
+    _preplay = (item) => {
         this.state.cards.forEach((item) => item.forEach((item) => {
             if (item.active == 3) {
                 item.active = 2;
@@ -370,7 +383,7 @@ class Table extends Component {
 
     /**
      * 设置牌的 active 状态。
-     * 把编号为 nums 的牌设置成 active 状态
+     * 把编号 在nums里 的牌设置成 active 状态
      * nums 是一个数组
      * active 是目标状态。*      
      * active     0,1,2,3  0 灰色不能点，1 亮色不能点，2 亮色能点, 3 亮色能点突出
@@ -445,11 +458,12 @@ class Table extends Component {
     // // }
     /**
      * 通过一张牌的索引，获得具体的 牌数据引用
-     * @param {*} index 
+     * this.state.cards 永远都是 52张牌
+     * 
      */
     _cardIndexOf(index) {
-        const i1 = Math.floor(index / 13);
-        const i2 = index % 13;
+        const i1 = Math.floor(index / 13);  // 商数是座位 0-3
+        const i2 = index % 13;              // 余数是 第几张牌
         return this.state.cards[i1][i2];
     }
 
