@@ -1,5 +1,5 @@
 import React from 'react';
-import Motion from '../lib/Motion'
+import Motion from '../libs/Motion'
 //import TweenOne from 'rc-tween-one';
 
 /**
