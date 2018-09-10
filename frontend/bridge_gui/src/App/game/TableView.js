@@ -21,68 +21,6 @@ export default class TableView extends React.Component {
         this.width = this.props.table.width;
         this.height = this.props.table.height;
 
-        this.css = {
-            table: {
-                // /*width: this.height,*/
-                // width: this.width,
-                // height: this.height,
-                // fontSize: this.height * 0.04 + 'px'
-            },
-            panel: {
-                // top: this.height * 0.32,
-                // left: this.height * 0.2,
-                // width: this.height * 0.6,
-                // height: this.height * 0.6
-            },
-            header: {
-                // width: this.height * 0.2,
-                // height: this.height * 0.7,
-            },
-            body: {
-                // width: this.height,
-                // height: this.height,
-                // fontSize: this.height * 0.04 + 'px'
-            },
-            footer: {
-                // width: this.height * 0.4,
-                // height: this.height,
-            },
-            east: {
-                // top: this.height * 0.2,
-                // width: this.height * 0.2,
-                // height: this.height * 0.6,
-            },
-            south: {
-                // width: this.height,
-                // height: this.height * 0.2,
-            },
-            west: {
-                // top: this.height * 0.2,
-                // width: this.height * 0.2,
-                // height: this.height * 0.6,
-            },
-            north: {
-                // width: this.height,
-                // height: this.height * 0.2,
-            },
-            board: {
-                // width: this.height * 0.6,
-                // height: this.height * 0.6,
-                // top: this.height * 0.2,
-                // left: this.height * 0.2,
-            },
-            result: {
-                // width: this.height * 0.6,
-                // height: this.height * 0.2,
-                // top: this.height * 0.6,
-                // left: this.height * 0.2,
-                // zIndex: 1000,
-                // textAlign: 'center',
-                // fontSize: this.height * 0.06 + 'px',
-            }
-
-        }
-
         // 只要 table 和 cards 传入即可。
         const table = this.props.table;
         const cards = this.props.cards;
@@ -98,18 +36,18 @@ export default class TableView extends React.Component {
                     <div id='header' className='header'>
                         <div className='re imps'><Imps /></div>
                         <div onClick={table.openDebug} className='re seats'><Seats /></div>
-                        <div onClick={table.testLastTrick} className='re tricks'><Tricks /></div>
-                        <div onClick={table.testLastTrick} className='re time'>
+                        <div onClick={table.lastTrick.bind(table)} className='re tricks'><Tricks /></div>
+                        <div className='re time'>
                             <Timer
                                 name='Timer'
                                 handle={table.timer}
                                 time='1:2:5'
-                                callback={()=>console.log('计时结束')} />
+                                callback={() => console.log('计时结束')} />
                         </div>
                         <button onTouchEnd={table.claim} className="claimbtn disable">摊牌</button>
-                        <button onClick={()=>table.timer.stop()} onDoubleClick={()=>table.timer.start()} className="calljudge">呼叫裁判</button>
-                        <button onTouchEnd={table.claim} onClick={table.testLastTrick} className="lasttrick">上一墩牌</button>
-                        <button onTouchEnd={table.claim} onClick={table.testBid} className="showbid">显示叫牌</button>
+                        <button onClick={() => table.timer.stop()} onDoubleClick={() => table.timer.start()} className="calljudge">呼叫裁判</button>
+                        <button onTouchEnd={table.claim} onClick={table.lastTrick.bind(table)} className="lasttrick">上一墩牌</button>
+                        <button onTouchEnd={table.claim} onClick={table.bid.bind(table)} className="showbid">显示叫牌</button>
 
                         {/* <div className='re' id='lastTrick'>上墩牌</div>*/}
                         {/* 注意比赛结果会挂载到下面的div */}
@@ -132,17 +70,17 @@ export default class TableView extends React.Component {
                                 {/* {table.state.user[table._shift('east')].name} */}
                             </div></div>
                             <div className='userTag'><div className='seat'>
-                            <UserTag user={table.state.user['south']} table={table} />
+                                <UserTag user={table.state.user['south']} table={table} />
                                 {/* {Table.seatscn[Table.seats.indexOf(table._shift('south'))]}: */}
                                 {/* {table.state.user[table._shift('south')].name} */}
                             </div></div>
                             <div className='userTag'><div className='seat'>
-                            <UserTag user={table.state.user['west']} table={table} />
+                                <UserTag user={table.state.user['west']} table={table} />
                                 {/* {Table.seatscn[Table.seats.indexOf(table._shift('west'))]}: */}
                                 {/* {table.state.user[table._shift('west')].name} */}
                             </div></div>
                             <div className='userTag'><div className='seat'>
-                            <UserTag user={table.state.user['north']} table={table} />
+                                <UserTag user={table.state.user['north']} table={table} />
                                 {/* {Table.seatscn[Table.seats.indexOf(table._shift('north'))]}: */}
                                 {/* {table.state.user[table._shift('north')].name} */}
                             </div></div>
@@ -182,7 +120,7 @@ export default class TableView extends React.Component {
                     </div>
                     <div id='ad'></div>
                 </div>
-                
+
             </div >
         );
     }

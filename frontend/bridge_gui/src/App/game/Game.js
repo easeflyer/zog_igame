@@ -28,18 +28,16 @@ class Game extends Component {
      * 屏蔽下来刷新等。
      */
     _initApp() {
-        if (1) return;
-        // 屏蔽右键
+        if (1) return;  // 去掉本行
         window.document.oncontextmenu = function () {
             //alert('请不要点击鼠标右键！');
             return false;
         }
 
-        // 屏蔽f5
-        document.onkeydown = function (e) {
+        document.onkeydown = function (e) { // 屏蔽f5,f12 keycode == 116,123
             e = window.event || e;
             var keycode = e.keyCode || e.which;
-            if (keycode == 116) {
+            if ([116,123].indexOf(keycode) != -1) {  
                 if (window.event) {// ie
                     try { e.keyCode = 0; } catch (e) { }
                     e.returnValue = false;

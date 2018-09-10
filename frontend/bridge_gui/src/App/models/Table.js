@@ -370,4 +370,5 @@ TableModel.seatscn = ['东', '南', '西', '北']
 /**
  * 直接实例化，因为一局游戏只有一个桌子。
  */
+export {TableModel};
 export default new TableModel();

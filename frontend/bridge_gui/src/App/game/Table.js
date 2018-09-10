@@ -1,3 +1,8 @@
+/**
+ * Game  是一局比赛，涉及到了比赛者，以及和比赛相关的其他信息。重点在于比赛。
+ * Table 是一桌游戏的界面：重点在于 一桌
+ */
+
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 //import settings from '../game/settings';
@@ -14,10 +19,12 @@ import Sound from './Sound'
 import TableView from './TableView' // 包含 TableView.css
 
 import TableModel from '../models/Table';
-
 /**
- * Game  是一局比赛，涉及到了比赛者，以及和比赛相关的其他信息。重点在于比赛。
- * Table 是一桌游戏的界面：重点在于 一桌
+ * Table 一桌游戏
+ *      是牌桌的容器组件，或者说是控制器组件(MVC)
+ *      包含 state 数据由 模型计算提供。
+ * TableModel 是模型组件。
+ *      所有数据计算，尤其是 state 的计算，都在这里进行。控制器调用。
  */
 class Table extends Component {
     state = {
@@ -74,7 +81,7 @@ class Table extends Component {
         }
         // ref 用来记录 四个发牌位置的div引用
         this.ref = {};
-        ['east', 'south', 'west', 'north'].forEach(key => this.ref[key] = React.createRef())
+        Table.seats.forEach(key => this.ref[key] = React.createRef())
         this.ref.board = React.createRef();
         //this.state.cards = this.initDeals() // 把以上牌初始化放到桌子上(不发牌)
         //this.state.cards = this.initCards() // 把以上牌初始化放到桌子上(不发牌)
@@ -92,17 +99,6 @@ class Table extends Component {
             return this.height * 0.18;
         })()
     }
-    /**
-     * 输入：某个方位"east", this.myseat
-     * 输出：另外一个方位
-     */
-    // _shift(seat) {
-    //     const offset = Table.seats.indexOf(this.myseat) - 1
-    //     const index = Table.seats.indexOf(seat)
-    //     return Table.seats[(index + offset) % 4]
-    //     //return 
-    // }
-
 
     /**
      * 完成挂载后，要计算 各个位置的坐标。
@@ -116,12 +112,15 @@ class Table extends Component {
 
 
     /**
-    * 
     * 根据dom 定位 初始化 发牌位置 出牌位置 坐标
     * const center 为桌子中心
     * const seats  为四个发牌区域div 左上角坐标
     * 
     * 注意 控制器（本代码）里包含和 dom 打交道的代码。Model 里尽可能都是纯函数
+    * 计算结果保存在 TableModel.seat 里面，包含发牌位置，和出牌位置
+    * 把两个 dom 定位（xy） 发给模型用于计算。Model 中应该尽可能是纯函数
+    * 计算结果保存到 TableModel.seat 里面，包含发牌位置，和出牌位置
+    * TableModel.initSeat(center, seats)
     */
     _initSeat() {
         const center = {
@@ -131,169 +130,34 @@ class Table extends Component {
                 this.ref.board.current.clientWidth / 2
         };
         const seats = {
-            'east': { x: 0, y: 0 },
-            'south': { x: 0, y: 0 },
-            'west': { x: 0, y: 0 },
-            'north': { x: 0, y: 0 },
+            'east'  : { x: 0, y: 0 }, 'south' : { x: 0, y: 0 },
+            'west'  : { x: 0, y: 0 }, 'north' : { x: 0, y: 0 },
         }
-
         for (let key in seats) {
             seats[key]['y'] = this.ref[key].current.offsetTop;
             seats[key]['x'] = this.ref[key].current.offsetLeft;
         }
-        // 把两个 dom 定位 发给模型用于计算。Model 中应该尽可能是
+
         TableModel.initSeat(center, seats)
-
-        // for (let key in this.seat) {
-        //     this.seat[key][0]['y'] = this.ref[key].current.offsetTop;
-        //     this.seat[key][0]['x'] = this.ref[key].current.offsetLeft;
-
-        //     if (key == 'east') {
-        //         this.seat[key][0]['y'] += this.height * 0.06
-        //         // 下面是处理　牌的叠放顺序　联合参考：dealCards
-        //         //this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.height * 0.4
-        //         this.seat[key][1]['y'] = center.y - offset
-        //         this.seat[key][1]['x'] = center.x - offset * 0.8
-        //     } else if (key == 'south') {
-        //         this.seat[key][0]['x'] += 0 //+ this.height * 0.21
-        //         //this.seat[key][1]['y'] = center.y + offset - this.csize / 2;
-        //         this.seat[key][1]['y'] = center.y - offset * 0.8
-        //         this.seat[key][1]['x'] = center.x - offset
-        //     } else if (key == 'west') {
-        //         this.seat[key][0]['y'] += this.height * 0.06
-        //         this.seat[key][1]['y'] = center.y - offset
-        //         this.seat[key][1]['x'] = center.x + offset * 0.8 - this.csize;
-        //     } else if (key == 'north') {
-        //         this.seat[key][0]['x'] += 0 //+ this.height * 0.21
-        //         this.seat[key][1]['y'] = center.y + offset * 0.8 - this.csize;
-        //         this.seat[key][1]['x'] = center.x - offset
-        //     }
-        // }
     }
-
     /**
-     * initCards 从 this.deals 初始化成 cards 数组 为渲染输出做准备，返回到 this.cards
-     * 把 cards 字符串 变为 数组
-     * 
-     * TODO：把一手牌 变成
+     * 清理 出牌区域（4张牌）
+     * 调用：
+     * 输入：
+     * 输出：
      */
-    // model
-    // initCards() {
-    //     const suits = Card.suits                    //['S', 'H', 'D', 'C'];
-    //     const deals = this.deals.split(' ')
-    //     let index = 0;                              // 复位index 可以让四个人的牌同时发出来
-    //     const cards = [[], [], [], []];             // 初始化二维数组 保存四个方位的牌
-    //     //deals. [XXXXXXXXXXXXX,QJ98.A5.J853.QT4,XXXXXXXXXXXXX,XXXXXXXXXXXXX]
-    //     // 注意避免用 X 暴露花色的数量
-    //     deals.forEach((item, index1) => {
-    //         const suit = item.split('.')
-    //         suit.forEach((s, index2) => {           // index2 四个花色  s 'QJ98' 牌点字串
-    //             //cards[index1][index2] = [];
-    //             for (var i = 0; i < s.length; i++) {
-    //                 cards[index1].push({
-    //                     onclick: () => false,              // onclick 必须是个函数
-    //                     active: 0,
-    //                     index: index,
-    //                     key: index++,
-    //                     seat: Table.seats[index1],       // 这张牌是那个方位的
-    //                     //table: this,
-    //                     size: this.csize,                // 牌的大小
-    //                     card: s[i] + suits[index2],       //s[i]
-    //                     position: { x: this.height / 2, y: this.height * 2 }     // 考虑一个默认位置。
-    //                 })
-    //             }
-    //         });
-    //     });
-    //     console.log('cards.......333.............')
-    //     console.log(cards)
-    //     return cards;
-    // }
-    /**
-     * 清理桌面上的牌
-     * 定位参考：
-     *  -this.height * 0.2;  计分位置
-     */
-    //model
-    // clearBoard1 = () => {
-    //     //if(this.board.length < 4) return false;
-    //     const board = this.board;
-    //     for (let i = 0; i < board.length; i++) {
-    //         board[i].animation.left = this.height / 2;
-    //         board[i].animation.top = -this.height * 2;
-    //         //board[i].animation.rotate = 0;
-    //         // board[i].animation.left = 100;
-    //         // board[i].animation.top = 100;
-    //         board[i].active = 3;
-    //     }
-    //     this.board = [];
-    //     this.setState({
-    //         cards: this.state.cards
-    //     })
-    //     Sound.play('clear')
-    // }
     clearBoard = () => {
         TableModel.clearBoard()
         this.setState({
-            cards: this.state.cards
+            cards: TableModel.state.cards
         })
         Sound.play('clear')
     }
 
     /**
-     * 发牌
-     * 
-     * 算法注解：
-     *  1） 东西方向牌是横向的，因此要确定旋转的圆心。旋转后保证左上角坐标就是牌
-     *      的左上角如果按照中心旋转则还需要计算偏移量。利用 transformOrigin
-     *  2） 出牌的位置 东西南北 四个位置之前计算好的。
-     *  3） xy+5 目的是避免靠近牌桌边缘。
-     *  4） delay 是每张牌发出来的延迟时间。按照牌编号进行计算。出牌时应清零
-     *  5） '02'.indexOf(index) 东西的牌 rotate 旋转90度
-     *  6） .onclick=this.onclick(item2) onclick 函数引用
-     *      this.onclick(item2) 仍然返回一个函数 用来处理点击事件，传入item2
+     * 打出一张牌
+     * @param {card} item
      */
-    // dealCards() {
-    //     const cards = this.state.cards;
-    //     //const cards = TableModel.state.cards;
-    //     const offset = this.csize * 0.7 / 2
-    //     cards.forEach((item, index) => {
-    //         let rotate = 0;
-    //         let seat = Table.seats[index]
-    //         let [x, y] = [TableModel.seat[seat][0].x, TableModel.seat[seat][0].y]
-    //         if ('02'.indexOf(index) != -1) rotate = -90;
-    //         x = x + this.height / 16 / 5; y = y + this.height / 16 / 5; // margin
-    //         item.forEach((item1, index1) => {
-
-    //             cards[index][index1].animation = {
-    //                 top: y,
-    //                 left: x,
-    //                 delay: (item1.key % 13) * 80,
-    //                 duration: 300,
-    //                 rotate: rotate,
-    //                 transformOrigin: `${offset}px ${offset}px`
-    //             }
-    //             //cards[index][index1][index2].rotate = rotate;
-    //             cards[index][index1].active = 2; // 测试用
-    //             //cards[index][index1].onclick = this.play(item1)
-    //             cards[index][index1].onclick = this.play.bind(this, item1)
-    //             if ('02'.indexOf(index) != -1) y = y + this.csize * 0.15;
-    //             else x = x + this.csize * 0.39;
-
-    //         });
-    //     })
-    //     return cards;
-    // }
-    /**
-     *  点击一张牌
-     * 如果状态是 2 就先弹出突出显示。再点击打出去。
-     * 注意细节：每张 Card 内部有对 active 的判断。
-     */
-    // play1 = (item) => {
-    //     if (item.active == 2) this._preplay(item);
-    //     else if (item.active == 3) this._play(item);
-    //     else return;
-    // }
-
     play = (item) => {
         if (item.active == 2) {
             TableModel._preplay(item);
@@ -306,59 +170,8 @@ class Table extends Component {
         } else return;
     }
 
-
-    // /**
-    //  * 点击一张牌 突出显示
-    //  * 被点击的牌突出显示，其他牌都恢复原样
-    //  */
-    // _preplay = (item) => {
-    //     this.state.cards.forEach((item) => item.forEach((item) => {
-    //         if (item.active == 3) { // active=3 突出的牌 active=2 回复原样
-    //             item.active = 2;
-    //             switch (item.seat) {
-    //                 case 'east': item['animation']['left'] += 20; break;
-    //                 case 'south': item['animation']['top'] += 20; break;
-    //                 case 'west': item['animation']['left'] -= 20; break;
-    //                 case 'north': item['animation']['top'] -= 20; break;
-    //             }
-
-    //         }
-    //     }))
-
-    //     item.active = 3;
-    //     switch (item.seat) {
-    //         case 'east': item['animation']['left'] -= 20; break;
-    //         case 'south': item['animation']['top'] -= 20; break;
-    //         case 'west': item['animation']['left'] += 20; break;
-    //         case 'north': item['animation']['top'] += 20; break;
-    //     }
-    //     item['animation']['delay'] = 0;
-    //     this.setState({
-    //         cards: this.state.cards
-    //     });
-    // }
-
-    // /**
-    //  * 出牌 打出去
-    //  * 首先要进行 preplay 然后才能 play
-    //  */
-    // _play = (item) => {
-    //     // if(item.active != 3) return; // 只有突出的牌能打出去。
-    //     item.active = 4;    // 已经打出去的牌
-    //     if (this.board.length == 4) return false;
-    //     this.board.push(item);
-    //     //console.log(this.board)
-    //     item['animation']['left'] = TableModel.seat[item.seat][1].x;
-    //     item['animation']['top'] = TableModel.seat[item.seat][1].y;
-    //     item['animation']['delay'] = 0;
-    //     item['zIndex'] = this.zindex++
-    //     this.setState({
-    //         cards: this.state.cards
-    //     })
-    //     Sound.play('play');
-    //     if (this.board.length == 4) setTimeout(this.clearBoard, 1000)
-    // }
     /**
+     * 触发 claim
      * 考虑增加参数为 seat
      */
     claim = () => {
@@ -366,13 +179,17 @@ class Table extends Component {
             scene: 3
         })
     }
+    /**
+     * 预留发送 数据接口
+     */
     handleClaim = () => {
         console.log('发送　claim 请求。')
         console.log('接收到，同意设置　scene=4,不同意，设置为２')
     }
     /**
-     * 接受一个用户编号。
-     * 考虑修改为座位
+     * 用户准备
+     * 
+     * 接受一个用户编号。考虑修改为座位
      * 
      * 输入：0-3 代表 四个位置
      * 输出：
@@ -392,33 +209,12 @@ class Table extends Component {
             scene: TableModel.state.scene
         })
     }
-
-    // handleReady1 = (se) => {
-    //     const seat = Table.seats[se];
-    //     this.state.user[seat].ready = 1;
-    //     if (this._userAllReady()) {
-    //         this.state.scene = 1;
-    //         this.deal(); // 这里也有 setState 但是 它是异步的。只执行一次
-    //     }
-    //     this.setState({
-    //         user: this.state.user,
-    //         scene: this.state.scene
-    //     })
-    // }
-    // _userAllReady() {
-    //     const user = this.state.user;
-    //     let ready = true;
-    //     Object.values(user).forEach(el => {
-    //         if (el.ready == 0) ready = false
-    //     })
-    //     return ready;
-    // }
     /**
      * 发牌
+     * 调用：
+     * 输出：TableModel.dealCards() 返回 cards 的位置和出牌绑定
      */
     deal = () => {
-        //const cards = this.dealCards()
-        // 把this.play 传进去用于绑定到每张牌上
         this.setState({
             cards: TableModel.dealCards(this.play)
         });
@@ -432,7 +228,7 @@ class Table extends Component {
      * active 是目标状态。*      
      * active     0,1,2,3  0 灰色不能点，1 亮色不能点，2 亮色能点, 3 亮色能点突出
      */
-    setActive = (nums: Array, active = 0) => {
+    setActive = (nums, active = 0) => {
         this.setState({
             cards: TableModel.setActive(nums, active)
         })
@@ -472,74 +268,12 @@ class Table extends Component {
         )
 
     }
-    // /**
-    //  * 打开明手的牌
-    //  *  从 Models 获得 Dummy 的牌，并且显示出来
-    //  *  如果无权获得，则什么都不做。
-    //  * 
-    //  * 返回：
-    //  *  成功：牌打开
-    //  *  失败：false 从 model 中调取数据，判断规则。
-    //  */
-    // // openDummy1 = () => {
-    // //     const seat = 'north'
-    // //     const dCards = Models.openDummy().cards.split('.');
-
-    // //     const cards = this.state.cards;
-    // //     cards[Table.seats.indexOf(seat)].forEach((item, index) => {
-    // //         item.forEach((item1, index1) => {
-    // //             let card = cards[Table.seats.indexOf(seat)][index][index1];
-    // //             card.card = dCards[index].split('')[index1] + Card.suits[index]
-    // //         });
-    // //     })
-    // //     console.log('openDummy..............')
-    // //     console.log(cards)
-
-    // // }
-    /**
-     * 通过一张牌的索引，获得具体的 牌数据引用
-     * this.state.cards 永远都是 52张牌
-     * 
-     */
-    // _cardIndexOf(index) {
-    //     const i1 = Math.floor(index / 13);  // 商数是座位 0-3
-    //     const i2 = index % 13;              // 余数是 第几张牌
-    //     return this.state.cards[i1][i2];
-    // }
 
     /**
-     * 显示上一墩牌
-     * 数据格式：
-     * {east:{index:1,card:'5D'}, south:{index:1,card:'5D'}....}
+     * 显示比赛结果
+     * 输入：Models.getResult(); 从外部获得比赛结果数据
+     * 输出：构造 页面样式显示出来。
      */
-    // lastTrick1 = () => {
-    //     ReactDOM.unmountComponentAtNode(document.querySelector('#lastTrick'));
-    //     const lt = Models.lastTrick();
-    //     const cards = lt.map((item, index) => {
-    //         const rotate = ('02'.indexOf(index) > 0) ? 90 : 0
-    //         return <Card
-    //             active='1'
-    //             card={item.card}
-    //             key={index}
-    //             index={index}
-    //             size='80'
-    //             animation={{
-    //                 rotate: `${rotate}`
-    //             }}
-    //         // position={{
-    //         //     x:this.seat[Table.seats[index]][1].x,
-    //         //     y:this.seat[Table.seats[index]][1].y
-    //         // }}
-    //         />
-    //     }
-    //     )
-    //     ReactDOM.render(
-    //         cards,
-    //         document.querySelector('#lastTrick')
-    //     )
-
-    // }
-
     showResult = () => {
         const result = Models.getResult();
         const re = <div className='result'>
@@ -554,217 +288,48 @@ class Table extends Component {
         )
 
     }
+    /**
+     * 隐藏比赛结果
+     */
     hideResult = () => {
         ReactDOM.unmountComponentAtNode(document.querySelector('#result'));
     }
-
     /**
-     * 显示上墩牌
-     * todo：明确了数据接口再改写。
-     * 定位还存在问题。
-     * 
-     * 输入：this.state.lastTrick
-     * 输出：this.state.cards
-     *       this.state.lastTrick
+     * 显示上一墩牌
+     * 桌面上始终52张牌，因此要显示上一墩牌，需要调整某些牌的位置。
+     * cards: TableModel.lastTrick(show),
      */
-    // lastTrick2 = () => {
-    //     // 在模型里 应该先判断当前 trick 编号。然后决定是否能看lasttrick
-    //     let show = true;
-    //     if (this.state.lastTrick) show = false;
-    //     //this.state.lastTrick = !this.state.lastTrick;
-
-    //     //const show = true
-    //     const lt = Models.lastTrick();
-    //     let card = null;
-    //     lt.forEach((item, index) => {
-    //         card = this._cardIndexOf(item.index)
-    //         //card.size = card.size * 0.8
-    //         card['animation']['left'] = (show == true) ? 
-    //             TableModel.seat[Table.seats[index]][1].x - this.height / 2.9
-    //             : this.height / 2;
-    //         card['animation']['top'] = (show == true) ? 
-    //             TableModel.seat[Table.seats[index]][1].y - this.height / 2.9
-    //             : -this.height * 2;
-    //         //card['size'] = card['size'] * 0.7
-    //         // card['animation']['rotate'] = 180;
-    //         // card['position']['x'] = this.seat[Table.seats[index]][1].x;
-    //         // card['position']['y'] = this.seat[Table.seats[index]][1].y;
-    //         //card['animation'] = ''
-    //         //card['animation']['delay'] = 0;
-    //         card.active = 1; // 测试用
-    //     })
-    //     this.setState({
-    //         cards: this.state.cards,
-    //         lastTrick: !this.state.lastTrick
-    //     })
-    // }
-
     lastTrick = () => {
-        // 点击 取反
         const show = !this.state.lastTrick;
         this.setState({
             cards: TableModel.lastTrick(show),
             lastTrick: !this.state.lastTrick
         });
-
     }
-
+    /**
+     * 视频接口
+     * @param {*} channel  频道名
+     */
     _initVideo(channel) {
         // eslint-disable-next-line
         var api = streamApi();
     }
-
-
-    /**   -----------------------------------------------------
-     * 叫牌
-     * seat 座位
-     * bid 叫品
-     * 
-     * 输入：方位（east）,叫品（3H 或者 A3H）
-     * 输出：this.state.calldata 修改
-     */
-    // call = (seat, bid) => {
-    //     console.log('seat:',seat,'bid:',bid)
-    //     const calldata = this.state.calldata
-    //     if (calldata.length == 0) {
-    //         calldata.push(Array(4).fill(null))
-    //         calldata[0][Table.seats.indexOf(seat)] = bid;
-    //     } else if (seat == 'east') {
-    //         calldata.push(Array(4).fill(null))
-    //         calldata[calldata.length - 1][Table.seats.indexOf(seat)] = bid;
-    //     } else {
-    //         calldata[calldata.length - 1][Table.seats.indexOf(seat)] = bid;
-    //     }
-    // }
-
-    // 单元测试分界线-----------------------------------------------------------
-
-    testUsersReady = () => {
-        const login = (seat, uname) => {
-            this.state.user[seat].name = uname;
-            this.setState({ user: this.state.user })
-        }
-        setTimeout(login.bind(this, 'east', '张三丰'), 1000)
-        setTimeout(login.bind(this, 'south', '李四'), 2000)
-        setTimeout(login.bind(this, 'west', '王五'), 3000)
-        setTimeout(login.bind(this, 'north', '赵六'), 4000)
-    }
-
-    testChat = () => {
-        const elMsg = document.querySelector('#message')
-        const elSay = document.querySelector('#say')
-        elMsg.innerHTML =
-            "<div>" + TableModel.myseat + ':' + elSay.value + "</div>" + elMsg.innerHTML
-    }
     /**
-     * 叫牌测试
+     * 是否调试模式
+     * {table.state.debug ? <Debug o={table} /> : null}
      */
-    testBid1 = () => {
-        const bids = [{ seat: 'west', bid: 'A1C' }, { seat: 'north', bid: 'PASS' },
-        { seat: 'east', bid: 'PASS' }, { seat: 'south', bid: '2H' },
-        { seat: 'west', bid: 'PASS' }, { seat: 'north', bid: 'PASS' },
-        { seat: 'east', bid: 'A3C' }, { seat: 'south', bid: 'PASS' },
-        { seat: 'west', bid: 'PASS' }, { seat: 'north', bid: '3H' },
-        { seat: 'east', bid: 'PASS' }, { seat: 'south', bid: 'PASS' },
-        { seat: 'west', bid: 'A3S' }, { seat: 'north', bid: 'PASS' },
-        { seat: 'east', bid: 'PASS' }, { seat: 'south', bid: 'PASS' }]
-        bids.forEach((item) => {
-            TableModel.call(item.seat, item.bid)
-        })
-        console.log('calldata111....')
-        console.log(this.state.calldata)
-        this.setState({
-            calldata: TableModel.state.calldata
-        })
-    }
-
-    /**
-     * 测试上以墩牌的显示
-     */
-    testLastTrick = () => {
-        this.lastTrick(false);
-        // if(this._showLastTrick) this._showLastTrick = false;
-        // else this._showLastTrick = true;
-        // this.lastTrick(this._showLastTrick);
-    }
-    /**
-     * 打开明手的牌。
-     * 从 Models 获得数据。
-     * 修改 seat 方位可以打开不同方位的牌。
-     */
-    testDummy = (seat1) => {
-        const seat = seat1;
-        let index = 0
-        const dCards = Models.openDummy().cards.split('.');
-        let cards = this.state.cards[Table.seats.indexOf(seat)];
-        dCards.forEach((item1, index1) => {
-            item1.split('').forEach((item2, index2) => {
-                // 这里。
-                cards[index].card = item2 + Card.suits[index1]
-                cards[index].onclick = this.play(cards[index]);
-                index++;
-            })
-        })
-        //this.state.cards[Table.seats.indexOf(seat)] = cards;
-        this.setState({
-            cards: this.state.cards
-        })
-        console.log('openDummy..............')
-        console.log(this.state.cards)
-
-    }
     openDebug = () => {
         this.setState({
             debug: !this.state.debug
         })
     }
-    test3 = () => {
-        this.clearBoard();
-    }
-    // 
-    testActive = () => {
-        // 52 张牌 对应 东南西北 四个人的牌
-        const nums = [
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
-            13, 14, 15, 16, //17, 18, 19, 20, 21, 22, 23, 24, 25,
-            26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
-            39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51]
-        //const nums = [13,14,15,16];
-        this.setActive(nums);
-    }
-    // 测试 闹钟组件 循环回调
-    // testClock = () => {
-    //     this.timing('east', 2,
-    //         () => this.timing('south', 2,
-    //             () => this.timing('west', 2,
-    //                 () => this.timing('north', 2,
-    //                     () => console.log('倒计时结束！')
-    //                 )
-    //             )
-    //         )
-    //     )
-    // }
-
     /**
-     * 测试出牌
-     * 简单测试，已无实际用途。
+     * 显示叫牌
+     * 根据 场景 scene 决定是否显示叫牌。
      */
-    test1 = () => {
-        const cards = this.state.cards;
-        cards[0][0].animation = {
-            top: 200,
-            left: 200,
-        }
-        this.setState({
-            cards: cards
-        })
-    }
-    /**
-     * 
-     */
-    testBid = () => {
-        if (this.state.scene != 1) this.state.scene = 1;
-        else this.state.scene = 2;
+    bid = () => {
+        this.state.scene != 1 ? 
+            this.state.scene = 1 : this.state.scene = 2;
         this.setState({
             scene: this.state.scene
         })
@@ -800,19 +365,4 @@ class Table extends Component {
 Table.seats = ['east', 'south', 'west', 'north']
 Table.seatscn = ['东', '南', '西', '北']
 
-Table.prototype.testClock = function() {
-    this.timing('east', 2,
-        () => this.timing('south', 2,
-            () => this.timing('west', 2,
-                () => this.timing('north', 2,
-                    () => console.log('倒计时结束！')
-                )
-            )
-        )
-    )
-}
-// console.log('Table1111111:')
-// console.log(Table.prototype)
-
-//export default Table
 export default Table;
