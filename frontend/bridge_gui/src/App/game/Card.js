@@ -41,33 +41,22 @@ class Card extends React.Component {
             }
             return style;
         }
-        
-        /**
-        if(this.props.active == 3) {
-            this.props.animation && ( this.props.animation.onComplete = () => {
-                
-                // 这张牌消失，非受控，不建议。
-                // let cCard = document.querySelector('#card'+this.props.index);
-                // cCard.style.display = 'none';
-            } )
-        }
-        */
 
         // 判断处理 active 状态
-        if(this.props.active == 0)
-            this.props.animation && ( this.props.animation['brightness'] = 0.6 )
-        if(this.props.active == 1)
-            this.props.animation && ( this.props.animation['brightness'] = 1 )
-        let onclick = ()=>false;
-        if(this.props.active > 1){
+        if (this.props.active == 0)
+            this.props.animation && (this.props.animation['brightness'] = 0.6)
+        if (this.props.active == 1)
+            this.props.animation && (this.props.animation['brightness'] = 1)
+        let onclick = () => false;
+        if (this.props.active > 1) {
             onclick = this.props.onClick;
-            this.props.animation && ( this.props.animation['brightness'] = 1 )
+            this.props.animation && (this.props.animation['brightness'] = 1)
         }
-        const card = this.props.card.slice(0,1) == 'X' ?   // XH  XS XD 都是扣着的
+        const card = this.props.card.slice(0, 1) == 'X' ?   // XH  XS XD 都是扣着的
             'back' : this.props.card;
 
         return (
-            <div id={'card'+this.props.index}  // TODO: 这个div定位不理想，只是起到了 zIndex 作用。
+            <div id={'card' + this.props.index}  // TODO: 这个div定位不理想，只是起到了 zIndex 作用。
                 style={{
                     position: 'absolute',
                     zIndex: this.props.zIndex,
@@ -87,6 +76,29 @@ class Card extends React.Component {
             </div>
         )
     }
+}
+/**
+ * 用于从 模型的数组 cards 返回 React 组件数组。
+ */
+Card.createComponents = function (cards) {
+    return cards.map((item1, index1) => {
+        return item1.map((item2, index2) => {
+            return <Card
+                active={item2.active}
+                onClick={item2.onclick}
+                //onClick={this.play(item3)}
+                key={item2.key}
+                index={item2.key}
+                //table={item3.table}
+                seat={item2.seat}
+                animation={item2.animation || ''}
+                card={item2.card}
+                size={item2.size}
+                position={item2.position}
+                zIndex={item2.zIndex}
+            />
+        });
+    });
 }
 Card.suits = ['S', 'H', 'D', 'C'];
 /**
@@ -110,3 +122,17 @@ Card.suits = ['S', 'H', 'D', 'C'];
 //     })
 // }
 export default Card
+
+// 其他参考：
+
+
+    /**
+    if(this.props.active == 3) {
+        this.props.animation && ( this.props.animation.onComplete = () => {
+            
+            // 这张牌消失，非受控，不建议。
+            // let cCard = document.querySelector('#card'+this.props.index);
+            // cCard.style.display = 'none';
+        } )
+    }
+    */

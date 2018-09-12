@@ -21,8 +21,11 @@ import TableView from './TableView' // 包含 TableView.css
 import TableModel from '../models/Table';
 /**
  * Table 一桌游戏
- *      是牌桌的容器组件，或者说是控制器组件(MVC)
- *      包含 state 数据由 模型计算提供。
+ *      1 是牌桌的容器组件，或者说是控制器组件(MVC)
+ *      2 state       ：数据由 模型计算提供。
+ *      3 事件处理函数：主要是触发 setState。
+ *      4 通过 context api 把 state 保存起来
+ *      5 调用 tableview 显示界面。
  * TableModel 是模型组件。
  *      所有数据计算，尤其是 state 的计算，都在这里进行。控制器调用。
  */
@@ -32,10 +35,10 @@ class Table extends Component {
         scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
         calldata: [], // todo 补充 calldata 4列（东西南北）若干行的数组参考 call 方法
         user: {
-            east: { ready: 0, name: '张三', face: '/imgs/face1.png', rank: '大师' },
-            south: { ready: 0, name: '李四', face: '/imgs/face2.png', rank: '专家' },
-            west: { ready: 0, name: '王五', face: '/imgs/face1.png', rank: '王者' },
-            north: { ready: 0, name: '赵六', face: '/imgs/face2.png', rank: '钻石' }
+            east    : { ready: 0, name: '张三', face: '/imgs/face1.png', rank: '大师' },
+            south   : { ready: 0, name: '李四', face: '/imgs/face2.png', rank: '专家' },
+            west    : { ready: 0, name: '王五', face: '/imgs/face1.png', rank: '王者' },
+            north   : { ready: 0, name: '赵六', face: '/imgs/face2.png', rank: '钻石' }
         },
         lastTrick: false,  // 最后一墩牌是否显示
         //playseat:null, // 倒计时解决
@@ -66,18 +69,19 @@ class Table extends Component {
         // this.board = []; // 桌面上的四张牌
         // this.cards = [];
         this.claimseat = 'east'; // east,south...
-        this.zindex = 10;
+        //this.zindex = 10;
         this.timer = { stop: null, start: null }; // 用于控制 倒计时
         this.center = null; // 桌子的中心 {x,y}
-        this._csize = null; // 牌的大小
+        // this._csize = null; // 牌的大小
+        this._csize = TableModel.csize;
         this.deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX'
         //this.deals = Models.deals()[0];
         //this.myseat = 'west'               // 用户坐在 南
         this.seat = {
-            east: [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // seat 用于记录坐标 
-            south: [{ x: 0, y: 0 }, { x: 0, y: 0 }], // 第一个xy 是 四个区域左上角坐标
-            west: [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // 第二个xy 是 出牌4个区域坐标。
-            north: [{ x: 0, y: 0 }, { x: 0, y: 0 }]   // 也就是牌出到什么地方。
+            east    : [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // seat 用于记录坐标 
+            south   : [{ x: 0, y: 0 }, { x: 0, y: 0 }], // 第一个xy 是 四个区域左上角坐标
+            west    : [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // 第二个xy 是 出牌4个区域坐标。
+            north   : [{ x: 0, y: 0 }, { x: 0, y: 0 }]   // 也就是牌出到什么地方。
         }
         // ref 用来记录 四个发牌位置的div引用
         this.ref = {};
@@ -160,10 +164,10 @@ class Table extends Component {
      */
     play = (item) => {
         if (item.active == 2) {
-            TableModel._preplay(item);
+            TableModel.preplay(item);
             this.setState({ cards: TableModel.state.cards });
         } else if (item.active == 3) {
-            TableModel._play(item);
+            TableModel.play(item);
             this.setState({ cards: TableModel.state.cards });
             Sound.play('play');
             if (TableModel.board.length == 4) setTimeout(this.clearBoard, 1000)
@@ -217,7 +221,7 @@ class Table extends Component {
     deal = () => {
         this.setState({
             cards: TableModel.dealCards(this.play)
-        });
+        }); // todo：考虑这里修改 动画速度。
         Sound.play('deal')
     }
 
@@ -335,30 +339,9 @@ class Table extends Component {
         })
     }
     render() {
-        const css = this.css;
-        const stat = Object.values(this.state.user).map(e => e.ready)
-        // cards 从 state.cards 遍历获得。不要重复构造，而所有操作只操作数据。
-        const cards = this.state.cards.map((item1, index1) => {
-            return item1.map((item2, index2) => {
-                return <Card
-                    active={item2.active}
-                    onClick={item2.onclick}
-                    //onClick={this.play(item3)}
-                    key={item2.key}
-                    index={item2.key}
-                    //table={item3.table}
-                    seat={item2.seat}
-                    animation={item2.animation || ''}
-                    card={item2.card}
-                    size={item2.size}
-                    position={item2.position}
-                    zIndex={item2.zIndex}
-                />
-
-            });
-        });
+        // 考虑这里判断手机，还是pc，可以通过不同路由来判断。不用自适应。
         return (
-            <TableView table={this} cards={cards} />
+            <TableView table={this} />
         );
     }
 }

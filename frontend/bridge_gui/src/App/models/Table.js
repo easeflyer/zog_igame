@@ -1,5 +1,17 @@
 import Card from '../game/Card'  // 也应该从模型引入
 import Models from './model'
+import { flexLayout } from '../libs/layout.js'
+/**
+ * TableModel 游戏桌 数据Model
+ * 
+ * 输入：
+ * 输出：
+ * 
+ * 
+ * 其他参考：
+ *    innerWidth，innerHeight
+ *    获取窗口的高度与宽度(不包含工具条与滚动条):
+ */
 class TableModel {
   constructor() {
     this.width = window.innerWidth;
@@ -86,7 +98,7 @@ class TableModel {
    *      所有其他牌的 top,left 调整
    */
 
-  _preplay(item) {
+  preplay(item) {
     this.state.cards.forEach((item) => item.forEach((item) => {
       if (item.active == 3) { // active=3 突出的牌 active=2 回复原样
         item.active = 2;
@@ -116,7 +128,7 @@ class TableModel {
    * 输入：item 当前点击的牌的引用
    * 输出：item 位置调整，this.board 出牌区域的牌 调整。
    */
-  _play = (item) => {
+  play = (item) => {
     // if(item.active != 3) return; // 只有突出的牌能打出去。
     item.active = 4;    // 已经打出去的牌
     if (this.board.length == 4) return false;
@@ -131,6 +143,11 @@ class TableModel {
     // })
     // Sound.play('play');
     // if (this.board.length == 4) setTimeout(this.clearBoard, 1000)
+    
+    const seatIndex = TableModel.seats.indexOf(item.seat);
+    let cards = this.state.cards[seatIndex]
+    console.log('cards:',cards)
+    cards = this.resetCards(cards,seatIndex)
   }
   /**
    * 清理桌面上的牌
@@ -147,7 +164,8 @@ class TableModel {
       //board[i].animation.rotate = 0;
       // board[i].animation.left = 100;
       // board[i].animation.top = 100;
-      board[i].active = 3;
+
+      //board[i].active = 3; // 应该不变
     }
     this.board = [];
     // this.setState({
@@ -169,6 +187,8 @@ class TableModel {
    *  5） '02'.indexOf(index) 东西的牌 rotate 旋转90度
    *  6） .onclick=this.onclick(item2) onclick 函数引用
    *      this.onclick(item2) 仍然返回一个函数 用来处理点击事件，传入item2
+   * sepY 纵向扑克间隔
+   * sepX 横向扑克间隔
    * 
    * 
    * 输入参数：play 是出牌的 事件处理方法。传递进来用于绑定到牌上
@@ -176,7 +196,9 @@ class TableModel {
    */
   dealCards(play) {
     const cards = this.state.cards;
-    let rotate = 0;
+    const sepY = this.csize * 0.15;
+    const sepX = this.csize * 0.25;
+    //let rotate = 0;
     console.log('tmseats:', TableModel.seats)
     const offset = this.csize * 0.7 / 2
     cards.forEach((item, index) => {
@@ -184,9 +206,9 @@ class TableModel {
       let seat = TableModel.seats[index]
       let [x, y] = [this.seat[seat][0].x, this.seat[seat][0].y]
       if ('02'.indexOf(index) != -1) rotate = -90;
-      x = x + this.height / 16 / 5; y = y + this.height / 16 / 5; // margin
+      x = x + this.height / 16 / 5;
+      y = y + this.height / 16 / 5; // margin
       item.forEach((item1, index1) => {
-
         cards[index][index1].animation = {
           top: y,
           left: x,
@@ -199,8 +221,8 @@ class TableModel {
         cards[index][index1].active = 2; // 测试用
         //cards[index][index1].onclick = this.play(item1)
         cards[index][index1].onclick = () => play(item1)
-        if ('02'.indexOf(index) != -1) y = y + this.csize * 0.15;
-        else x = x + this.csize * 0.39;
+        if ('02'.indexOf(index) != -1) y = y + sepY
+        else x = x + sepX
 
       });
     })
@@ -224,7 +246,7 @@ class TableModel {
   *        this.ref.board.current.clientHeight / 2
   *        // parseInt(this.ref.board.current.style.height.slice(0, -2)) / 2
   * 
-  * 输入：center, seats
+  * 输入：center, seat
   * 输出：this.seat
   * 
   */
@@ -257,6 +279,22 @@ class TableModel {
         this.seat[key][1]['x'] = center.x - offset
       }
     }
+  }
+  /**
+   * 重新整理手里的牌
+   * pos：left 上下 top 左右
+   */
+  resetCards(cards, seatIndex) {
+    const pos = [0,2].indexOf(seatIndex) == -1 ? 'left' : 'top';
+    let length = 0;
+    cards.forEach(card => card.active == 2 && length++)
+    const layout = flexLayout(this.height, length, 3)
+    console.log('length:',length)
+    console.log('cards:',cards)
+    return cards.map((card, index) => {
+      if (card.active == 2) card['animation'][pos] = layout.shift()
+      return card;
+    })
   }
 
   /**
@@ -370,5 +408,5 @@ TableModel.seatscn = ['东', '南', '西', '北']
 /**
  * 直接实例化，因为一局游戏只有一个桌子。
  */
-export {TableModel};
+export { TableModel };
 export default new TableModel();
