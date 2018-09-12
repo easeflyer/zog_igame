@@ -143,11 +143,11 @@ class TableModel {
     // })
     // Sound.play('play');
     // if (this.board.length == 4) setTimeout(this.clearBoard, 1000)
-    
+
     const seatIndex = TableModel.seats.indexOf(item.seat);
     let cards = this.state.cards[seatIndex]
-    console.log('cards:',cards)
-    cards = this.resetCards(cards,seatIndex)
+    console.log('cards:', cards)
+    cards = this.resetCards(cards, seatIndex, true)
   }
   /**
    * 清理桌面上的牌
@@ -221,10 +221,11 @@ class TableModel {
         cards[index][index1].active = 2; // 测试用
         //cards[index][index1].onclick = this.play(item1)
         cards[index][index1].onclick = () => play(item1)
-        if ('02'.indexOf(index) != -1) y = y + sepY
-        else x = x + sepX
+        // if ('02'.indexOf(index) != -1) y = y + sepY
+        // else x = x + sepX
 
       });
+      item = this.resetCards(item, index)
     })
     this.state.cards = cards;
     return cards;
@@ -282,17 +283,30 @@ class TableModel {
   }
   /**
    * 重新整理手里的牌
+   * 
+   * 输入：
+   *    cards       一手牌
+   *    seatIndex   当前牌的方位号
+   * 
+   * 输出：
+   *    cards       定位重新排列的一手牌
    * pos：left 上下 top 左右
+   * flexLayout： 获得重新的布局分布 参数 2 每间隔2张牌 增大一些距离
+   * Array.shift() 从开头弹出一个值
    */
-  resetCards(cards, seatIndex) {
-    const pos = [0,2].indexOf(seatIndex) == -1 ? 'left' : 'top';
+  resetCards(cards, seatIndex, resetDelay=false) {
+    const pos = [0, 2].indexOf(seatIndex) == -1 ? 'left' : 'top';
     let length = 0;
     cards.forEach(card => card.active == 2 && length++)
-    const layout = flexLayout(this.height, length, 3)
-    console.log('length:',length)
-    console.log('cards:',cards)
+    const layout = flexLayout(this.height, length, 2)
+    console.log('length:', length)
+    console.log('cards:', cards)
     return cards.map((card, index) => {
-      if (card.active == 2) card['animation'][pos] = layout.shift()
+      if (card.active == 2) {
+        card['animation'][pos] = layout.shift()
+        card['animation']['duration'] = 100;
+        if(resetDelay) card['animation']['delay'] = 0;
+      }
       return card;
     })
   }
