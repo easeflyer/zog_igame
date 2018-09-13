@@ -44,10 +44,9 @@
   - 首先出去 lib 里面的内容。
   - 然后抽取 model 里的内容。
   - 抽取 controller 里的内容。
-  - todo: 打出来的牌，zindex 存在问题。
-  - todo: claim 组件结构比较乱。应该改造
-  - todo: 扑克的布局位置，做几个专门布局的函数。输入输出 确定好。
   - todo: Card TableModel 重点改造对象，系统灵活性的关键
+  - todo: claim 组件结构比较乱。应该改造
+
 
   - 为什么用context api 现在直接 import 进来不行吗？
       在子组件 直接 import TabelModel 只能 对数据模型进行操作。而无法调用 setState

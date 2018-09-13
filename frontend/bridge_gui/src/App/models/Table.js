@@ -23,7 +23,7 @@ class TableModel {
       west: [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // 第二个xy 是 出牌4个区域坐标。
       north: [{ x: 0, y: 0 }, { x: 0, y: 0 }]   // 也就是牌出到什么地方。
     }
-
+    this.zindex = 10;
     this.myseat = 'west'               // 用户坐在 南
     this.deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
     this.state = {
@@ -147,6 +147,9 @@ class TableModel {
     const seatIndex = TableModel.seats.indexOf(item.seat);
     let cards = this.state.cards[seatIndex]
     console.log('cards:', cards)
+    // if([0,2].indexOf(seatIndex) == -1) cards = this.resetCards(cards, seatIndex)
+    // else  cards = this.suitLayoutCards(cards, seatIndex)
+
     cards = this.resetCards(cards, seatIndex, true)
   }
   /**
@@ -225,6 +228,9 @@ class TableModel {
         // else x = x + sepX
 
       });
+      // if([0,2].indexOf(index) != -1) item = this.suitLayoutCards(item, index)
+      // else item = this.resetCards(item, index)
+      //item = this.suitLayoutCards(item, index)
       item = this.resetCards(item, index)
     })
     this.state.cards = cards;
@@ -294,20 +300,50 @@ class TableModel {
    * flexLayout： 获得重新的布局分布 参数 2 每间隔2张牌 增大一些距离
    * Array.shift() 从开头弹出一个值
    */
-  resetCards(cards, seatIndex, resetDelay=false) {
+  resetCards(cards, seatIndex, resetDelay = false) {
     const pos = [0, 2].indexOf(seatIndex) == -1 ? 'left' : 'top';
     let length = 0;
+    let ps = 0;
     cards.forEach(card => card.active == 2 && length++)
     const layout = flexLayout(this.height, length, 2)
-    console.log('length:', length)
-    console.log('cards:', cards)
     return cards.map((card, index) => {
       if (card.active == 2) {
-        card['animation'][pos] = layout.shift()
-        card['animation']['duration'] = 100;
-        if(resetDelay) card['animation']['delay'] = 0;
+        ps = layout.shift();
+        card['animation'][pos] = ps;
+        card['animation']['duration'] = 600;
+        if (resetDelay) card['animation']['delay'] = ps;
+        //if (resetDelay) card['animation']['delay'] = 0;
       }
       return card;
+    })
+  }
+
+  /**
+   * 按照花色布局 已可用，未启用
+   * 
+   * @param {*} cards 牌数组
+   * @param {*} seatIndex 座位编号
+   */
+  suitLayoutCards(cards, seatIndex) {
+    //const rotate = [0, 2].indexOf(seatIndex) == -1 ? '0' : '-90';
+    const rotate = 0;
+    let preCard = cards[0];
+    let offsetTop = 0;
+    let offsetLeft = 0;
+    let seat = TableModel.seats[seatIndex];
+    cards.map((card, index) => {
+      if (card.card.slice(1, 2) != preCard.card.slice(1, 2)) {
+        offsetTop += 40;
+        offsetLeft = 0;
+        card.animation['top'] += offsetTop;
+        //card.animation['left'] += this.seat[seat][0].x
+      } else {
+        card.animation['left'] += offsetLeft;
+        card.animation['top'] += offsetTop;
+        offsetLeft += 25;
+      }
+      card.animation['rotate'] = rotate;
+      preCard = card;
     })
   }
 
