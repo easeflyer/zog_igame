@@ -32,6 +32,8 @@ export default class Func{
 
     playOrder=(data,i)=>{   //展示出牌顺序
         let piers = data.slice(4*i,4*(i+1));
+        console.log(piers);
+
         let plays;
         if(piers[0][1]==='S'){
             plays={

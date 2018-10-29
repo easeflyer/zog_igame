@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import settings from '../game/settings';
+// import Table from './Table_test';
+// import Table from './Table_view_mobile';
 import Table from './Table';
 import Bid from './BidPanel'
 import Result from '../Point/Result'
+import PointDetail from '../Point/PointDetail';
 
 /**
  * Game  是一局比赛，涉及到了比赛者，以及和比赛相关的其他信息。重点在于比赛。
@@ -30,19 +33,21 @@ class Game extends Component {
             table_id:table_id
         })
     }
-    // componentDidMount(){    //隐藏底部tabBar
-    //     this.props.setHiddenState(true);
-    // }
+    toTable=()=>{
+        this.setState({
+            scene:0,
+        })
+    }
     render(){
         return(
             <div>
                 {this.state.scene===0?
-                <Table toResult={this.toResult} setHiddenState={this.props.setHiddenState}>
+                <Table toResult={this.toResult} setHiddenState={this.props.setHiddenState}> 
                     <Bid />
                 </Table>
                 :null}
                 {this.state.scene===1?
-                <Result table_id={this.state.table_id} setHiddenState={this.props.setHiddenState}/>
+                <Result table_id={this.state.table_id} toTable={this.toTable} setHiddenState={this.props.setHiddenState}/>
                 :null
                 }
             </div>

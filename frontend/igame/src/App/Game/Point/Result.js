@@ -30,7 +30,7 @@ export default class Result extends React.Component{
     render(){
         return(
             <div>
-                {this.state.scene===0?<PointResult searchOneResult={this.searchOneResult} table_id={this.props.table_id}></PointResult>:null}
+                {this.state.scene===0?<PointResult toTable={this.props.toTable} searchOneResult={this.searchOneResult} table_id={this.props.table_id}></PointResult>:null}
                 {this.state.scene===1?<PointDetail Detail={this.state.oneResult} result_key={this.state.result_key} toPointResult={this.toPointResult}></PointDetail>:null}
             </div>
         )

@@ -193,9 +193,9 @@ export default class OneCourseResult extends React.Component {
             render: (text) => {
                 return (
                     <div>
-                        <span>{text.host_vp}</span>
+                        <span>{text.host_vp.toFixed(2)}</span>
                         <br />
-                        <span>{text.guest_vp}</span>
+                        <span>{text.guest_vp.toFixed(2)}</span>
                     </div>
                 )
             }

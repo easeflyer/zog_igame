@@ -49,7 +49,7 @@ class Navbar extends React.Component {
                     icon={<Icon type="bars" style={{ fontSize: '24px' }} />}
                     onLeftClick={this.props.toggleMenuBar}
                     // rightContent={this.rightContent()}
-                >中国桥牌</NavBar>
+                >智赛桥牌</NavBar>
         );
     }
 }

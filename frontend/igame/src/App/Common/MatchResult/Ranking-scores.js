@@ -35,7 +35,14 @@ export default class RankingByScores extends React.Component {
             sorter: (a, b) => a.team_number - b.team_number,
             sortOrder: sortedInfo.columnKey === 'team_number' && sortedInfo.order
         }, { title: '队名', dataIndex: 'name', width: 60 },
-        { title: '总分', dataIndex: 'score', width: 60 },
+        { 
+            title: '总分',
+         dataIndex: 'score',
+          width: 60 ,
+          render:(text)=>{
+              return text.toFixed(2)
+          }
+        },
         { title: '罚分', dataIndex: 'Penalty', width: 60 },
         { title: '带分', dataIndex: 'band_score', width: 60 },
         { title: '获胜轮数', dataIndex: 'win_round', width: 70 },

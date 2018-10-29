@@ -71,24 +71,24 @@ export default class CardSuit extends React.Component{
                         </Flex>
                         <Flex style={{height:60,lineHeight:60}}>
                             <Flex.Item>E</Flex.Item>
-                            <Flex.Item style={{textAlign:'right'}}>S</Flex.Item>
+                            <Flex.Item style={{textAlign:'right'}}>W</Flex.Item>
                         </Flex>
                         <Flex style={{height:20}}>
-                            <Flex.Item style={{textAlign:'center'}}>W</Flex.Item>
+                            <Flex.Item style={{textAlign:'center'}}>S</Flex.Item>
                         </Flex>
                     </Flex.Item>
                     <Flex.Item style={{height:140,border:'1px solid black',marginLeft:0,padding:5}}>
                         <Flex>
-                            <Flex.Item>♠ <span>{card?card[2].split('.')[0]:null}</span></Flex.Item>
+                            <Flex.Item>♠ <span>{card?card[3].split('.')[0]:null}</span></Flex.Item>
                         </Flex>
                         <Flex>
-                            <Flex.Item style={{color:'red'}}>♥ <span>{card?card[2].split('.')[1]:null}</span></Flex.Item>
+                            <Flex.Item style={{color:'red'}}>♥ <span>{card?card[3].split('.')[1]:null}</span></Flex.Item>
                         </Flex>
                         <Flex>
-                            <Flex.Item style={{color:'red'}}>♦ <span>{card?card[2].split('.')[2]:null}</span></Flex.Item>
+                            <Flex.Item style={{color:'red'}}>♦ <span>{card?card[3].split('.')[2]:null}</span></Flex.Item>
                         </Flex>
                         <Flex>
-                            <Flex.Item>♣ <span>{card?card[2].split('.')[3]:null}</span></Flex.Item>
+                            <Flex.Item>♣ <span>{card?card[3].split('.')[3]:null}</span></Flex.Item>
                         </Flex>
                         <Flex>
                             <Flex.Item style={{textAlign:'center'}}>{this.state.table_information?this.state.table_information.map(item=>{
@@ -102,16 +102,16 @@ export default class CardSuit extends React.Component{
                     <Flex.Item style={{height:140,border:'1px solid black',marginLeft:0,padding:5}}></Flex.Item>
                     <Flex.Item style={{height:140,border:'1px solid black',marginLeft:0,padding:5}}>
                         <Flex>
-                            <Flex.Item>♠ <span>{card?card[3].split('.')[0]:null}</span></Flex.Item>
+                            <Flex.Item>♠ <span>{card?card[2].split('.')[0]:null}</span></Flex.Item>
                         </Flex>
                         <Flex>
-                            <Flex.Item style={{color:'red'}}>♥ <span>{card?card[3].split('.')[1]:null}</span></Flex.Item>
+                            <Flex.Item style={{color:'red'}}>♥ <span>{card?card[2].split('.')[1]:null}</span></Flex.Item>
                         </Flex>
                         <Flex>
-                            <Flex.Item style={{color:'red'}}>♦ <span>{card?card[3].split('.')[2]:null}</span></Flex.Item>
+                            <Flex.Item style={{color:'red'}}>♦ <span>{card?card[2].split('.')[2]:null}</span></Flex.Item>
                         </Flex>
                         <Flex>
-                            <Flex.Item>♣ <span>{card?card[3].split('.')[3]:null}</span></Flex.Item>
+                            <Flex.Item>♣ <span>{card?card[2].split('.')[3]:null}</span></Flex.Item>
                         </Flex>
                         <Flex>
                             <Flex.Item style={{textAlign:'center'}}>{this.state.table_information?this.state.table_information.map(item=>{

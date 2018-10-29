@@ -56,6 +56,7 @@ export default class Board extends Models {
     sendplay(...data){
         this.exec('sendplay',{},...data);
     }
+    
     board_points(...data){    //一副牌的成绩
         this.exec('board_points',{},...data);
          /*
@@ -90,7 +91,7 @@ export default class Board extends Models {
     claim(...data){   //claim
         this.exec('claim',{},...data);
         /*
-         * params:[board_id,pos,num,channel_id]
+         * params:[board_id,pos,channel_id]
          * return:[
                  
             ]
@@ -107,5 +108,16 @@ export default class Board extends Models {
          */
     }
 
+    call_ready(...data){    //准备状态
+        this.exec('call_ready',{},...data);
+    }
+
+    claiming(...data){
+        this.exec('claiming',{},...data);
+    }
+
+    ask_claim(...data){
+        this.exec('ask_claim',{},...data);
+    }
    
 }

@@ -10,11 +10,15 @@ import './Claim.css'
 
 export default class Claim extends Component {
     state = {
-        value: 0,
-        submit: 0
+        value: 0||this.props.claimnum.num,
+        submit: 0||this.props.claiming,
+        active: 0||this.props.active,
     }
     componentWillReceiveProps(newProps){
         console.log(newProps)
+        console.log(newProps.active)
+        this.setState({active:newProps.active})
+        console.log(this.state.active)
     }
     handleClick = (value) => {
         this.setState({
@@ -22,7 +26,7 @@ export default class Claim extends Component {
         })
     }
     handleCancel=()=>{
-        this.props.cancelClaim()
+        this.props.cancelClaim(this.state.value)
     }
     handleSubmit = () => {
         this.setState({
@@ -32,14 +36,19 @@ export default class Claim extends Component {
     }
     handleSubmit1 = (data) => {
         console.log(data)
+        // this.setState({active:1})
         this.props.onSubmit1(data)
     }
     render() {
+        // const value=this.state.value;
         const cblocks = Array(this.props.number / 1).fill('').map((_, index) =>
             <Cblock key={index} number={index + 1}
+                // active={value === index + 1 ? 0 : 1}
                 active={this.state.value === index + 1 ? 0 : 1}
                 onClick={this.state.submit ? null : this.handleClick.bind(this, index + 1)} />
         )
+        // console.log(value)
+        console.log(this.state.value)
         console.log(cblocks)
         const myClaim = <div id='myclaim' className='claim'>
             <h3>请选择你要Claim的墩数？</h3>
@@ -54,8 +63,8 @@ export default class Claim extends Component {
         </div>
         const otherClaim = <div id='otherclaim' className='claim'>
             <span>庄家 claim {this.props.claimnum?this.props.claimnum.num:null} 墩</span>
-            {!this.props.isDummy?<button onClick={this.handleSubmit1.bind(this,true)}>同意</button>:null}
-            {!this.props.isDummy?<button onClick={this.handleSubmit1.bind(this,false)}>拒绝</button>:null}
+            {!this.props.isDummy?<button disabled={this.state.active} onClick={this.handleSubmit1.bind(this,true)}>同意</button>:null}
+            {!this.props.isDummy?<button disabled={this.state.active} onClick={this.handleSubmit1.bind(this,false)}>拒绝</button>:null}
             {this.props.isDummy?<p>正在等待防守方同意...</p>:null}
         </div>
 

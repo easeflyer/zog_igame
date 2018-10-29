@@ -56,14 +56,32 @@ class Models{
         board.claim1(board_id,pos,num,channel_id);   //params: [board_id,pos,num,channel_id]
     }
 
-    static claim=(success,error,board_id,pos,num,channel_id)=>{  //claim
+    static claim=(success,error,board_id,pos,channel_id)=>{  //claim
         const  board= new Board(success,error); 
-        board.claim(board_id,pos,num,channel_id);   //params: [board_id,pos,num,channel_id]
+        board.claim(board_id,pos,channel_id);   //params: [board_id,pos,num,channel_id]
     }
 
     static send_message=(success,error,channel_id,msg)=>{  //直接向频道发送消息
         const  board= new Board(success,error); 
         board.send_message(channel_id,msg);   //params: [channel_id,msg]
+    }
+
+    static call_ready = (success,error,board_id,pos)=>{
+        const board = new Board(success,error);
+        board.call_ready(board_id,pos);
+    }
+
+    static claiming = (success,error,board_id,state,rank)=>{
+        const board = new Board(success,error);
+        board.claiming(board_id,state,rank);
+    }
+
+    static ask_claim = (success,error,board_id,pos,state)=>{
+        console.log(board_id)
+        console.log(pos)
+        console.log(state)
+        const board = new Board(success,error);
+        board.ask_claim(board_id,pos,state);
     }
 }
 

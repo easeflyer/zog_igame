@@ -29,14 +29,29 @@
 }
 .claimbtn{
     position: absolute;
-    bottom: 0%;
+    /* bottom: 0%; */
+    top: 0;
+    right: 0;
+    width: 80px;
+    height:30px;
+    color:#000;
+    background:#ddd;
+
 }
 .re{
     background-color: #ee88ee;
     float: left;
     margin:2px;
 }
-
+.totalTime{
+    background-color: #0099cc;
+    float: left;
+    margin:2px;
+    box-sizing:border-box;
+    overflow: hidden;
+    color: #ffffff;
+    border-radius: 10%;
+}
 .body{
     position: relative;
     background-image: url(/imgs/bg1.png);
@@ -115,6 +130,7 @@
 .board .seat {
     text-align:center;   
     background-color: #ffff55;
+    font-size: 0.7rem;
 }
 .board > .userTag:nth-child(1) > .seat{
          height:100%;
@@ -164,5 +180,6 @@
 .message{
     padding:2%;
     color:#FFFFFF;
-    overflow-y: scroll;
+    /* overflow-y: scroll; */
+    position: relative;
 }

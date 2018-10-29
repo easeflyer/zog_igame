@@ -12,8 +12,10 @@ import './Table.css'
 import Models from '../Models/model'
 import Sound from './Sound'
 
-const False = 'False'
+import {Toast} from 'antd-mobile'
 
+const False = 'False'
+let timer=null;
 /**
  * Game  是一局比赛，涉及到了比赛者，以及和比赛相关的其他信息。重点在于比赛。
  * Table 是一桌游戏的界面：重点在于 一桌
@@ -25,7 +27,8 @@ class Table extends Component {
         calldata:[],
         bidCard: null,
         user: { east: null, south: null, west: null, north: null },
-        ready:{east: null, south: null, west: null, north: null },
+        // ready:null,
+        ready:{east: null, south: null, west: null, north: null ,next_board:0},
         userdir:[],
         contract:null,
         declarer:null,
@@ -34,8 +37,15 @@ class Table extends Component {
         lastTrick:false,
         debug: false,
         online:true,
-        offlinePlayer:null,
         lastState:null,
+        playCardNumber: 0,
+        nextplayer:null,
+        claiming:0,
+        claimnum:{pos:null, num:0},
+        claimingState:[],
+        toResult:false,
+        totalTime:60*60*1.5,
+        formatTime:'01:30:00'
     }
     /**
      * 重构参考： 打牌的几个阶段，应该在规则里面，调入进来。
@@ -123,10 +133,10 @@ class Table extends Component {
 		this.pollingId = 1;     //消息ID
         this.callResult = 0;    //叫牌时，对'Pass'进行计数，判断是否叫牌结束
         this.dealer = null;     //发牌人
-        this.nextplayer = null;
+        
         this.dummyCards = null;
         this.dummySeat = null;
-        this.claimnum = 0;      //claim的墩数、方位、庄家剩余的牌
+        // this.claimnum = 0;      //claim的墩数、方位、庄家剩余的牌
         this.agreeClaim = 0;    //claim时，对防守方是否同意claim计数
         this.claimtrick = 13;    //可claim的数目
         this.playSuit = null;
@@ -135,6 +145,7 @@ class Table extends Component {
         this.lastTrickCard = null    //上墩牌
         this.lastTrickPos = [];  //上墩牌的方位
         this.cards = [];  //原始牌
+        
         this.zindex = 10;
         this.center = null; // 桌子的中心 {x,y}
         this._csize = null; // 牌的大小
@@ -162,34 +173,48 @@ class Table extends Component {
 
     /* 完成挂载后，要计算 各个位置的坐标。 */
     componentDidMount() {
-        this.props.setHiddenState(true)
+        // this.timing('south',0,()=>{},true)
+        console.log(timer)
+        clearInterval(timer);
         Models.get_matches(this.sucGetMatch,this.failGetMatch)  //查询桌号
-        // this.props.toResult(2)
     }
-
 
     sucGetMatch=(data)=>{   //查询到所有未开始的table_id
         console.log(data)   
-        this.table_id_list = data;
-        this.table_id = data[0];
-        Models.join_channel(this.sucChannel,this.failChannel,this.table_id);    //根据桌号进入频道
-        this._initSeat();   // 初始化 发牌位置 出牌位置等坐标
+        if(data.length){
+            console.log(data.length)
+            this.table_id_list = data;
+            this.table_id = data[0];
+            Models.join_channel(this.sucChannel,this.failChannel,this.table_id);    //根据桌号进入频道
+            this._initSeat();   // 初始化 发牌位置 出牌位置等坐标
+        }
+        else{
+            // this.props.setHiddenState(true)
+            //提示：未查询到待开始的比赛
+            Toast.info('您当前没有比赛，请稍后再试',2)
+        }
     }
-    failGetMatch=()=>{}
 
     sucChannel=(data)=>{    //查询公共频道号,board_id,私有频道号,  [2, Array(8), 5]
-        console.log(data);
         const boardData = data.slice(-3);
-        if(data.length===3){ this.setBoardId(boardData) }
-        if(data.length===4){ this.setBoardId(boardData,data[0]['current board']); //this.setState({lastState:data[0]})
+        if(data.length===3){this.props.setHiddenState(true); this.setBoardId(boardData) }
+        clearInterval(timer);
+        if(data.length===4){ 
+            this.setState({lastState:data[0]});
+            if(data[0]==='All Done'){
+                this.props.setHiddenState(false)
+                Toast.info('您当前没有比赛，请稍后再试',2)
+            }else if(data[0]['current_board']){
+                this.props.setHiddenState(true)
+                this.setBoardId(boardData,data[0]['current_board'])
+            }else{
+                this.props.setHiddenState(true)
+                this.setBoardId(boardData)
+            }
+        }
     }
-        Models.init_board(this.sucInit,this.failInit,this.board_id,this.channel_id);    //初始化牌桌
-    }
-    failChannel=()=>{ console.log('fail join channel') }
-
+    
     setBoardId=(data,board_id)=>{
-        console.log(data);
-        console.log(board_id);
         this.my_channel_id = data[2];
         if(this.board_id_list){
             this.channel_id = data[0];
@@ -199,10 +224,11 @@ class Table extends Component {
             this.channel_id = data[0];
             this.board_id = board_id||data[1][0];
         }
+        Models.init_board(this.sucInit,this.failInit,this.board_id,this.channel_id);    //初始化牌桌
     }
 
     sucInit=(data)=>{
-        console.log(data);
+        console.log(data)
     // [cards:"AQ93.T9632.T7.73 6.K7.K984.AQJ964 K42.AQ5.AJ3.KT85 JT875.J84.Q652.2",dealer:'E',players:[["111 1111 1111", "S", 7],["222 2222 2222", "N", 8],["333 3333 3333", "E", 9],["444 4444 4444", "W", 10]],vulnerable:"NS"]
         this.originData = data; 
         data.players.map(item=>{    //存储‘我’的方位
@@ -219,97 +245,65 @@ class Table extends Component {
             }
         });
         this.transfer(this.myseat);  //根据我的方位，计算界面中“上下左右”对应的实际方位
-        if(this.board_id_list.indexOf(this.board_id)>0){ 
-            this.splitCards(data); 
-        }    
+        console.log(this.state.lastState)
+        if(this.state.lastState){
+            this.re_init();
+        }
+        //else{
+            // console.log('￥￥￥￥￥￥￥￥￥￥￥￥￥￥￥￥￥￥￥￥￥￥￥￥￥￥￥')
+          //  this.splitCards(this.originData); 
+        // } 
         Models.polling(this.sucPolling,this.failPolling,this.pollingId); 
     }
-    failInit=()=>{console.log('fail init')}
 
     sucPolling=(data)=>{
-        if(data.length&&this.pollingId===1){    //从历史消息中查询其他用户的准备状态
-            let startIndex = null;
-            data.map((item)=>{
-                let body = item.message.body;    //"<p>{'board_id': 44, 'number': 1, 'name': u'1S', 'pos': u'S'}</p>"
-                if(body.indexOf('data-oe-id')>-1){ startIndex = item.id; }
-            })
-            data.map(item=>{
-                if(item.id>startIndex){
-                    let body = item.message.body;    
-                    body = body.replace(/u'/g,"'").replace(/ /g,'');
-                    body = eval('('+body.substring(3,body.length-4)+')')
-                    if(body.pos&&body.iAmReady){   //收到牌手准备就绪的消息
-                        console.log(body)
-                        this.validatePrepare(body,1,this.splitCards);     //验证准备信息，判断是否可以发牌
-                    }
-                }
-            })
-        }
         console.log(data)
         if(data.length && data.slice(-1)[0]['id']!==this.pollingId && data[data.length-1].message.body.indexOf('data-oe-id')===-1){
-            this.pollingId=data.slice(-1)[0]['id']
-            console.log(this.pollingId)
-            let body = data[data.length-1].message.body;    //"<p>{'board_id': 44, 'number': 1, 'name': u'1S', 'pos': u'S'}</p>"
+            //准备遍历消息
+            this.dealMsg(data);
+        }
+        if(!this.state.toResult){
+            Models.polling(this.sucPolling,this.failPolling,this.pollingId)
+        }
+    }
+    failPolling=()=>{console.log('fail polling')}
+
+    dealMsg = (data) =>{
+        this.pollingId=data.slice(-1)[0]['id']
+        let body = data[data.length-1].message.body;    //"<p>{'board_id': 44, 'number': 1, 'name': u'1S', 'pos': u'S'}</p>"
+        if(body.substring(3,body.length-4)==='all ready'){
+            this.splitCards(this.originData)
+        }else if(body.substring(3,body.length-4)==='claim agreed'){
+                this.setState({scene:2});
+                this.addChatMsg('系统消息','庄家claim成功，正在为您计算本副牌成绩...')
+                Models.claim(this.sucClaim,this.failClaim,this.board_id,this.state.claimnum.pos,this.channel_id);
+        }else{
             body = body.replace(/u'/g,"'").replace(/ /g,'')
             body = eval('('+body.substring(3,body.length-4)+')')
+        
             console.log(body);
 
-            // if(body.pos&&body.state&&body.player){   //收到牌手掉线消息   {pos:s,player:111 1111 1111, state:offline}
-                // this.someoneOffline(body.player)
-            // }
-
-            // if(body.pos&&body.player&&body.state&&body.board_id){   //收到牌手上线消息   {pos:N,player:111 1111 1111, state:online, board_id: 3, pollingID:1234}
-                // this.re_online(body.board_id)
-            // }
-
             if(body.pos&&body.send_msg){         //收到聊天消息  {pos:'W',send_msg:'msg'}
-                const elMsg = document.querySelector('#message')
-                elMsg.innerHTML = 
-                    "<div>" + body.pos + ' : ' + body.send_msg + "</div>" + elMsg.innerHTML
+                this.addChatMsg(body.pos,body.send_msg)
             }
             if(body.board_id&&body.name&&body.pos&&body.number){  //收到叫牌消息   {board_id: 44, number: 1, name: '1S', pos: 'S'}
-                let nextBidder = Table.seats[this.state.userdir.indexOf(body.pos)+1]||Table.seats[this.state.userdir.indexOf(body.pos)-3]
-                this.timing(nextBidder,10,()=>{})   //提示下一个叫牌人
-                this.call(body.pos,body.name)   //展示叫牌人及叫品
+                // let nextBidder = Table.seats[this.state.userdir.indexOf(body.pos)+1]||Table.seats[this.state.userdir.indexOf(body.pos)-3]
                 this.setState({
-                    bidCard:body.name,
-                    calldata:this.state.calldata,
-                });
-                body.name==='Pass'?this.callResult ++ : this.callResult = 0;    //计算当前‘Pass’的次数，判断是否叫牌结束
-                if(this.callResult===3&&body.number!==3&&body.name==='Pass'){
-                    Models.call_result(this.sucCall,this.failCall,this.board_id,this.channel_id);
-                    this.callResult=0
-                }
-                if(this.callResult===3&&body.number!==3&&body.name!=='Pass'){this.callResult=0};
-                if(this.callResult===4&&body.number===4){ 
-                    if(this.board_id_list.indexOf(this.board_id)<this.board_id_list.length-1){
-                        this.state.cards.map(itemSeat=>{
-                            itemSeat.map(item=>{
-                                item.position.x = this.width / 2;
-                                item.position.y = -this.width / 2;
-                            })
-                        })
-                        this.setState({
-                            cards:this.state.cards,
-                            scene: 1,    // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
-                            calldata:[],
-                            bidCard: null,
-                        })
-                        this.state.cards = this.initCards();
-                        Models.join_channel(this.sucChannel,this.failChannel,this.table_id);
-                    }
-                    if(this.board_id_list.indexOf(this.board_id)===this.board_id_list.length-1){
-                        this.props.toResult(this.table_id);
-                    }
-                    this.callResult=0;
-                }
-			}
-			if(body.dummy&&body.openlead&&body.declarer){   //收到叫牌结果信息   {dummy:'N',openlead:'W',declarer:'S',nextplayer:'W',contract:'1S'}
+                    next:Table.dirCN[Table.dir.indexOf(body.pos)+1]||Table.dirCN[Table.dir.indexOf(body.pos)-3]
+                })
+                console.log('next' + this.state.next)
+                this.timing(null,0,()=>{},true)   //提示下一个叫牌人
+                this.validatePass(body)
+            }
+            if(body.dummy&&body.openlead&&body.declarer){   //收到叫牌结果信息   {dummy:'N',openlead:'W',declarer:'S',nextplayer:'W',contract:'1S'}
                 // this.timing(Table.seats[this.state.userdir.indexOf(body.openlead)],10,()=>{});      //提示下一个出牌人  
                 ReactDOM.unmountComponentAtNode(document.querySelector('#clock'));
-                this.nextplayer = body.nextplayer;
-                this.dummyCards = this.cards[Table.dir.indexOf(body.dummy)];       //拿到明手的牌
-				this.dummySeat = Table.seats[this.state.userdir.indexOf(body.dummy)]   //计算明手的方位
+                this.setState({
+                    nextplayer:body.nextplayer,
+                    next:Table.dirCN[Table.dir.indexOf(body.openlead)]
+                })
+                console.log('next'+ this.state.next)
+                this.timing(null,0,()=>{},true);
                 this.playRules(body.nextplayer,null,null);      //根据打牌规则提示
                 this.setState({
                     cards:this.state.cards,
@@ -319,47 +313,45 @@ class Table extends Component {
                     scene:2
                 })
             }
-            if(body.number&&body.rank&&body.card){    //收到打牌消息 {ns_win:0,number:1,rank:'5',pos:'W',suit:'C',nextplayer:'W',card:'C5',ew_win:0}
+            if(body.number&&body.rank&&body.card&&body.number!==this.state.playCardNumber){    //收到打牌消息 {ns_win:0,number:1,rank:'5',pos:'W',suit:'C',nextplayer:'W',card:'C5',ew_win:0}
+                this.state.playCardNumber = body.number
+                // this.setState({lastTrick:false})
+                if(this.state.lastTrick){this.lastTrick(false)};
+                this.dummyCards = this.cards[Table.dir.indexOf(this.state.dummy)];       //拿到明手的牌
+                this.dummySeat = Table.seats[this.state.userdir.indexOf(this.state.dummy)]   //计算明手的方位
                 if(body.number===1){this.testDummy(this.dummySeat,this.dummyCards)}
-                if(body.number%4===1){  this.playSuit = body.suit;    }
+                if(body.number%4===1){  this.playSuit = body.suit; }
                 //验证打牌规则，根据打牌规则进行提示
                 this.playRules(body.nextplayer,this.playSuit,body.number);    
                 if(body.pos===this.state.declarer){this.claimtrick = this.claimtrick-1;}       //计算当前庄家可claim的墩数
-                // this.timing(Table.seats[this.state.userdir.indexOf(body.nextplayer)],10,()=>{});        //提示下一个出牌人  
-                const card = body.card.split('')[1]+body.card.split('')[0]      // 对收到的牌处理成‘5C’的格式
+                
                 const playSeatCard = this.state.cards[this.state.userdir.indexOf(body.pos)]     //拿到当前出牌人对应的牌，应为XXXXXXXXXXXXX
-                if(playSeatCard[Math.floor((body.number-1)/4)].card.split('')[0]==='X'){    //将收到的牌设置进当前出牌人的牌中
-                    playSeatCard[Math.floor((body.number-1)/4)].card=card
-                }
-                playSeatCard.map((item1,index1)=>{      //动画，将当前出牌人出的牌放到board中，即表现为出牌
-                    if(item1.card===card){
-                        this.lastTrickPos.push(body.pos)
-                        this.board.push(item1);
-                        item1['animation']['left'] = this.seat[item1.seat][1].x;
-                        item1['animation']['top'] = this.seat[item1.seat][1].y;
-                        item1['animation']['delay'] = 0;
-                        item1['zIndex'] = this.zindex++
-                    }
-                    Sound.play('play');
-                }) 
+                const setItem = [body.pos,body.card];
+                this.recoverTrick(setItem,'play',true);
+                
+                let index = this.state.userdir.indexOf(body.pos)
+                this.dealOneSeatCards(playSeatCard,index,true)
+                
                 this.setState({
                     cards: this.state.cards,
                     ew_win:body.ew_win,
                     ns_win:body.ns_win,
+                    nextplayer:body.nextplayer,
+                    next:Table.dirCN[Table.dir.indexOf(body.nextplayer)]
                 })
-                if (this.board.length === 4){    //当board中有4张牌时，清理桌面
-                    this.lastTrickCard = {pos:this.lastTrickPos,card:this.board};
-                    setTimeout(this.clearBoard, 500)
-                } 
-                this.nextplayer = body.nextplayer;
+                this.timing(null,10,()=>{},true);        //提示下一个出牌人  
+                console.log('next'+ this.state.next)
+                
                 if(body.number===52){   //当52张牌全部出完后，查询当前这幅牌的成绩
                     if(this.board_id_list.indexOf(this.board_id)<=this.board_id_list.length-1){
                         Models.board_points(this.sucBoardPoints,this.failBoardPoints,this.board_id)
                     }
                 }
-            }  
+            }
             if(body.pos&&body.num&&body.board){   //收到庄家claim消息  {pos:'W', num:3, board:['SQ','ST']}
-                this.claimnum = body
+                console.log(body)
+                // this.claimnum = body
+                this.setState({claimnum:body})
                 if(this.myseat!==body.pos){
                     //展示庄家的牌
                     let claimCard = this.state.cards[this.state.userdir.indexOf(body.pos)].splice(13-body.board.length,body.board.length);  
@@ -372,59 +364,30 @@ class Table extends Component {
                         cards: this.state.cards,
                     });
                 } 
-                // var claimCountTime = setTimeout(this.handleClaimMsg.bind(this,false),30000); 
             }
             if(body.pos&&body.agreeClaim){   //收到防守方是否同意
-                // clearTimeout(claimCountTime);
                 const agreeClaimPos = Table.dirAll[Table.dir.indexOf(body.pos)]
                 if(body.agreeClaim==='false'){  //当有防守方拒绝claim时，继续打牌过程
-                    this.agreeClaim=0;
-                    const elMsg = document.querySelector('#message');
-                    elMsg.innerHTML = 
-                        "<div>系统消息： " + this.state.user[agreeClaimPos]  + " 拒绝了庄家的claim请求，请继续打牌</div>" +  elMsg.innerHTML
-                    this.setState({scene:2});
-                }else if(body.agreeClaim==='true'){
-                    this.agreeClaim++;  //统计有几个防守同意claim
-                    const elMsg = document.querySelector('#message');
-                    elMsg.innerHTML = 
-                         "<div>系统消息： " + this.state.user[agreeClaimPos]  + " 同意了庄家的claim请求</div>" +elMsg.innerHTML
-                    if(this.agreeClaim===2){ //当两个防守方都同意claim时，调取claim方法
-                        this.agreeClaim=0;
-                        this.setState({scene:2});
-                        elMsg.innerHTML = 
-                             "<div>系统消息： 庄家claim成功，正在为您计算本副牌成绩...</div>" +elMsg.innerHTML
-                        Models.claim(this.sucClaim,this.failClaim,this.board_id,this.claimnum.pos,this.claimnum.num,this.channel_id);
-                    }
+                    this.addChatMsg('系统消息',this.state.user[agreeClaimPos]+' 拒绝庄家的claim请求，请继续打牌')
+                    this.setState({scene:2, claimnum:{pos:null, num:0}, claiming:0, claimingState:[]});
+                    if(this.state.playCardNumber%4===0){this.playRules(this.state.nextplayer,null,null);}
+                    else{this.playRules(this.state.nextplayer,this.playSuit,null);}
+                }
+                else if(body.agreeClaim==='true'){
+                    this.state.claimingState.push(body.pos)
+                    this.setState({claimingState:this.state.claimingState})
+                    this.addChatMsg('系统消息',this.state.user[agreeClaimPos]+' 同意了庄家的claim请求')
                 }
             }
-            if(body.pos&&body.iAmReady){   //收到牌手准备就绪的消息
-                this.validatePrepare(body,1,this.splitCards)
-            }
-            if(body.pos&&body.next){
-                this.validatePrepare(body,'next')
+        
+            if(body.pos&&body.state==='ready'){
+                const seat = Table.seats[this.state.userdir.indexOf(body.pos)]
+                this.state.ready[seat]='R'
+                this.setState({ready:this.state.ready})
+                console.log(this.state.ready)
             }
         }
-        Models.polling(this.sucPolling,this.failPolling,this.pollingId)
     }
-    failPolling=()=>{console.log('fail polling')}
-
-
-    //牌手掉线后
-    someoneOffline=(player)=>{
-        this.setState({
-            online:false,
-            offlinePlayer:player
-        })
-    }
-    //重新上线后，重置状态
-    re_online=(data)=>{
-        this.setState({
-            online:true,
-            offlinePlayer:null
-        })
-        console.log(data)
-    }
-
 
     bidCall=(card)=>{   //牌手的叫牌事件，发送叫牌消息
         console.log(card)
@@ -463,15 +426,23 @@ class Table extends Component {
     */
     claim = () =>{  //庄家点击“摊牌”事件
         this.setState({ scene:3 })
+        // console.log(this.state.playCardNumber)
+        // console.log(this.state.playCardNumber===0)
     }
     handleClaim = (data) =>{    //庄家发送claim消息
-        Models.claim1(this.sucClaim1,this.failClaim1,this.board_id,this.myseat,data,this.channel_id);
+        if(data){  
+            Models.claiming(this.sucClaiming,this.failClaiming,this.board_id,'C',data);
+            Models.claim1(this.sucClaim1,this.failClaim1,this.board_id,this.myseat,data,this.channel_id);
+        }
     }
     sucClaim1=(data)=>{ console.log(data) }
     failClaim1=()=>{console.log('fail claim')}
+    sucClaiming=(data)=>{ console.log(data) ;}
+    failClaiming=()=>{console.log('fail claiming')}
 
-    cancelClaim = ()=>{     //庄家取消claim事件，继续打牌
+    cancelClaim = (data)=>{     //庄家取消claim事件，继续打牌
         this.setState({ scene:2 })
+        // Models.claiming(this.sucClaiming,this.failClaiming,this.board_id,'N',data);
     }
     handleClaimMsg = (data) =>{     //收到防守对庄家claim 的同意或拒绝消息
         const msg={
@@ -479,7 +450,14 @@ class Table extends Component {
             agreeClaim:data.toString()
         }
         Models.send_message(this.sucSend,this.failSend,this.channel_id,msg);
+        if(data){
+            Models.ask_claim(this.sucAskClaim,this.failAskClaim,this.board_id,this.myseat,'C')
+        }else{
+            Models.ask_claim(this.sucAskClaim,this.failAskClaim,this.board_id,this.myseat,'N')
+        }
     }
+    sucAskClaim=(data)=>{console.log(data)}
+    failAskClaim=()=>{console.log('fail ask_claim')}
  
     sucClaim=(data)=>{  //当两个防守均同意claim消息后，claim成功的回调函数
         Models.board_points(this.sucBoardPoints,this.failBoardPoints,this.board_id);
@@ -487,13 +465,21 @@ class Table extends Component {
     failClaim=()=>{}
 
     handleReady = (se) => {     //收到牌手的准备消息
-        console.log(se)
-        const msg ={
-            pos:this.myseat,
-            iAmReady:'ready'
+        Models.call_ready(this.sucReady,this.failReady,this.board_id,this.myseat);
+    }
+
+    sucReady=(data)=>{
+        const seat = Table.seats[this.state.userdir.indexOf(this.myseat)]
+        this.state.ready[seat]='R'
+        this.setState({ready:this.state.ready,nextBoard:false})
+        const msg = {
+            pos: this.myseat,
+            state: 'ready',
+            next_board:'',
         }
         Models.send_message(this.sucSend,this.failSend,this.channel_id,msg);
     }
+    failReady=(data)=>{console.log(data)}
 
    
     /**
@@ -582,12 +568,14 @@ class Table extends Component {
     //从未打出去的牌中验证打牌规则  可提出公共部分？？？？？？
     playRules=(nextplayer,suit,number)=>{   
         this.state.cards.map(item=>{
+            console.log('...........................')
             item.map(item1=>{
                 item1.onclick =  () => false;
                 item1.active = 2;
             })
         });
-        if(nextplayer!==this.state.dummy&&this.myseat===nextplayer){
+        if(nextplayer&&nextplayer!==this.state.dummy&&this.myseat===nextplayer){
+            console.log('**********************')
             let haveSuit = 0;
             this.state.cards[1].map((item,index)=>{
                 if(item['animation']['top']===(this.seat['south'][0]['y']+this.width / 16 / 5)){
@@ -600,7 +588,7 @@ class Table extends Component {
                 }
                 return haveSuit;
             }) 
-            if(haveSuit===0||number%4===0){this.state.cards[1].map(item=>{item.active=2;item.onclick =  this.play(item);})}
+            if(haveSuit===0||number%4===0&&number){this.state.cards[1].map(item=>{item.active=2;item.onclick =  this.play(item);})}
         }else if(nextplayer===this.state.dummy&&this.myseat===this.state.declarer){
             let haveSuit = 0;
             this.state.cards[3].map((item,index)=>{
@@ -613,32 +601,56 @@ class Table extends Component {
                     }
                 }
             })  
-            if(haveSuit===0||number%4===0){this.state.cards[3].map(item=>{item.active=2;item.onclick =  this.play(item);})}
+            if(haveSuit===0||number%4===0&&number){this.state.cards[3].map(item=>{item.active=2;item.onclick =  this.play(item);})}
         }
         this.setState({cards:this.state.cards})
     }
  
-    validatePrepare=(body,num,callback)=>{   //验证牌手准备消息
-        const seat = Table.seats[this.state.userdir.indexOf(body.pos)]
-        const readyPos = Table.dirAll[Table.dir.indexOf(body.pos)]
-        const elMsg = document.querySelector('#message')
-        this.state.ready[seat]='ready'
+    validatePass=(body)=>{
+        this.call(body.pos,body.name)   //展示叫牌人及叫品
         this.setState({
-            ready:this.state.ready
+            bidCard:body.name,
+            calldata:this.state.calldata,
         });
-        elMsg.innerHTML = 
-           "<div>系统消息： " + this.state.user[readyPos]  + " 已就绪</div>" + elMsg.innerHTML
-        let countReady = 0;
-        Table.dirAll.map(item=>{
-            if(this.state.ready[item]==='ready')countReady+=1
-            if(countReady===4){
-                console.log(4444444444444)
-                if(num===1){ callback(this.originData) }
-                if(num==='next'){Models.join_channel(this.sucChannel,this.failChannel,this.table_id);}
-                this.setState({ready:{east: null, south: null, west: null, north: null }})
-                // this.splitCards(this.originData)
+        console.log(this.state.calldata)
+        body.name==='Pass'?this.callResult ++ : this.callResult = 0;    //计算当前‘Pass’的次数，判断是否叫牌结束
+        if(this.callResult===3&&body.number!==3&&body.name==='Pass'){
+            Models.call_result(this.sucCall,this.failCall,this.board_id,this.channel_id);
+            this.callResult=0
+        }else if(this.callResult===3&&body.number!==3&&body.name!=='Pass'){
+            this.callResult=0
+        }else if(this.callResult===4&&body.number===4){ 
+            if(this.board_id_list.indexOf(this.board_id)===this.board_id_list.length-1){
+                this.setState({toResult:true})
+                this.props.toResult(this.table_id);
+                console.log('#########################')
+            }else if(this.board_id_list.indexOf(this.board_id)<this.board_id_list.length-1){
+                console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+                this.state.cards.map(itemSeat=>{
+                    itemSeat.map(item=>{
+                        item.position.x = this.width / 2;
+                        item.position.y = -this.width / 2;
+                    })
+                })
+                this.setState({
+                    cards:this.state.cards,
+                    scene: 1,    // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
+                    calldata:[],
+                    bidCard: null,
+                    // lastState:null
+                })
+                this.state.cards = this.initCards();
+                this.board_id=this.board_id_list[this.board_id_list.indexOf(this.board_id)+1]
+                Toast.info('叫牌失败，即将进入下一副牌', 1, Models.init_board(this.sucInit,this.failInit,this.board_id), true);
             }
-        })
+            this.callResult=0;
+        }
+    }
+
+    addChatMsg=(seat,msg)=>{
+        const elMsg = document.querySelector('#message')
+        elMsg.innerHTML = 
+            "<div>" + seat + ' : ' + msg + "</div>" + elMsg.innerHTML
     }
 
     transfer=(pos)=>{   //根据“我”的方位按照“右，下，左，上”的顺序计算对应的实际方位
@@ -649,87 +661,174 @@ class Table extends Component {
     }
 
     splitCards=(data)=>{
+        console.log(data)
         this.cards = data.cards.split(' ');
         this.dealer=data.dealer;
-        this.timing(Table.seats[this.state.userdir.indexOf(data.dealer)],10,()=>{});
+        this.counterTime();
+        console.log(Table.seats[this.state.userdir.indexOf(data.dealer)])
         this.deals = 'XXX.XX.XXXX.XXXX '+ data.cards.split(' ')[Table.dir.indexOf(this.myseat)] +' XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
         this.state.cards = this.initCards()
         this.deal();
-        this.setState({scene:1})  
-        // if(this.state.lastState){this.re_init();}
+        this.setState({scene:1,next:Table.dirCN[Table.dir.indexOf(data.dealer)]})  
+        this.timing(null,0,()=>{},true);
+        console.log('next'+ this.state.next)
     }
 
     re_init=()=>{
+        //未准备，准备阶段，叫牌阶段，打牌阶段，claim中，claim完成，
         const lastState=this.state.lastState;
         console.log(lastState);
         // 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
-        if(lastState.state==='biding'){
-            console.log('in biding');
-            let nextBidder = Table.seats[this.state.userdir.indexOf(lastState.bidder)]
-            console.log(111111111111111111111)
-            console.log(nextBidder)
-            this.timing(nextBidder,10,()=>{});
-            lastState.call_info.map(item=>{
-                this.call(item[1],item[2]);
+        ReactDOM.unmountComponentAtNode(document.querySelector('#clock'));
+        if(lastState.state==='calling ready'||lastState.state==='start playing'){
+            if(this.myseat==='S'){
                 this.setState({
-                    bidCard:item[2],
-                    calldata:this.state.calldata,
+                    ready: {east: lastState['east_ready'], south: lastState['south_ready'], west: lastState['west_ready'], north: lastState['north_ready'] }
+                })
+            }
+            if(this.myseat==='N'){
+                this.setState({
+                    ready: {east: lastState['west_ready'], south: lastState['north_ready'], west: lastState['east_ready'], north: lastState['south_ready'] }
+                })
+            }
+            if(this.myseat==='W'){
+                this.setState({
+                    ready: {east: lastState['south_ready'], south:lastState['west_ready'], west:lastState['north_ready'], north: lastState['east_ready'] }
+                })
+            }
+            if(this.myseat==='E'){
+                this.setState({
+                    ready: {east:lastState['north_ready'], south: lastState['east_ready'], west: lastState['south_ready'], north: lastState['west_ready'] }
+                })
+            }
+            if(lastState['east_ready']&&lastState['north_ready']&&lastState['south_ready']&&lastState['west_ready']){
+                this.splitCards(this.originData)
+            }
+        }
+
+        if(lastState.state==='biding'){     //叫牌阶段断线
+            this.splitCards(this.originData)
+            if(lastState.bidder){
+                // let nextBidder = Table.seats[this.state.userdir.indexOf(lastState.bidder)]
+                this.setState({next:Table.dirCN[Table.dir.indexOf(lastState.bidder)]})
+                console.log('next' + this.state.next)
+                this.timing(null,0,()=>{},true);
+            }
+            lastState.call_info.map(item=>{     //{board_id: 44, number: 1, name: '1S', pos: 'S'}
+                let body = {board_id:this.board_id, number:item[0], name:item[2], pos:item[1]}
+                this.validatePass(body)
+                this.setState({
+                    ready:{east:'R',west:'R',north:'R',south:'R'}
                 });
             });
         }
-        if(lastState.state==='playing'){
-            console.log('in playing')
-            this.setState({
-                scene: 2, 
-                contract:lastState.contract,
-                ns_win:lastState.ns_win,
-                ew_win:lastState.ew_win,
-            })
-            this.current_trick.map(item=>{
-                // const card = item.card.split('')[1]+item.card.split('')[0]      // 对收到的牌处理成‘5C’的格式
-                // const playSeatCard = this.state.cards[this.state.userdir.indexOf(body.pos)]     //拿到当前出牌人对应的牌，应为XXXXXXXXXXXXX
-                // if(playSeatCard[Math.floor((body.number-1)/4)].card.split('')[0]==='X'){    //将收到的牌设置进当前出牌人的牌中
-                //     playSeatCard[Math.floor((body.number-1)/4)].card=card
-                // }
-                // playSeatCard.map((item1,index1)=>{      //动画，将当前出牌人出的牌放到board中，即表现为出牌
-                //     if(item1.card===card){
-                //         this.lastTrickPos.push(body.pos)
-                //         this.board.push(item1);
-                //         item1['animation']['left'] = this.seat[item1.seat][1].x;
-                //         item1['animation']['top'] = this.seat[item1.seat][1].y;
-                //         item1['animation']['delay'] = 0;
-                //         item1['zIndex'] = this.zindex++
-                //     }
-                //     Sound.play('play');
-                // })
-            })
-            this.dummyCards = this.cards[Table.dir.indexOf(lastState.dummy)];       //拿到明手的牌
-            this.dummySeat = Table.seats[this.state.userdir.indexOf(lastState.dummy)]
-            this.nextplayer = lastState.player;
-            this.testDummy(this.dummySeat,this.dummyCards)
-            this.playRules(this.nextplayer,null,null);
+        if(lastState.state==='playing'){       //打牌阶段断线恢复
+            this.setState({scene:2})
+            this.setPlayingState();
+
+            //设置可claim的墩数
+            this.setClaimtrick()
+            //设置已出牌数量
+            this.state.playCardNumber = 52-this.state.lastState.unplayed_card.length
+
+            if(lastState.unplayed_card.length===52){
+                this.splitCards(this.originData);
+                this.setState({scene:2})
+                // ReactDOM.unmountComponentAtNode(document.querySelector('#clock'));
+            }else{
+                this.counterTime();
+                this.recoverMyCards();      /*恢复自己的牌 */
+                this.recoverDeclarerOrDummyCards(lastState.dummy)     /*恢复明手的牌 */
+                const guardSeat = [];
+                if(lastState.board_claim){
+                    this.recoverDeclarerOrDummyCards(lastState.declarer)     /*恢复庄家的牌 */
+                    //恢复防守的牌
+                    this.state.userdir.map(item=>{
+                        if(item!==this.myseat&&item!==this.state.declarer&&item!==this.state.dummy){  guardSeat.push({pos:item,num:13}); }
+                    });
+                }
+                else{
+                    //恢复防守的牌
+                    this.state.userdir.map(item=>{
+                        if(item!==this.myseat&&item!==this.state.dummy){  guardSeat.push({pos:item,num:13}); }
+                    });
+                }
+                this.recoverGuardCards(guardSeat);      //恢复防守的牌
+                lastState.last_trick.map(item=>{
+                    const setItem = [item[0],item[1]];
+                    this.recoverTrick(setItem,'last',false);     //恢复上一墩
+                })
+                lastState.current_trick.map(item=>{
+                    const setItem = [item[1],item[2]];
+                    this.recoverTrick(setItem,'current',false);     //恢复上一墩
+                })
+
+                //恢复自己的牌，去掉已出的牌
+                this.filterMyCards()
+            }
+            
+            /* 恢复验证规则 */
+            if(lastState.current_trick.length===4||lastState.current_trick.length===0){
+                this.playRules(this.state.nextplayer,null,null);
+            }else{
+                this.playSuit = lastState.current_trick.slice(0,1)[0][2].split('')[0];
+                this.playRules(this.state.nextplayer,this.playSuit,null);
+            }
         }
-        // this.setState({
-        //     scene: 1,    
-        //     calldata:[],
-        //     bidCard: null,
-        //     userdir:[],
-        //     declarer:null,
-        //     ns_win:null,
-        //     ew_win:null,
-        //     lastTrick:false,
-        //     debug: false,
-        // })
-        // this.claimnum = 0;      //claim的墩数、方位、庄家剩余的牌
-        // this.agreeClaim = 0;    //claim时，对防守方是否同意claim计数
-        // this.claimtrick = 13;    //可claim的数目
-        // this.originData = null;
-        // this.board = [];
-        // this.lastTrickCard = []; 
-        // this.lastTrickPos = []; 
-        // this.dummyCards = null;
-        // this.dummySeat = null;
-        // this.state.cards = this.initCards()
+
+        if(lastState.state==='claiming'){       //claim阶段断线恢复
+            console.log('in claiming')
+            this.counterTime();
+            this.playSuit = lastState.current_trick.length?lastState.current_trick.slice(0,1)[0][2].split('')[0]:null;
+            this.setPlayingState();
+
+            //设置可claim的墩数
+            this.setClaimtrick()
+            //设置已出牌数量
+            this.state.playCardNumber = 52-this.state.lastState.unplayed_card.length
+            
+            if(lastState.unplayed_card.length===52){
+                this.splitCards(this.originData);
+                // ReactDOM.unmountComponentAtNode(document.querySelector('#clock'));
+                this.setState({scene:2})
+            }else{
+                 /*恢复自己的牌 */
+                 this.recoverMyCards()
+            
+                 /*恢复明手的牌 */
+                this.recoverDeclarerOrDummyCards(lastState.dummy)
+
+                const guardSeat = [];
+                this.state.userdir.map(item=>{
+                    if(item!==this.myseat&&item!==this.state.declarer&&item!==this.state.dummy){  guardSeat.push({pos:item,num:13}); }
+                })
+                 /**恢复防守的牌 */
+                 this.recoverGuardCards(guardSeat);
+            
+                 /**恢复庄家的牌 */
+                this.recoverDeclarerOrDummyCards(lastState.declarer)
+
+                lastState.last_trick.map(item=>{
+                    const setItem = [item[0],item[1]];
+                    this.recoverTrick(setItem,'last',false);     //恢复上一墩
+                })
+                lastState.current_trick.map(item=>{
+                    const setItem = [item[1],item[2]];
+                    this.recoverTrick(setItem,'current',false);     //恢复上一墩
+                })
+                //去除自己已出过的牌
+                this.filterMyCards()
+            }
+
+            this.setState({scene:3, claiming:1, claimnum:{pos:this.state.declarer, num:lastState.claim_result}})
+            // this.claimnum = {pos:this.state.declarer, num:lastState.claim_result}
+            if(lastState.north_claim)this.setState({claimingState:['N']})
+            if(lastState.south_claim)this.setState({claimingState:['S']})
+            if(lastState.west_claim)this.setState({claimingState:['W']})
+            if(lastState.east_claim)this.setState({claimingState:['E']})
+
+            this.playRules();
+        }
     }
 
     deal = () => {
@@ -750,34 +849,49 @@ class Table extends Component {
      *  6） .onclick=this.onclick(item2) onclick 函数引用
      *      this.onclick(item2) 仍然返回一个函数 用来处理点击事件，传入item2
      */
-    dealCards() {
-        const cards = this.state.cards;
-        const offset = this.csize * 0.7 / 2
+    dealCards(statecards) { //发牌，整桌的牌
+        const cards = statecards||this.state.cards;
         cards.forEach((item, index) => {
-            let rotate = 0;
-            let seat = Table.seats[index]
-            let [x, y] = [this.seat[seat][0].x, this.seat[seat][0].y]
-            if ('02'.indexOf(index) !== -1) rotate = -90;
-            x = x + this.width / 16 / 5; y = y + this.width / 16 / 5; // margin
-            item.forEach((item1, index1) => {
-
-                cards[index][index1].animation = {
-                    top: y,
-                    left: x,
-                    delay: (item1.key % 13) * 80,
-                    duration: 300,
-                    rotate: rotate,
-                    transformOrigin: `${offset}px ${offset}px`
-                }
-                cards[index][index1].active = 2; 
-                cards[index][index1].onclick =  () => false;
-                if ('02'.indexOf(index) !== -1) y = y + this.csize * 0.15;
-                else x = x + this.csize * 0.39;
-
-            });
+            this.dealOneSeatCards(item,index,false)
         })
         Sound.play('deal');
         return cards;
+    }
+
+    dealOneSeatCards=(item,index,bool)=>{   //发牌，某个方位的牌[iten(某个方位的牌),index(该方位在Table.seat中的索引),bool(初始化时为false，其他均为true)]
+        let rotate = 0;
+        const offset = this.csize * 0.7 / 2
+        let seat = Table.seats[index]
+        let [x, y] = [this.seat[seat][0].x, this.seat[seat][0].y]
+        x = x + this.width / 16 / 5; y = y + this.width / 16 / 5; // margin
+        if ('02'.indexOf(index) !== -1) rotate = -90;
+        item.forEach((item1, index1) => {
+            console.log(item1)
+            if(bool&&item1['animation']['left']!==this.width / 2 && item1['animation']['top'] !== this.seat[item1.seat][1].y){  //保证只从未出的牌中设置
+                this.dealOneCard(item1,x,y,rotate,offset)
+                if ('02'.indexOf(index) !== -1) y = y + this.csize * 0.15;
+                else x = x + this.csize * 0.39;
+            }
+            if(!bool){
+                this.dealOneCard(item1,x,y,rotate,offset)
+                if ('02'.indexOf(index) !== -1) y = y + this.csize * 0.15;
+                else x = x + this.csize * 0.39;
+            }
+        });
+    }
+
+    dealOneCard = (item1,x,y,rotate,offset)=>{  //发牌动作，某一张牌
+        console.log(rotate)
+            item1.animation = {
+                top: y,
+                left: x,
+                delay: (item1.key % 13) * 80,
+                duration: 300,
+                rotate: rotate,
+                transformOrigin: `${offset}px ${offset}px`
+            }
+            item1.active = 2; 
+            item1.onclick =  () => false;
     }
 
     // 发送聊天消息，展示聊天消息
@@ -833,26 +947,50 @@ class Table extends Component {
                 index++;
             })
         })
+        cards.map(item=>{
+            console.log(item);
+            if(item['card'].split('')[0]==='X'){
+                this.moveToPlayed(item)
+            }
+        })
         this.setState({
             cards: this.state.cards
         })
     }
-    
+    /**
+     * 出牌动作
+     */
+    playCard = (item) => {
+        item['animation']['left'] = this.seat[item.seat][1].x;
+        item['animation']['top'] = this.seat[item.seat][1].y;
+        item['animation']['delay'] = 0;
+        item['zIndex'] = this.zindex++
+        this.setState({cards: this.state.cards })
+        Sound.play('play');
+    }
+
     /**
      * 显示上墩牌
      * todo：明确了数据接口再改写。
      * 定位还存在问题。
      */
-    lastTrick = () => {
+    lastTrick = (data) => {
         // 在模型里 应该先判断当前 trick 编号。然后决定是否能看lasttrick
+        console.log(this.lastTrickCard)
+        console.log(this.state.lastTrick)
         if(this.lastTrickCard){
-            let show = true;
-            if(this.state.lastTrick) show = false;
-
             const lt = this.lastTrickCard;
             let card = null;
+            let show = true;
+            if(data){
+                if(this.state.lastTrick) show = false;
+            }else{
+                show = false
+            }
             lt.pos.map((item,index)=>{
                 card = this._cardIndexOf(lt.card[index].index);
+                console.log(lt.card[index].index)
+                console.log(card)
                 card['animation']['left'] = (show === true) ?
                     this.seat[Table.seats[this.state.userdir.indexOf(item)]][1].x - this.width / 2.9
                     : this.width / 2;
@@ -860,12 +998,14 @@ class Table extends Component {
                     this.seat[Table.seats[this.state.userdir.indexOf(item)]][1].y - this.width / 2.9
                     : -this.width * 2;
                 card['zIndex']=this.zindex++
+                card['animation']['delay']=0;
+                this.setState({cards: this.state.cards})
             })
-        
-            this.setState({
-                cards: this.state.cards,
-                lastTrick:!this.state.lastTrick
-            })
+            if(data){
+                this.setState({ lastTrick:!this.state.lastTrick  })
+            }else{
+                this.setState({lastTrick:false})
+            }
         }
     }
     /**
@@ -883,24 +1023,37 @@ class Table extends Component {
      *  -this.width * 0.2;  计分位置
      */
     clearBoard = () => {
-        //if(this.board.length < 4) return false;
-        // this.state.cards.map(item=>{
-        //     item.map(item1=>{
-        //         item1.onclick =  () => false;
-        //         item1.active = 2;
-        //     })
-        // });
+        this.diabledCardClick();
         const board = this.board;
         for (let i = 0; i < board.length; i++) {
-            console.log(board)
-            board[i].animation.left = this.width / 2;
-            board[i].animation.top = -this.width * 2;
-            board[i].active = 3;
+            this.moveToPlayed(board[i])
         }
         this.setState({
             cards: this.state.cards
-        }, () => {this.board = [];this.lastTrickPos=[]});
+        }, () => {this.board = [];this.lastTrickPos=[]; this.playRules(this.state.nextplayer,null,null);});
         Sound.play('clear');
+    }
+
+    /**
+     * 禁用所有牌的点击事件
+     */
+    diabledCardClick=()=>{
+        this.state.cards.map(item=>{
+            item.map(item1=>{
+                item1.onclick =  () => false;
+                item1.active = 2;
+            })
+        });
+    }
+
+    /**
+     * 将牌放到已出牌区
+     */
+    moveToPlayed=(item)=>{
+        item.animation.left = this.width / 2;
+        item.animation.top = -this.width * 2;
+        item.zindex= this.zindex++;
+        item.active = 3;
     }
     /**
      * 给某一个座位倒计时
@@ -908,27 +1061,35 @@ class Table extends Component {
      * 利用 unmountComponentAtNode 进行卸载。
      * p, offset 都是闹钟出现位置的微调。
      */
-    timing = (seat, time, callback) => {
+    timing = (seat, time, callback,addOrReduce) => {
         ReactDOM.unmountComponentAtNode(document.querySelector('#clock'));
-        const p = this.width * 0.25;
-        const offset = {
-            east: { x: p, y: 0 },
-            south: { x: 0, y: p },
-            west: { x: -p * 0.66, y: 0 },
-            north: { x: 0, y: -p * 0.66 }
-        }
-        const top = this.seat[seat][1]['y'] + offset[seat].y;
-        const left = this.seat[seat][1]['x'] + offset[seat].x;
+        // const p = this.width * 0.25;
+        // const offset = {
+        //     east: { x: p, y: 0 },
+        //     south: { x: 0, y: p },
+        //     west: { x: -p * 0.66, y: 0 },
+        //     north: { x: 0, y: -p * 0.66 }
+        // }
+        // const top = this.seat[seat][1]['y'] + offset[seat].y;
+        // const left = this.seat[seat][1]['x'] + offset[seat].x;
+        // const style = {
+        //     position: 'absolute',
+        //     top: top,
+        //     left: left,
+        //     width: '10%',
+        //     zIndex:6
+        // }
         const style = {
             position: 'absolute',
-            top: top,
-            left: left,
+            top: this.width * 0.09+3,
+            right: this.width*0.04,
             width: '10%',
+            height:this.width * 0.10,
             zIndex:6
         }
         const clock = (
             <div style={style}>
-                <Clock time={time} callback={callback} />
+                <Clock time={time} callback={callback} addOrReduce={addOrReduce}/>
             </div>
         );
         ReactDOM.render(
@@ -950,19 +1111,21 @@ class Table extends Component {
         const re = <div className='result' style={this.css.result}>
             <img src='/cards/medal.svg' width="20%" />
             <div style={{lineHeight:this.width * 0.12+'px',}}>{result}</div>
-            <button onClick={this.hideResult}>下一局</button>
+            {/* <button onClick={this.hideResult}>下一局</button> */}
+            <button disabled={true} >即将进入下一局</button>
         </div>;
         ReactDOM.unmountComponentAtNode(document.querySelector('#result'));
         ReactDOM.render(
             re,
             document.querySelector('#result')
         )
-
+        setTimeout(this.hideResult,2000)
+        // Models.join_channel(this.sucChannel,this.failChannel,this.table_id);
     }
     hideResult = () => {
         if(this.board_id_list.indexOf(this.board_id)<this.board_id_list.length-1){
             this.setState({
-                scene: 1,    // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
+                scene: 0,    // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
                 calldata:[],
                 bidCard: null,
                 contract:null,
@@ -971,28 +1134,183 @@ class Table extends Component {
                 ew_win:null,
                 lastTrick:false,
                 debug: false,
+                lastTrick:false,
+                // lastState: null,
+                claimnum:{pos:null, num:0},
+                ready:{east: null, south: null, west: null, north: null ,next_board:0},
+                claiming:0,
+                claimingState:[],
+                next:null,
+                // nextBoard:true,
             })
             this.state.cards = this.initCards();
-            this.claimnum = 0;      //claim的墩数、方位、庄家剩余的牌
+            // this.claimnum = 0;      //claim的墩数、方位、庄家剩余的牌
             this.agreeClaim = 0;    //claim时，对防守方是否同意claim计数
             this.claimtrick = 13;    //可claim的数目
             this.originData = null;
             this.board = [];
-            this.lastTrickCard = []; 
+            this.lastTrickCard = null; 
             this.lastTrickPos = []; 
             this.dummyCards = null;
             this.dummySeat = null;
-            const msg = {
-                pos: this.myseat,
-                next: 'next card',
-            }
-            Models.send_message(this.sucSend,this.failSend,this.channel_id,msg);
-            // Models.join_channel(this.sucChannel,this.failChannel,this.table_id);
+            Models.join_channel(this.sucChannel,this.failChannel,this.table_id);
+            ReactDOM.unmountComponentAtNode(document.querySelector('#result'));
         }
         if(this.board_id_list.indexOf(this.board_id)===this.board_id_list.length-1){
             this.props.toResult(this.table_id);
         }
-        ReactDOM.unmountComponentAtNode(document.querySelector('#result'));
+    }
+
+    recoverMyCards=()=>{
+        const mycards = [[],[],[],[]];       /*恢复自己的牌 */
+        let mycardslength = 0;
+        let addXX = ['X','X','X','X','X','X','X','X','X','X','X','X','X'];
+        this.state.lastState.unplayed_card.map(item=>{
+            if(item[0]===this.myseat){
+                addXX.pop();
+                mycardslength += 1;
+                if(item[1].split('')[0]==='S'){mycards[0]+=item[1].split('')[1]}
+                if(item[1].split('')[0]==='H'){mycards[1]+=item[1].split('')[1]}
+                if(item[1].split('')[0]==='D'){mycards[2]+=item[1].split('')[1]}
+                if(item[1].split('')[0]==='C'){mycards[3]+=item[1].split('')[1]}
+                
+            }
+        })
+        // this.deals = 'XXX.XX.XXXX.XXXX '+ mycards.join('.') + ('X').repeat(mycardslength) +' XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
+        this.deals = 'XXX.XX.XXXX.XXXX '+ mycards.join('.') + addXX.join('') +' XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
+        this.state.cards = this.initCards()
+        this.deal();
+    }
+    
+    recoverGuardCards=()=>{
+        const guardSeat = [];
+        this.state.userdir.map(item=>{
+            if(item!==this.myseat&&item!==this.state.declarer&&item!==this.state.dummy){  guardSeat.push({pos:item,num:13}); }
+        });
+        guardSeat.map(item=>{
+            this.state.lastState.unplayed_card.map(item1=>{
+                if(item1[0]===item.pos){ item.num--;  }
+            });
+        });
+        this.state.cards.map(item=>{
+            guardSeat.map(item1=>{
+                item.map(item2=>{
+                    if(item2.seat===Table.seats[this.state.userdir.indexOf(item1.pos)]){
+                        if(item1.num){
+                            this.moveToPlayed(item2);
+                            item1.num--;
+                        }
+                    }
+                });
+            });
+        });
+    }
+    
+    recoverDeclarerOrDummyCards=(seat)=>{
+        const DeclarerOrDummyCards=['','','',''];      
+        const DeclarerOrDummySeat = Table.seats[this.state.userdir.indexOf(seat)]
+        this.state.lastState.unplayed_card.map(item=>{
+            if(item[0]===seat){
+                if(item[1].split('')[0]==='S'){DeclarerOrDummyCards[0]+=item[1].split('')[1]}
+                if(item[1].split('')[0]==='H'){DeclarerOrDummyCards[1]+=item[1].split('')[1]}
+                if(item[1].split('')[0]==='D'){DeclarerOrDummyCards[2]+=item[1].split('')[1]}
+                if(item[1].split('')[0]==='C'){DeclarerOrDummyCards[3]+=item[1].split('')[1]}
+                
+            }
+        });
+        this.testDummy(DeclarerOrDummySeat,DeclarerOrDummyCards.join('.'))
+    }
+    
+    recoverTrick=(Item,which,state)=>{
+            let card = null, playSeatCard = null, last = 0;
+            card = Item[1].split('')[1]+Item[1].split('')[0]      // 对收到的牌处理成‘5C’的格式
+            playSeatCard = this.state.cards[this.state.userdir.indexOf(Item[0])]
+            console.log(playSeatCard)
+            playSeatCard.map(item=>{
+                if(item.card.split('')[0]==='X'&&last===0){
+                    if(state&&item['animation']['left']!==this.width / 2){
+                        item.card=card;
+                        last=1
+                    }else if(!state){
+                        item.card=card;
+                        last=1
+                    }
+                }
+            })
+            playSeatCard.map((item1,index1)=>{      //动画，将当前出牌人出的牌放到board中，即表现为出牌
+                if(item1.card===card){
+                    console.log(Item[1])
+                    this.board.push(item1);
+                    this.lastTrickPos.push(Item[0]);
+                    if(which==='last') {
+                        this.moveToPlayed(item1)
+                    }
+                    if(which==='current'||which==='play') {
+                        this.playCard(item1)
+                    }
+                }
+            });
+        if(this.board.length===4){
+            this.lastTrickCard = {pos:this.lastTrickPos,card:this.board};
+            if(which==='play'){setTimeout(this.clearBoard, 1000)}
+            else{this.clearBoard()}
+        }
+    }
+ 
+    filterMyCards=()=>{
+        this.state.cards[this.state.userdir.indexOf(this.myseat)].map(item=>{
+            if(item.card.split('')[0]==='X'){
+                this.moveToPlayed(item)
+            }
+        })
+    }
+
+    setClaimtrick=()=>{
+        let countClaim = 0;
+        this.state.lastState.unplayed_card.map(item1=>{    //设置可claim的墩数
+            if(item1[0]===this.state.declarer){
+                countClaim += 1;
+            }
+        });
+        this.claimtrick = countClaim;
+    }
+
+    setPlayingState=()=>{
+        this.setState({
+            contract:this.state.lastState.contract,
+            declarer:this.state.lastState.declarer,
+            dummy:this.state.lastState.dummy,
+            ns_win:this.state.lastState.ns_win,
+            ew_win:this.state.lastState.ew_win,
+            nextplayer:this.state.lastState.player,    //设置下一个出牌人
+            next:Table.dirCN[Table.dir.indexOf(this.state.lastState.player)]
+        })
+        console.log('next'+ this.state.next)
+        this.timing(null,0,()=>{},true);
+    }
+
+    counterTime=()=>{
+        timer=setInterval(()=>{
+            let [hour,minute,second]=[0,0,0];
+            let time = this.state.totalTime;
+            hour = Math.floor(time/60/60);
+            minute = Math.floor((time-hour*60*60)/60); 
+            second = (time-hour*60*60-minute*60);
+            time = time-1;
+            //this.setState({totalTime:time, formatTime:`${hour}:${minute}:${second}`})
+            this.setState({totalTime:time, formatTime:`${hour>9?hour:'0'+hour}: ${minute>9?minute:'0'+minute}: ${second>9?second:'0'+second}`})
+        },1000);
+    }
+    
+    checkTest=()=>{
+        ReactDOM.unmountComponentAtNode(document.querySelector('#clock'));
+        this.timing('east',0,()=>{},true)
+    }
+
+    searchLastboard=()=>{
+       // if(this.board_id_list&&this.board_id_list.indexOf(this.board_id)>0){
+           // this.props.toResult(this.table_id);            
+       // }
     }
 
     render() {
@@ -1001,7 +1319,6 @@ class Table extends Component {
         // cards 从 state.cards 遍历获得。不要重复构造，而所有操作只操作数据。
         const cards = this.state.cards.map((item1, index1) => {
             return item1.map((item2, index2) => {
-
                 return <Card
                     active={item2.active}
                     onClick={item2.onclick}
@@ -1037,31 +1354,43 @@ class Table extends Component {
              */
             <div>
                 <div id='table' className='match_table' style={css.table}>
-                    
                     <div id='header' className='header' style={css.header}>
                         <div className='re' style={css.re}><Imps /></div>
-                        <div className='re' style={css.re}  
-                        // onClick={this.openDebug}
-                        >
-                        <Seats 
-                        dealer={Table.seats[this.state.userdir.indexOf(this.dealer)]} 
-                        board_id={this.board_id_list?this.board_id_list.indexOf(this.board_id)+1:null}
-                        />
+                        <div className='re' style={css.re}>
+                            <Seats 
+                            dealer={Table.seats[this.state.userdir.indexOf(this.dealer)]} 
+                            board_id={this.board_id_list?this.board_id_list.indexOf(this.board_id)+1:null}
+                            />
                         </div>
                         <div className='re' style={css.re} onClick={this.lastTrick}>
-                        <Tricks 
-                        contract={this.state.contract}
-                        declarer={this.state.declarer}
-                        vertical={this.myseat==='N'||this.myseat==='S'?this.state.ns_win:this.state.ew_win}
-                        transverse={this.myseat==='N'||this.myseat==='S'?this.state.ew_win:this.state.ns_win}
-                        />
+                            <Tricks 
+                            contract={this.state.contract}
+                            declarer={this.state.declarer}
+                            vertical={this.myseat==='N'||this.myseat==='S'?this.state.ns_win:this.state.ew_win}
+                            transverse={this.myseat==='N'||this.myseat==='S'?this.state.ew_win:this.state.ns_win}
+                            />
                         </div>
-                        {this.state.declarer===this.myseat?<button onTouchEnd={this.claim} className="claimbtn">摊牌</button>:null}
+                        <div>
+
+                        <div className='totalTime' style={{width: this.width * 0.28,height: this.width * 0.08, paddingLeft:'2px',lineHeight:this.width * 0.08+'px',textAlign:'center'}}>{this.state.formatTime}</div>
+                        {this.state.declarer===this.myseat?
+                        <div onClick={this.state.playCardNumber===0?null:this.claim} style={{width: this.width * 0.08,height: this.width * 0.08,textAlign:'center',fontSize:12,lineHeight:this.width*0.08+'px'}} className="totalTime">摊牌</div>
+                        :null}
+                        </div>
+                        <div>
+
+                        <div className='totalTime' style={{width: this.width * 0.08,height: this.width * 0.10,textAlign:'center',fontSize:12}} onClick={this.searchLastboard}>历史记录</div>
+                        <div className='totalTime' style={{width: this.width * 0.28,height: this.width * 0.10, paddingLeft:2,lineHeight:this.width * 0.10+'px'}} >当前: {this.state.next}</div>
+                        </div>
+                        {/* <div className='totalTime' style={{width: this.width * 0.08,height: this.width * 0.10,textAlign:'center',fontSize:12}} onClick={this.searchLastboard}>历史记录</div> */}
+                        {/* {this.state.declarer===this.myseat?<button onTouchEnd={this.state.playCardNumber===0?null:this.claim} className="claimbtn">摊牌</button>:null} */}
                         <div id='result' style={css.re}>结果</div> 
                         <div id='sound'></div>
+                        <div id='clock'></div>
                     </div>
                     <div id='body' className='body' style={css.body}>
-                        {!this.state.online?<div className='mask' style={css.body}><p style={{marginTop:80,fontSize:20,fontWeight:'bold'}}>牌手{this.state.offlinePlayer}已掉线，请耐心等待......</p></div>:null}
+                        {/* {!this.state.online?<div className='mask' style={css.body}><p style={{marginTop:80,fontSize:20,fontWeight:'bold'}}>牌手{this.state.offlinePlayer}已掉线，请耐心等待......</p></div>:null} */}
+                        {/* <div id='clock'></div> */}
                         {this.state.lastTrick ? <div id='lastTrick' className='lastTrick'></div> : null}
                         {(this.state.scene === 1) ?
                             <div className='panel' style={css.panel}>
@@ -1076,48 +1405,65 @@ class Table extends Component {
                         <Claim 
                         claimseat={this.state.declarer===this.myseat?0:2}
                         isDummy={this.state.dummy===this.myseat}
-                        claimnum={this.claimnum}
+                        claimnum={this.state.claimnum}
+                        active={this.state.claimingState.indexOf(this.myseat)>-1}
+                        // claimnum={this.claimnum}
+                        claiming={this.state.claiming}
                         number={this.claimtrick} 
                         onSubmit={this.handleClaim} 
                         onSubmit1={this.handleClaimMsg}
                         cancelClaim={this.cancelClaim} /> 
                         : null}
-                        <div id='clock'></div>
-                        <div id='east' className='east' style={css.east} ref={this.ref.east}>east</div>
-                        <div id='west' className='west' style={css.west} ref={this.ref.west}>west</div>
-                        <div id='south' className='pan_south' style={css.south} ref={this.ref.south}>south</div>
-                        <div id='north' className='pan_north' style={css.north} ref={this.ref.north}>north</div>
+                        <div id='east' className='east' style={css.east} ref={this.ref.east}></div>
+                        <div id='west' className='west' style={css.west} ref={this.ref.west}></div>
+                        <div id='south' className='pan_south' style={css.south} ref={this.ref.south}></div>
+                        <div id='north' className='pan_north' style={css.north} ref={this.ref.north}></div>
                         <div id='board' className='board' style={css.board} ref={this.ref.board}>
-                        <div className='userTag'><div className='seat' style={{backgroundColor: this.nextplayer===this.state.userdir[0]?'#ee88ee':'#ffff55'}}>
-                                {Table.seatscn[ Table.seats.indexOf(this._shift('east')) ]}:
-                            {this.state.user[this._shift('east')]}</div></div>
-                            <div className='userTag'><div className='seat'  style={{backgroundColor: this.nextplayer===this.state.userdir[1]?'#ee88ee':'#ffff55'}}>
-                                {Table.seatscn[Table.seats.indexOf(this._shift('south'))]}:
-                            {this.state.user[this._shift('south')]}</div></div>
-                            <div className='userTag'><div className='seat'  style={{backgroundColor: this.nextplayer===this.state.userdir[2]?'#ee88ee':'#ffff55'}}>
-                                {Table.seatscn[Table.seats.indexOf(this._shift('west'))]}:
-                            {this.state.user[this._shift('west')]}</div></div>
-                            <div className='userTag'><div className='seat'  style={{backgroundColor: this.nextplayer===this.state.userdir[3]?'#ee88ee':'#ffff55'}}>
-                                {Table.seatscn[Table.seats.indexOf(this._shift('north'))]}:
-                            {this.state.user[this._shift('north')]}</div></div>
+                            <div className='userTag'>
+                                <div className='seat' style={{backgroundColor: this.state.nextplayer===this.state.userdir[0]?'#ee88ee':'#ffff55'}}>
+                                    {this.state.declarer===this.state.userdir[Table.seats.indexOf('east')]?'(庄) ':null}
+                                    {Table.seatscn[ Table.seats.indexOf(this._shift('east')) ]}:
+                                    {this.state.user[this._shift('east')]}</div>
+                            </div>
+                            <div className='userTag'>
+                                <div className='seat'  style={{backgroundColor: this.state.nextplayer===this.state.userdir[1]?'#ee88ee':'#ffff55'}}>
+                                    {this.state.declarer===this.state.userdir[Table.seats.indexOf('south')]?'(庄) ':null}
+                                    {Table.seatscn[Table.seats.indexOf(this._shift('south'))]}:
+                                    {this.state.user[this._shift('south')]}</div>
+                            </div>
+                            <div className='userTag'>
+                                <div className='seat'  style={{backgroundColor: this.state.nextplayer===this.state.userdir[2]?'#ee88ee':'#ffff55'}}>
+                                    {this.state.declarer===this.state.userdir[Table.seats.indexOf('west')]?'(庄) ':null}
+                                    {Table.seatscn[Table.seats.indexOf(this._shift('west'))]}:
+                                    {this.state.user[this._shift('west')]}</div>
+                            </div>
+                            <div className='userTag'>
+                                <div className='seat'  style={{backgroundColor: this.state.nextplayer===this.state.userdir[3]?'#ee88ee':'#ffff55'}}>
+                                    {this.state.declarer===this.state.userdir[Table.seats.indexOf('north')]?'(庄) ':null}
+                                    {Table.seatscn[Table.seats.indexOf(this._shift('north'))]}:
+                                    {this.state.user[this._shift('north')]}</div>
+                            </div>
                             {this.state.scene === 0 ? <Prepare readyState={this.state.ready} handleReady={this.handleReady} /> : null}
                         </div>
                         {cards}
                     </div>
                     {this.state.debug ? <Debug o={this} /> : null}
-                    <div id='message' className='message'></div>
+                    <div id='message' className='message'>
+                    {/* {this.state.declarer===this.myseat?<button onTouchEnd={this.state.playCardNumber===0?null:this.claim} className="claimbtn">摊牌</button>:null} */}
+                    </div>
                     <div id='footer' className='footer' style={css.footer}>
                         <input id='say' type='text' />
                         <input type='button' value='发送' onClick={this.testChat}/>
                     </div>
                 </div>
-            </div >
-        );
+            </div>
+        )
     }
 }
 Table.seats = ['east', 'south', 'west', 'north']    
+Table.seatscn = ['东', '南', '西', '北']
 Table.dir = ['N','E','S','W']
 Table.dirAll = ['north','east','south','west']
-Table.seatscn = ['东', '南', '西', '北']
+Table.dirCN = ['北', '东', '南', '西']
 //export default Table
 export default Table

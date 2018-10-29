@@ -76,13 +76,20 @@ export default class PointDetail extends React.Component{
       })
     }
     if(this.props.Detail.plays){
-			let plays = this.state.playData
-			this.props.Detail.plays.map((item,index)=>{
-				if(item[0]!==0&&item[0]%4===0){
-					plays.push( DealFunc.playOrder(this.props.Detail.plays,i))
-					i++
-				}
-			})
+      let plays = this.state.playData
+      // let cardNum = 0;
+      // for(let cardNum=1;cardNum<=52;cardNum++){
+        this.props.Detail.plays.map((item,index)=>{
+      //     if(item[0]===cardNum){
+      //       plays.push( DealFunc.playOrder(this.props.Detail.plays,i))
+      //     	i++
+      //     }
+          if(item[0]!==0&&item[0]%4===0){
+          	plays.push( DealFunc.playOrder(this.props.Detail.plays,i))
+          	i++
+          }
+        })
+      // }
 			this.setState({ callData:calls, playData:plays })
 		}
 	}

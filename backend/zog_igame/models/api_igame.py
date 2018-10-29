@@ -473,7 +473,7 @@ class IntelligentTeamPlayer(models.Model):
                 close_table = line.match_id.close_table_id.partner_ids.mapped('id')
                 open_table = line.match_id.open_table_id.partner_ids.mapped('id')
                 if partner_id in close_table:
-                    if self.check_matches(line,close_table_id):
+                    if self.check_matches(close_table_id):
                         tables.append(line.match_id.close_table_id.id)
                     continue
                 if partner_id in open_table:

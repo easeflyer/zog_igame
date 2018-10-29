@@ -11,26 +11,40 @@ import React, { Component } from 'react';
  */
 class Clock extends Component {
     state = {
-        time: 0
+        time: 0,
+        addOrReduce:true,   //true，代表正计时；false，代表倒计时
     }
     constructor(props) {
+        console.log(props)
         super(props);
         this.color1 = '#eeee33';    // 表体颜色
         this.color2 = '#73D0F4';    // 铃铛颜色
-        this.state.time = props.time;
+        if(!props.addOrReduce){
+            this.state.time=props.time;
+            this.state.addOrReduce=props.addOrReduce;
+        }
     }
     timing = () => {
-        if (this.state.time === 0) {
-            this.props.callback();
-            clearInterval(this._clock);
-        } else {
+        if(this.state.addOrReduce){
             this.setState({
-                time: --this.state.time
+                time:++this.state.time
             })
+        }else{
+            if (this.state.time === 0) {
+                this.props.callback();
+                clearInterval(this._clock);
+            } else {
+                this.setState({
+                    time: --this.state.time
+                })
+            }
         }
     }
     componentDidMount() {
         this._clock = setInterval(this.timing, 1000)
+    }
+    componentWillUnmount(){
+        clearInterval(this._clock)
     }
     render() {
         const time = this.state.time;

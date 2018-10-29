@@ -47,7 +47,7 @@ export const App2 = Loadable({
 });
 export const Learn = Loadable({
     //比赛入口
-    // loader: () => import('./Game/game/Game'),
+    loader: () => import('./SingleGame/game/Game'),
     // loader: () => import('./Game/Index'),
     loading: () => loading1,
 });

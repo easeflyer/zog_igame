@@ -60,18 +60,20 @@ export default class PointResult extends React.Component{
 		data.map((item,index)=>{
 		// data.reverse().map((item,index)=>{
 			// 顺序：从 1 到 8
-			dataSource.push({
-				key: index,
-				number:index+1,
-				dealer:item.dealer,
-				vulnerable:item.vulnerable,
-				contract:item.result?item.result.split(' ')[1]:'-',
-				declarer:item.result?item.result.split(' ')[0]:'-',
-				openlead:item.openlead?item.openlead:'-',
-				result:item.result?item.result.split(' ')[2]:'-',
-				ew_point:item.ew_point?item.ew_point:'-',
-				ns_point:item.ns_point?item.ns_point:'-',
-			})
+			if(item.ns_point||item.ew_point){
+				dataSource.push({
+					key: index,
+					number:index+1,
+					dealer:item.dealer,
+					vulnerable:item.vulnerable,
+					contract:item.result?item.result.split(' ')[1]:'-',
+					declarer:item.result?item.result.split(' ')[0]:'-',
+					openlead:item.openlead?item.openlead:'-',
+					result:item.result?item.result.split(' ')[2]:'-',
+					ew_point:item.ew_point?item.ew_point:'-',
+					ns_point:item.ns_point?item.ns_point:'-',
+				})
+			}
 		})
 		this.forceUpdate()
 	}
@@ -82,6 +84,7 @@ export default class PointResult extends React.Component{
 		this.state.result.filter((item,index)=>{
 			if(index===record.key){
 				oneResult = item;
+				console.log(oneResult)
 				return oneResult;
 			}
 		});
@@ -90,20 +93,19 @@ export default class PointResult extends React.Component{
 
     render(){
         return(
-          	<WingBlank>
-             	<NavBar
-                mode="light"
-                // icon={<Icon type="left" />}
-                // onLeftClick={() => console.log('onLeftClick')}
-				>本局累计得分</NavBar>
+        <WingBlank>
+            <NavBar
+              mode="light"
+              icon={<Icon type="left" />}
+              onLeftClick={this.props.toTable}
+						>本局累计得分</NavBar>
 				<WhiteSpace/>
 				<Table 
 				className='pan_pointResultTable'
-                dataSource={dataSource} 
-                columns={columns}
+        dataSource={dataSource} 
+        columns={columns}
 				size="middle"
 				onRow={(record) => {
-					console.log()
 					return {
 					  onClick: () => {this.searchResultDetail(record)},       // 点击行
 					};

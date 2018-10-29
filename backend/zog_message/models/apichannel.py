@@ -67,9 +67,9 @@ class GameChannel(models.Model):
             board_ids = board_ids.mapped('id')
             channel = self.search([('table_id','=',table.id),('type','=','all')])
             opp_channel = self.check_opp_side(user_id,table_id)
-            if self.is_playing(table_id) != 'Notplaying':
-                vals = self.is_playing(table_id)
-                return vals, channel.id, board_ids, opp_channel
+            #if self.is_playing(table_id) != 'Notplaying':
+            #    vals = self.is_playing(table_id)
+            #    return vals, channel.id, board_ids, opp_channel
             return channel.id , board_ids, opp_channel
 
 
