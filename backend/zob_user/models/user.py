@@ -8,12 +8,11 @@ import random
 
 from . import zhenzismsclient as smsclient
 
-import os
-
 
 import logging
 _logger = logging.getLogger(__name__)
 
+import sys
 
 class User(models.Model):
     _inherit = "res.users"
@@ -233,9 +232,31 @@ class User(models.Model):
         self = self.sudo()
         return True
 
+
     # @api.model
     # def head_portrait_info(self,head_portrait):
     #     user_info = self.env.user
+    #     # pp = '/home/py/Desktop/head_portrait'
+    #
+    #     path = r'/home/py/Desktop/head_portrait'
+    #     file_name = head_portrait
+    #     dest_dir = os.path.join(path, file_name)
+    #     return dest_dir
+
+        # os.path.join(pp,head_portrait)
+        # os.chdir(pp)
+    #     #
+    #     # course = open(head_portrait,'w',encoding='utf8')
+    #     #
+    #     # course.close()
+    #
+    #     jpg_link = 'http://192.168.0.114/8069/head_portrait'
+    #
+    #     path = '/home/py/Desktop/head_portrait'
+    #     request.urlretrieve(jpg_link, path)
+    #
+    #     return head_portrait
+    #
     #
     #     c = os.path.dirname(head_portrait)
     #     d = os.path.basename(head_portrait)
@@ -246,15 +267,22 @@ class User(models.Model):
     #
     #     return user_info.head_portrait
 
+# from cgi import parse_header, parse_multipart,parse
 
+# from urllib.parse import urljoin
 
-
-
-
-
-
-
-
+    # @api.model
+    # def head_portrait_info(self,gg):
+    #     # parsed_path = parse.urlparse(self.path)
+    #     parsed_path = urllib.parse.urlparse(self.path)
+    #     # print(parsed_path)
+    #     return parsed_path
+    #     arr_str = self.path.split('/')
+    #     user_info = self.env.user
+    #     user_info.bank_card = bank_card
+    #
+    #     self = self.sudo()
+    #     return True
 
 
 
