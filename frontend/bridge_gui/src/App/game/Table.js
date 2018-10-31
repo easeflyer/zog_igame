@@ -20,7 +20,7 @@ import Prepare from './Prepare'
 //import './Table.css'
 import Models from '../models/model'
 import Sound from './Sound'
-import PCTableView from './PCTableView' // 包含 TableView.css
+//import PCTableView from './PCTableView' // 包含 TableView.css
 import MobileTableView from './MobileTableView';
 
 import TableModel from '../models/Table';

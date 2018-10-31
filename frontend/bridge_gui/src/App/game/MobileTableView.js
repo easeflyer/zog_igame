@@ -5,6 +5,8 @@ import BidPanel from './BidPanel'
 import Table from './Table'
 import { Imps, Seats, Tricks } from './Headers'
 import Prepare from './Prepare'
+//import UserTag from './UserTag'
+import './MobileTableView.css'
 /**
  * 用来模拟 table 对象保证 tableview 组件可独立测试。
   */
@@ -38,6 +40,72 @@ const _tableObj = {
 const MobileTableView = (props) => {
   // 只要 table 和 cards 传入即可。
   const table = props.table;
+  const mwidth = window.innerWidth;
+  console.log('thissss:',this);
+  table.css = {
+    table: {
+        width: mwidth,
+        height: this.height,
+        fontSize: mwidth * 0.04 + 'px'
+    },
+    panel: {
+        top: mwidth * 0.32,
+        left: mwidth * 0.2,
+        width: mwidth * 0.6,
+        height: mwidth * 0.6
+    },
+    header: {
+        width: mwidth,
+        height: mwidth * 0.2,
+    },
+    body: {
+        width: mwidth,
+        height: mwidth,
+        fontSize: mwidth * 0.04 + 'px'
+    },
+    footer: {
+        width: mwidth,
+        height: '40px',
+    },
+    east: {
+        top: mwidth * 0.2,
+        width: mwidth * 0.2,
+        height: mwidth * 0.6,
+    },
+    south: {
+        width: mwidth,
+        height: mwidth * 0.2,
+    },
+    west: {
+        top: mwidth * 0.2,
+        width: mwidth * 0.2,
+        height: mwidth * 0.6,
+    },
+    north: {
+        width: mwidth,
+        height: mwidth * 0.2,
+    },
+    re: {
+        width: mwidth * 0.19,
+        height: mwidth * 0.19,
+    },
+    board: {
+        width: mwidth * 0.6,
+        height: mwidth * 0.6,
+        top: mwidth * 0.2,
+        left: mwidth * 0.2,
+    },
+    result: {
+        width: mwidth * 0.6,
+        height: mwidth * 0.2,
+        top: mwidth * 0.6,
+        left: mwidth * 0.2,
+        zIndex: 1000,
+        textAlign: 'center',
+        fontSize: mwidth * 0.06 + 'px',
+    }
+  }
+
   const cards = table.cards;
   console.log('table1:',table);
   const stat = Object.values(table.state.user).map(e => e.ready)
@@ -69,17 +137,25 @@ const MobileTableView = (props) => {
           <div id='north' className='north' style={table.css.north} ref={table.ref.north}></div>
           <div id='board' className='board' style={table.css.board} ref={table.ref.board}>
             <div className='userTag'><div className='seat'>
-              {Table.seatscn[Table.seats.indexOf(table._shift('east'))]}:
-                        {table.state.user[table._shift('east')].name}</div></div>
+              {/* <UserTag user={table.state.user['east']} table={table} /> */}
+              {/* {Table.seatscn[Table.seats.indexOf(table._shift('east'))]}:
+              {table.state.user[table._shift('east')].name} */}
+              </div></div>
             <div className='userTag'><div className='seat'>
-              {Table.seatscn[Table.seats.indexOf(table._shift('south'))]}:
-                        {table.state.user[table._shift('south')].name}</div></div>
+              {/* <UserTag user={table.state.user['south']} table={table} /> */}
+              {/* {Table.seatscn[Table.seats.indexOf(table._shift('south'))]}:
+              {table.state.user[table._shift('south')].name} */}
+              </div></div>
             <div className='userTag'><div className='seat'>
-              {Table.seatscn[Table.seats.indexOf(table._shift('west'))]}:
-                        {table.state.user[table._shift('west')].name}</div></div>
+              {/* <UserTag user={table.state.user['west']} table={table} /> */}
+              {/* {Table.seatscn[Table.seats.indexOf(table._shift('west'))]}:
+              {table.state.user[table._shift('west')].name} */}
+              </div></div>
             <div className='userTag'><div className='seat'>
-              {Table.seatscn[Table.seats.indexOf(table._shift('north'))]}:
-                        {table.state.user[table._shift('north')].name}</div></div>
+              {/* <UserTag user={table.state.user['north']} table={table} /> */}
+              {/* {Table.seatscn[Table.seats.indexOf(table._shift('north'))]}:
+              {table.state.user[table._shift('north')].name} */}
+              </div></div>
             {table.state.scene == 0 ? <Prepare stat={stat} ready={table.handleReady} /> : null}
           </div>
           {cards}
