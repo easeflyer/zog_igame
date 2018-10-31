@@ -2,7 +2,7 @@ import React from 'react';
 import Debug from './Debug'
 import Claim from './Claim'
 import BidPanel from './BidPanel'
-import Table from './Table'
+import Table from '../../game/Table'
 import { Imps, Seats, Tricks } from './Headers'
 import Prepare from './Prepare'
 /**

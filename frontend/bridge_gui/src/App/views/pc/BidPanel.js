@@ -5,7 +5,7 @@
  */
 
 import React, { Component } from 'react';
-import Motion from '../libs/Motion'
+import Motion from '../../libs/Motion'
 import './BidPanel.css'
 
 /**

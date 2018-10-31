@@ -6,10 +6,10 @@
 
 
 import React, { Component } from 'react';
-import Models from '../models/model'
-import { TableModel } from '../models/Table';
-import TableModels from '../models/Table';
-import Card from './Card'
+import Models from '../../models/model'
+import { TableModel } from '../../models/Table';
+import TableModels from '../../models/Table';
+import Card from '../../game/Card';
 
 
 

@@ -9,7 +9,7 @@ import React from 'react';
 import Debug from './Debug'
 import Claim from './Claim'
 import BidPanel from './BidPanel'
-import Card from './Card'
+import Card from '../../game/Card'
 import { Imps, Seats, Tricks } from './Headers'
 import Prepare from './Prepare'
 import UserTag from './UserTag'

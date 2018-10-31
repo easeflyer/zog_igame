@@ -12,16 +12,16 @@ import ReactDOM from 'react-dom';
 //import settings from '../game/settings';
 import Card from './Card'
 //import BidPanel from './BidPanel'
-import Clock from './Clock'
-import { Imps, Seats, Tricks } from './Headers'
-import Prepare from './Prepare'
+import Clock from '../views/pc/Clock'
+import { Imps, Seats, Tricks } from '../views/pc/Headers'
+import Prepare from '../views/pc/Prepare'
 //import Claim from './Claim'
 //import Debug from './Debug'
 //import './Table.css'
 import Models from '../models/model'
 import Sound from './Sound'
-//import PCTableView from './PCTableView' // 包含 TableView.css
-import MobileTableView from './MobileTableView';
+//import PCTableView from '../views/pc/PCTableView' // 包含 TableView.css
+import MobileTableView from '../views/mobile/MobileTableView';
 
 import TableModel from '../models/Table';
 /**
