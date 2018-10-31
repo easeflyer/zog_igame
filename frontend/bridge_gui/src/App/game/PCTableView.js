@@ -14,18 +14,52 @@ import { Imps, Seats, Tricks } from './Headers'
 import Prepare from './Prepare'
 import UserTag from './UserTag'
 import Timer from './Timer'
-import './TableView.css'
+import './PCTableView.css'
+
+
+/**
+ * 用来模拟 table 对象保证 tableview 组件可独立测试。
+  */
+const _tableObj = {
+  cards:[],
+  state:{
+    scene:0,
+    calldata: [['1C','2C','PASS','PASS'],['3H','PASS','PASS','4NT'],['PASS','PASS','PASS','']],
+    user: {
+      east: { ready: 0, name: '张三', face: '/imgs/face1.png', rank: '大师' },
+      south: { ready: 0, name: '李四', face: '/imgs/face2.png', rank: '专家' },
+      west: { ready: 0, name: '王五', face: '/imgs/face1.png', rank: '王者' },
+      north: { ready: 0, name: '赵六', face: '/imgs/face2.png', rank: '钻石' }
+    },    
+  },
+  ref:{east:null,south:null,west:null,north:null},
+  openDebug:e=>null,
+  debug:e=>null,
+  lastTrick:e=>null,
+  timer:{stop:e=>null,start:e=>null},
+  claim:e=>null,
+  bid:e=>null,
+}
+
 /**
  * TableView 的用途
  * 增加 TableView 的目的是 把 牌桌的排版进行单独设置。增加view1,2,3
  * 本代码原本是在 Table 的 render 里写的。
  * 完整 copy 到这里，然后替换 this 为 props.table 进行简单的替换完成。
+ * 
+ * 单元测试：
+ * 开启：//const table = _tableObj;
  */
 const TableView = (props) => {
-  // this.width = props.table.width;
-  // this.height = props.table.height;
+  /* 这里应该对 props 做处理，提高 view 的独立性。
+    换句话说，这里对入口数据进行判断。如果入口数据有错误，照样正常显示view
+    比如用模拟数据。
+  */
+
   const table = props.table;
-  const cards = Card.createComponents(table.state.cards)
+  //const table = _tableObj;
+  const cards = table.cards;
+  console.log('table1:',table);
   const stat = Object.values(table.state.user).map(e => e.ready)
   return (
     <div>
@@ -126,4 +160,5 @@ const TableView = (props) => {
     </div >
   );
 }
+
 export default TableView;

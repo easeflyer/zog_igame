@@ -1,6 +1,10 @@
 /**
  * Game  是一局比赛，涉及到了比赛者，以及和比赛相关的其他信息。重点在于比赛。
  * Table 是一桌游戏的界面：重点在于 一桌
+ * 
+ * <TableView table={this} />
+ *  把控制器直接给到 view 也就是说控制器的事件处理和 state 都给到了view
+ *  event 和 state 就是  view 的输入数据。
  */
 
 import React, { Component } from 'react';
@@ -16,34 +20,21 @@ import Prepare from './Prepare'
 //import './Table.css'
 import Models from '../models/model'
 import Sound from './Sound'
-import TableView from './TableView' // 包含 TableView.css
+import PCTableView from './PCTableView' // 包含 TableView.css
 
 import TableModel from '../models/Table';
 /**
  * Table 一桌游戏
  *      1 是牌桌的容器组件，或者说是控制器组件(MVC)
  *      2 state       ：数据由 模型计算提供。
- *      3 事件处理函数：主要是触发 setState。
- *      4 通过 context api 把 state 保存起来
+ *      3 事件        ：处理函数,主要是触发 setState。
+ *      4 通过 context api 把 state 保存起来（暂时没用到）
  *      5 调用 tableview 显示界面。
  * TableModel 是模型组件。
  *      所有数据计算，尤其是 state 的计算，都在这里进行。控制器调用。
  */
 class Table extends Component {
-    state = {
-        cards: null, // 考虑这里不用 cards 只用必要的数字
-        scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
-        calldata: [], // todo 补充 calldata 4列（东西南北）若干行的数组参考 call 方法
-        user: {
-            east    : { ready: 0, name: '张三', face: '/imgs/face1.png', rank: '大师' },
-            south   : { ready: 0, name: '李四', face: '/imgs/face2.png', rank: '专家' },
-            west    : { ready: 0, name: '王五', face: '/imgs/face1.png', rank: '王者' },
-            north   : { ready: 0, name: '赵六', face: '/imgs/face2.png', rank: '钻石' }
-        },
-        lastTrick: false,  // 最后一墩牌是否显示
-        //playseat:null, // 倒计时解决
-        debug: false,
-    }
+    state = TableModel.state; // 从模型获得 state
     /**
      * 重构参考： 打牌的几个阶段，应该在规则里面，调入进来。
      * 属性列表：
@@ -90,6 +81,8 @@ class Table extends Component {
         //this.state.cards = this.initDeals() // 把以上牌初始化放到桌子上(不发牌)
         //this.state.cards = this.initCards() // 把以上牌初始化放到桌子上(不发牌)
         this.state.cards = TableModel.state.cards;
+        //this.cards = Card.createComponents(this.state.cards);
+
         // console.log('this.state.cards:',this.state.cards)
     }
     /**
@@ -106,12 +99,12 @@ class Table extends Component {
 
     /**
      * 完成挂载后，要计算 各个位置的坐标。
+     * _initSeat 初始化 发牌位置 出牌位置等坐标
      */
     componentDidMount() {
-        this._initSeat(); // 初始化 发牌位置 出牌位置等坐标
+        this._initSeat(); // 
         // this._initVideo('table02open');
         //console.log(parseInt(center.y) - parseInt(this.csize) * 0.7 / 2)
-
     }
 
 
@@ -263,7 +256,7 @@ class Table extends Component {
         }
         const clock = (
             <div style={style}>
-                <Clock time={time} callback={callback} />
+                0.
             </div>
         );
         ReactDOM.render(
@@ -340,8 +333,9 @@ class Table extends Component {
     }
     render() {
         // 考虑这里判断手机，还是pc，可以通过不同路由来判断。不用自适应。
+        this.cards = Card.createComponents(this.state.cards);
         return (
-            <TableView table={this} />
+            <PCTableView table={this} />
         );
     }
 }

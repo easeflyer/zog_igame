@@ -1,3 +1,7 @@
+/**
+ * 这个Models 用来模拟数据提供。
+ */
+
 class Models{
     static deals(){
         // E               S                W                N

@@ -4,6 +4,10 @@ import { flexLayout } from '../libs/layout.js'
 /**
  * TableModel 游戏桌 数据Model
  * 
+ * 这个类主要用于 数据的计算，用来构造新的 state
+ * 这里不含有任何 React 的组件。
+ * Table.js 也就是 Table 控制器（容器）类调用本类
+ * 
  * 输入：
  * 输出：
  * 
@@ -457,6 +461,7 @@ TableModel.seatscn = ['东', '南', '西', '北']
 
 /**
  * 直接实例化，因为一局游戏只有一个桌子。
+ * Table.js 也就是 Table 控制器（容器）类调用本类
  */
 export { TableModel };
 export default new TableModel();
