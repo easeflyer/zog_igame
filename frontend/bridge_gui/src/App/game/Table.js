@@ -21,6 +21,7 @@ import Prepare from './Prepare'
 import Models from '../models/model'
 import Sound from './Sound'
 import PCTableView from './PCTableView' // 包含 TableView.css
+import MobileTableView from './MobileTableView';
 
 import TableModel from '../models/Table';
 /**
@@ -335,7 +336,7 @@ class Table extends Component {
         // 考虑这里判断手机，还是pc，可以通过不同路由来判断。不用自适应。
         this.cards = Card.createComponents(this.state.cards);
         return (
-            <PCTableView table={this} />
+            <MobileTableView table={this} />
         );
     }
 }
