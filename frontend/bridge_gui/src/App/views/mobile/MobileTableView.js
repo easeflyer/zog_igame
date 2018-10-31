@@ -2,7 +2,7 @@ import React from 'react';
 import Debug from './Debug'
 import Claim from './Claim'
 import BidPanel from './BidPanel'
-import Table from './Table'
+//import Table from '../../game/Table'
 import { Imps, Seats, Tricks } from './Headers'
 import Prepare from './Prepare'
 //import UserTag from './UserTag'
@@ -42,7 +42,7 @@ const MobileTableView = (props) => {
   const table = props.table;
   const mwidth = window.innerWidth;
   console.log('thissss:',this);
-  table.css = {
+  table.css = {  // 参考 PCTableView 去掉 table.css
     table: {
         width: mwidth,
         height: this.height,
