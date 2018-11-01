@@ -20,8 +20,8 @@ import Prepare from '../views/pc/Prepare'
 //import './Table.css'
 import Models from '../models/model'
 import Sound from './Sound'
-//import PCTableView from '../views/pc/PCTableView' // 包含 TableView.css
-import MobileTableView from '../views/mobile/MobileTableView';
+//import TableView from '../views/pc/PCTableView' // 包含 TableView.css
+import TableView from '../views/mobile/MobileTableView';
 
 import TableModel from '../models/Table';
 /**
@@ -177,6 +177,7 @@ class Table extends Component {
             scene: 3
         })
     }
+
     /**
      * 预留发送 数据接口
      */
@@ -264,7 +265,6 @@ class Table extends Component {
             clock,
             document.querySelector('#clock')
         )
-
     }
 
     /**
@@ -336,7 +336,7 @@ class Table extends Component {
         // 考虑这里判断手机，还是pc，可以通过不同路由来判断。不用自适应。
         this.cards = Card.createComponents(this.state.cards);
         return (
-            <MobileTableView table={this} />
+            <TableView table={this} />
         );
     }
 }

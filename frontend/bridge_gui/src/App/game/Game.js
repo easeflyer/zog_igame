@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import settings from '../game/settings';
 import Table from './Table';
-//import Bid from '../views/BidPanel'
-import Bid from '../views/pc/BidPanel'
 /**
  * Game  是一局比赛，涉及到了比赛者，以及和比赛相关的其他信息。重点在于比赛。
  * Table 是一桌游戏的界面：重点在于 一桌
@@ -49,11 +47,7 @@ class Game extends Component {
 
     }
     render() {
-        return (
-            <Table>
-                <Bid />
-            </Table>
-        );
+        return <Table />
     }
 }
 

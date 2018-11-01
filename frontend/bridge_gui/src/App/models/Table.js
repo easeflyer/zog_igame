@@ -46,12 +46,17 @@ class TableModel {
     }
     this.initCards();
   }
+  // 横屏取高度，竖屏取宽度
+  get size(){
+    return this.height>this.width?this.width:this.height;
+  }
   get csize() {
     /*  短路语法 牌的大小 可以计算在下面的函数内。
         可以考虑用 vh 改造，所有计算都按照比例计算。
+        横屏取 高度，竖屏取宽度。（正方形桌面的边长）
     */
     return this._csize || (() => {
-      return this.height * 0.18;
+      return this.size * 0.18;
     })()
   }
   /**
@@ -159,15 +164,15 @@ class TableModel {
   /**
    * 清理桌面上的牌
    * 定位参考：
-   *  -this.height * 0.2;  计分位置
+   *  -this.size * 0.2;  计分位置
    */
   //model
   clearBoard = () => {
     //if(this.board.length < 4) return false;
     const board = this.board;
     for (let i = 0; i < board.length; i++) {
-      board[i].animation.left = this.height / 2;
-      board[i].animation.top = -this.height * 2;
+      board[i].animation.left = this.size / 2;
+      board[i].animation.top = -this.size * 2;
       //board[i].animation.rotate = 0;
       // board[i].animation.left = 100;
       // board[i].animation.top = 100;
@@ -205,6 +210,7 @@ class TableModel {
     const cards = this.state.cards;
     const sepY = this.csize * 0.15;
     const sepX = this.csize * 0.25;
+    const size = this.height > this.width ? this.width : this.height;
     //let rotate = 0;
     console.log('tmseats:', TableModel.seats)
     const offset = this.csize * 0.7 / 2
@@ -213,8 +219,8 @@ class TableModel {
       let seat = TableModel.seats[index]
       let [x, y] = [this.seat[seat][0].x, this.seat[seat][0].y]
       if ('02'.indexOf(index) != -1) rotate = -90;
-      x = x + this.height / 16 / 5;
-      y = y + this.height / 16 / 5; // margin
+      x = x + size / 16 / 5;
+      y = y + size / 16 / 5; // margin
       item.forEach((item1, index1) => {
         cards[index][index1].animation = {
           top: y,
@@ -270,22 +276,22 @@ class TableModel {
       this.seat[key][0]['x'] = seats[key]['x'];
 
       if (key == 'east') {
-        this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.height * 0.06
+        this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.size * 0.06
         // 下面是处理　牌的叠放顺序　联合参考：dealCards
-        //this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.height * 0.4
+        //this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.size * 0.4
         this.seat[key][1]['y'] = center.y - offset
         this.seat[key][1]['x'] = center.x - offset * 0.8
       } else if (key == 'south') {
-        this.seat[key][0]['x'] = this.seat[key][0]['x'] //+ this.height * 0.21
+        this.seat[key][0]['x'] = this.seat[key][0]['x'] //+ this.size * 0.21
         //this.seat[key][1]['y'] = center.y + offset - this.csize / 2;
         this.seat[key][1]['y'] = center.y - offset * 0.8
         this.seat[key][1]['x'] = center.x - offset
       } else if (key == 'west') {
-        this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.height * 0.06
+        this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.size * 0.06
         this.seat[key][1]['y'] = center.y - offset
         this.seat[key][1]['x'] = center.x + offset * 0.8 - this.csize;
       } else if (key == 'north') {
-        this.seat[key][0]['x'] = this.seat[key][0]['x'] //+ this.height * 0.21
+        this.seat[key][0]['x'] = this.seat[key][0]['x'] //+ this.size * 0.21
         this.seat[key][1]['y'] = center.y + offset * 0.8 - this.csize;
         this.seat[key][1]['x'] = center.x - offset
       }
@@ -309,7 +315,7 @@ class TableModel {
     let length = 0;
     let ps = 0;
     cards.forEach(card => card.active == 2 && length++)
-    const layout = flexLayout(this.height, length, 2)
+    const layout = flexLayout(this.size, length, 2)
     return cards.map((card, index) => {
       if (card.active == 2) {
         ps = layout.shift();
@@ -392,11 +398,11 @@ class TableModel {
       card = this.cardIndexOf(item.index)
       //card.size = card.size * 0.8
       card['animation']['left'] = (show == true) ?
-        this.seat[TableModel.seats[index]][1].x - this.height / 2.9
-        : this.height / 2;
+        this.seat[TableModel.seats[index]][1].x - this.size / 2.9
+        : this.size / 2;
       card['animation']['top'] = (show == true) ?
-        this.seat[TableModel.seats[index]][1].y - this.height / 2.9
-        : -this.height * 2;
+        this.seat[TableModel.seats[index]][1].y - this.size / 2.9
+        : -this.size * 2;
       //card['size'] = card['size'] * 0.7
       // card['animation']['rotate'] = 180;
       // card['position']['x'] = this.seat[Table.seats[index]][1].x;

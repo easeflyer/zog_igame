@@ -41,11 +41,12 @@ const MobileTableView = (props) => {
   // 只要 table 和 cards 传入即可。
   const table = props.table;
   const mwidth = window.innerWidth;
+  const mheight = window.innerHeight;
   console.log('thissss:',this);
   table.css = {  // 参考 PCTableView 去掉 table.css
     table: {
         width: mwidth,
-        height: this.height,
+        height: mheight,
         fontSize: mwidth * 0.04 + 'px'
     },
     panel: {
