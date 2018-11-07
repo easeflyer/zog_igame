@@ -1,15 +1,30 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-//import App from './App/ui/utest';  // 单元测试引入这个 到 App
-import Game from './App/game/Game';  
-//import Game from './App/game/PCTableView'; //  单元测试 PCTableView
-//import Game from './App/test/card_motion' // 测试用例
-//import Game from './App/test/com_render' // 测试用例
-//import Game from './App/test/test_card' // 测试用例
-import registerServiceWorker from './registerServiceWorker';
+//import promiseFinally from 'promise.prototype.finally';
+import React from 'react';
+import { HashRouter } from 'react-router-dom';
+//import { useStrict } from 'mobx';
+import { Provider } from 'mobx-react';
 
-const game = new Game();
-game.start();
+import App from './App/components/App';
 
-registerServiceWorker();
+import testStore from './stores/testStore';
+import commonStore from './stores/commonStore';
+
+const stores = {
+  testStore,
+  commonStore
+};
+
+// For easier debugging
+window._____APP_STATE_____ = stores;
+
+//promiseFinally.shim();
+//useStrict(true);
+
+ReactDOM.render((
+  <Provider {...stores}>
+    <HashRouter>
+      <App />
+    </HashRouter>
+  </Provider>
+), document.getElementById('root'));
