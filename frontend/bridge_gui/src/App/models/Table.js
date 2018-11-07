@@ -405,8 +405,8 @@ class TableModel {
         : -this.size * 2;
       //card['size'] = card['size'] * 0.7
       // card['animation']['rotate'] = 180;
-      // card['position']['x'] = this.seat[Table.seats[index]][1].x;
-      // card['position']['y'] = this.seat[Table.seats[index]][1].y;
+      // card['position']['x'] = this.seat[Table.seatsen[index]][1].x;
+      // card['position']['y'] = this.seat[Table.seatsen[index]][1].y;
       //card['animation'] = ''
       //card['animation']['delay'] = 0;
       card.active = 1; // 测试用

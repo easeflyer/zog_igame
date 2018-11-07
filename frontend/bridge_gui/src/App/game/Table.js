@@ -20,8 +20,8 @@ import Prepare from '../views/pc/Prepare'
 //import './Table.css'
 import Models from '../models/model'
 import Sound from './Sound'
-//import TableView from '../views/pc/PCTableView' // 包含 TableView.css
-import TableView from '../views/mobile/MobileTableView';
+import TableView from '../views/pc/PCTableView' // 包含 TableView.css
+//import TableView from '../views/mobile/MobileTableView';
 
 import TableModel from '../models/Table';
 /**
@@ -40,7 +40,6 @@ class Table extends Component {
      * 重构参考： 打牌的几个阶段，应该在规则里面，调入进来。
      * 属性列表：
      *  scene: 1 叫牌，2 打牌 3 claim 4 展示比分
-     *         1 
      *  deals: 牌，除了自己的牌，其他人的牌应该不显示
      *  seat：ESWN 自己做在那个方位。
      *  csize: 牌的大小 手机 80像素比较合适。
@@ -77,7 +76,7 @@ class Table extends Component {
         }
         // ref 用来记录 四个发牌位置的div引用
         this.ref = {};
-        Table.seats.forEach(key => this.ref[key] = React.createRef())
+        Table.seatsen.forEach(key => this.ref[key] = React.createRef())
         this.ref.board = React.createRef();
         //this.state.cards = this.initDeals() // 把以上牌初始化放到桌子上(不发牌)
         //this.state.cards = this.initCards() // 把以上牌初始化放到桌子上(不发牌)
@@ -103,7 +102,7 @@ class Table extends Component {
      * _initSeat 初始化 发牌位置 出牌位置等坐标
      */
     componentDidMount() {
-        this._initSeat(); // 
+        this._initSeat(); //
         // this._initVideo('table02open');
         //console.log(parseInt(center.y) - parseInt(this.csize) * 0.7 / 2)
     }
@@ -340,7 +339,10 @@ class Table extends Component {
         );
     }
 }
-Table.seats = ['east', 'south', 'west', 'north']
-Table.seatscn = ['东', '南', '西', '北']
+
+Table.seats = ['E', 'S', 'W', 'N'];
+Table.seatsen = ['east', 'south', 'west', 'north'];
+Table.seatscn = ['东', '南', '西', '北'];
+
 
 export default Table;

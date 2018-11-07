@@ -87,7 +87,7 @@ export default class Debug extends Component {
                     index++;
                 })
             })
-            //this.state.cards[Table.seats.indexOf(seat)] = cards;
+            //this.state.cards[Table.seatsen.indexOf(seat)] = cards;
             this.setState({
                 cards: this.state.cards
             })

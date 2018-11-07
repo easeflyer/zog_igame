@@ -1,5 +1,15 @@
 /**
  * 这个Models 用来模拟数据提供。
+ * 控制器 game.js table.js 调用 views 和 models
+ * models 也就是本文件，负责提供数据。
+ * 如果 Models.debug = true 提供模拟数据。否则调用 Api.js 提供真实数据。
+ * 
+ * 考虑 Models 直接用 models/table.js 因为计算都在里面。而且 table 本来就是模型。
+ * 而 api.js 里面考虑提供模拟数据或者 后台数据。
+ * 那个模型需要 接口数据，就直接在那个模型中请求。模拟数据。
+ * 方式 
+ * 
+ * 
  */
 
 class Models{
@@ -31,6 +41,17 @@ class Models{
     static getResult(){
         return "N3D +2 NS 600";
     }
+    // 调用 api 返回用户登录状态。
+    static ckLogin(){
+        return false;
+        return {
+            userid:1,
+            username:'张三丰',
+            seat:'N',
+        }
+        // 如果 api 获得数据失败 return false;
+    }
 }
+Models.debug = true;
 
 export default Models

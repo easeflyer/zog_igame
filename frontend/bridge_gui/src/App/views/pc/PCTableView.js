@@ -102,22 +102,22 @@ const TableView = (props) => {
           <div id='board' className='board' ref={table.ref.board}>
             <div className='userTag'><div className='seat'>
               <UserTag user={table.state.user['east']} table={table} />
-              {/* {Table.seatscn[Table.seats.indexOf(table._shift('east'))]}: */}
+              {/* {Table.seatscn[Table.seatsen.indexOf(table._shift('east'))]}: */}
               {/* {table.state.user[table._shift('east')].name} */}
             </div></div>
             <div className='userTag'><div className='seat'>
               <UserTag user={table.state.user['south']} table={table} />
-              {/* {Table.seatscn[Table.seats.indexOf(table._shift('south'))]}: */}
+              {/* {Table.seatscn[Table.seatsen.indexOf(table._shift('south'))]}: */}
               {/* {table.state.user[table._shift('south')].name} */}
             </div></div>
             <div className='userTag'><div className='seat'>
               <UserTag user={table.state.user['west']} table={table} />
-              {/* {Table.seatscn[Table.seats.indexOf(table._shift('west'))]}: */}
+              {/* {Table.seatscn[Table.seatsen.indexOf(table._shift('west'))]}: */}
               {/* {table.state.user[table._shift('west')].name} */}
             </div></div>
             <div className='userTag'><div className='seat'>
               <UserTag user={table.state.user['north']} table={table} />
-              {/* {Table.seatscn[Table.seats.indexOf(table._shift('north'))]}: */}
+              {/* {Table.seatscn[Table.seatsen.indexOf(table._shift('north'))]}: */}
               {/* {table.state.user[table._shift('north')].name} */}
             </div></div>
             {table.state.scene == 0 ? <Prepare stat={stat} ready={table.handleReady} /> : null}

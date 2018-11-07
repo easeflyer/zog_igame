@@ -9,5 +9,7 @@ import Game from './App/game/Game';
 //import Game from './App/test/test_card' // 测试用例
 import registerServiceWorker from './registerServiceWorker';
 
-ReactDOM.render(<Game />, document.getElementById('root'));
+const game = new Game();
+game.start();
+
 registerServiceWorker();
