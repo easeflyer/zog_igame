@@ -1,10 +1,10 @@
 import { observable, action, computed } from 'mobx';
-import agent from '../agent';
+//import agent from '../agent';
 
 
 class CommonStore{
-  @observable v1 = null;
-  @observable v2 = null;
+  @observable v1 = 11;
+  @observable v2 = 22;
 
   @action.bound
   setV1(){

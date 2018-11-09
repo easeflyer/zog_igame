@@ -2,6 +2,16 @@
 
 ## 目录结构
 
+参考印象笔记：React + MobX 前后端分离 系统架构
+src
+  |-App
+    |- component
+      |- app.js
+      |- login.js
+    |- stores
+  |- agent.js
+
+
 ```javascript
 components        React 组件，尽可能只负责 UI 
                   组件会被用 observer 装饰，以观察 store 的变化

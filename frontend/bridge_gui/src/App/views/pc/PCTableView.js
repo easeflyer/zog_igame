@@ -6,16 +6,15 @@
  * Debug 纯视图组件
  */
 import React from 'react';
-import Debug from './Debug'
+//import Debug from './Debug'
 import Claim from './Claim'
 import BidPanel from './BidPanel'
-import Card from '../../game/Card'
 import { Imps, Seats, Tricks } from './Headers'
 import Prepare from './Prepare'
 import UserTag from './UserTag'
 import Timer from './Timer'
 import './PCTableView.css'
-
+import {inject,observer} from 'mobx-react';
 
 /**
  * 用来模拟 table 对象保证 tableview 组件可独立测试。
@@ -50,6 +49,7 @@ const _tableObj = {
  * 单元测试：
  * 开启：//const table = _tableObj;
  */
+
 const TableView = (props) => {
   /* 这里应该对 props 做处理，提高 view 的独立性。
     换句话说，这里对入口数据进行判断。如果入口数据有错误，照样正常显示view
@@ -60,12 +60,12 @@ const TableView = (props) => {
   //const table = _tableObj;
   const cards = table.cards;
   console.log('table1:',table);
-  const stat = Object.values(table.state.user).map(e => e.ready)
+  const stat = Object.values(table.props.tableStore.state.user).map(e => e.ready);
   return (
     <div>
-      {(table.state.scene == 1) ?
+      {(table.props.tableStore.state.scene == 1) ?
         <div className='panel'>
-          <BidPanel calldata={table.state.calldata} active='1' />
+          <BidPanel calldata={table.props.tableStore.state.calldata} active='1' />
         </div> : null
       }
       <div id='table' className='table'>
@@ -92,8 +92,8 @@ const TableView = (props) => {
         </div>
 
         <div id='body' className='body'>
-          {table.state.lastTrick ? <div id='lastTrick' className='lastTrick'></div> : null}
-          {table.state.scene == 3 ? <Claim number='8' myclaim={table.claimseat == table.myseat} onSubmit={table.handleClaim} /> : null}
+          {table.props.tableStore.state.lastTrick ? <div id='lastTrick' className='lastTrick'></div> : null}
+          {table.props.tableStore.state.scene == 3 ? <Claim number='8' myclaim={table.claimseat == table.myseat} onSubmit={table.handleClaim} /> : null}
           <div id='clock'></div>
           <div id='east' className='east' ref={table.ref.east}></div>
           <div id='west' className='west' ref={table.ref.west}></div>
@@ -101,30 +101,30 @@ const TableView = (props) => {
           <div id='north' className='north' ref={table.ref.north}></div>
           <div id='board' className='board' ref={table.ref.board}>
             <div className='userTag'><div className='seat'>
-              <UserTag user={table.state.user['east']} table={table} />
+              <UserTag user={table.props.tableStore.state.user['east']} table={table} />
               {/* {Table.seatscn[Table.seatsen.indexOf(table._shift('east'))]}: */}
-              {/* {table.state.user[table._shift('east')].name} */}
+              {/* {table.props.tableStore.state.user[table._shift('east')].name} */}
             </div></div>
             <div className='userTag'><div className='seat'>
-              <UserTag user={table.state.user['south']} table={table} />
+              <UserTag user={table.props.tableStore.state.user['south']} table={table} />
               {/* {Table.seatscn[Table.seatsen.indexOf(table._shift('south'))]}: */}
-              {/* {table.state.user[table._shift('south')].name} */}
+              {/* {table.props.tableStore.state.user[table._shift('south')].name} */}
             </div></div>
             <div className='userTag'><div className='seat'>
-              <UserTag user={table.state.user['west']} table={table} />
+              <UserTag user={table.props.tableStore.state.user['west']} table={table} />
               {/* {Table.seatscn[Table.seatsen.indexOf(table._shift('west'))]}: */}
-              {/* {table.state.user[table._shift('west')].name} */}
+              {/* {table.props.tableStore.state.user[table._shift('west')].name} */}
             </div></div>
             <div className='userTag'><div className='seat'>
-              <UserTag user={table.state.user['north']} table={table} />
+              <UserTag user={table.props.tableStore.state.user['north']} table={table} />
               {/* {Table.seatscn[Table.seatsen.indexOf(table._shift('north'))]}: */}
-              {/* {table.state.user[table._shift('north')].name} */}
+              {/* {table.props.tableStore.state.user[table._shift('north')].name} */}
             </div></div>
-            {table.state.scene == 0 ? <Prepare stat={stat} ready={table.handleReady} /> : null}
+            {table.props.tableStore.state.scene == 0 ? <Prepare stat={stat} ready={table.handleReady} /> : null}
           </div>
           {cards}
         </div>
-        {table.state.debug ? <Debug o={table} /> : null}
+        {/* {table.props.tableStore.state.debug ? <Debug o={table} /> : null} */}
 
         <div id='footer' className='footer'>
           <div id='video'></div>
@@ -161,4 +161,5 @@ const TableView = (props) => {
   );
 }
 
-export default TableView;
+const ObTableView = inject('tableStore')(observer(TableView));
+export default ObTableView;

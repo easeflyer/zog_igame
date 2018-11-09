@@ -1,21 +1,29 @@
-import { observable, action, computed } from 'mobx';
-import agent from '../agent';
-
+import { observable, action, computed, autorun } from 'mobx';
+//import agent from '../agent';
+import { trace } from 'mobx';
 
 class TestStore{
-  @observable v1 = null;
-  @observable v2 = null;
+  @observable v1 = 'aa';
+  @observable v2 = 'bb';
+  @computed get v3(){
+    return this.v1+this.v2
+  }
+  autoEnd = autorun(()=>{
+    trace(true);
+    console.log('v3:',this.v3)
+  });
 
   @action.bound
   setV1(){
-    this.v1 = '1111';
+    this.v1 = 'aaaa';
   }
   @action.bound
   setV2(){
-    this.v1 = '2222';
+    this.v2 = 'bbbb';
+    this.autoEnd();
   }
 
 
 }
 
-export default new testStore();
+export default new TestStore();

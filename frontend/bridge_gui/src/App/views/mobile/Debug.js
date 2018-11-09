@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Models from '../../models/model'
-import { TableModel } from '../../models/Table';
+import { TableModel } from '../../models/Table'; // 这里有问题。
 import TableModels from '../../models/Table';
 import Card from '../../game/Card';
 
