@@ -7,59 +7,59 @@
  */
 
 
-  /**
-   * 重新整理手里的牌（调整间距）
-   * 
-   * 输入：
-   *    cards       一手牌
-   *    seatIndex   当前牌的方位号
-   * 
-   * 输出：
-   *    cards       定位重新排列的一手牌
-   * pos：left 上下 top 左右
-   * flexLayout： 获得重新的布局分布 参数 2 每间隔2张牌 增大一些距离
-   * Array.shift() 从开头弹出一个值
-   */
-  function resetCards(cards, seatIndex, resetDelay = false) {
-    const pos = [0, 2].indexOf(seatIndex) == -1 ? 'left' : 'top';
-    let length = 0;
-    let ps = 0;
-    cards.forEach(card => card.active == 2 && length++)
-    const layout = flexLayout(this.height, length, 2)
-    return cards.map((card, index) => {
-      if (card.active == 2) {
-        ps = layout.shift();
-        card['animation'][pos] = ps;
-        card['animation']['duration'] = 600;
-        if (resetDelay) card['animation']['delay'] = ps;
-        //if (resetDelay) card['animation']['delay'] = 0;
-      }
-      return card;
-    })
-  }
+/**
+ * 重新整理手里的牌（调整间距）
+ * 
+ * 输入：
+ *    cards       一手牌
+ *    seatIndex   当前牌的方位号
+ * 
+ * 输出：
+ *    cards       定位重新排列的一手牌
+ * pos：left 上下 top 左右
+ * flexLayout： 获得重新的布局分布 参数 2 每间隔2张牌 增大一些距离
+ * Array.shift() 从开头弹出一个值
+ */
+function resetCards(cards, seatIndex, resetDelay = false) {
+  const pos = [0, 2].indexOf(seatIndex) == -1 ? 'left' : 'top';
+  let length = 0;
+  let ps = 0;
+  cards.forEach(card => card.active == 2 && length++)
+  const layout = flexLayout(this.height, length, 2)
+  return cards.map((card, index) => {
+    if (card.active == 2) {
+      ps = layout.shift();
+      card['animation'][pos] = ps;
+      card['animation']['duration'] = 600;
+      if (resetDelay) card['animation']['delay'] = ps;
+      //if (resetDelay) card['animation']['delay'] = 0;
+    }
+    return card;
+  })
+}
 
-  function suitLayoutCards(cards, seatIndex) {
-    //const rotate = [0, 2].indexOf(seatIndex) == -1 ? '0' : '-90';
-    const rotate = 0;
-    let preCard = cards[0];
-    let offsetTop = 0;
-    let offsetLeft = 0;
-    let seat = ['east', 'south', 'west', 'north'][seatIndex];
-    cards.map((card, index) => {
-      if (card.card.slice(1, 2) != preCard.card.slice(1, 2)) {
-        offsetTop += 40;
-        offsetLeft = 0;
-        card.animation['top'] += offsetTop;
-        //card.animation['left'] += this.seat[seat][0].x
-      } else {
-        card.animation['left'] += offsetLeft;
-        card.animation['top'] += offsetTop;
-        offsetLeft += 25;
-      }
-      card.animation['rotate'] = rotate;
-      preCard = card;
-    })
-  }
+function suitLayoutCards(cards, seatIndex) {
+  //const rotate = [0, 2].indexOf(seatIndex) == -1 ? '0' : '-90';
+  const rotate = 0;
+  let preCard = cards[0];
+  let offsetTop = 0;
+  let offsetLeft = 0;
+  let seat = ['east', 'south', 'west', 'north'][seatIndex];
+  cards.map((card, index) => {
+    if (card.card.slice(1, 2) != preCard.card.slice(1, 2)) {
+      offsetTop += 40;
+      offsetLeft = 0;
+      card.animation['top'] += offsetTop;
+      //card.animation['left'] += this.seat[seat][0].x
+    } else {
+      card.animation['left'] += offsetLeft;
+      card.animation['top'] += offsetTop;
+      offsetLeft += 25;
+    }
+    card.animation['rotate'] = rotate;
+    preCard = card;
+  })
+}
 
 
 
@@ -100,7 +100,7 @@ function flexLayout(width, length, separate) {
   return Array(length).fill(0).map((item, index) => item + left + index * offset);
 }
 
-function suitLayout(width, ){
+function suitLayout(width, ) {
 
 }
 
@@ -116,5 +116,11 @@ function test_flexLayout() {
   console.log("flexLayout:", flexLayout(width, length, separate))
 }
 //test_flexLayout();
-
+function testFunc(a,b){
+  return a + b;
+}
+export {testFunc}
 export { flexLayout, resetCards, suitLayoutCards };
+
+
+

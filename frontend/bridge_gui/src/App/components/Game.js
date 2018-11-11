@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import settings from '../game/settings';
+//import settings from '../game/settings';
 import Table from './Table';
 import Models from '../models/model'
 import GameModel from '../models/Game'
@@ -12,7 +12,7 @@ import GameModel from '../models/Game'
 class Game extends React.Component {
     constructor(props) {
         /**
-         * 属性列表：
+         *  属性列表：
          *  屏幕大小
          */
         super(props);
@@ -21,7 +21,7 @@ class Game extends React.Component {
         this.height = window.screen.height;
         console.log('width:' + this.width)
         console.log('height:' + this.height)
-        if (this.width < 400) settings.scale = 0.5;
+        //if (this.width < 400) settings.scale = 0.5;
     }
     /**
      * 做一些初始化操作，比如屏蔽鼠标右键。

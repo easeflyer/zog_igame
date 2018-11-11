@@ -12,7 +12,7 @@ import ReactDOM from 'react-dom';
 import Card from './Card'
 import Models from '../models/model'
 import Sound from './Sound'
-import TableView from '../views/pc/PCTableView' // 包含 TableView.css
+import TableView from '../views/pc/TableView' // 包含 TableView.css
 //import this.TableModel from '../models/Table';
 import {inject,observer} from 'mobx-react';
 /**

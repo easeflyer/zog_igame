@@ -13,7 +13,7 @@ import { Imps, Seats, Tricks } from './Headers'
 import Prepare from './Prepare'
 import UserTag from './UserTag'
 import Timer from './Timer'
-import './PCTableView.css'
+import './TableView.css'
 import {inject,observer} from 'mobx-react';
 
 /**
