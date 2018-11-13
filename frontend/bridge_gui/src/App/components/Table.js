@@ -9,12 +9,12 @@
 
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import Card from './Card'
 import Models from '../models/model'
 import Sound from './Sound'
 import TableView from '../views/pc/TableView' // 包含 TableView.css
-//import this.TableModel from '../models/Table';
-import {inject,observer} from 'mobx-react';
+import { inject, observer } from 'mobx-react';
+import { TableModel } from '../stores/tableStore';
+import Clock from '../views/pc/Clock';
 /**
  * Table 一桌游戏
  *      1 是牌桌的容器组件，或者说是控制器组件(MVC)
@@ -42,38 +42,10 @@ class Table extends Component {
      *  字体大小：fontSize:this.height * 0.04 + 'px'
      */
     constructor(props) {
-
         super(props);
-        this.width = window.innerWidth;
-        this.height = window.innerHeight;
-        console.log(this.height * 0.2)
-        this.claimseat = 'east'; // east,south...
-        this.timer = { stop: null, start: null }; // 用于控制 倒计时
-        this.center = null; // 桌子的中心 {x,y}
-        this._csize = this.props.tableStore.csize;
-        this.deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX'
-        this.seat = {
-            east    : [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // seat 用于记录坐标 
-            south   : [{ x: 0, y: 0 }, { x: 0, y: 0 }], // 第一个xy 是 四个区域左上角坐标
-            west    : [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // 第二个xy 是 出牌4个区域坐标。
-            north   : [{ x: 0, y: 0 }, { x: 0, y: 0 }]   // 也就是牌出到什么地方。
-        }   
-        // ref 用来记录 四个发牌位置的div引用
         this.ref = {};
-        Table.seatsen = ['east', 'south', 'west', 'north'];
-        Table.seatsen.forEach(key => this.ref[key] = React.createRef())
+        TableModel.seats.forEach(key => this.ref[key] = React.createRef())
         this.ref.board = React.createRef();
-    }
-    /**
-     * 通过计算获得 Card 的 size
-     */
-    get csize() {
-        /*  短路语法 牌的大小 可以计算在下面的函数内。
-            可以考虑用 vh 改造，所有计算都按照比例计算。
-        */
-        return this._csize || (() => {
-            return this.height * 0.18;
-        })()
     }
 
     /**
@@ -82,8 +54,6 @@ class Table extends Component {
      */
     componentDidMount() {
         this._initSeat(); //
-        // this._initVideo('table02open');
-        //console.log(parseInt(center.y) - parseInt(this.csize) * 0.7 / 2)
     }
 
 
@@ -106,8 +76,8 @@ class Table extends Component {
                 this.ref.board.current.clientWidth / 2
         };
         const seats = {
-            'east'  : { x: 0, y: 0 }, 'south' : { x: 0, y: 0 },
-            'west'  : { x: 0, y: 0 }, 'north' : { x: 0, y: 0 },
+            'east': { x: 0, y: 0 }, 'south': { x: 0, y: 0 },
+            'west': { x: 0, y: 0 }, 'north': { x: 0, y: 0 },
         }
         for (let key in seats) {
             seats[key]['y'] = this.ref[key].current.offsetTop;
@@ -123,16 +93,12 @@ class Table extends Component {
      * 输出：
      */
     clearBoard = () => {
-        //this.TableModel.clearBoard()
         this.props.tableStore.clearBoard();
-        // this.setState({
-        //     cards: this.TableModel.state.cards
-        // })
         Sound.play('clear');
     }
 
     /**
-     * 打出一张牌
+     * 打出一张牌 TODO: 最值得优化的一个函数。
      * @param {card} item
      */
     play = (item) => {
@@ -155,10 +121,8 @@ class Table extends Component {
      * 考虑增加参数为 seat
      */
     claim = () => {
-        this.props.tableStore.state.scene = 3;
-        // this.setState({
-        //     scene: 3
-        // })
+        this.props.tableStore.claim();
+        // Sound.play('claim');
     }
 
     /**
@@ -183,14 +147,7 @@ class Table extends Component {
     handleReady = (se) => {
         //this.TableModel.userReady(se);
         this.props.tableStore.userReady(se);
-        if (this.props.tableStore.userAllReady()) {
-            this.props.tableStore.state.scene = 1;
-            this.deal(); // 这里也有 setState 但是 它是异步的。只执行一次
-        }
-        // this.setState({
-        //     user: this.TableModel.state.user,
-        //     scene: this.TableModel.state.scene
-        // })
+        if (this.props.tableStore.userAllReady()) this.deal();
     }
     /**
      * 发牌
@@ -199,34 +156,25 @@ class Table extends Component {
      */
     deal = () => {
         this.props.tableStore.dealCards(this.play)
-        // this.setState({
-        //     cards: this.TableModel.dealCards(this.play)
-        // }); // todo：考虑这里修改 动画速度。
         Sound.play('deal')
     }
 
+//////////////////////////////////////////////////////////
     /**
-     * 设置牌的 active 状态。
-     * 把编号 在nums里 的牌设置成 active 状态
-     * nums 是一个数组
-     * active 是目标状态。*      
-     * active     0,1,2,3  0 灰色不能点，1 亮色不能点，2 亮色能点, 3 亮色能点突出
-     */
-    setActive = (nums, active = 0) => {
-        this.props.tableStore.setActive(nums, active);
-        // this.setState({
-        //     cards: this.TableModel.setActive(nums, active)
-        // })
-    }
-    /**
+     * TODO：把这个组件移出去。单独测试。
      * 给某一个座位倒计时
      * 为了降低组件的耦合性。将本组件动态挂载到 DOM 上。
      * 利用 unmountComponentAtNode 进行卸载。
      * p, offset 都是闹钟出现位置的微调。
+     * 
+     * seat [east,west,south,north]
+     * time 倒计时妙数
+     * callback 倒计时结束回调。
      */
     timing = (seat, time, callback) => {
+        const height = this.props.tableStore.height;
         ReactDOM.unmountComponentAtNode(document.querySelector('#clock'));
-        const p = this.height * 0.18;
+        const p = height * 0.18;
         const offset = {
             east: { x: p, y: 0 },
             south: { x: 0, y: p },
@@ -234,8 +182,8 @@ class Table extends Component {
             north: { x: 0, y: -p * 0.66 }
         }
 
-        const top = this.TableModel.seat[seat][1]['y'] + offset[seat].y;
-        const left = this.TableModel.seat[seat][1]['x'] + offset[seat].x;
+        const top = this.props.tableStore.seat[seat][1]['y'] + offset[seat].y;
+        const left = this.props.tableStore.seat[seat][1]['x'] + offset[seat].x;
         const style = {
             position: 'absolute',
             top: top,
@@ -244,7 +192,7 @@ class Table extends Component {
         }
         const clock = (
             <div style={style}>
-                0.
+                <Clock time={time} callback={callback} />
             </div>
         );
         ReactDOM.render(
@@ -253,16 +201,17 @@ class Table extends Component {
         )
     }
 
-    /**
+    /** TODO: 移出去
      * 显示比赛结果
      * 输入：Models.getResult(); 从外部获得比赛结果数据
      * 输出：构造 页面样式显示出来。
      */
     showResult = () => {
+        const height = this.props.tableStore.height;
         const result = Models.getResult();
         const re = <div className='result'>
             <img src='/cards/medal.svg' width="20%" />
-            <div style={{ lineHeight: this.height * 0.12 + 'px', }}>{result}</div>
+            <div style={{ lineHeight: height * 0.12 + 'px', }}>{result}</div>
             <button onClick={this.hideResult}>下一局</button>
         </div>;
         ReactDOM.unmountComponentAtNode(document.querySelector('#result'));
@@ -284,12 +233,7 @@ class Table extends Component {
      * cards: this.TableModel.lastTrick(show),
      */
     lastTrick = () => {
-        const show = !this.props.tableStore.state.lastTrick;
-        this.props.tableStore.lastTrick(show);
-        // this.setState({
-        //     cards: this.TableModel.lastTrick(show),
-        //     lastTrick: !this.props.tableStore.state.lastTrick
-        // });
+        this.props.tableStore.lastTrick();
     }
     /**
      * 视频接口
@@ -306,9 +250,6 @@ class Table extends Component {
     openDebug = () => {
         const debug = this.props.tableStore.state.debug;
         this.props.tableStore.state.debug = !debug;
-        // this.setState({
-        //     debug: !this.state.debug
-        // })
     }
     /**
      * 显示叫牌
@@ -316,18 +257,9 @@ class Table extends Component {
      */
     bid = () => {
         this.props.tableStore.bid();
-        // this.props.tableStore.state.scene != 1 ? 
-        //     this.props.tableStore.state.scene = 1: 
-        //     this.props.tableStore.state.scene = 2;
-        // this.setState({
-        //     scene: this.state.scene
-        // })
     }
     render() {
-        // 考虑这里判断手机，还是pc，可以通过不同路由来判断。不用自适应。
-        this.cards = Card.createComponents(this.props.tableStore.state.cards);
         return (
-            //<div>3333</div>
             <TableView table={this} />
         );
     }

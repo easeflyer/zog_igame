@@ -2,6 +2,7 @@ import Card from '../components/Card'  // 也应该从模型引入
 import Models from '../models/model'
 import { flexLayout } from '../libs/layout.js'
 import { observable, computed, action } from 'mobx';
+import Claim from '../views/pc/Claim';
 /**
  * TableModel 游戏桌 数据Model
  * 
@@ -189,7 +190,7 @@ class TableModel {
    */
   //model
   @action.bound
-  clearBoard = () => {
+  clearBoard(){
     //if(this.board.length < 4) return false;
     const board = this.board;
     for (let i = 0; i < board.length; i++) {
@@ -202,10 +203,7 @@ class TableModel {
       //board[i].active = 3; // 应该不变
     }
     this.board = [];
-    // this.setState({
-    //     cards: this.state.cards
-    // })
-    // Sound.play('clear')
+    this.state.cards = Object.assign({},this.state.cards);
   }
 
 
@@ -290,7 +288,6 @@ class TableModel {
   * 输出：this.seat
   * 
   */
-
   initSeat(center, seats) {
     this.center = center;
     const offset = this.csize * 0.7 / 2
@@ -381,6 +378,12 @@ class TableModel {
     })
   }
 
+
+  @action.bound
+  claim() {
+    this.state.scene = 3;
+  }
+
   /**
    * 设置牌的 active 状态。
    * 把编号 在nums里 的牌设置成 active 状态
@@ -393,8 +396,9 @@ class TableModel {
     const cards = this.state.cards;
     cards.forEach((item) => item.forEach((item) => {
       if (nums.indexOf(item.index) != -1) item.active = active;
-    }))
-    return cards;
+    }));
+    this.state.cards = cards; 
+    //return cards;
   }
   /**
    * 通过一张牌的索引，获得具体的 牌数据引用
@@ -416,8 +420,9 @@ class TableModel {
    *       this.state.lastTrick
    */
   @action
-  lastTrick = (show) => {
+  lastTrick = () => {
     // 在模型里 应该先判断当前 trick 编号。然后决定是否能看lasttrick
+    const show = !this.lastTrick;
     const lt = Models.lastTrick();
     let card = null;
     lt.forEach((item, index) => {
@@ -463,6 +468,7 @@ class TableModel {
     Object.values(user).forEach(el => {
       if (el.ready == 0) ready = false
     })
+    if (ready) this.state.scene = 1;
     return ready;
   }
 
@@ -490,8 +496,10 @@ class TableModel {
 
 
 }
-TableModel.seats = ['east', 'south', 'west', 'north']
-TableModel.seatscn = ['东', '南', '西', '北']
+TableModel.seatsen = ['E', 'S', 'W', 'N'];
+TableModel.seats = ['east', 'south', 'west', 'north'];
+TableModel.seatscn = ['东', '南', '西', '北'];
+
 
 /**
  * 直接实例化，因为一局游戏只有一个桌子。

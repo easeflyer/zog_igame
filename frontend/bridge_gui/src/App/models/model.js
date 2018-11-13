@@ -1,3 +1,5 @@
+import { Agent } from "https";
+
 /**
  * 这个Models 用来模拟数据提供。
  * 控制器 game.js table.js 调用 views 和 models
@@ -53,5 +55,6 @@ class Models{
     }
 }
 Models.debug = true;
+
 
 export default Models

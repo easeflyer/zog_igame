@@ -6,13 +6,14 @@
  * Debug 纯视图组件
  */
 import React from 'react';
-//import Debug from './Debug'
+import Debug from './Debug'
 import Claim from './Claim'
 import BidPanel from './BidPanel'
 import { Imps, Seats, Tricks } from './Headers'
 import Prepare from './Prepare'
 import UserTag from './UserTag'
 import Timer from './Timer'
+import Card from '../../components/Card';
 import './TableView.css'
 import {inject,observer} from 'mobx-react';
 
@@ -58,7 +59,8 @@ const TableView = (props) => {
 
   const table = props.table;
   //const table = _tableObj;
-  const cards = table.cards;
+  //const cards = table.cards;
+  const cards = Card.createComponents(table.props.tableStore.state.cards);
   console.log('table1:',table);
   const stat = Object.values(table.props.tableStore.state.user).map(e => e.ready);
   return (
@@ -124,7 +126,7 @@ const TableView = (props) => {
           </div>
           {cards}
         </div>
-        {/* {table.props.tableStore.state.debug ? <Debug o={table} /> : null} */}
+        {table.props.tableStore.state.debug ? <Debug o={table} /> : null}
 
         <div id='footer' className='footer'>
           <div id='video'></div>

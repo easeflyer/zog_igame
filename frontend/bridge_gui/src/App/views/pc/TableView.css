@@ -1,4 +1,6 @@
 *{
+    /* 避免出现白边 */
+    margin:0px;
     /* font-family:'Courier New', Courier, monospace; */
     font-family:monospace;
 }

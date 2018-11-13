@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-//import settings from '../game/settings';
 import Table from './Table';
-import Models from '../models/model'
 import GameModel from '../models/Game'
 /**
  * Game  是一局比赛，涉及到了比赛者，以及和比赛相关的其他信息。重点在于比赛。
@@ -17,10 +14,10 @@ class Game extends React.Component {
          */
         super(props);
         this.init();// 屏蔽鼠标右键
-        this.width = window.screen.width;
-        this.height = window.screen.height;
-        console.log('width:' + this.width)
-        console.log('height:' + this.height)
+        // this.width = window.screen.width;
+        // this.height = window.screen.height;
+        // console.log('width:' + this.width)
+        // console.log('height:' + this.height)
         //if (this.width < 400) settings.scale = 0.5;
     }
     /**
@@ -55,6 +52,8 @@ class Game extends React.Component {
         const gameModel = new GameModel();
         gameModel.ckLogin();
         return <Table user={gameModel.user} />;
+        // unitTest
+        //return <div style={{width:'80vh',height:'60vh',backgroundColor:'#eeeeee'}}></div>;
     }
 
 }

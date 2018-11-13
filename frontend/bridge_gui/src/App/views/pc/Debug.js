@@ -7,11 +7,8 @@
 
 import React, { Component } from 'react';
 import Models from '../../models/model'
-import { TableModel } from '../../models/Table';
-import TableModels from '../../models/Table';
-import Card from '../../component/Card';
-
-
+import { TableModel } from '../../stores/tableStore';
+import Card from '../../components/Card';
 
 /**
  * props.o  
@@ -55,6 +52,13 @@ export default class Debug extends Component {
                 cards: cards
             })
         }
+        /**
+         * 设置牌的 active 状态。
+         * 把编号 在nums里 的牌设置成 active 状态
+         * nums 是一个数组
+         * active 是目标状态。*      
+         * active     0,1,2,3  0 灰色不能点，1 亮色不能点，2 亮色能点, 3 亮色能点突出
+         */
         o.testActive = function () {
             // 52 张牌 对应 东南西北 四个人的牌
             const nums = [
@@ -62,8 +66,7 @@ export default class Debug extends Component {
                 13, 14, 15, 16, //17, 18, 19, 20, 21, 22, 23, 24, 25,
                 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
                 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51]
-            //const nums = [13,14,15,16];
-            this.setActive(nums);
+            this.props.tableStore.setActive(nums, 0);
 
         }
         o.test3 = function () {
@@ -78,7 +81,7 @@ export default class Debug extends Component {
             const seat = seat1;
             let index = 0
             const dCards = Models.openDummy().cards.split('.');
-            let cards = this.state.cards[TableModel.seats.indexOf(seat)];
+            let cards = o.props.tableStore.state.cards[TableModel.seats.indexOf(seat)];
             dCards.forEach((item1, index1) => {
                 item1.split('').forEach((item2, index2) => {
                     // 这里。
@@ -89,10 +92,10 @@ export default class Debug extends Component {
             })
             //this.state.cards[Table.seatsen.indexOf(seat)] = cards;
             this.setState({
-                cards: this.state.cards
+                cards: o.props.tableStore.state.cards
             })
             console.log('openDummy..............')
-            console.log(this.state.cards)
+            console.log(o.props.tableStore.state.cards)
 
         }
         /**
@@ -117,12 +120,12 @@ export default class Debug extends Component {
             { seat: 'west', bid: 'A3S' }, { seat: 'north', bid: 'PASS' },
             { seat: 'east', bid: 'PASS' }, { seat: 'south', bid: 'PASS' }]
             bids.forEach((item) => {
-                TableModels.call(item.seat, item.bid)
+                o.props.tableStore.call(item.seat, item.bid)
             })
             console.log('calldata111....')
             //console.log(this.state.calldata)
             o.setState({
-                calldata: TableModels.state.calldata
+                calldata: o.props.tableStore.state.calldata
             })
         }
 
@@ -141,7 +144,7 @@ export default class Debug extends Component {
             const elMsg = document.querySelector('#message')
             const elSay = document.querySelector('#say')
             elMsg.innerHTML =
-                "<div>" + TableModel.myseat + ':' + elSay.value + "</div>" + elMsg.innerHTML
+                "<div>" + o.props.tableStore.myseat + ':' + elSay.value + "</div>" + elMsg.innerHTML
         }
 
         // =====  测试用例结束 =================================================
