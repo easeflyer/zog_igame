@@ -16,7 +16,7 @@ import Motion from '../libs/Motion'
  *      size        大小
  *      card        5S 黑桃5
  *      zIndex      叠放顺序
- *      onClick     点击绑定到图片上
+ *      onClick     点击绑定到图片上, onclick() 函数执行返回的是一个函数引用。
  *      active      0,1,2  0 灰色不能点，1 亮色不能点，2 亮色能点, 3 亮色能点突出
  * 
  * 关于动画：
@@ -63,7 +63,8 @@ class Card extends React.Component {
                 }}
             >
                 <Motion animation={this.props.animation} style={getStyle()}>
-                    <img onClick={onclick}
+                    <img onClick={onclick(`${this.props.index}`)}
+                        alt={this.props.key}
                         src={`/cards/${card}.svg`}
                         style={{
                             position: 'absolute',
@@ -86,10 +87,8 @@ Card.createComponents = function (cards) {
             return <Card
                 active={item2.active}
                 onClick={item2.onclick}
-                //onClick={this.play(item3)}
                 key={item2.key}
                 index={item2.key}
-                //table={item3.table}
                 seat={item2.seat}
                 animation={item2.animation || ''}
                 card={item2.card}

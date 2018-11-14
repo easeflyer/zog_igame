@@ -14,7 +14,6 @@ import Sound from './Sound'
 import TableView from '../views/pc/TableView' // 包含 TableView.css
 import { inject, observer } from 'mobx-react';
 import { TableModel } from '../stores/tableStore';
-import Clock from '../views/pc/Clock';
 /**
  * Table 一桌游戏
  *      1 是牌桌的容器组件，或者说是控制器组件(MVC)
@@ -101,19 +100,18 @@ class Table extends Component {
      * 打出一张牌 TODO: 最值得优化的一个函数。
      * @param {card} item
      */
-    play = (item) => {
-        if (item.active == 2) {
-            //this.TableModel.preplay(item);
-            this.props.tableStore.preplay(item);
-            //this.setState({ cards: this.TableModel.state.cards });
-        } else if (item.active == 3) {
-            //this.TableModel.play(item);
-            this.props.tableStore.play(item);
-            //this.setState({ cards: this.TableModel.state.cards });
-            Sound.play('play');
-            //if (this.TableModel.board.length == 4) setTimeout(this.clearBoard, 1000)
-            if (this.props.tableStore.board.length == 4) setTimeout(this.clearBoard, 1000)
-        } else return;
+    play = (index) => {
+        const _play = function (){
+            const card = this.props.tableStore.getCardByIndex(index);
+            if (card.active == 2) {
+                this.props.tableStore.preplay(card);
+            } else if (card.active == 3) {
+                this.props.tableStore.play(card);
+                Sound.play('play');
+                if (this.props.tableStore.board.length == 4) setTimeout(this.clearBoard, 1000)
+            } else return;
+        }
+        return _play.bind(this);
     }
 
     /**
@@ -155,51 +153,11 @@ class Table extends Component {
      * 输出：TableModel.dealCards() 返回 cards 的位置和出牌绑定
      */
     deal = () => {
-        this.props.tableStore.dealCards(this.play)
+        //this.props.tableStore.dealCards(this.play)
+        this.props.tableStore.dealCards();
         Sound.play('deal')
     }
 
-//////////////////////////////////////////////////////////
-    /**
-     * TODO：把这个组件移出去。单独测试。
-     * 给某一个座位倒计时
-     * 为了降低组件的耦合性。将本组件动态挂载到 DOM 上。
-     * 利用 unmountComponentAtNode 进行卸载。
-     * p, offset 都是闹钟出现位置的微调。
-     * 
-     * seat [east,west,south,north]
-     * time 倒计时妙数
-     * callback 倒计时结束回调。
-     */
-    timing = (seat, time, callback) => {
-        const height = this.props.tableStore.height;
-        ReactDOM.unmountComponentAtNode(document.querySelector('#clock'));
-        const p = height * 0.18;
-        const offset = {
-            east: { x: p, y: 0 },
-            south: { x: 0, y: p },
-            west: { x: -p * 0.66, y: 0 },
-            north: { x: 0, y: -p * 0.66 }
-        }
-
-        const top = this.props.tableStore.seat[seat][1]['y'] + offset[seat].y;
-        const left = this.props.tableStore.seat[seat][1]['x'] + offset[seat].x;
-        const style = {
-            position: 'absolute',
-            top: top,
-            left: left,
-            width: '10%'
-        }
-        const clock = (
-            <div style={style}>
-                <Clock time={time} callback={callback} />
-            </div>
-        );
-        ReactDOM.render(
-            clock,
-            document.querySelector('#clock')
-        )
-    }
 
     /** TODO: 移出去
      * 显示比赛结果
@@ -265,9 +223,9 @@ class Table extends Component {
     }
 }
 
-Table.seats = ['E', 'S', 'W', 'N'];
-Table.seatsen = ['east', 'south', 'west', 'north'];
-Table.seatscn = ['东', '南', '西', '北'];
+// Table.seats = ['E', 'S', 'W', 'N'];
+// Table.seatsen = ['east', 'south', 'west', 'north'];
+// Table.seatscn = ['东', '南', '西', '北'];
 
 
 export default Table;
