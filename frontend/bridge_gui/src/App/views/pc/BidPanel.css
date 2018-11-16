@@ -83,3 +83,12 @@
     box-shadow: 2px 2px 1px #888888;
 
 }
+.calling{
+    position: relative;
+    height:5vh;
+    width:22vh;
+    margin:1vh;
+    float:right;
+    font-size:3vh;
+    line-height:5vh;
+}

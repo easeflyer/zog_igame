@@ -67,7 +67,7 @@ const TableView = (props) => {
     <div>
       {(table.props.tableStore.state.scene == 1) ?
         <div className='panel'>
-          <BidPanel calldata={table.props.tableStore.state.calldata} active='1' />
+          <BidPanel />
         </div> : null
       }
       <div id='table' className='table'>
@@ -82,7 +82,7 @@ const TableView = (props) => {
               time='1:2:5'
               callback={() => console.log('计时结束')}/>
           </div>
-          <button onTouchEnd={table.claim} className="claimbtn disable">摊牌</button>
+          <button onClick={table.claim} className="claimbtn disable">摊牌</button>
           <button onClick={() => table.timer.stop()} onDoubleClick={() => table.timer.start()} className="calljudge">呼叫裁判</button>
           <button onTouchEnd={table.claim} onClick={table.lastTrick.bind(table)} className="lasttrick">上一墩牌</button>
           <button onTouchEnd={table.claim} onClick={table.bid.bind(table)} className="showbid">显示叫牌</button>
@@ -95,7 +95,9 @@ const TableView = (props) => {
 
         <div id='body' className='body'>
           {table.props.tableStore.state.lastTrick ? <div id='lastTrick' className='lastTrick'></div> : null}
-          {table.props.tableStore.state.scene == 3 ? <Claim number='8' myclaim={table.claimseat == table.myseat} onSubmit={table.handleClaim} /> : null}
+          {table.props.tableStore.state.scene == 3 ? 
+            <Claim number='8' onSubmit={table.handleClaim} />
+             : null}
           <div id='clock'></div>
           <div id='east' className='east' ref={table.ref.east}></div>
           <div id='west' className='west' ref={table.ref.west}></div>

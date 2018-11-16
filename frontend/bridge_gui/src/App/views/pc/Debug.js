@@ -70,10 +70,10 @@ export default class Debug extends Component {
             )
         }
         o.testClock = function () {
-            this.timing('east', 2,
-                () => this.timing('south', 2,
-                    () => this.timing('west', 2,
-                        () => this.timing('north', 2,
+            this.timing('east', 200,
+                () => this.timing('south', 200,
+                    () => this.timing('west', 200,
+                        () => this.timing('north', 200,
                             () => console.log('倒计时结束！')
                         )
                     )
@@ -119,23 +119,28 @@ export default class Debug extends Component {
          * 从 Models 获得数据。
          * 修改 seat 方位可以打开不同方位的牌。
          */
-        o.testDummy = function (seat1) {
+        o.testDummy = function (){
+            o.openDummy();
+        }
+        o.testDummy1 = function (seat1) {
             const seat = seat1;
             let index = 0
             const dCards = Models.openDummy().cards.split('.');
             let cards = o.props.tableStore.state.cards[TableModel.seats.indexOf(seat)];
+            console.log('seatnumber:',dCards);
             dCards.forEach((item1, index1) => {
                 item1.split('').forEach((item2, index2) => {
                     // 这里。
                     cards[index].card = item2 + Card.suits[index1]
-                    cards[index].onclick = this.play(cards[index]);
+                    cards[index].onclick = o.play(cards[index]);
                     index++;
                 })
             })
             //this.state.cards[Table.seatsen.indexOf(seat)] = cards;
-            this.setState({
-                cards: o.props.tableStore.state.cards
-            })
+            // this.setState({
+            //     cards: o.props.tableStore.state.cards
+            // })
+            //this.props.tableStore.state.cards = 
             console.log('openDummy..............')
             console.log(o.props.tableStore.state.cards)
 
