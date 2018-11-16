@@ -7,6 +7,7 @@
 import React, { Component } from 'react';
 import Motion from '../../libs/Motion'
 import './BidPanel.css'
+import { inject, observer } from 'mobx-react';
 
 /**
  * BidPanel 叫牌面板
@@ -15,11 +16,14 @@ import './BidPanel.css'
  * 输出：暂时只有 state 的变化。未形成任何输出。
  *      考虑应该 由 handleConfirm 事件，形成“最终叫品”
  */
+@inject('tableStore')
+@observer
 class BidPanel extends Component {
   state = {
     bidblocks: [],
     bidcards: [],
-    active: 1
+    active: 1,
+    calling:"5D"
   }
   constructor(props) {
     super(props)
@@ -33,8 +37,8 @@ class BidPanel extends Component {
       return { name: e1, active: 1 }
     }))
     this.state.bidcards = [
-        { name: 'PASS', active: 1 }, { name: 'ALERT', active: 1 },
-        { name: 'X',    active: 1 }, { name: 'XX',    active: 1 },]
+      { name: 'PASS', active: 1 }, { name: 'ALERT', active: 1 },
+      { name: 'X', active: 1 }, { name: 'XX', active: 1 },]
     // console.log('bbb................')
     // console.log(bidblocks)
     this.state.bidblocks = bidblocks;
@@ -53,6 +57,10 @@ class BidPanel extends Component {
     }
   }
 
+  getCallData() {
+    return this.props.tableStore.state.calldata;
+  }
+
   /**
    * 处理 pass,alert,x,xx
    * 这4个选项应该只能点击一个。
@@ -61,13 +69,29 @@ class BidPanel extends Component {
     if (!this.state.active) return false;
     // console.log('bidcards.........item...........')
     // console.log(item)
-    this.state.bidcards.forEach((e) => {
-      if (e.name == item.name) e.active = 0;
-      else e.active = 1;
-    })
-    // console.log(this.state.bidcards)
+    if (item.name == 'ALERT') {
+      this.state.bidcards[1].active = !this.state.bidcards[1].active;
+    } else {
+      this.state.bidcards.forEach((e) => {
+        if (e.name == item.name) e.active = 0;
+        else e.active = 1;
+      })
+      this.state.bidblocks.map((item) => {
+        return item.map((i) => {
+          i.active = 1;
+          return i;
+        });
+      })
+    }
+
+    let calling = this.state.calling;
+    if(item.name == 'ALERT'){
+      if(this.state.calling.indexOf('ALERT') == -1) calling += ' ' + item.name;
+    } else calling = item.name;
     this.setState({
-      bidcards: this.state.bidcards
+      bidblocks: this.state.bidblocks,
+      bidcards: this.state.bidcards,
+      calling:calling
     })
   }
   /**
@@ -89,8 +113,15 @@ class BidPanel extends Component {
 
       }
     }
+    this.state.bidcards.map((item) => {
+      item.active = 1;
+      return item;
+    })  
+    //console.log('...item...',item,this.state.bidblocks[item.row][item.col]);  
     this.setState({
-      bidblocks: this.state.bidblocks
+      bidblocks: this.state.bidblocks,
+      bidcards: this.state.bidcards,
+      calling:this.state.bidblocks[item.row][item.col].name
     })
   }
   /**
@@ -102,17 +133,33 @@ class BidPanel extends Component {
       active: 0
     })
   }
+
+  handleReset = () => {
+    this.setState({
+      bidblocks: this.state.bidblocks.map((item) => {
+        return item.map((i) => {
+          i.active = 1;
+          return i;
+        });
+      }),
+      bidcards: this.state.bidcards.map((item) => {
+        item.active = 1;
+        return item;
+      })
+    });
+  }
+
   render() {
     //console.log('ffff:' + this.width)
     const bidblocks = this.state.bidblocks.map((e1, i1) => e1.map((e2, i2) => {
       //if (e2.active == 0) animation['brightness'] = 0.6;
-      
+
       return <BidBlock key={e2.name} name={e2.name}
         active={e2.active}
         onclick={this.handleCall.bind(this, { row: i1, col: i2 })} />
     }))
     //console.log(bidblocks)
-    const rows = this.props.calldata.map((item, index) => {
+    const rows = this.getCallData().map((item, index) => {
       //console.log(item)
       return <tr key={index}>
         <td key='0'>&nbsp;{index + 1}</td>
@@ -159,6 +206,8 @@ class BidPanel extends Component {
           onclick={this.handleCall.bind(this, { name: 'XX' })}
         />
         <button onClick={this.handleConfirm}>确认</button>
+        <button onClick={this.handleReset}>重置</button>
+        <div className='calling'>{this.state.calling}</div>
       </div>
     );
   }
@@ -174,14 +223,16 @@ class BidPanel extends Component {
 class BidBlock extends Component {
   render() {
     const suit = this.props.name.slice(-1);
-    const bgcolor = { T: '#eeeeee', S: '#ddddFF', H: '#FFdddd'
-                    , D: '#ffffcc', C: '#ccffcc' };
+    const bgcolor = {
+      T: '#eeeeee', S: '#ddddFF', H: '#FFdddd'
+      , D: '#ffffcc', C: '#ccffcc'
+    };
     //const bgcolor = { T: '#eeeeee', S: '#eeeeee', H: '#eeeeee'
-                  //  , D: '#eeeeee', C: '#eeeeee' };
+    //  , D: '#eeeeee', C: '#eeeeee' };
     const style = {
       backgroundColor: `${bgcolor[suit]}`,
     }
-    let animation = {brightness:0};
+    let animation = { brightness: 0 };
     if (this.props.active == 0) animation['brightness'] = 0.6
     if (this.props.active == 1) animation['brightness'] = 1
 
@@ -219,7 +270,7 @@ class BidCard extends Component {
       animation && (animation['brightness'] = 1);
     }
     return (
-      <Motion animation={animation} className='bidcard'> 
+      <Motion animation={animation} className='bidcard'>
         <div className='cn1' onClick={this.props.onclick} style={style}>
           <img className='suit' src={`/cards/bids/${this.props.name}.svg`} />
         </div>
