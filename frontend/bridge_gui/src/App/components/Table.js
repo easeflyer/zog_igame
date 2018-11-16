@@ -9,9 +9,10 @@
 
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import Models from '../models/model'
-import Sound from './Sound'
-import TableView from '../views/pc/TableView' // 包含 TableView.css
+import Models from '../models/model';
+import Sound from './Sound';
+import TableView from '../views/pc/TableView'; // 包含 TableView.css
+import ResultPanel from '../views/pc/ResultPanel';
 import { inject, observer } from 'mobx-react';
 import { TableModel } from '../stores/tableStore';
 /**
@@ -101,7 +102,7 @@ class Table extends Component {
      * @param {card} item
      */
     play = (index) => {
-        const _play = function (){
+        const _play = function () {
             const card = this.props.tableStore.getCardByIndex(index);
             if (card.active == 2) {
                 this.props.tableStore.preplay(card);
@@ -123,12 +124,15 @@ class Table extends Component {
         // Sound.play('claim');
     }
 
+    openDummy = () => {
+        this.props.tableStore.openDummy();
+    }
     /**
      * 预留发送 数据接口
      */
     handleClaim = () => {
-        console.log('发送　claim 请求。')
-        console.log('接收到，同意设置　scene=4,不同意，设置为２')
+        console.log('发送　claim 请求。');
+        console.log('接收到，同意设置　scene=4,不同意，设置为２');
     }
     /**
      * 用户准备
@@ -158,33 +162,12 @@ class Table extends Component {
         Sound.play('deal')
     }
 
-
-    /** TODO: 移出去
-     * 显示比赛结果
-     * 输入：Models.getResult(); 从外部获得比赛结果数据
-     * 输出：构造 页面样式显示出来。
-     */
     showResult = () => {
-        const height = this.props.tableStore.height;
-        const result = Models.getResult();
-        const re = <div className='result'>
-            <img src='/cards/medal.svg' width="20%" />
-            <div style={{ lineHeight: height * 0.12 + 'px', }}>{result}</div>
-            <button onClick={this.hideResult}>下一局</button>
-        </div>;
-        ReactDOM.unmountComponentAtNode(document.querySelector('#result'));
-        ReactDOM.render(
-            re,
-            document.querySelector('#result')
-        )
+        const result = document.querySelector('.result');
+        if(!result)
+            ReactDOM.render(<ResultPanel />,document.querySelector('#result'))
+    }
 
-    }
-    /**
-     * 隐藏比赛结果
-     */
-    hideResult = () => {
-        ReactDOM.unmountComponentAtNode(document.querySelector('#result'));
-    }
     /**
      * 显示上一墩牌
      * 桌面上始终52张牌，因此要显示上一墩牌，需要调整某些牌的位置。

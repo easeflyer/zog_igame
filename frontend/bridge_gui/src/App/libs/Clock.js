@@ -11,21 +11,21 @@ import React, { Component } from 'react';
  */
 class Clock extends Component {
     state = {
-        time: 0
+        time: 95
     }
     constructor(props) {
         super(props);
         this.color1 = '#eeee33';    // 表体颜色
         this.color2 = '#73D0F4';    // 铃铛颜色
-        this.state.time = props.time;
+        //this.state.time = props.time;
     }
     timing = () => {
-        if (this.state.time == 0) {
+        if (this.state.time == this.props.time) {
             this.props.callback();
             clearInterval(this._clock);
         } else {
             this.setState({
-                time: --this.state.time
+                time: ++this.state.time
             })
         }
     }

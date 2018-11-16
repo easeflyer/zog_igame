@@ -1,23 +1,31 @@
 import React, { Component } from 'react';
 import TweenOne from 'rc-tween-one';
-import './Claim.css'
+import './Claim.css';
+import { inject, observer } from 'mobx-react';
 /**
 * props
 * number 剩余数字
 * active 点击状态
 * myclaim 是否自己　claim   true,false
 */
+@inject('tableStore')
+@observer
+class Claim extends Component {
 
-export default class Claim extends Component {
     state = {
+        number: 4,
         value: 0,
         submit: 0
     }
+
     handleClick = (value) => {
         console.log('ccc...')
         this.setState({
             value: value
         })
+    }
+    componentDidMount() {
+        this.props.tableStore.getUnPlayCardNumber();
     }
     handleSubmit = () => {
         this.setState({
@@ -26,10 +34,11 @@ export default class Claim extends Component {
         this.props.onSubmit();
     }
     handleSubmit1 = () => {
-        
+
     }
     render() {
-        const cblocks = Array(this.props.number / 1).fill('').map((_, index) =>
+        const number = this.props.tableStore.state.unPlayCardNumber;
+        const cblocks = Array(number).fill('').map((_, index) =>
             <Cblock key={index} number={index + 1}
                 active={this.state.value == index + 1 ? 0 : 1}
                 onClick={this.state.submit ? null : this.handleClick.bind(this, index + 1)} />
@@ -50,10 +59,13 @@ export default class Claim extends Component {
         </div>
 
         return (
-            this.props.myclaim ? myClaim : otherClaim
+            this.props.tableStore._claim.seat == this.props.tableStore.myseat
+                ? myClaim : otherClaim
         )
     }
 }
+
+
 
 
 
@@ -83,3 +95,6 @@ class Cblock extends Component {
         );
     }
 }
+
+
+export default Claim;

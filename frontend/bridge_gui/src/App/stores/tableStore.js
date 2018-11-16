@@ -45,10 +45,18 @@ class TableModel {
     lastTrick: false,  // 最后一墩牌是否显示
     //playseat:null, // 倒计时解决
     debug: false,
+    unPlayCardNumber:null,
   }
+  dummySeat = "north";
+  _claim = {seat:null,value:null};
+  _result = "";
 
   constructor() {
     this.initCards();
+  }
+  get result(){
+    if(this._result) return this._result;
+    else return "N3D +2 NS 600";
   }
   // 横屏取高度，竖屏取宽度
   @computed get size() {
@@ -424,8 +432,18 @@ class TableModel {
 
   @action.bound
   claim() {
+    this._claim.seat = this.myseat;
     this.state.scene = 3;
   }
+
+  @action.bound
+  getUnPlayCardNumber(){
+    // const p = new Promise(this.fetchNumber);
+    // const number =  await p;  
+    const number = 3;
+    this.state.unPlayCardNumber = number;
+  }
+
 
   /** !! 弃用 用
    * 设置牌的 active 状态。
@@ -486,6 +504,24 @@ class TableModel {
       card.active = 1; // 测试用
     })
     return this.state.cards;
+  }
+
+  @action.bound
+  openDummy(){
+    // await 获得数据 然后更新 state
+    const dummySeat = this.dummySeat;
+    let index = 0;
+    const dCards = Models.openDummy().cards.split('.');
+    let cards = this.state.cards[TableModel.seats.indexOf(dummySeat)];
+    console.log('seatnumber:',dCards);
+    dCards.forEach((item1, index1) => {
+        item1.split('').forEach((item2, index2) => {
+            // 这里。
+            cards[index].card = item2 + Card.suits[index1]
+            //cards[index].onclick = o.play(cards[index]);
+            index++;
+        })
+    })    
   }
 
 
