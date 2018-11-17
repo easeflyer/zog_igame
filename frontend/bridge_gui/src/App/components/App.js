@@ -4,6 +4,7 @@
 import React from 'react';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
+import Clock from '../libs/component/clock'
 //import PrivateRoute from './PrivateRoute'; 
 
 // 子组件列表
@@ -18,20 +19,19 @@ export default class App extends React.Component {
   componentWillMount() {
     console.log('...componentWillMount');
   }
-
   componentDidMount() {
     console.log('...componentDidMount');
   }
-
   render() {
     return (
       <div>
         {/* <Header /> */}
+        <input type={"button"} onClick={this.test.bind(this)}></input>
         <Switch>
-          <Route path="/game" component={Game} />
+          <Route path="/" component={Game} />
           <Route path="/test" component={Test} />
           {/* 注意主页放在最下面，避免重复匹配 */}
-          <Route path="/" component={Home} />
+          <Route path="/da" component={Home} />
         </Switch>
       </div>
     );
