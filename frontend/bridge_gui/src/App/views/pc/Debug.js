@@ -4,11 +4,13 @@
  * import TableModels from '../models/Table';
  */
 
-
+import ReactDOM from 'react-dom';
 import React, { Component } from 'react';
 import Models from '../../models/model'
 import { TableModel } from '../../stores/tableStore';
 import Card from '../../components/Card';
+import Clock from '../../libs/Clock';
+import { tokensToRegExp } from 'path-to-regexp';
 
 /**
  * props.o  
@@ -27,11 +29,51 @@ export default class Debug extends Component {
          * 如果不添加本 测试代码。这些方法就不会加载给 Table
          */
         // =====  测试用例开始 =================================================
+        /**
+         * TODO：把这个组件移出去。单独测试。
+         * 给某一个座位倒计时
+         * 为了降低组件的耦合性。将本组件动态挂载到 DOM 上。
+         * 利用 unmountComponentAtNode 进行卸载。
+         * p, offset 都是闹钟出现位置的微调。
+         * 
+         * seat [east,west,south,north]
+         * time 倒计时妙数
+         * callback 倒计时结束回调。
+         */
+        o.timing = function (seat, time, callback) {
+            const height = this.props.tableStore.height;
+            ReactDOM.unmountComponentAtNode(document.querySelector('#clock'));
+            const p = height * 0.18;
+            const offset = {
+                east: { x: p, y: 0 },
+                south: { x: 0, y: p },
+                west: { x: -p * 0.66, y: 0 },
+                north: { x: 0, y: -p * 0.66 }
+            }
+
+            const top = this.props.tableStore.seat[seat][1]['y'] + offset[seat].y;
+            const left = this.props.tableStore.seat[seat][1]['x'] + offset[seat].x;
+            const style = {
+                position: 'absolute',
+                top: top,
+                left: left,
+                width: '8%'
+            }
+            const clock = (
+                <div style={style}>
+                    <Clock time={time} callback={callback} />
+                </div>
+            );
+            ReactDOM.render(
+                clock,
+                document.querySelector('#clock')
+            )
+        }
         o.testClock = function () {
-            this.timing('east', 2,
-                () => this.timing('south', 2,
-                    () => this.timing('west', 2,
-                        () => this.timing('north', 2,
+            this.timing('east', 200,
+                () => this.timing('south', 200,
+                    () => this.timing('west', 200,
+                        () => this.timing('north', 200,
                             () => console.log('倒计时结束！')
                         )
                     )
@@ -77,23 +119,28 @@ export default class Debug extends Component {
          * 从 Models 获得数据。
          * 修改 seat 方位可以打开不同方位的牌。
          */
-        o.testDummy = function (seat1) {
+        o.testDummy = function (){
+            o.openDummy();
+        }
+        o.testDummy1 = function (seat1) {
             const seat = seat1;
             let index = 0
             const dCards = Models.openDummy().cards.split('.');
             let cards = o.props.tableStore.state.cards[TableModel.seats.indexOf(seat)];
+            console.log('seatnumber:',dCards);
             dCards.forEach((item1, index1) => {
                 item1.split('').forEach((item2, index2) => {
                     // 这里。
                     cards[index].card = item2 + Card.suits[index1]
-                    cards[index].onclick = this.play(cards[index]);
+                    cards[index].onclick = o.play(cards[index]);
                     index++;
                 })
             })
             //this.state.cards[Table.seatsen.indexOf(seat)] = cards;
-            this.setState({
-                cards: o.props.tableStore.state.cards
-            })
+            // this.setState({
+            //     cards: o.props.tableStore.state.cards
+            // })
+            //this.props.tableStore.state.cards = 
             console.log('openDummy..............')
             console.log(o.props.tableStore.state.cards)
 
@@ -147,26 +194,68 @@ export default class Debug extends Component {
                 "<div>" + o.props.tableStore.myseat + ':' + elSay.value + "</div>" + elMsg.innerHTML
         }
 
+        // 给所有牌添加可点击，可以测试出牌
+        o.addClick = function () {
+            // 南 方块 可点击。
+            let cards = o.props.tableStore.selectCards([0,1,2,3], 'SHDC');
+            o.props.tableStore.setCardsState(cards, { active: 2, onclick: o.play });
+        }
+
+        // 部分牌课点击
+        o.addClick1 = function () {
+            // 南 方块 可点击。
+            let cards = o.props.tableStore.selectCards([1], 'D');
+            o.props.tableStore.setCardsState(cards, { active: 2, onclick: o.play });
+            // 其他牌都不可点击
+            cards = o.props.tableStore.selectCards([0, 2, 3], 'SHDC');
+            cards = cards.concat(o.props.tableStore.selectCards([1], 'SHC'));
+            o.props.tableStore.addClick2Cards(cards, 0);
+        }
+
+
+        // 测试 出牌的位置。左上角坐标。用于参考。
+        o.testSeat = function () {
+            const top = o.props.tableStore.seat['south'][1]['y'];
+            const left = o.props.tableStore.seat['south'][1]['x'];
+
+            const style = {
+                position: 'absolute',
+                border: '1px solid red',
+                width: '5px',
+                top: top,
+                left: left,
+                height: '5px'
+            };
+            const dv1 = <div id="testDiv" style={style}></div>;
+            const testDiv = document.querySelector('#testDiv');
+            if (testDiv) ReactDOM.unmountComponentAtNode(document.querySelector('#clock'));
+            else ReactDOM.render(dv1, document.querySelector('#clock'))
+
+        }
+
+
         // =====  测试用例结束 =================================================
 
         return (
             <div className='debug' style={{ position: 'absolute' }}>
-                <button onClick={o.testUsersReady}>登录</button>
-                <button onClick={o.deal}>发牌</button>
-                <button onClick={o.test1.bind(o)}>出牌</button>
-                <button onClick={o.testActive.bind(o)}>阻止出牌</button>
-                <button onClick={o.test3.bind(o)}>清理桌面</button>
+                <button onClick={o.testUsersReady}>登录</button>&nbsp;
+                <button onClick={o.deal}>发牌</button>&nbsp;
+                <button onClick={o.testSeat}>出牌位置显示</button>&nbsp;
+                <button onClick={o.test1.bind(o)}>出牌</button>&nbsp;
+                <button onClick={o.addClick1}>阻止出牌</button>&nbsp;
+                <button onClick={o.test3.bind(o)}>清理桌面</button>&nbsp;
                 <br />
-                <button onClick={o.testDummy.bind(o, 'east')}>明手东</button>
-                <button onClick={o.testDummy.bind(o, 'west')}>明手西</button>
-                <button onClick={o.testDummy.bind(o, 'north')}>明手北</button>
+                <button onClick={o.testDummy.bind(o, 'east')}>明手东</button>&nbsp;
+                <button onClick={o.testDummy.bind(o, 'west')}>明手西</button>&nbsp;
+                <button onClick={o.testDummy.bind(o, 'north')}>明手北</button>&nbsp;
                 <br />
-                <button onClick={o.bid.bind(o)}>显示叫牌</button>
-                <button onClick={o.testBid1.bind()}>叫牌</button>
-                <button onClick={o.testClock.bind(o)}>倒计时</button>
-                <button onClick={o.testLastTrick.bind(o)}>上一墩牌</button>
+                <button onClick={o.bid.bind(o)}>显示叫牌</button>&nbsp;
+                <button onClick={o.testBid1.bind()}>叫牌</button>&nbsp;
+                <button onClick={o.testClock.bind(o)}>倒计时</button>&nbsp;
+                <button onClick={o.testLastTrick.bind(o)}>上一墩牌</button>&nbsp;
                 <br />
-                <button onClick={o.showResult}>显示结果</button>
+                <button onClick={o.addClick}>牌可点击</button>&nbsp;
+                <button onClick={o.showResult}>显示结果</button>&nbsp;
             </div>
         )
     }

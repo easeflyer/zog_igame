@@ -2,7 +2,8 @@ import Card from '../components/Card'  // 也应该从模型引入
 import Models from '../models/model'
 import { flexLayout } from '../libs/layout.js'
 import { observable, computed, action } from 'mobx';
-import Claim from '../views/pc/Claim';
+import Position from '../common/Position';
+//import Claim from '../views/pc/Claim';
 /**
  * TableModel 游戏桌 数据Model
  * 
@@ -26,7 +27,7 @@ class TableModel {
     east: [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // seat 用于记录坐标 
     south: [{ x: 0, y: 0 }, { x: 0, y: 0 }], // 第一个xy 是 四个区域左上角坐标
     west: [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // 第二个xy 是 出牌4个区域坐标。
-    north: [{ x: 0, y: 0 }, { x: 0, y: 0 }]   // 也就是牌出到什么地方。
+    north: [{ x: 0, y: 0 }, { x: 0, y: 0 }]  // 也就是牌出到什么地方。
   }
   zindex = 10;
   myseat = 'west'               // 用户坐在 南
@@ -44,10 +45,18 @@ class TableModel {
     lastTrick: false,  // 最后一墩牌是否显示
     //playseat:null, // 倒计时解决
     debug: false,
+    unPlayCardNumber:null,
   }
+  dummySeat = "north";
+  _claim = {seat:null,value:null};
+  _result = "";
 
   constructor() {
     this.initCards();
+  }
+  get result(){
+    if(this._result) return this._result;
+    else return "N3D +2 NS 600";
   }
   // 横屏取高度，竖屏取宽度
   @computed get size() {
@@ -89,7 +98,7 @@ class TableModel {
             seat: TableModel.seats[index1],       // 这张牌是那个方位的
             //table: this,
             size: this.csize,                // 牌的大小
-            card: s[i] + suits[index2],       //s[i]
+            card: s[i] + suits[index2],       //s[i]  5D
             position: { x: this.height / 2, y: this.height * 2 }     // 考虑一个默认位置。
           })
         }
@@ -125,6 +134,7 @@ class TableModel {
           case 'south': item['animation']['top'] += 20; break;
           case 'west': item['animation']['left'] -= 20; break;
           case 'north': item['animation']['top'] -= 20; break;
+          default:break;
         }
 
       }
@@ -136,6 +146,7 @@ class TableModel {
       case 'south': item['animation']['top'] -= 20; break;
       case 'west': item['animation']['left'] += 20; break;
       case 'north': item['animation']['top'] += 20; break;
+      default:break;
     }
     item['animation']['delay'] = 0;
   }
@@ -190,20 +201,15 @@ class TableModel {
    */
   //model
   @action.bound
-  clearBoard(){
+  clearBoard() {
     //if(this.board.length < 4) return false;
     const board = this.board;
     for (let i = 0; i < board.length; i++) {
       board[i].animation.left = this.size / 2;
       board[i].animation.top = -this.size * 2;
-      //board[i].animation.rotate = 0;
-      // board[i].animation.left = 100;
-      // board[i].animation.top = 100;
-
-      //board[i].active = 3; // 应该不变
     }
     this.board = [];
-    this.state.cards = Object.assign({},this.state.cards);
+    this.state.cards = Object.assign([], this.state.cards);
   }
 
 
@@ -222,12 +228,14 @@ class TableModel {
    * sepY 纵向扑克间隔
    * sepX 横向扑克间隔
    * 
+   * active define 0,1,2,3  0 灰色不能点，1 亮色不能点，2 亮色能点, 3 亮色能点突出
+   * ACT000  ACT100 ACT110 ACT111 (考虑编码)
    * 
    * 输入参数：play 是出牌的 事件处理方法。传递进来用于绑定到牌上
    * 输出：this.state.cards
    */
   @action.bound
-  dealCards(play) {
+  dealCards() {
     const cards = this.state.cards;
     const sepY = this.csize * 0.15;
     const sepX = this.csize * 0.25;
@@ -251,22 +259,65 @@ class TableModel {
           rotate: rotate,
           transformOrigin: `${offset}px ${offset}px`
         }
-        //cards[index][index1][index2].rotate = rotate;
         cards[index][index1].active = 2; // 测试用
-        //cards[index][index1].onclick = this.play(item1)
-        cards[index][index1].onclick = () => play(item1)
-        // if ('02'.indexOf(index) != -1) y = y + sepY
-        // else x = x + sepX
-
       });
-      // if([0,2].indexOf(index) != -1) item = this.suitLayoutCards(item, index)
-      // else item = this.resetCards(item, index)
-      //item = this.suitLayoutCards(item, index)
       item = this.resetCards(item, index)
     })
     this.state.cards = cards;
     return cards;
   }
+  /**
+   * 根据用户和花色选出指定的牌对象数组
+   * @param {*} user 用户0-3 NESW
+   * @param {*} suit 花色
+   */
+  selectCards(user, suit) {
+    const cards = this.state.cards;
+    let destCards = [];
+    user.forEach((j) => {
+      cards[j].forEach((card, i) => {
+        if (suit.indexOf(card.card.slice(-1)) != -1) destCards.push(card);
+      });
+    });
+    return destCards;
+  }
+  /**
+   * 通过 index n/52 获得card 的引用。
+   * @param {*} index 
+   */
+  getCardByIndex(index){
+    const cards = this.state.cards;
+    const user = Math.floor(index/13);
+    const i = index % 13;
+    return cards[user][i];
+  }
+
+  /**
+   * 未完成。
+   * @param {*} cards
+   *    一维数组，值是card对象。
+   * @param {*} active 
+   * @param {*} handleClick 
+   */
+  addClick2Cards(cards, active, handleClick) {
+    cards.forEach((item, index) => {
+      cards[index].active = active;
+      if (handleClick)
+        cards[index].onclick = handleClick;
+    });
+  }
+
+  setCardsState(cards, state) {
+    cards.forEach((card, i) => {
+      console.log('card555:',card);
+      Object.keys(state).forEach((key)=>{
+        //if(key=='onclick') card[key] = ()=>state[key](card);
+        card[key] = state[key];
+      });
+      //cards[i] = Object.assign({}, card, state);
+    });
+  }
+
 
   /**
   * initSeat 初始化 发牌位置 出牌位置的坐标。 
@@ -381,15 +432,25 @@ class TableModel {
 
   @action.bound
   claim() {
+    this._claim.seat = this.myseat;
     this.state.scene = 3;
   }
 
-  /**
+  @action.bound
+  getUnPlayCardNumber(){
+    // const p = new Promise(this.fetchNumber);
+    // const number =  await p;  
+    const number = 3;
+    this.state.unPlayCardNumber = number;
+  }
+
+
+  /** !! 弃用 用
    * 设置牌的 active 状态。
    * 把编号 在nums里 的牌设置成 active 状态
    * nums 是一个数组
    * active 是目标状态。*      
-   * active     0,1,2,3  0 灰色不能点，1 亮色不能点，2 亮色能点, 3 亮色能点突出
+   * active define 0,1,2,3  0 灰色不能点，1 亮色不能点，2 亮色能点, 3 亮色能点突出
    */
   @action.bound
   setActive = (nums: Array, active = 0) => {
@@ -397,7 +458,7 @@ class TableModel {
     cards.forEach((item) => item.forEach((item) => {
       if (nums.indexOf(item.index) != -1) item.active = active;
     }));
-    this.state.cards = cards; 
+    this.state.cards = cards;
     //return cards;
   }
   /**
@@ -443,6 +504,24 @@ class TableModel {
       card.active = 1; // 测试用
     })
     return this.state.cards;
+  }
+
+  @action.bound
+  openDummy(){
+    // await 获得数据 然后更新 state
+    const dummySeat = this.dummySeat;
+    let index = 0;
+    const dCards = Models.openDummy().cards.split('.');
+    let cards = this.state.cards[TableModel.seats.indexOf(dummySeat)];
+    console.log('seatnumber:',dCards);
+    dCards.forEach((item1, index1) => {
+        item1.split('').forEach((item2, index2) => {
+            // 这里。
+            cards[index].card = item2 + Card.suits[index1]
+            //cards[index].onclick = o.play(cards[index]);
+            index++;
+        })
+    })    
   }
 
 
