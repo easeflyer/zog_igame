@@ -181,3 +181,61 @@ Table.js
         doudizhu
         拱猪
     
+
+## 一张 牌的几个状态。
+initCards()
+{
+  "active": 0,
+  "card": "XS",
+  "animation": "",  
+}
+dealCards()
+{
+  "active": 2,
+  "onClick": "[function onclick]",
+  "animation": {
+    "top": 101.09580000000003,
+    "left": 412.3375,
+  },
+}
+play() inboard
+{
+  "onClick": "[function ]",
+  "animation": {
+    "top": 221.559,
+    "left": 227.9472,
+  },
+  "zIndex": 10
+}
+飞走后。
+{
+  "active": 4,
+  "animation": {
+    "top": -1014,
+    "left": 253.5,
+  },
+}
+
+
+{
+  "active": 4,
+  "onClick": "[function ]",
+  "index": 1,
+  "seat": "east",
+  "animation": {
+    "top": 221.559,
+    "left": 227.9472,
+    "delay": 0,
+    "duration": 600,
+    "rotate": -90,
+    "transformOrigin": "31.940999999999995px 31.940999999999995px",
+    "brightness": 1
+  },
+  "card": "XS",
+  "size": 91.25999999999999,
+  "position": {
+    "x": 253.5,
+    "y": 1014
+  },
+  "zIndex": 14
+}

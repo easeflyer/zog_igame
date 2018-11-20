@@ -198,18 +198,19 @@ export default class Debug extends Component {
         o.addClick = function () {
             // 南 方块 可点击。
             let cards = o.props.tableStore.selectCards([0,1,2,3], 'SHDC');
-            o.props.tableStore.setCardsState(cards, { active: 2, onclick: o.play });
+            o.props.tableStore.setCardsState(cards, { active: 3, onclick: o.play });
         }
 
         // 部分牌课点击
         o.addClick1 = function () {
             // 南 方块 可点击。
             let cards = o.props.tableStore.selectCards([1], 'D');
-            o.props.tableStore.setCardsState(cards, { active: 2, onclick: o.play });
+            o.props.tableStore.setCardsState(cards, { active: 3, onclick: o.play });
             // 其他牌都不可点击
             cards = o.props.tableStore.selectCards([0, 2, 3], 'SHDC');
             cards = cards.concat(o.props.tableStore.selectCards([1], 'SHC'));
-            o.props.tableStore.addClick2Cards(cards, 0);
+            o.props.tableStore.setCardsState(cards, { active: 1, onclick: o.play });
+            //o.props.tableStore.addClick2Cards(cards, 0);
         }
 
 

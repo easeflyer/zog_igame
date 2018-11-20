@@ -14,7 +14,7 @@ import Sound from './Sound';
 import TableView from '../views/pc/TableView'; // 包含 TableView.css
 import ResultPanel from '../views/pc/ResultPanel';
 import { inject, observer } from 'mobx-react';
-import { TableModel } from '../stores/tableStore';
+import { TableModel,ACT0, ACT1, ACT2, ACT3 } from '../stores/tableStore';
 /**
  * Table 一桌游戏
  *      1 是牌桌的容器组件，或者说是控制器组件(MVC)
@@ -104,9 +104,9 @@ class Table extends Component {
     play = (index) => {
         const _play = function () {
             const card = this.props.tableStore.getCardByIndex(index);
-            if (card.active == 2) {
+            if (card.active == ACT1.LC) {
                 this.props.tableStore.preplay(card);
-            } else if (card.active == 3) {
+            } else if (card.active == ACT1.LCO) {
                 this.props.tableStore.play(card);
                 Sound.play('play');
                 if (this.props.tableStore.board.length == 4) setTimeout(this.clearBoard, 1000)
