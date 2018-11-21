@@ -59,7 +59,7 @@ class Claim extends Component {
         </div>
 
         return (
-            this.props.tableStore._claim.seat == this.props.tableStore.myseat
+            this.props.tableStore.boardState.claim.seat == this.props.tableStore.myseat
                 ? myClaim : otherClaim
         )
     }
