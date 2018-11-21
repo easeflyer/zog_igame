@@ -1,4 +1,5 @@
 import Card from '../components/Card'  // 也应该从模型引入
+import {ACT0,ACT1,ACT2,ACT3} from '../components/Card'
 import Models from '../models/model'
 import { flexLayout } from '../libs/layout.js'
 import { observable, computed, action } from 'mobx';
@@ -20,10 +21,10 @@ import Position from '../common/Position';
  *    获取窗口的高度与宽度(不包含工具条与滚动条):
  */
 //* active define 0,1,2,3  0 灰色不能点，1 亮色不能点，2 亮色能点, 3 亮色能点突出
-const ACT0 = 0;                             // initCards
-const ACT1 = { D: 1, L: 2, LC: 3, LCO: 4 }  // dealCards
-const ACT2 = 5;                             // play() in board
-const ACT3 = 6;                             // out of Screen
+// const ACT0 = 0;                             // initCards
+// const ACT1 = { D: 1, L: 2, LC: 3, LCO: 4 }  // dealCards
+// const ACT2 = 5;                             // play() in board
+// const ACT3 = 6;                             // out of Screen
 
 class TableModel {
   width = window.innerWidth;
@@ -38,6 +39,7 @@ class TableModel {
   zindex = 10;
   myseat = 'west'               // 用户坐在 南
   deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
+  @observable uiState = {}
   @observable state = {
     cards: null, // 考虑这里不用 cards 只用必要的数字
     scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
@@ -54,20 +56,20 @@ class TableModel {
     unPlayCardNumber: null,
   }
   dummySeat = "north";
-  boardState = {
-    boardId: null,
-    contract: null,
-    claim: { seat: null, value: null },
-    result: null,
-    curTrick: [],    // 桌面上的两张牌
-    dealer: null,    // 第一个叫牌的人
-    declarer: null,  // 庄家
-    dummy: null,      // 明手
-    ewWin: null,
-    nsWin: null,
-    player: null,
-    unPlayedCards: null, // 什么样的数据结构？？
-  }
+  // boardState = {
+  //   boardId: null,
+  //   contract: null,
+  //   claim: { seat: null, value: null },
+  //   result: null,
+  //   curTrick: [],    // 桌面上的两张牌
+  //   dealer: null,    // 第一个叫牌的人
+  //   declarer: null,  // 庄家
+  //   dummy: null,     // 明手
+  //   ewWin: null,
+  //   nsWin: null,
+  //   player: null,
+  //   unPlayedCards: null, // 什么样的数据结构？？
+  // }
   // _boardId = null;
   // _contract = null;
   // _claim = {seat:null,value:null};
@@ -274,7 +276,7 @@ class TableModel {
    * 定位参考：
    *  -this.size * 0.2;  计分位置
    * 
-   * board[i].active = ACT3;  飞到桌面以外。
+   * board[i].active = ACT3;  飞到桌面以外。                      
    */
   //model
   @action.bound
@@ -411,10 +413,13 @@ class TableModel {
     const pos = [0, 2].indexOf(seatIndex) == -1 ? 'left' : 'top';
     let length = 0;
     let ps = 0;
-    cards.forEach(card => card.active == ACT1.L && length++)
+    cards.forEach(card => {
+      if(card.active == ACT1.L || card.active == ACT1.LC)
+        length++
+    })
     const layout = flexLayout(this.size, length, 2)
     return cards.map((card, index) => {
-      if (card.active == ACT1.L) {
+      if (card.active == ACT1.L || card.active == ACT1.LC) {
         ps = layout.shift();
         card['animation'][pos] = ps;
         card['animation']['duration'] = 600;
@@ -601,6 +606,15 @@ class TableModel {
     } else {
       calldata[calldata.length - 1][TableModel.seats.indexOf(seat)] = bid;
     }
+  }
+  /**
+   * 恢复牌局
+   * 主要用于断线重连，或者和服务器数据不同步时执行。
+   * 依据 this.boardState 恢复。
+   */
+  @action.bound
+  recovery = () => {
+    
   }
 
 

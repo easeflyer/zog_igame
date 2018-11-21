@@ -9,12 +9,12 @@
 
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import Models from '../models/model';
 import Sound from './Sound';
 import TableView from '../views/pc/TableView'; // 包含 TableView.css
 import ResultPanel from '../views/pc/ResultPanel';
 import { inject, observer } from 'mobx-react';
-import { TableModel,ACT0, ACT1, ACT2, ACT3 } from '../stores/tableStore';
+import { TableModel } from '../stores/tableStore';
+import {ACT0, ACT1, ACT2, ACT3} from '../components/Card';
 /**
  * Table 一桌游戏
  *      1 是牌桌的容器组件，或者说是控制器组件(MVC)
@@ -199,6 +199,14 @@ class Table extends Component {
     bid = () => {
         this.props.tableStore.bid();
     }
+
+    /**
+     * 重新链接 复盘
+     */
+    recovery = () => {
+        this.props.tableStore.recovery();
+    }
+
     render() {
         return (
             <TableView table={this} />

@@ -69,21 +69,8 @@ class Card extends React.Component {
             }
             return style;
         }
-
-
-
-
-        // 判断处理 active 状态
+        // 根据 active 调整 card 的状态。影响显示和点击
         this.setActive(this.props.active);
-        // if (this.props.active == 0)
-        //     this.props.animation && (this.props.animation['brightness'] = 0.6)
-        // if (this.props.active == 1)
-        //     this.props.animation && (this.props.animation['brightness'] = 1)
-        // let onclick = () => false;
-        // if (this.props.active > 1) {
-        //     onclick = this.props.onClick;
-        //     this.props.animation && (this.props.animation['brightness'] = 1)
-        // }
         const card = this.props.card.slice(0, 1) == 'X' ?   // XH  XS XD 都是扣着的
             'back' : this.props.card;
 
@@ -154,6 +141,7 @@ Card.suits = ['S', 'H', 'D', 'C'];
 //     })
 // }
 export default Card
+export {ACT0,ACT1,ACT2,ACT3}
 
 // 其他参考：
 
