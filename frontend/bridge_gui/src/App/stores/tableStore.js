@@ -31,15 +31,15 @@ class TableModel {
   height = window.innerHeight;
   board = []; // 出牌区域的四张牌
   seat = {
-    east: [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // seat 用于记录坐标 
-    south: [{ x: 0, y: 0 }, { x: 0, y: 0 }], // 第一个xy 是 四个区域左上角坐标
-    west: [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // 第二个xy 是 出牌4个区域坐标。
-    north: [{ x: 0, y: 0 }, { x: 0, y: 0 }]  // 也就是牌出到什么地方。
+    east:  [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // seat 用于记录坐标 
+    south: [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // 第一个xy 是 四个区域左上角坐标
+    west:  [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // 第二个xy 是 出牌4个区域坐标。
+    north: [{ x: 0, y: 0 }, { x: 0, y: 0 }]   // 也就是牌出到什么地方。
   }
   zindex = 10;
   myseat = 'west'               // 用户坐在 南
   deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
-  @observable uiState = {}
+  @observable uiState = {} // 未启用。
   @observable state = {
     cards: null, // 考虑这里不用 cards 只用必要的数字
     scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
