@@ -203,7 +203,7 @@ representing chess games.  PGN has been very successful.  There are already
 many chess programs that understand PGN, and PGN databases with thousands
 of games are publicly available.
 PBN起源于PGN（便携式游戏符号），从PGN的名字来看，它好像是任意游戏的一种标准，事实上
-PGN只是针对象棋游戏的一种数据标准。PGN非常成功，已经有许多象棋程序使用PGN成千上万的开源PBN数据库都可以得到
+PGN只是针对象棋游戏的一种数据标准。PGN非常成功，已经有许多象棋程序使用PGN,成千上万的开源PBN数据库都可以得到
   The specification of PGN can be downloaded from
 http://www.tistis.nl/pbn/pgn.zip .
   One standard, namely the "Portable Draughts Notation" (PDN), has already
