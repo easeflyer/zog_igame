@@ -108,7 +108,7 @@ class TableModel {
     let index = 0;                              // 复位index 可以让四个人的牌同时发出来
     const cards = [[], [], [], []];             // 初始化二维数组 保存四个方位的牌
     //deals. [XXXXXXXXXXXXX,QJ98.A5.J853.QT4,XXXXXXXXXXXXX,XXXXXXXXXXXXX]
-    // 注意避免用 X 暴露花色的数量
+    // 注意避免用 X 暴露花色的数量 index1 是方位编号
     deals.forEach((item, index1) => {
       const suit = item.split('.')
       suit.forEach((s, index2) => {           // index2 四个花色  s 'QJ98' 牌点字串
@@ -310,6 +310,7 @@ class TableModel {
   }
   /**
    * 通过 index n/52 获得card 的引用。
+   * cardIndexOf 重复函数
    * @param {*} index 
    */
   getCardByIndex(index) {
@@ -333,7 +334,9 @@ class TableModel {
         cards[index].onclick = handleClick;
     });
   }
-
+  /**
+   * 好像可以覆盖上面的功能。
+   */
   setCardsState(cards, state) {
     cards.forEach((card, i) => {
       console.log('card555:', card);
@@ -487,19 +490,19 @@ class TableModel {
    * ACT2
    * ACT3
    */
-  @action.bound
-  setActive = (nums: Array, active = 0) => {
-    const cards = this.state.cards;
-    cards.forEach((item) => item.forEach((item) => {
-      if (nums.indexOf(item.index) != -1) item.active = active;
-    }));
-    this.state.cards = cards;
-    //return cards;
-  }
+  // @action.bound
+  // setActive = (nums: Array, active = 0) => {
+  //   const cards = this.state.cards;
+  //   cards.forEach((item) => item.forEach((item) => {
+  //     if (nums.indexOf(item.index) != -1) item.active = active;
+  //   }));
+  //   this.state.cards = cards;
+  //   //return cards;
+  // }
   /**
    * 通过一张牌的索引，获得具体的 牌数据引用
    * this.state.cards 永远都是 52张牌
-   * 
+   * getCardByIndex重复函数
    */
   cardIndexOf(index) {
     const i1 = Math.floor(index / 13);  // 商数是座位 0-3
@@ -534,7 +537,7 @@ class TableModel {
       // card['animation']['rotate'] = 180;
       // card['position']['x'] = this.seat[Table.seatsen[index]][1].x;
       // card['position']['y'] = this.seat[Table.seatsen[index]][1].y;
-      //card['animation'] = ''
+      //card['animation'] = '';
       //card['animation']['delay'] = 0;
       card.active = ACT3; // 测试用
     })
@@ -628,5 +631,5 @@ TableModel.seatscn = ['东', '南', '西', '北'];
  * 直接实例化，因为一局游戏只有一个桌子。
  * Table.js 也就是 Table 控制器（容器）类调用本类
  */
-export { TableModel, ACT0, ACT1, ACT2, ACT3 };
+export { TableModel};
 export default new TableModel();
