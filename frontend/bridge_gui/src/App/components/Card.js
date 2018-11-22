@@ -1,6 +1,11 @@
 import React from 'react';
 import Motion from '../libs/Motion'
 //import TweenOne from 'rc-tween-one';
+//* active define 0,1,2,3  0 灰色不能点，1 亮色不能点，2 亮色能点, 3 亮色能点突出
+const ACT0 = 0;                             // initCards
+const ACT1 = { D: 1, L: 2, LC: 3, LCO: 4 }  // dealCards
+const ACT2 = 5;                             // play() in board
+const ACT3 = 6;                             // out of Screen
 
 /**
  * 一张牌 Card 的功能：
@@ -27,6 +32,29 @@ import Motion from '../libs/Motion'
  *      X 代表扣着，可能暴露扣着牌的花色数量，比如：XHXHXH,XDXD,XSXSXS  
 */
 class Card extends React.Component {
+    handleClick = () => false;
+    setActive(act) {
+        switch (act) {
+            case ACT1.D:
+                this.props.animation && (this.props.animation['brightness'] = 0.6);
+                break;
+            case ACT1.L:
+                this.props.animation && (this.props.animation['brightness'] = 1)
+                break;
+            case ACT1.LC:
+            case ACT1.LCO:
+                this.handleClick = this.props.onClick;
+                this.props.animation && (this.props.animation['brightness'] = 1)
+                break;
+            case ACT2:
+            case ACT3:
+                this.handleClick = () => false;
+                this.props.animation && (this.props.animation['brightness'] = 1)
+                break;
+            default:
+                break;
+        }
+    }
     render() {
         // 非动画样式，如果有给出就调整，如果没有给出，就不变。
         const getStyle = () => {
@@ -41,19 +69,11 @@ class Card extends React.Component {
             }
             return style;
         }
-
-        // 判断处理 active 状态
-        if (this.props.active == 0)
-            this.props.animation && (this.props.animation['brightness'] = 0.6)
-        if (this.props.active == 1)
-            this.props.animation && (this.props.animation['brightness'] = 1)
-        let onclick = () => false;
-        if (this.props.active > 1) {
-            onclick = this.props.onClick;
-            this.props.animation && (this.props.animation['brightness'] = 1)
-        }
+        // 根据 active 调整 card 的状态。影响显示和点击
+        this.setActive(this.props.active);
         const card = this.props.card.slice(0, 1) == 'X' ?   // XH  XS XD 都是扣着的
             'back' : this.props.card;
+
 
         return (
             <div id={'card' + this.props.index}  // TODO: 这个div定位不理想，只是起到了 zIndex 作用。
@@ -63,7 +83,7 @@ class Card extends React.Component {
                 }}
             >
                 <Motion animation={this.props.animation} style={getStyle()}>
-                    <img onClick={onclick(`${this.props.index}`)}
+                    <img onClick={this.handleClick(`${this.props.index}`)}
                         alt={this.props.key}
                         src={`/cards/${card}.svg`}
                         style={{
@@ -121,6 +141,7 @@ Card.suits = ['S', 'H', 'D', 'C'];
 //     })
 // }
 export default Card
+export {ACT0,ACT1,ACT2,ACT3}
 
 // 其他参考：
 

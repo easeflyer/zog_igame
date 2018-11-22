@@ -84,8 +84,8 @@ const TableView = (props) => {
           </div>
           <button onClick={table.claim} className="claimbtn disable">摊牌</button>
           <button onClick={() => table.timer.stop()} onDoubleClick={() => table.timer.start()} className="calljudge">呼叫裁判</button>
-          <button onTouchEnd={table.claim} onClick={table.lastTrick.bind(table)} className="lasttrick">上一墩牌</button>
-          <button onTouchEnd={table.claim} onClick={table.bid.bind(table)} className="showbid">显示叫牌</button>
+          <button onClick={table.lastTrick.bind(table)} className="lasttrick">上一墩牌</button>
+          <button onClick={table.bid.bind(table)} className="showbid">显示叫牌</button>
 
           {/* <div className='re' id='lastTrick'>上墩牌</div>*/}
           {/* 注意比赛结果会挂载到下面的div */}
