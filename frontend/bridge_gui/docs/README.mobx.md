@@ -40,6 +40,39 @@ stores            MobX 提供的 Store 文件的保存目录
 1. 如何分工。
 
 
+## tableStore 详解
+
+```
+constructor()     
+  this.initCards();     初始化 cards 二维数组
+
+userReady(se);          用户准备就绪
+userAllReady();         判断用户是否都就绪
+dealCards();            发牌，绑定点击事件。
+bid();                  显示叫牌面板
+call(seat,bid)          叫牌
+
+preplay();              仅调整UI牌突出显示
+play();                 牌打出到 board
+resetCards();           重新整理余下的牌的位置ui
+clearBoard();           清理桌面上的牌ui
+
+selectCards(user, suit) 根据用户和花色，选中牌
+getCardByIndex(index)   根据52张牌的编号选中1张牌
+addClick2Cards          (cards, active, handleClick)
+                        给一组牌添加点击处理。
+initSeat(center, seats) 初始化设置 发牌位置和出牌位置坐标
+
+suitLayoutCards         (cards, seatIndex)
+                        按照花色布局
+lastTrick               显示上一墩牌, 数据如何和客户端关联起来。
+openDummy
+
+需要增加的方法：
+给所有牌调整动画时间。
+```
+
+
 ## TODO：
 table.js
   play()
