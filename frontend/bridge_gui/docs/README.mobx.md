@@ -87,18 +87,12 @@ recovery                      断线恢复 回复 state 从 state 回复 uistate
 
 
 ## TODO：
-table.js
-  play()
-  timing 等移出
-  上一墩 正确。
-
-store  优化合理，添加测试用例
-tableStore 206行解决问题。
 
 
 
 ## 关于方位
 
+1. UI 位置 和 数据位置，分别对待。UI 位置，永远是NESW
 1. 位置变化：自己的位置，东南西北有变化。
 1. 自己牌永远在第二组，要和位置对应起来。
 1. 

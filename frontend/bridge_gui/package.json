@@ -100,6 +100,7 @@
     "extends": "react-app"
   },
   "devDependencies": {
-    "babel-plugin-transform-decorators-legacy": "^1.3.5"
+    "babel-plugin-transform-decorators-legacy": "^1.3.5",
+    "react-test-renderer": "<current-version>"
   }
 }
