@@ -58,7 +58,7 @@ const TableView = (props) => {
   */
 
   const table = props.table;
-  //const table = _tableObj;
+  // const table = _tableObj;
   //const cards = table.cards;
   const cards = Card.createComponents(table.props.tableStore.state.cards);
   console.log('table1:',table);

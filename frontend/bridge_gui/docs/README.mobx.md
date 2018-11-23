@@ -84,7 +84,47 @@ get size()              牌的大小
 setDelay                      给所有牌调整动画时间。
 recovery                      断线恢复 回复 state 从 state 回复 uistate
 ```
+## 接口函数
+```
+进入页面，立刻得到所有玩家信息，和52张牌（应该所有玩家都准备好再得到52张牌）
+sucInit(){
+    1. 分配 4 个玩家的牌
+    2. 分析当前账号属于哪个方位
+    3. 配置4个玩家的信息
+    4. 判断是否是重连接
+    5. 建立长连接
+}
 
+sucPolling()  处理长连接发送来的消息
+handleReady() 点击准备时，触发的事件
+bidCall() 用来发送叫牌消息
+handleClaim() 庄家摊牌
+play() 打牌
+handleClaimMsg() 同意或拒绝摊牌
+
+长连接相关 ：
+ 0. 收到一个玩家的准备消息： 将准备改成就绪
+ 1. 全都准备好:  发牌 splitCards()   PC版 dealCards()
+ 2. 摊牌通过:  显示结果showResult()
+ 3. 收到聊天消息：addChatMsg() 将消息添加到聊天区
+ 4. 收到叫牌消息： validatePass() 检测是否有连续三个pass        这个消息中应该提示下一个要操作的玩家，不应该由玩家告诉服务器叫牌成功，
+ 5. 收到叫牌结果信息 ：playRules() 设置该谁打牌
+ 6. 收到打牌消息 recoverTrick() 将对应玩家的牌打出去
+ 7. 收到庄家摊牌消息
+ 8. 收到防守方同意或拒绝摊牌的消息
+```
+
+## 功能函数
+```
+validatePass()  处理叫牌
+playRules()  验证打牌规则
+recoverMyCards() 恢复本玩家的牌
+recoverGuardCards() 恢复扣着的牌
+testDummy() 恢复明手的牌
+recoverDeclarerOrDummyCards() 恢复庄家或明手的牌
+recoverTrick()根据不同参数实现恢复上墩(last)、 恢复当前墩(current)、接收到打牌消息后打出相应的牌(play) 
+setClaimtrick() 设置当前可摊牌的墩数
+```
 
 ## TODO：
 
