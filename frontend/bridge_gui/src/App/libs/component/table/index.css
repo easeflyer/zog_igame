@@ -1,0 +1,39 @@
+.flexwrap{
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: center;  
+}
+.boards{
+    background-image: url(../../image/table.jpg);
+    width:300px;
+    height: 300px;
+    background-size: 300px 300px;
+    display: inline-block;
+}
+.imgwrap{        
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    margin: 1rem;
+}
+.middleimg{
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+    align-items: center;
+}
+.flexColumn{
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    align-content: center;
+}
+.flexRow{
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    align-content: center
+}

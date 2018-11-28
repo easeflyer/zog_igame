@@ -4,7 +4,7 @@ import TweenOne from 'rc-tween-one';
 /**
  * 对动画组件的封装。考虑以后也许会用其他的动画替代
  */
-export default (props) => (
+const Motion= (props) => (
   <TweenOne
     animation={{
       ...props.animation,
@@ -16,3 +16,4 @@ export default (props) => (
     {props.children}
   </TweenOne>
 )
+export default React.memo(Motion)

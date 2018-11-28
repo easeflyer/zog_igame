@@ -4,7 +4,6 @@
 import React from 'react';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
-import Clock from '../libs/component/clock'
 //import PrivateRoute from './PrivateRoute'; 
 
 // 子组件列表
@@ -25,8 +24,7 @@ export default class App extends React.Component {
   render() {
     return (
       <div>
-        {/* <Header /> */}
-        <input type={"button"} onClick={this.test.bind(this)}></input>
+        {/* <Header /> */}  
         <Switch>
           <Route path="/" component={Game} />
           <Route path="/test" component={Test} />
