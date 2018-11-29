@@ -4,6 +4,7 @@
 import React from 'react';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
+import Tables from '../libs/component/table'
 //import PrivateRoute from './PrivateRoute'; 
 
 // 子组件列表
