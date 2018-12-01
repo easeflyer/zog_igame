@@ -7,34 +7,34 @@ const Table = (props) => {
     return (
         <div className="imgwrap" style={{ margin: margin + "px" }} >
             <div>
-                <Player
-                    user={user[0]}
+                {user[1] ? <Player
+                    user={user[1]}
                     status={user[0].status}//不应该用索引选择，应该用东西南北标识。4个player依次为北西东南。
-                    size={size * scale} />
+                    size={size * scale} /> : null}
             </div>
             <div className="middleimg">
                 <div>
-                    <Player
+                    {user[1] ? <Player
                         user={user[1]}
                         status={user[0].status}
-                        size={size * scale} />
+                        size={size * scale} /> : null}
                 </div>
                 <div
                     className="boards"
                     style={{ width: size + "px", height: size + "px", backgroundSize: size + "px" }}>
                 </div>
                 <div>
-                    <Player
-                        user={user[2]}
+                    {user[1] ? <Player
+                        user={user[1]}
                         status={user[0].status}
-                        size={size * scale} />
+                        size={size * scale} /> : null}
                 </div>
             </div>
             <div>
-                <Player
-                    user={user[3]}
+                {user[1] ? <Player
+                    user={user[1]}
                     status={user[0].status}
-                    size={size * scale} />
+                    size={size * scale} /> : null}
             </div>
         </div>
     )

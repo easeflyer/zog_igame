@@ -23,11 +23,73 @@ export default class App extends React.Component {
     console.log('...componentDidMount');
   }
   render() {
+    const tableList=[[{
+      name:"张三",
+      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
+      rank:"大师",
+      status:"ok"
+    },{
+      name:"张三",
+      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
+      rank:"大师",
+      status:"ok"
+    },{
+      name:"张三",
+      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
+      rank:"大师",
+      status:"ok"
+    },{
+      name:"张三",
+      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
+      rank:"大师",
+      status:"ok"
+    },],[{
+      name:"张三",
+      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
+      rank:"大师",
+      status:"ok"
+    },{
+      name:"张三",
+      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
+      rank:"大师",
+      status:"ok"
+    },{
+      name:"张三",
+      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
+      rank:"大师",
+      status:"ok"
+    },{
+      name:"张三",
+      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
+      rank:"大师",
+      status:"ok"
+    },],[{
+      name:"张三",
+      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
+      rank:"大师",
+      status:"ok"
+    },{
+      name:"张三",
+      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
+      rank:"大师",
+      status:"ok"
+    },{
+      name:"张三",
+      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
+      rank:"大师",
+      status:"ok"
+    },{
+      name:"张三",
+      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
+      rank:"大师",
+      status:"ok"
+    },]]
     return (
       <div>
         {/* <Header /> */}  
+        <Tables tableList={tableList} size={200} scale={0.05} margin={2}/>
         <Switch>
-          <Route path="/" component={Game} />
+          <Route path="/" component={""} />
           <Route path="/test" component={Test} />
           {/* 注意主页放在最下面，避免重复匹配 */}
           <Route path="/da" component={Home} />
