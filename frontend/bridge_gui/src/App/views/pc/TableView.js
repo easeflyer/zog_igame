@@ -16,7 +16,7 @@ import Timer from './Timer'
 import Card from '../../components/Card';
 import './TableView.css'
 import {inject,observer} from 'mobx-react';
-
+import {rotateSeat} from '../../common/util'
 /**
  * 用来模拟 table 对象保证 tableview 组件可独立测试。
   */
@@ -41,6 +41,9 @@ const _tableObj = {
   bid:e=>null,
 }
 
+var Arr1 = [1,2,3,4,5]
+console.log(Arr1.RightMove(3))
+
 /**
  * TableView 的用途
  * 增加 TableView 的目的是 把 牌桌的排版进行单独设置。增加view1,2,3
@@ -50,19 +53,43 @@ const _tableObj = {
  * 单元测试：
  * 开启：//const table = _tableObj;
  */
-
-const TableView = (props) => {
+class TableView extends React.Component {
   /* 这里应该对 props 做处理，提高 view 的独立性。
     换句话说，这里对入口数据进行判断。如果入口数据有错误，照样正常显示view
     比如用模拟数据。
   */
-
+  render(){
+    console.log('******************')
+  
+    const props =this.props;
   const table = props.table;
-  // const table = _tableObj;
-  //const cards = table.cards;
+  window._Table=props;
+ 
   const cards = Card.createComponents(table.props.tableStore.state.cards);
-  console.log('table1:',table);
   const stat = Object.values(table.props.tableStore.state.user).map(e => e.ready);
+  const ArrSeats=[
+    <div className='userTag'>
+      <div className='seat'>
+          <UserTag user={table.props.tableStore.state.user['east']} table={table} />
+      </div>
+    </div>,
+    <div className='userTag'><div className='seat'>
+          <UserTag user={table.props.tableStore.state.user['south']} table={table} />
+      </div>
+    </div>,
+    <div className='userTag'>
+      <div className='seat'>
+         <UserTag user={table.props.tableStore.state.user['west']} table={table} /> 
+      </div>
+    </div>,
+    <div className='userTag'>
+      <div className='seat'>
+        <UserTag user={table.props.tableStore.state.user['north']} table={table} />
+      </div>
+    </div>
+  ];
+
+  rotateSeat(ArrSeats,this.props.tableStore.myseat)
   return (
     <div>
       {(table.props.tableStore.state.scene == 1) ?
@@ -104,26 +131,7 @@ const TableView = (props) => {
           <div id='south' className='south' ref={table.ref.south}></div>
           <div id='north' className='north' ref={table.ref.north}></div>
           <div id='board' className='board' ref={table.ref.board}>
-            <div className='userTag'><div className='seat'>
-              <UserTag user={table.props.tableStore.state.user['east']} table={table} />
-              {/* {Table.seatscn[Table.seatsen.indexOf(table._shift('east'))]}: */}
-              {/* {table.props.tableStore.state.user[table._shift('east')].name} */}
-            </div></div>
-            <div className='userTag'><div className='seat'>
-              <UserTag user={table.props.tableStore.state.user['south']} table={table} />
-              {/* {Table.seatscn[Table.seatsen.indexOf(table._shift('south'))]}: */}
-              {/* {table.props.tableStore.state.user[table._shift('south')].name} */}
-            </div></div>
-            <div className='userTag'><div className='seat'>
-              <UserTag user={table.props.tableStore.state.user['west']} table={table} />
-              {/* {Table.seatscn[Table.seatsen.indexOf(table._shift('west'))]}: */}
-              {/* {table.props.tableStore.state.user[table._shift('west')].name} */}
-            </div></div>
-            <div className='userTag'><div className='seat'>
-              <UserTag user={table.props.tableStore.state.user['north']} table={table} />
-              {/* {Table.seatscn[Table.seatsen.indexOf(table._shift('north'))]}: */}
-              {/* {table.props.tableStore.state.user[table._shift('north')].name} */}
-            </div></div>
+            {ArrSeats}
             {table.props.tableStore.state.scene == 0 ? <Prepare stat={stat} ready={table.handleReady} /> : null}
           </div>
           {cards}
@@ -163,6 +171,8 @@ const TableView = (props) => {
 
     </div >
   );
+  }
+ 
 }
 
 const ObTableView = inject('tableStore')(observer(TableView));

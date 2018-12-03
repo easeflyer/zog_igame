@@ -7,7 +7,7 @@ import { inject, observer } from 'mobx-react';
 //import PrivateRoute from './PrivateRoute'; 
 
 // 子组件列表
-import Home from './Home';
+import Login from './Login';
 import Test from './Test';
 import Game from './Game';
 
@@ -28,10 +28,11 @@ export default class App extends React.Component {
       <div>
         {/* <Header /> */}
         <Switch>
-          <Route path="/" component={Game} />
+          <Route path="/" exact={true} component={Login} />
+          <Route path="/game" component={Game} />
           <Route path="/test" component={Test} />
           {/* 注意主页放在最下面，避免重复匹配 */}
-          <Route path="/" component={Home} />
+          {/* <Route path="/" component={Home} /> */}
         </Switch>
       </div>
     );

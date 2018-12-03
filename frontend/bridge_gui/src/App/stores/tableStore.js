@@ -4,6 +4,7 @@ import Models from '../models/model'
 import { flexLayout } from '../libs/layout.js'
 import { observable, computed, action } from 'mobx';
 import Position from '../common/Position';
+import Modals from '../models/model';
 //import Claim from '../views/pc/Claim';
 /**
  * TableModel 游戏桌 数据Model
@@ -37,15 +38,24 @@ class TableModel {
     north: [{ x: 0, y: 0 }, { x: 0, y: 0 }]  // 也就是牌出到什么地方。
   }
   zindex = 10;
-  myseat = 'west'               // 用户坐在 南
-  deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
+  @observable myseat = 'west'               // 用户坐在 南
+  table_id=null                 //没一个玩家都要坐在一个桌子上，表示该桌子的编号
+  table_id = null;
+  board_id_list = null;  //牌号列表
+  board_id = null;   //当前牌号
+  channel_id = null;     //公共频道号
+  my_channel_id =null;   //私有频道号
+  deals = 'AAA.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
+  cards={N:'',E:'',S:'',W:''};  //保存四个玩家牌的真实数据
+  delFirstMessage=1;
+  pollingId=1;
   @observable uiState = {}
   @observable state = {
     cards: null, // 考虑这里不用 cards 只用必要的数字
     scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
     calldata: [], // todo 补充 calldata 4列（东西南北）若干行的数组参考 call 方法
     user: {
-      east: { ready: 0, name: '张三', face: '/imgs/face1.png', rank: '大师' },
+      east: { ready: 0, name: '张三111', face: '/imgs/face1.png', rank: '大师' },
       south: { ready: 0, name: '李四', face: '/imgs/face2.png', rank: '专家' },
       west: { ready: 0, name: '王五', face: '/imgs/face1.png', rank: '王者' },
       north: { ready: 0, name: '赵六', face: '/imgs/face2.png', rank: '钻石' }
@@ -161,6 +171,8 @@ class TableModel {
    */
   @action.bound
   dealCards() {
+    this.deals = 'XXX.XX.XXXX.XXXX '+ this.cards[this.myseat] +' XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
+    this.initCards()
     const cards = this.state.cards;
     const sepY = this.csize * 0.15;
     const sepX = this.csize * 0.25;
@@ -575,9 +587,16 @@ class TableModel {
   }
   @action.bound
   userReady(se) {
-    const seat = TableModel.seats[se];
-    this.state.user[seat].ready = 1;
+  
+    const msg = {
+      pos: this.myseat,
+      state: 'ready',
+      next_board:'',
   }
+    Models.call_ready(()=>{},()=>{},this.board_id,this.myseat); //   没有接收数据
+    Models.send_message(()=>{},()=>{},this.channel_id,msg);
+  }
+
   @action.bound
   userAllReady() {
     const user = this.state.user;

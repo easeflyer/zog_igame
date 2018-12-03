@@ -2,7 +2,7 @@
     /* 避免出现白边 */
     margin:0px;
     /* font-family:'Courier New', Courier, monospace; */
-    font-family:monospace;
+    font-family:monospace !important;
 }
 button{
 
@@ -13,6 +13,8 @@ button{
     color:#FFFFFF;
     border-radius:4px;
     height:2vw;
+    font-size: 1vw;
+    font-family:monospace !important;
     /* box-shadow: 0 2px 0 #0880d7, 0 2px 1px rgba(0, 0, 0, 0.3); */
 }
 button:focus,button:hover{

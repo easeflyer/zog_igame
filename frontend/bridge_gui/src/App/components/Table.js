@@ -157,7 +157,6 @@ class Table extends Component {
      * 输出：TableModel.dealCards() 返回 cards 的位置和出牌绑定
      */
     deal = () => {
-        //this.props.tableStore.dealCards(this.play)
         this.props.tableStore.dealCards();
         Sound.play('deal')
     }

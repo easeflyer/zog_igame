@@ -29,7 +29,7 @@ class TableModel {
     }
     this.zindex = 10;
     this.myseat = 'west'               // 用户坐在 南
-    this.deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
+    this.deals = 'AAA.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
     this.state = {
       cards: null, // 考虑这里不用 cards 只用必要的数字
       scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
