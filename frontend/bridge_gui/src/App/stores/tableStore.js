@@ -4,6 +4,7 @@ import Models from '../models/model'
 import { flexLayout } from '../libs/layout.js'
 import { observable, computed, action } from 'mobx';
 import Position from '../common/Position';
+import Board from './board'
 //import Claim from '../views/pc/Claim';
 /**
  * TableModel 游戏桌 数据Model
@@ -27,6 +28,7 @@ import Position from '../common/Position';
 // const ACT3 = 6;                             // out of Screen
 
 class TableModel {
+  _tableId = null;
   width = window.innerWidth;
   height = window.innerHeight;
   board = []; // 出牌区域的四张牌
@@ -76,6 +78,15 @@ class TableModel {
     seat.forEach(key=>this.seat[key] = [{ x: 0, y: 0 }, { x: 0, y: 0 }]);
     this.initCards();
   }
+  set tableId(data){
+    this._tableId = data;
+    Board.tableId = data;
+    // 设置 board.js  的 tableId;
+  }
+  get tableId(){
+    return this._tableId;
+  }
+
   get result() {
     if (this._result) return this._result;
     else return "N3D +2 NS 600";
@@ -133,7 +144,7 @@ class TableModel {
   @action.bound
   bid() {
     this.state.scene != 1 ?
-      this.state.scene = 1 :
+      this.state.scene = 1:
       this.state.scene = 2;
   }
   /**
@@ -163,7 +174,7 @@ class TableModel {
     const sepY = this.csize * 0.15;
     const sepX = this.csize * 0.25;
     const size = this.height > this.width ? this.width : this.height;
-    //let rotate = 0;
+
     console.log('tmseats:', TableModel.seats)
     const offset = this.csize * 0.7 / 2
     cards.forEach((item, index) => {
@@ -262,12 +273,12 @@ class TableModel {
     // if (this.board.length == 4) setTimeout(this.clearBoard, 1000)
 
     const seatIndex = TableModel.seats.indexOf(item.seat);
-    let cards = this.state.cards[seatIndex]
-    console.log('cards:', cards)
+    let cards = this.state.cards[seatIndex];
+    console.log('cards:', cards);
     // if([0,2].indexOf(seatIndex) == -1) cards = this.resetCards(cards, seatIndex)
     // else  cards = this.suitLayoutCards(cards, seatIndex)
 
-    cards = this.resetCards(cards, seatIndex, true)
+    cards = this.resetCards(cards, seatIndex, true);
   }
   /**
    * 清理桌面上的牌
@@ -496,7 +507,7 @@ class TableModel {
   //   }));
   //   this.state.cards = cards;
   //   //return cards;
-  // }
+  // } 1 qing 2 guan 3 tiao 4 chashou
   /**
    * 通过一张牌的索引，获得具体的 牌数据引用
    * this.state.cards 永远都是 52张牌

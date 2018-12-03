@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
 import Table from './Table';
 import GameModel from '../models/Game'
+import { inject, observer } from 'mobx-react';
+import { withRouter } from 'react-router-dom';
 /**
  * Game  是一局比赛，涉及到了比赛者，以及和比赛相关的其他信息。重点在于比赛。
  * Table 是一桌游戏的界面：重点在于 一桌
  */
-
+@inject('tableStore')
+@withRouter
+@observer
 class Game extends React.Component {
     constructor(props) {
         /**
@@ -25,6 +29,7 @@ class Game extends React.Component {
      * 屏蔽下来刷新等。
      */
     init() {
+        this.props.tableStore.tableId = this.props.match.params.tableid;
         if (1) return;  // 去掉本行
         window.document.oncontextmenu = function () {
             //alert('请不要点击鼠标右键！');
@@ -50,6 +55,7 @@ class Game extends React.Component {
      */
     render(){
         const gameModel = new GameModel();
+        //const tableId = this.props.params.tableid;
         gameModel.ckLogin();
         return <Table user={gameModel.user} />;
         // unitTest

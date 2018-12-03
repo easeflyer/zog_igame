@@ -111,6 +111,9 @@ export default class Debug extends Component {
             this.props.tableStore.setActive(nums, 0);
 
         }
+        o.showTableId = () => {
+            alert(o.props.tableStore.tableId);
+        }
         o.test3 = function () {
             this.clearBoard();
         }
@@ -257,6 +260,7 @@ export default class Debug extends Component {
                 <br />
                 <button onClick={o.addClick}>牌可点击</button>&nbsp;
                 <button onClick={o.showResult}>显示结果</button>&nbsp;
+                <button onClick={o.showTableId}>显示桌号</button>&nbsp;
             </div>
         )
     }

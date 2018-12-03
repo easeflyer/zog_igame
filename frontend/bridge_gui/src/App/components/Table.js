@@ -87,6 +87,7 @@ class Table extends Component {
         this.props.tableStore.initSeat(center, seats)
     }
     /**
+     * 
      * 清理 出牌区域（4张牌）
      * 调用：
      * 输入：
