@@ -3,7 +3,7 @@ import { Form, Icon, Input, Button, Checkbox } from 'antd';
 import 'antd/lib/form/style/css'
 import 'antd/lib/input/style/css'
 import 'antd/lib/icon/style/css'
-import User from '../OdooRpc/User';
+import User from '../libs/odoo/OdooRpc/User';
 import session from '../User/session';
 const FormItem = Form.Item;
 

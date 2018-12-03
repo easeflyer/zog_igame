@@ -1,8 +1,8 @@
 import { Agent } from "https";
-import Board from '../OdooRpc/Board'
-import OdooModel from '../OdooRpc/OdooRpc'
-import Channel from '../OdooRpc/Channel'
-import GameTeamPlayer from '../OdooRpc/GameTeamPlayer'
+import Board from '../libs/odoo/OdooRpc/Board'
+import OdooModel from '../libs/odoo/OdooRpc/OdooRpc'
+import Channel from '../libs/odoo/OdooRpc/Channel'
+import GameTeamPlayer from '../libs/odoo/OdooRpc/GameTeamPlayer'
 /**
  * 这个Models 用来模拟数据提供。
  * 控制器 game.js table.js 调用 views 和 models
