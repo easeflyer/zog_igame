@@ -34,7 +34,7 @@ stores            MobX 提供的 Store 文件的保存目录
 
 ## 需要考虑的问题
 
-1. 如何对 store 进行独立测试。
+1. 如何对 store 进行独立测试。 jest 已经解决
 1. 如何对组件进行独立测试。使得UI组件可以被分离出来。
 1. 控制器组件和UI组件写在一起，还是分开写。\
 1. 如何分工。
@@ -44,32 +44,45 @@ stores            MobX 提供的 Store 文件的保存目录
 
 ```
 constructor()     
-  this.initCards();     初始化 cards 二维数组
+  this.initCards();         初始化 从 deals 转换为 cards 二维数组
+                        api 接口获得初始化的数据。
 
-userReady(se);          用户准备就绪
-userAllReady();         判断用户是否都就绪
-dealCards();            发牌，绑定点击事件。
-bid();                  显示叫牌面板
-call(seat,bid)          叫牌
+userReady(se);          ui  根据 state 切换界面到用户准备就绪
+userAllReady();         ui  读取 state 判断用户是否都就绪
+dealCards();            ui  发牌，绑定点击事件。
+bid();                  ui  显示叫牌面板
+call(seat,bid)          api 叫牌
 
-preplay();              仅调整UI牌突出显示
-play();                 牌打出到 board
-resetCards();           重新整理余下的牌的位置ui
-clearBoard();           清理桌面上的牌ui
+preplay();              ui  仅调整牌突出显示
+play();                 api 牌打出到 board
+                            通知服务器
+resetCards();           ui  重新整理余下的牌的位置ui
+clearBoard();           ui  清理桌面上的牌
 
-selectCards(user, suit) 根据用户和花色，选中牌
-getCardByIndex(index)   根据52张牌的编号选中1张牌
-addClick2Cards          (cards, active, handleClick)
-                        给一组牌添加点击处理。
-initSeat(center, seats) 初始化设置 发牌位置和出牌位置坐标
+selectCards(user, suit) ui  根据用户和花色，选中牌
+getCardByIndex(index)   ui  根据52张牌的编号选中1张牌
+addClick2Cards              (cards, active, handleClick)
+                        ui  给一组牌添加点击处理。
+setCardsState               (cards, state)                         
+                        ui  覆盖上面的方法
+initSeat(center, seats) ui  初始化设置 发牌位置和出牌位置坐标
 
 suitLayoutCards         (cards, seatIndex)
                         按照花色布局
 lastTrick               显示上一墩牌, 数据如何和客户端关联起来。
+                        如有必要调用  api ，可以直接调用本地存储。
 openDummy
+claim()                 ui 显示 claim 面板
+get result()            比赛成绩
+get size()              牌的大小
+
+
+
+
 
 需要增加的方法：
-给所有牌调整动画时间。
+setDelay                      给所有牌调整动画时间。
+recovery                      断线恢复 回复 state 从 state 回复 uistate
 ```
 ## 接口函数
 ```
@@ -114,21 +127,21 @@ setClaimtrick() 设置当前可摊牌的墩数
 ```
 
 ## TODO：
-table.js
-  play()
-  timing 等移出
-  上一墩 正确。
+1. 对于 UiState 和 BzState 进行抽离解耦。BzState 参考 pbn
+   bzstate 都有那些函数？uistate 应该尽可能脱离业务逻辑。
+   思路的重要改变：完全以uistate 为中心。明确uistate 里的数据结构。
+   然后把 后台尽量提供 符合要求的数据结构，同步到 boardState。
+   boardState 的功能，完全用于和后台同步。
 
-store  优化合理，添加测试用例
-tableStore 206行解决问题。
+1. 扑克的大小进行 vh css  的设计调整。定位进行调整。
 
 
 
 ## 关于方位
 
+1. UI 位置 和 数据位置，分别对待。UI 位置，永远是NESW
 1. 位置变化：自己的位置，东南西北有变化。
 1. 自己牌永远在第二组，要和位置对应起来。
-1. 
 
 ### 解决方案分析1
 

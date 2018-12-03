@@ -76,8 +76,8 @@ class Table extends Component {
                 this.ref.board.current.clientWidth / 2
         };
         const seats = {
-            'east': { x: 0, y: 0 }, 'south': { x: 0, y: 0 },
-            'west': { x: 0, y: 0 }, 'north': { x: 0, y: 0 },
+            'E': { x: 0, y: 0 }, 'S': { x: 0, y: 0 },
+            'W': { x: 0, y: 0 }, 'N': { x: 0, y: 0 },
         }
         for (let key in seats) {
             seats[key]['y'] = this.ref[key].current.offsetTop;
@@ -87,6 +87,7 @@ class Table extends Component {
         this.props.tableStore.initSeat(center, seats)
     }
     /**
+     * 
      * 清理 出牌区域（4张牌）
      * 调用：
      * 输入：

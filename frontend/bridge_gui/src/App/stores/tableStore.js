@@ -4,6 +4,7 @@ import Models from '../models/model'
 import { flexLayout } from '../libs/layout.js'
 import { observable, computed, action } from 'mobx';
 import Position from '../common/Position';
+import Board from './board'
 //import Claim from '../views/pc/Claim';
 /**
  * TableModel 游戏桌 数据Model
@@ -27,35 +28,26 @@ import Position from '../common/Position';
 // const ACT3 = 6;                             // out of Screen
 
 class TableModel {
+  _tableId = null;
   width = window.innerWidth;
   height = window.innerHeight;
   board = []; // 出牌区域的四张牌
-  seat = {
-    east: [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // seat 用于记录坐标 
-    south: [{ x: 0, y: 0 }, { x: 0, y: 0 }], // 第一个xy 是 四个区域左上角坐标
-    west: [{ x: 0, y: 0 }, { x: 0, y: 0 }],  // 第二个xy 是 出牌4个区域坐标。
-    north: [{ x: 0, y: 0 }, { x: 0, y: 0 }]  // 也就是牌出到什么地方。
-  }
+  seat = {}
   zindex = 10;
-  myseat = 'west'               // 用户坐在 南
+  myseat = 'W'               // 用户坐在 南
   deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
-  @observable uiState = {}
+  @observable uiState = {} // 未启用。
   @observable state = {
     cards: null, // 考虑这里不用 cards 只用必要的数字
     scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
     calldata: [], // todo 补充 calldata 4列（东西南北）若干行的数组参考 call 方法
-    user: {
-      east: { ready: 0, name: '张三', face: '/imgs/face1.png', rank: '大师' },
-      south: { ready: 0, name: '李四', face: '/imgs/face2.png', rank: '专家' },
-      west: { ready: 0, name: '王五', face: '/imgs/face1.png', rank: '王者' },
-      north: { ready: 0, name: '赵六', face: '/imgs/face2.png', rank: '钻石' }
-    },
+    user: {},
     lastTrick: false,  // 最后一墩牌是否显示
     //playseat:null, // 倒计时解决
     debug: false,
     unPlayCardNumber: null,
   }
-  dummySeat = "north";
+  dummySeat = "N";
   // boardState = {
   //   boardId: null,
   //   contract: null,
@@ -76,8 +68,25 @@ class TableModel {
   // _result = "";
 
   constructor() {
+    this.state.user = {
+      E: { ready: 0, name: '张三', face: '/imgs/face1.png', rank: '大师' },
+      S: { ready: 0, name: '李四', face: '/imgs/face2.png', rank: '专家' },
+      W: { ready: 0, name: '王五', face: '/imgs/face1.png', rank: '王者' },
+      N: { ready: 0, name: '赵六', face: '/imgs/face2.png', rank: '钻石' }
+    };    
+    const seat = Position.SNames.split('');
+    seat.forEach(key=>this.seat[key] = [{ x: 0, y: 0 }, { x: 0, y: 0 }]);
     this.initCards();
   }
+  set tableId(data){
+    this._tableId = data;
+    Board.tableId = data;
+    // 设置 board.js  的 tableId;
+  }
+  get tableId(){
+    return this._tableId;
+  }
+
   get result() {
     if (this._result) return this._result;
     else return "N3D +2 NS 600";
@@ -135,7 +144,7 @@ class TableModel {
   @action.bound
   bid() {
     this.state.scene != 1 ?
-      this.state.scene = 1 :
+      this.state.scene = 1:
       this.state.scene = 2;
   }
   /**
@@ -165,7 +174,7 @@ class TableModel {
     const sepY = this.csize * 0.15;
     const sepX = this.csize * 0.25;
     const size = this.height > this.width ? this.width : this.height;
-    //let rotate = 0;
+
     console.log('tmseats:', TableModel.seats)
     const offset = this.csize * 0.7 / 2
     cards.forEach((item, index) => {
@@ -207,10 +216,10 @@ class TableModel {
       if (item.active == ACT1.LCO) { // active=4 突出的牌 active=3 回复原样
         item.active = ACT1.LC;
         switch (item.seat) {
-          case 'east': item['animation']['left'] += 20; break;
-          case 'south': item['animation']['top'] += 20; break;
-          case 'west': item['animation']['left'] -= 20; break;
-          case 'north': item['animation']['top'] -= 20; break;
+          case 'E': item['animation']['left'] += 20; break;
+          case 'S': item['animation']['top'] += 20; break;
+          case 'W': item['animation']['left'] -= 20; break;
+          case 'N': item['animation']['top'] -= 20; break;
           default: break;
         }
 
@@ -219,10 +228,10 @@ class TableModel {
 
     item.active = ACT1.LCO;
     switch (item.seat) {
-      case 'east': item['animation']['left'] -= 20; break;
-      case 'south': item['animation']['top'] -= 20; break;
-      case 'west': item['animation']['left'] += 20; break;
-      case 'north': item['animation']['top'] += 20; break;
+      case 'E': item['animation']['left'] -= 20; break;
+      case 'S': item['animation']['top'] -= 20; break;
+      case 'W': item['animation']['left'] += 20; break;
+      case 'N': item['animation']['top'] += 20; break;
       default: break;
     }
     item['animation']['delay'] = 0;
@@ -264,12 +273,12 @@ class TableModel {
     // if (this.board.length == 4) setTimeout(this.clearBoard, 1000)
 
     const seatIndex = TableModel.seats.indexOf(item.seat);
-    let cards = this.state.cards[seatIndex]
-    console.log('cards:', cards)
+    let cards = this.state.cards[seatIndex];
+    console.log('cards:', cards);
     // if([0,2].indexOf(seatIndex) == -1) cards = this.resetCards(cards, seatIndex)
     // else  cards = this.suitLayoutCards(cards, seatIndex)
 
-    cards = this.resetCards(cards, seatIndex, true)
+    cards = this.resetCards(cards, seatIndex, true);
   }
   /**
    * 清理桌面上的牌
@@ -376,22 +385,22 @@ class TableModel {
       this.seat[key][0]['y'] = seats[key]['y'];
       this.seat[key][0]['x'] = seats[key]['x'];
 
-      if (key == 'east') {
+      if (key == 'E') {
         this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.size * 0.06
         // 下面是处理　牌的叠放顺序　联合参考：dealCards
         //this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.size * 0.4
         this.seat[key][1]['y'] = center.y - offset
         this.seat[key][1]['x'] = center.x - offset * 0.8
-      } else if (key == 'south') {
+      } else if (key == 'S') {
         this.seat[key][0]['x'] = this.seat[key][0]['x'] //+ this.size * 0.21
         //this.seat[key][1]['y'] = center.y + offset - this.csize / 2;
         this.seat[key][1]['y'] = center.y - offset * 0.8
         this.seat[key][1]['x'] = center.x - offset
-      } else if (key == 'west') {
+      } else if (key == 'W') {
         this.seat[key][0]['y'] = this.seat[key][0]['y'] + this.size * 0.06
         this.seat[key][1]['y'] = center.y - offset
         this.seat[key][1]['x'] = center.x + offset * 0.8 - this.csize;
-      } else if (key == 'north') {
+      } else if (key == 'N') {
         this.seat[key][0]['x'] = this.seat[key][0]['x'] //+ this.size * 0.21
         this.seat[key][1]['y'] = center.y + offset * 0.8 - this.csize;
         this.seat[key][1]['x'] = center.x - offset
@@ -498,7 +507,7 @@ class TableModel {
   //   }));
   //   this.state.cards = cards;
   //   //return cards;
-  // }
+  // } 1 qing 2 guan 3 tiao 4 chashou
   /**
    * 通过一张牌的索引，获得具体的 牌数据引用
    * this.state.cards 永远都是 52张牌
@@ -564,7 +573,7 @@ class TableModel {
 
 
   /**
-   * 输入：某个方位"east", this.myseat
+   * 输入：某个方位"E", this.myseat
    * 输出：另外一个方位
    */
   _shift(seat) {
@@ -594,7 +603,7 @@ class TableModel {
    * seat 座位
    * bid 叫品
    * 
-   * 输入：方位（east）,叫品（3H 或者 A3H）
+   * 输入：方位（E）,叫品（3H 或者 A3H）
    * 输出：this.state.calldata 修改
    */
   @action.bound
@@ -603,7 +612,7 @@ class TableModel {
     if (calldata.length == 0) {
       calldata.push(Array(4).fill(null))
       calldata[0][TableModel.seats.indexOf(seat)] = bid;
-    } else if (seat == 'east') {
+    } else if (seat == 'E') {
       calldata.push(Array(4).fill(null))
       calldata[calldata.length - 1][TableModel.seats.indexOf(seat)] = bid;
     } else {
@@ -622,9 +631,9 @@ class TableModel {
 
 
 }
-TableModel.seatsen = ['E', 'S', 'W', 'N'];
-TableModel.seats = ['east', 'south', 'west', 'north'];
-TableModel.seatscn = ['东', '南', '西', '北'];
+// TableModel.seatsen = ['E', 'S', 'W', 'N'];
+TableModel.seats = ['E', 'S', 'W', 'N'];
+// TableModel.seatscn = ['东', '南', '西', '北'];
 
 
 /**

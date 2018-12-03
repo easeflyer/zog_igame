@@ -10,7 +10,8 @@ const API_ROOT = 'https://conduit.productionready.io/api';
 
 const handleErrors = err => {
   if (err && err.response && err.response.status === 401) {
-    authStore.logout();
+    //authStore.logout();
+    return;
   }
   return err;
 };
@@ -23,6 +24,7 @@ const handleErrors = err => {
 const dataBody = res => res.data;
 
 
+
 const Table = {
   getLastTrick:()=>{
     axios.get('url')
@@ -31,18 +33,71 @@ const Table = {
   },
   playCard:()=>{
     axios.post('url',{
-      field1:value1,
-      field2:value2
+      field1:'',
+      field2:''
     })
     .then(dataBody)
     .cache(handleErrors);
   }
 }
 
+/**
+ * getBoard(tableId)
+ * 通过 table id  获得初始 board 信息。
+ */
+const Board = {
+  getBoard: async (tableId)=>{  // 模拟数据 应该是异步的。
+    const board =   {
+      conn        : {public_channel:1,private_channel:2},
+      event       : '国际大赛3',
+      site        : '石家庄赛区',
+      date        : '2018.10.1',
+      board       : '1',
+      west        : '张一',
+      north       : '王二',
+      east        : '李三',
+      south       : '赵四',
+      dealer      : 'N',
+      vulnerable  : 'None',
+      deal        : 'N:- A8654.KQ5.T.QJT6 - -',
+      scoring     : "IMP"
+    }
+    return getData(board);
+  },
+  sendReady: async ()=>{
+    return getData(true);
+    // throw "失败" 模拟发送失败的情况。
+  }
+}
+
+// 模拟异步 没有其他用途。
+const getData = async (data)=>{
+  return new Promise((resolve, reject)=>{
+    setTimeout(()=>resolve(data),1000)
+  })
+}
 
 
 
-// 以下为参考，完成后可以删除。
+
+/**
+ * 异步模拟  这里用 promise 改造。
+ */
+// const AsyncObj = {
+//   data:null,
+//   setData : (data) =>{
+//     this.data = data;
+//   },
+//   fetch:async (data)=>{
+//     setTimeout(()=>this.setData(data),1000);
+//   }
+// }
+
+
+export default {Board};
+
+// 以下为参考，完成后可以删除。 ----------------------------------------------
+/*
 const requests = {
   del: url =>
     superagent
@@ -138,3 +193,4 @@ export default {
   Profile,
   Tags,
 };
+*/
