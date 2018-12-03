@@ -1,6 +1,8 @@
 import React from 'react';
 import './UserTag.css'
+import {observer} from 'mobx-react'
 
+@observer
 export default class UserTag extends React.Component{
     render(){
         const user = this.props.user;

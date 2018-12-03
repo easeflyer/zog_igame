@@ -8,7 +8,7 @@ import GameLobby from '../libs/page'
 //import PrivateRoute from './PrivateRoute'; 
 
 // 子组件列表
-import Home from './Home';
+import Login from './Login';
 import Test from './Test';
 import Game from './Game';
 
@@ -28,10 +28,19 @@ export default class App extends React.Component {
         {/* <Header /> */}
         <GameLobby/>
         <Switch>
+<<<<<<< HEAD
           <Route path="/" component={""} />
           <Route path="/test" component={Test} />
           {/* 注意主页放在最下面，避免重复匹配 */}
           <Route path="/da" component={Home} />
+=======
+
+          <Route path="/" exact={true} component={Login} />
+          <Route path="/game/:tableid" component={Game} />
+          <Route path="/test" component={Test} />
+          {/* 注意主页放在最下面，避免重复匹配 */}
+          {/* <Route path="/" component={Home} /> */}
+>>>>>>> bui-mobx
         </Switch>
       </div>
     );

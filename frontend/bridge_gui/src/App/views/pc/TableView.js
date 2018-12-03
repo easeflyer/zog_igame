@@ -16,7 +16,7 @@ import Timer from './Timer'
 import Card from '../../components/Card';
 import './TableView.css'
 import {inject,observer} from 'mobx-react';
-
+import {rotateSeat} from '../../common/util'
 /**
  * 用来模拟 table 对象保证 tableview 组件可独立测试。
   */
@@ -26,13 +26,13 @@ const _tableObj = {
     scene:0,
     calldata: [['1C','2C','PASS','PASS'],['3H','PASS','PASS','4NT'],['PASS','PASS','PASS','']],
     user: {
-      east: { ready: 0, name: '张三', face: '/imgs/face1.png', rank: '大师' },
-      south: { ready: 0, name: '李四', face: '/imgs/face2.png', rank: '专家' },
-      west: { ready: 0, name: '王五', face: '/imgs/face1.png', rank: '王者' },
-      north: { ready: 0, name: '赵六', face: '/imgs/face2.png', rank: '钻石' }
+      E: { ready: 0, name: '张三', face: '/imgs/face1.png', rank: '大师' },
+      S: { ready: 0, name: '李四', face: '/imgs/face2.png', rank: '专家' },
+      W: { ready: 0, name: '王五', face: '/imgs/face1.png', rank: '王者' },
+      N: { ready: 0, name: '赵六', face: '/imgs/face2.png', rank: '钻石' }
     },    
   },
-  ref:{east:null,south:null,west:null,north:null},
+  ref:{E:null,S:null,W:null,N:null},
   openDebug:e=>null,
   debug:e=>null,
   lastTrick:e=>null,
@@ -40,6 +40,9 @@ const _tableObj = {
   claim:e=>null,
   bid:e=>null,
 }
+
+var Arr1 = [1,2,3,4,5]
+console.log(Arr1.RightMove(3))
 
 /**
  * TableView 的用途
@@ -50,19 +53,43 @@ const _tableObj = {
  * 单元测试：
  * 开启：//const table = _tableObj;
  */
-
-const TableView = (props) => {
+class TableView extends React.Component {
   /* 这里应该对 props 做处理，提高 view 的独立性。
     换句话说，这里对入口数据进行判断。如果入口数据有错误，照样正常显示view
     比如用模拟数据。
   */
-
+  render(){
+    console.log('******************')
+  
+    const props =this.props;
   const table = props.table;
-  //const table = _tableObj;
-  //const cards = table.cards;
+  window._Table=props;
+ 
   const cards = Card.createComponents(table.props.tableStore.state.cards);
-  console.log('table1:',table);
   const stat = Object.values(table.props.tableStore.state.user).map(e => e.ready);
+  const ArrSeats=[
+    <div className='userTag'>
+      <div className='seat'>
+          <UserTag user={table.props.tableStore.state.user['east']} table={table} />
+      </div>
+    </div>,
+    <div className='userTag'><div className='seat'>
+          <UserTag user={table.props.tableStore.state.user['south']} table={table} />
+      </div>
+    </div>,
+    <div className='userTag'>
+      <div className='seat'>
+         <UserTag user={table.props.tableStore.state.user['west']} table={table} /> 
+      </div>
+    </div>,
+    <div className='userTag'>
+      <div className='seat'>
+        <UserTag user={table.props.tableStore.state.user['north']} table={table} />
+      </div>
+    </div>
+  ];
+
+  rotateSeat(ArrSeats,this.props.tableStore.myseat)
   return (
     <div>
       {(table.props.tableStore.state.scene == 1) ?
@@ -84,8 +111,8 @@ const TableView = (props) => {
           </div>
           <button onClick={table.claim} className="claimbtn disable">摊牌</button>
           <button onClick={() => table.timer.stop()} onDoubleClick={() => table.timer.start()} className="calljudge">呼叫裁判</button>
-          <button onTouchEnd={table.claim} onClick={table.lastTrick.bind(table)} className="lasttrick">上一墩牌</button>
-          <button onTouchEnd={table.claim} onClick={table.bid.bind(table)} className="showbid">显示叫牌</button>
+          <button onClick={table.lastTrick.bind(table)} className="lasttrick">上一墩牌</button>
+          <button onClick={table.bid.bind(table)} className="showbid">显示叫牌</button>
 
           {/* <div className='re' id='lastTrick'>上墩牌</div>*/}
           {/* 注意比赛结果会挂载到下面的div */}
@@ -99,28 +126,28 @@ const TableView = (props) => {
             <Claim number='8' onSubmit={table.handleClaim} />
              : null}
           <div id='clock'></div>
-          <div id='east' className='east' ref={table.ref.east}></div>
-          <div id='west' className='west' ref={table.ref.west}></div>
-          <div id='south' className='south' ref={table.ref.south}></div>
-          <div id='north' className='north' ref={table.ref.north}></div>
+          <div id='east' className='east' ref={table.ref.E}></div>
+          <div id='west' className='west' ref={table.ref.W}></div>
+          <div id='south' className='south' ref={table.ref.S}></div>
+          <div id='north' className='north' ref={table.ref.N}></div>
           <div id='board' className='board' ref={table.ref.board}>
             <div className='userTag'><div className='seat'>
-              <UserTag user={table.props.tableStore.state.user['east']} table={table} />
+              <UserTag user={table.props.tableStore.state.user['E']} table={table} />
               {/* {Table.seatscn[Table.seatsen.indexOf(table._shift('east'))]}: */}
               {/* {table.props.tableStore.state.user[table._shift('east')].name} */}
             </div></div>
             <div className='userTag'><div className='seat'>
-              <UserTag user={table.props.tableStore.state.user['south']} table={table} />
+              <UserTag user={table.props.tableStore.state.user['S']} table={table} />
               {/* {Table.seatscn[Table.seatsen.indexOf(table._shift('south'))]}: */}
               {/* {table.props.tableStore.state.user[table._shift('south')].name} */}
             </div></div>
             <div className='userTag'><div className='seat'>
-              <UserTag user={table.props.tableStore.state.user['west']} table={table} />
+              <UserTag user={table.props.tableStore.state.user['W']} table={table} />
               {/* {Table.seatscn[Table.seatsen.indexOf(table._shift('west'))]}: */}
               {/* {table.props.tableStore.state.user[table._shift('west')].name} */}
             </div></div>
             <div className='userTag'><div className='seat'>
-              <UserTag user={table.props.tableStore.state.user['north']} table={table} />
+              <UserTag user={table.props.tableStore.state.user['N']} table={table} />
               {/* {Table.seatscn[Table.seatsen.indexOf(table._shift('north'))]}: */}
               {/* {table.props.tableStore.state.user[table._shift('north')].name} */}
             </div></div>
@@ -163,6 +190,8 @@ const TableView = (props) => {
 
     </div >
   );
+  }
+ 
 }
 
 const ObTableView = inject('tableStore')(observer(TableView));

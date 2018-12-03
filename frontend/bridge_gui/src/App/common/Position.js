@@ -1,21 +1,17 @@
-const _SNames = 'NESW';
-const _ENames = ['north', 'east', 'south', 'west'];
-const _CNames = ['北', '东', '南', '西'];
-
 class Position {
   constructor(pos) {
     if (typeof (pos) == 'string') {
       const sn = pos[0].toUpperCase();
       this._sn = sn;
-      this._in = _SNames.indexOf(sn);
-      this._en = _ENames[this._in];
-      this._cn = _CNames[this._in];
+      this._in = Position.SNames.indexOf(sn);
+      this._en = Position.ENames[this._in];
+      this._cn = Position.CNames[this._in];
     } else if (typeof (pos) == 'number') {
       if (pos > 3) return false;
       this._in = pos;
-      this._en = _ENames[pos];
-      this._sn = _SNames[pos];
-      this._cn = _CNames[pos];
+      this._en = Position.ENames[pos];
+      this._sn = Position.SNames[pos];
+      this._cn = Position.CNames[pos];
     }
   }
   /**
@@ -27,9 +23,9 @@ class Position {
     const ls = n % 4;
     if (this._in == 0) this._in = 3 - n + 1;
     else this._in -= n;
-    this._en = _ENames[this._in];
-    this._sn = _SNames[this._in];
-    this._cn = _CNames[this._in];
+    this._en = Position.ENames[this._in];
+    this._sn = Position.SNames[this._in];
+    this._cn = Position.CNames[this._in];
     return this;
   }
   /**
@@ -57,8 +53,10 @@ class Position {
     return this._in;
   }
   toString() {
-    return _SNames[this._in - 1];
+    return Position.SNames[this._in - 1];
   }
 }
-
+Position.SNames = 'NESW';
+Position.ENames = ['north', 'east', 'south', 'west'];
+Position.CNames = ['北', '东', '南', '西'];
 export default Position;

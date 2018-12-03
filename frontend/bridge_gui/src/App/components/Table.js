@@ -9,12 +9,12 @@
 
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import Models from '../models/model';
 import Sound from './Sound';
 import TableView from '../views/pc/TableView'; // 包含 TableView.css
 import ResultPanel from '../views/pc/ResultPanel';
 import { inject, observer } from 'mobx-react';
 import { TableModel } from '../stores/tableStore';
+import {ACT0, ACT1, ACT2, ACT3} from '../components/Card';
 /**
  * Table 一桌游戏
  *      1 是牌桌的容器组件，或者说是控制器组件(MVC)
@@ -76,8 +76,8 @@ class Table extends Component {
                 this.ref.board.current.clientWidth / 2
         };
         const seats = {
-            'east': { x: 0, y: 0 }, 'south': { x: 0, y: 0 },
-            'west': { x: 0, y: 0 }, 'north': { x: 0, y: 0 },
+            'E': { x: 0, y: 0 }, 'S': { x: 0, y: 0 },
+            'W': { x: 0, y: 0 }, 'N': { x: 0, y: 0 },
         }
         for (let key in seats) {
             seats[key]['y'] = this.ref[key].current.offsetTop;
@@ -87,6 +87,7 @@ class Table extends Component {
         this.props.tableStore.initSeat(center, seats)
     }
     /**
+     * 
      * 清理 出牌区域（4张牌）
      * 调用：
      * 输入：
@@ -104,9 +105,9 @@ class Table extends Component {
     play = (index) => {
         const _play = function () {
             const card = this.props.tableStore.getCardByIndex(index);
-            if (card.active == 2) {
+            if (card.active == ACT1.LC) {
                 this.props.tableStore.preplay(card);
-            } else if (card.active == 3) {
+            } else if (card.active == ACT1.LCO) {
                 this.props.tableStore.play(card);
                 Sound.play('play');
                 if (this.props.tableStore.board.length == 4) setTimeout(this.clearBoard, 1000)
@@ -157,7 +158,6 @@ class Table extends Component {
      * 输出：TableModel.dealCards() 返回 cards 的位置和出牌绑定
      */
     deal = () => {
-        //this.props.tableStore.dealCards(this.play)
         this.props.tableStore.dealCards();
         Sound.play('deal')
     }
@@ -199,6 +199,14 @@ class Table extends Component {
     bid = () => {
         this.props.tableStore.bid();
     }
+
+    /**
+     * 重新链接 复盘
+     */
+    recovery = () => {
+        this.props.tableStore.recovery();
+    }
+
     render() {
         return (
             <TableView table={this} />
