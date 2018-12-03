@@ -26,13 +26,13 @@ const _tableObj = {
     scene:0,
     calldata: [['1C','2C','PASS','PASS'],['3H','PASS','PASS','4NT'],['PASS','PASS','PASS','']],
     user: {
-      east: { ready: 0, name: '张三', face: '/imgs/face1.png', rank: '大师' },
-      south: { ready: 0, name: '李四', face: '/imgs/face2.png', rank: '专家' },
-      west: { ready: 0, name: '王五', face: '/imgs/face1.png', rank: '王者' },
-      north: { ready: 0, name: '赵六', face: '/imgs/face2.png', rank: '钻石' }
+      E: { ready: 0, name: '张三', face: '/imgs/face1.png', rank: '大师' },
+      S: { ready: 0, name: '李四', face: '/imgs/face2.png', rank: '专家' },
+      W: { ready: 0, name: '王五', face: '/imgs/face1.png', rank: '王者' },
+      N: { ready: 0, name: '赵六', face: '/imgs/face2.png', rank: '钻石' }
     },    
   },
-  ref:{east:null,south:null,west:null,north:null},
+  ref:{E:null,S:null,W:null,N:null},
   openDebug:e=>null,
   debug:e=>null,
   lastTrick:e=>null,
@@ -126,12 +126,31 @@ class TableView extends React.Component {
             <Claim number='8' onSubmit={table.handleClaim} />
              : null}
           <div id='clock'></div>
-          <div id='east' className='east' ref={table.ref.east}></div>
-          <div id='west' className='west' ref={table.ref.west}></div>
-          <div id='south' className='south' ref={table.ref.south}></div>
-          <div id='north' className='north' ref={table.ref.north}></div>
+          <div id='east' className='east' ref={table.ref.E}></div>
+          <div id='west' className='west' ref={table.ref.W}></div>
+          <div id='south' className='south' ref={table.ref.S}></div>
+          <div id='north' className='north' ref={table.ref.N}></div>
           <div id='board' className='board' ref={table.ref.board}>
-            {ArrSeats}
+            <div className='userTag'><div className='seat'>
+              <UserTag user={table.props.tableStore.state.user['E']} table={table} />
+              {/* {Table.seatscn[Table.seatsen.indexOf(table._shift('east'))]}: */}
+              {/* {table.props.tableStore.state.user[table._shift('east')].name} */}
+            </div></div>
+            <div className='userTag'><div className='seat'>
+              <UserTag user={table.props.tableStore.state.user['S']} table={table} />
+              {/* {Table.seatscn[Table.seatsen.indexOf(table._shift('south'))]}: */}
+              {/* {table.props.tableStore.state.user[table._shift('south')].name} */}
+            </div></div>
+            <div className='userTag'><div className='seat'>
+              <UserTag user={table.props.tableStore.state.user['W']} table={table} />
+              {/* {Table.seatscn[Table.seatsen.indexOf(table._shift('west'))]}: */}
+              {/* {table.props.tableStore.state.user[table._shift('west')].name} */}
+            </div></div>
+            <div className='userTag'><div className='seat'>
+              <UserTag user={table.props.tableStore.state.user['N']} table={table} />
+              {/* {Table.seatscn[Table.seatsen.indexOf(table._shift('north'))]}: */}
+              {/* {table.props.tableStore.state.user[table._shift('north')].name} */}
+            </div></div>
             {table.props.tableStore.state.scene == 0 ? <Prepare stat={stat} ready={table.handleReady} /> : null}
           </div>
           {cards}

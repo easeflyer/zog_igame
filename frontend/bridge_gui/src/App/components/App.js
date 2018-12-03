@@ -28,8 +28,9 @@ export default class App extends React.Component {
       <div>
         {/* <Header /> */}
         <Switch>
+
           <Route path="/" exact={true} component={Login} />
-          <Route path="/game" component={Game} />
+          <Route path="/game/:tableid" component={Game} />
           <Route path="/test" component={Test} />
           {/* 注意主页放在最下面，避免重复匹配 */}
           {/* <Route path="/" component={Home} /> */}
