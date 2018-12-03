@@ -1,8 +1,7 @@
 .flexwrap{
     display: flex;
     flex-flow: row wrap;
-    justify-content: flex-start;
-    align-items: center;  
+    justify-content: flex-start; 
 }
 .boards{
     background-image: url(/imgs/old/bg1.png);
@@ -35,4 +34,21 @@
     flex-flow: row nowrap;
     align-items: center;
     align-content: center
+}
+.tableBack{
+    background-image: url(/imgs/old/bg1.png);
+    background-repeat: no-repeat;
+    background-size:100% 100%;
+    width: 80%;
+}
+.clearfix::before,
+.clearfix::after {
+    display: table;
+    content: " ";
+}
+.clearfix::after {
+    clear: both;
+}
+.clearfix{
+    *zoom: 1;
 }

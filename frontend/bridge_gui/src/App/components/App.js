@@ -4,7 +4,7 @@
 import React from 'react';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
-import Tables from '../libs/component/table'
+import GameLobby from '../libs/page'
 //import PrivateRoute from './PrivateRoute'; 
 
 // 子组件列表
@@ -23,71 +23,10 @@ export default class App extends React.Component {
     console.log('...componentDidMount');
   }
   render() {
-    const tableList=[[{
-      name:"张三",
-      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
-      rank:"大师",
-      status:"ok"
-    },{
-      name:"张三",
-      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
-      rank:"大师",
-      status:"ok"
-    },{
-      name:"张三",
-      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
-      rank:"大师",
-      status:"ok"
-    },{
-      name:"张三",
-      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
-      rank:"大师",
-      status:"ok"
-    },],[{
-      name:"张三",
-      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
-      rank:"大师",
-      status:"ok"
-    },{
-      name:"张三",
-      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
-      rank:"大师",
-      status:"ok"
-    },{
-      name:"张三",
-      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
-      rank:"大师",
-      status:"ok"
-    },{
-      name:"张三",
-      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
-      rank:"大师",
-      status:"ok"
-    },],[{
-      name:"张三",
-      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
-      rank:"大师",
-      status:"ok"
-    },{
-      name:"张三",
-      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
-      rank:"大师",
-      status:"ok"
-    },{
-      name:"张三",
-      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
-      rank:"大师",
-      status:"ok"
-    },{
-      name:"张三",
-      face:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1285622578,302277335&fm=27&gp=0.jpg",
-      rank:"大师",
-      status:"ok"
-    },]]
     return (
       <div>
-        {/* <Header /> */}  
-        <Tables tableList={tableList} size={200} scale={0.05} margin={2}/>
+        {/* <Header /> */}
+        <GameLobby/>
         <Switch>
           <Route path="/" component={""} />
           <Route path="/test" component={Test} />
