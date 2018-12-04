@@ -5,6 +5,7 @@
 }
 .table-card{
     background-color: #FCFCFC;
+    cursor: pointer;
 }
 .table-split{
     border:none;border-right:3px double rgb(21, 21, 46);

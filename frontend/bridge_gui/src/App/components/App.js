@@ -26,21 +26,13 @@ export default class App extends React.Component {
     return (
       <div>
         {/* <Header /> */}
-        <GameLobby/>
         <Switch>
-<<<<<<< HEAD
-          <Route path="/" component={""} />
-          <Route path="/test" component={Test} />
-          {/* 注意主页放在最下面，避免重复匹配 */}
-          <Route path="/da" component={Home} />
-=======
-
+          <Route path="/gamelobby" component={GameLobby}/>
           <Route path="/" exact={true} component={Login} />
           <Route path="/game/:tableid" component={Game} />
           <Route path="/test" component={Test} />
           {/* 注意主页放在最下面，避免重复匹配 */}
           {/* <Route path="/" component={Home} /> */}
->>>>>>> bui-mobx
         </Switch>
       </div>
     );
