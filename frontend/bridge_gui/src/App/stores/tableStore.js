@@ -171,7 +171,7 @@ class TableModel {
    */
   @action.bound
   dealCards() {
-    this.deals = 'XXX.XX.XXXX.XXXX '+ this.cards[this.myseat] +' XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
+    this.deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
     this.initCards()
     const cards = this.state.cards;
     const sepY = this.csize * 0.15;
@@ -587,14 +587,11 @@ class TableModel {
   }
   @action.bound
   userReady(se) {
-  
-    const msg = {
-      pos: this.myseat,
-      state: 'ready',
-      next_board:'',
-  }
-    Models.call_ready(()=>{},()=>{},this.board_id,this.myseat); //   没有接收数据
-    Models.send_message(()=>{},()=>{},this.channel_id,msg);
+
+    const user = this.state.user;
+    Object.values(user)[se]['ready']=1
+    console.log(Object.values(user))
+
   }
 
   @action.bound

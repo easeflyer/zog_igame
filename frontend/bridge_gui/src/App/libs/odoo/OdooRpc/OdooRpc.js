@@ -1,6 +1,6 @@
-import session from '../User/session';
+import session from '../../../User/session';
 // const config = require('../../config');
-import config from '../../config'
+import config from '../../../../config'
 const HOST = config.HOST; 
 // const HOST = 'http://124.42.117.43:8069';
 // const HOST = 'http://192.168.0.20:8069';

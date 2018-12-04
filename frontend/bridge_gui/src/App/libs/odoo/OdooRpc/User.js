@@ -1,5 +1,5 @@
 import Models from './OdooRpc';
-const config = require('../../config').default; 
+const config = require('../../../../config').default; 
 const HOST = config.HOST; console.log(HOST)
 // const DATABASE = config.DATABASE;
 // const HOST = 'http://124.42.117.43:8069';

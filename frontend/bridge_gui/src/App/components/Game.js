@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import Table from './Table';
 import GameModel from '../models/Game'
 
-import Process from '../models/Process'
-
 import { inject, observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
 
@@ -33,7 +31,7 @@ class Game extends React.Component {
      * 屏蔽下来刷新等。
      */
     init() {
-        new Process().start()
+        // new Process().start()
         this.props.tableStore.tableId = this.props.match.params.tableid;
         if (1) return;  // 去掉本行
         window.document.oncontextmenu = function () {
