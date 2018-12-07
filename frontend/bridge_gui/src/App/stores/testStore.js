@@ -3,23 +3,26 @@ import { observable, action, computed, autorun } from 'mobx';
 import { trace } from 'mobx';
 
 class TestStore{
-  @observable v1 = 'aa';
-  @observable v2 = 'bb';
+  @observable v1 = 11;
+  //@observable v2 = 22;
+  v2 = observable.box(22);
   @computed get v3(){
     return this.v1+this.v2
   }
   autoEnd = autorun(()=>{
-    trace(true);
-    console.log('v3:',this.v3)
+    //trace(true);
+    console.log('v3:',this.v3);
+    console.log('v2:',this.v2)
   });
 
   @action.bound
   setV1(){
-    this.v1 = 'aaaa';
+    this.v1 = 33;
   }
   @action.bound
   setV2(){
-    this.v2 = 'bbbb';
+    //this.v2 = 44;
+    this.v2.set(44);
     this.autoEnd();
   }
 
