@@ -1,8 +1,10 @@
 import Models from './model'
-import tableStore from '../stores/tableStore'
+import boardStore from '../stores/board'
 import session from '../User/session'
 import {Etoeast} from '../common/util'
-window._tableStore = tableStore;
+import Table from '../components/Table';
+import tableStore from '../stores/tableStore';
+window._boardStore = boardStore;
 /**
  * sucGetMatch的data就是[2],需要的就是2这个值，table_id=2,每个桌子都有一个编号，就是table_id
  * table_id有两个作用：
@@ -27,8 +29,8 @@ export default class Process{
     sucGetMatch=(data)=>{   //查询到所有未开始的table_id
     
         if(data.length){
-            tableStore.table_id=data[0];
-            Models.join_channel(this.sucChannel,this.failChannel,tableStore.table_id);    //根据桌号进入频道
+            boardStore.table_id=data[0];
+            Models.join_channel(this.sucChannel,this.failChannel,boardStore.table_id);    //根据桌号进入频道
         }
         else{
             //提示：未查询到待开始的比赛
@@ -42,6 +44,7 @@ export default class Process{
      
         if(data.length===4){ 
             // this.setState({lastState:data[0]});
+            boardStore.lastState = data[0]
             if(data[0]==='All Done'){
                 
                 alert('您当前没有比赛，请稍后再试',2)
@@ -56,70 +59,56 @@ export default class Process{
     }
 
     setBoardId=(data,board_id)=>{
-        tableStore.my_channel_id = data[2]; 
-        tableStore.board_id_list = data[1];
-        tableStore.channel_id = data[0];
-        tableStore.board_id = board_id||data[1][0];
-        tableStore.nth = tableStore.board_id_list.indexOf(this.board_id) + 1 ;
-        Models.init_board(this.sucInit,this.failInit,tableStore.board_id,tableStore.channel_id);    //初始化牌桌，第三个参数表示牌号
+        boardStore.my_channel_id = data[2]; 
+        boardStore.board_id_list = data[1];
+        boardStore.channel_id = data[0];
+        boardStore.board_id = board_id||data[1][0];
+        boardStore.nth = boardStore.board_id_list.indexOf(this.board_id) + 1 ;
+        Models.init_board(this.sucInit,this.failInit,boardStore.board_id,boardStore.channel_id);    //初始化牌桌，第三个参数表示牌号
     }
 
     sucInit=(data)=>{
           
         // {cards:"AQ93.T9632.T7.73 6.K7.K984.AQJ964 K42.AQ5.AJ3.KT85 JT875.J84.Q652.2",dealer:'E',players:[["111 1111 1111", "S", 7],["222 2222 2222", "N", 8],["333 3333 3333", "E", 9],["444 4444 4444", "W", 10]],vulnerable:"NS"}
             this.originData = data;
-            tableStore.cards['N'] = data.cards.split(' ')[0];
-            tableStore.cards['E'] = data.cards.split(' ')[1];
-            tableStore.cards['S'] = data.cards.split(' ')[2];
-            tableStore.cards['W'] = data.cards.split(' ')[3];
-            // this.dealer=data.dealer;
-            // this.playerCards= []
+            boardStore.hands = data.cards.split(' ')
+           
             console.log(session.get_name())
             data.players.forEach(item=>{    //存储‘我’的方位
                 if(item[0]===session.get_name()){
-                    tableStore.myseat = item[1];
-                    // let playerDirections =  tableStore.confirmDirection(this.myseat);
-                    // this.state.user.east.directionNum=playerDirections.east
-                    // this.state.user.south.directionNum=playerDirections.south
-                    // this.state.user.west.directionNum=playerDirections.west
-                    // this.state.user.north.directionNum=playerDirections.north
+                    boardStore.my.seat = item[1];
                 }
             })
-            tableStore.deals=data.cards;
-            tableStore.state.user.east.name = 'E' + data.players.filter(item=>{if(item[1]==='E')return item})[0][0] ;
-            tableStore.state.user.south.name ='S' + data.players.filter(item=>{if(item[1]==='S')return item})[0][0];
-            tableStore.state.user.west.name ='W' + data.players.filter(item=>{if(item[1]==='W')return item})[0][0];
-            tableStore.state.user.north.name ='N' + data.players.filter(item=>{if(item[1]==='N')return item})[0][0];
-            // this.setState();
-            // this.transfer(this.myseat);
-           
-            // if(this.state.lastState){
-            //     this.re_init();
-            // }
-            Models.polling(this.sucPolling,this.failPolling,tableStore.pollingId); 
+            // boardStore.my.cards = data.cards.split(' ')[['N','E','S','W'].indexOf(boardStore.my.seat)].split('.')
+            boardStore.getMyCards();
+            boardStore.deals=data.cards;
+            if(boardStore.lastState){
+                boardStore.re_init();
+            }
+            Models.polling(this.sucPolling,this.failPolling,boardStore.pollingId); 
         }
 
         sucPolling=(data)=>{
            
-            if(data.length && data.slice(-1)[0]['id']!==tableStore.pollingId && data[data.length-1].message.body.indexOf('data-oe-id')===-1){
+            if(data.length && data.slice(-1)[0]['id']!==boardStore.pollingId && data[data.length-1].message.body.indexOf('data-oe-id')===-1){
                 //准备遍历消息
-                if(tableStore.delFirstMessage===1){
-                    tableStore.delFirstMessage=0
-                    tableStore.pollingId=data.slice(-1)[0]['id'];
+                if(boardStore.delFirstMessage===1){
+                    boardStore.delFirstMessage=0
+                    boardStore.pollingId=data.slice(-1)[0]['id'];
                 }else{
                     this.dealMsg(data);
                 }
                
             } 
             // if(!this.state.toResult){
-                Models.polling(this.sucPolling,this.failPolling,tableStore.pollingId)
+                Models.polling(this.sucPolling,this.failPolling,boardStore.pollingId)
             // }
         }
         dealMessageBody=(body)=>{
            
             if(body.substring(3,body.length-4)==='all ready'){
-                tableStore.dealCards();
-                tableStore.state.scene=1;// 去掉准备按钮
+                boardStore.dealCards();
+                boardStore.state.scene=1;// 去掉准备按钮
                 // Sound.play('deal')
             }else if(body.substring(3,body.length-4)==='claim agreed'){
                     this.setState({scene:2});
@@ -128,7 +117,7 @@ export default class Process{
             }else{
                 body = body.replace(/u'/g,"'").replace(/ /g,'')
                 body = eval('('+body.substring(3,body.length-4)+')')
-            
+                debugger
             
     
                 if(body.pos&&body.send_msg){         //收到聊天消息  {pos:'W',send_msg:'msg'}
@@ -152,62 +141,36 @@ export default class Process{
                 //     this.timing(null,0,()=>{},true);
                 //     this.playRules(body.nextplayer,null,null);      //根据打牌规则提示
                 //     this.setState({
-                //         cards:tableStore.state.cards,
+                //         cards:boardStore.state.cards,
                 //         contract:body.contract,
                 //         declarer:body.declarer,
                 //         dummy:body.dummy,
                 //         scene:2
                 //     })
                 // }
-                // if(body.number&&body.rank&&body.card&&body.number!==this.state.playCardNumber ){    //收到打牌消息 {ns_win:0,number:1,rank:'5',pos:'W',suit:'C',nextplayer:'W',card:'C5',ew_win:0}
-                //     this.state.playCardNumber = body.number
-                //     // this.setState({lastTrick:false})
-                //     if(this.state.lastTrick){this.lastTrick(false)};
-                //     this.dummyCards = this.cards[this.state.dummy];       //拿到明手的牌
-                //     // this.dummySeat = Table.seats[this.state.userdir.indexOf(this.state.dummy)]   //计算明手的方位
-                //     if(body.number===1){this.testDummy(this.dummySeat,this.dummyCards)}
-                //     if(body.number%4===1){  this.playSuit = body.suit; }
-                //     this.body=body;
-                //     //验证打牌规则，根据打牌规则进行提示
-                //     this.playRules(body.nextplayer,this.playSuit,body.number);    
-                //     if(body.pos===this.state.declarer){this.claimtrick = this.claimtrick-1;}       //计算当前庄家可claim的墩数
-                    
-                //     const playSeatCard = tableStore.state.cards[this.state.userdir.indexOf(body.pos)]     //拿到当前出牌人对应的牌，应为XXXXXXXXXXXXX
-                //     const setItem = [body.pos,body.card];
-                //     this.recoverTrick(setItem,'play',true);
-                //     this.setState({
-                //         cards: tableStore.state.cards,
-                //         ew_win:body.ew_win,
-                //         ns_win:body.ns_win,
-                //         nextplayer:body.nextplayer,
-                //         next:body.nextplayer
-                //     })
-                //     this.timing(null,0,()=>{},true);        //提示下一个出牌人  
-                 
-                //     if(body.number===52){   //当52张牌全部出完后，查询当前这幅牌的成绩
-                //         console.log('52张牌已经打完')
-                //         if(this.board_id_list.indexOf(this.board_id)<=this.board_id_list.length-1){
-                //             Models.board_points(this.sucBoardPoints,this.failBoardPoints,this.board_id)
-                //         }
-                //     }
-                // }
+                if(body.number&&body.rank&&body.card){    //收到打牌消息 {ns_win:0,number:1,rank:'5',pos:'W',suit:'C',nextplayer:'W',card:'C5',ew_win:0}
+                    debugger
+                    if(boardStore.curTrick.indexOf(body.card)===-1){
+                        boardStore.curTrick.push(body.card)
+                    }
+                }
                 // if(body.pos&&body.num&&body.board){   //收到庄家claim消息  {pos:'W', num:3, board:['SQ','ST']}
                 //     this.setState({claimnum:body})
                 //     if(this.myseat!==body.pos){
                 //         //展示庄家的牌
-                //         let claimCard = tableStore.state.cards[this.state.userdir.indexOf(body.pos)].splice(13-body.board.length,body.board.length);  
+                //         let claimCard = boardStore.state.cards[this.state.userdir.indexOf(body.pos)].splice(13-body.board.length,body.board.length);  
                 //         claimCard.map((item1,index1)=>{
                 //             item1.card = body.board[index1].split('')[1]+body.board[index1].split('')[0];
-                //             tableStore.state.cards[this.state.userdir.indexOf(body.pos)].push(item1)
+                //             boardStore.state.cards[this.state.userdir.indexOf(body.pos)].push(item1)
                 //         })
                 //         this.setState({
                 //             scene:3,
-                //             cards: tableStore.state.cards,
+                //             cards: boardStore.state.cards,
                 //         });
                 //     } 
                 // }
                 // if(body.pos&&body.agreeClaim){   //收到防守方是否同意
-                //     const agreeClaimPos = tableStore.unifyDirection(body.pos);
+                //     const agreeClaimPos = boardStore.unifyDirection(body.pos);
                 //     if(body.agreeClaim==='false'){  //当有防守方拒绝claim时，继续打牌过程
                 //         this.addChatMsg('系统消息',this.state.user[agreeClaimPos]['name']+' 拒绝庄家的claim请求，请继续打牌')
                 //         this.setState({scene:2, claimnum:{pos:null, num:0}, claiming:0, claimingState:[]});
@@ -222,14 +185,14 @@ export default class Process{
                 // }
             
                 if(body.pos&&body.state==='ready'){
-                    tableStore.state.user[Etoeast(body.pos)].ready = 1;
+                    boardStore.ready[Etoeast(body.pos)] = 'R';
                 }
             }
         }
         dealMsg = (data) =>{
             
             data.forEach((dataItem)=>{
-                tableStore.pollingId=dataItem['id'];
+                boardStore.pollingId=dataItem['id'];
                 let body = dataItem.message.body;
                 this.dealMessageBody(body)
             })

@@ -5,7 +5,6 @@ import { inject, observer } from 'mobx-react';
 
 
 @inject('testStore')
-@withRouter
 @observer
 class Test extends React.Component {
   render(){

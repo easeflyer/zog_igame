@@ -41,8 +41,6 @@ const _tableObj = {
   bid:e=>null,
 }
 
-var Arr1 = [1,2,3,4,5]
-console.log(Arr1.RightMove(3))
 
 /**
  * TableView 的用途
@@ -63,33 +61,10 @@ class TableView extends React.Component {
   
     const props =this.props;
   const table = props.table;
-  window._Table=props;
  
   const cards = Card.createComponents(table.props.tableStore.state.cards);
   const stat = Object.values(table.props.tableStore.state.user).map(e => e.ready);
-  const ArrSeats=[
-    <div className='userTag'>
-      <div className='seat'>
-          <UserTag user={table.props.tableStore.state.user['east']} table={table} />
-      </div>
-    </div>,
-    <div className='userTag'><div className='seat'>
-          <UserTag user={table.props.tableStore.state.user['south']} table={table} />
-      </div>
-    </div>,
-    <div className='userTag'>
-      <div className='seat'>
-         <UserTag user={table.props.tableStore.state.user['west']} table={table} /> 
-      </div>
-    </div>,
-    <div className='userTag'>
-      <div className='seat'>
-        <UserTag user={table.props.tableStore.state.user['north']} table={table} />
-      </div>
-    </div>
-  ];
-
-  rotateSeat(ArrSeats,this.props.tableStore.myseat)
+  
   return (
     <div>
       {(table.props.tableStore.state.scene == 1) ?

@@ -10,7 +10,7 @@ import { inject, observer } from 'mobx-react';
 import Login from './Login';
 import Test from './Test';
 import Game from './Game';
-
+import LogicPlay from './logicPlay'
 @inject('testStore', 'commonStore')
 @withRouter
 @observer
@@ -32,6 +32,7 @@ export default class App extends React.Component {
           <Route path="/" exact={true} component={Login} />
           <Route path="/game/:tableid" component={Game} />
           <Route path="/test" component={Test} />
+          <Route path="/logicPlay" component={LogicPlay} />
           {/* 注意主页放在最下面，避免重复匹配 */}
           {/* <Route path="/" component={Home} /> */}
         </Switch>
