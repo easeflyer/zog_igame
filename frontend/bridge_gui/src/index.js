@@ -10,11 +10,12 @@ import App from './App/components/App';
 import testStore from './App/stores/testStore';
 import commonStore from './App/stores/commonStore';
 import tableStore from './App/stores/tableStore';
-
+import boardStore from './App/stores/board'
 const stores = {
   testStore,
   commonStore,
-  tableStore
+  tableStore,
+  boardStore
 };
 
 // For easier debugging

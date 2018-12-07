@@ -1,6 +1,7 @@
 import React from 'react';
-import './Timer.css'
-
+// import './Timer.css';
+import style from './Timer.module.css'
+console.log(style.timername)
 
 export default class Timer extends React.Component {
     state = {

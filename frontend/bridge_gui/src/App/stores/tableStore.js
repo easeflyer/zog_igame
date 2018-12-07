@@ -4,6 +4,7 @@ import Models from '../models/model'
 import { flexLayout } from '../libs/layout.js'
 import { observable, computed, action } from 'mobx';
 import Position from '../common/Position';
+import Modals from '../models/model';
 import Board from './board'
 //import Claim from '../views/pc/Claim';
 /**
@@ -170,6 +171,8 @@ class TableModel {
    */
   @action.bound
   dealCards() {
+    this.deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
+    this.initCards()
     const cards = this.state.cards;
     const sepY = this.csize * 0.15;
     const sepX = this.csize * 0.25;
@@ -584,9 +587,13 @@ class TableModel {
   }
   @action.bound
   userReady(se) {
-    const seat = TableModel.seats[se];
-    this.state.user[seat].ready = 1;
+
+    const user = this.state.user;
+    Object.values(user)[se]['ready']=1
+    console.log(Object.values(user))
+
   }
+
   @action.bound
   userAllReady() {
     const user = this.state.user;

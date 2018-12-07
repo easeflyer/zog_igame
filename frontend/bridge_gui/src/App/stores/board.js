@@ -46,8 +46,21 @@ import { observable, computed, action } from 'mobx';
  * UiState 衍生自 BzState 观察此State 的变化自动变化。
  * BzState 数据结构参照 PBN
  */
+const suits = ['S','H','D','C'];
+Array.prototype.remove= function(removeItem){
+   var ind =  this.indexOf(removeItem);
+   if(ind != -1){
+     this.splice(ind,1)
+   }
+}
 class Board {
-  pbn = {
+  constructor(){
+    this.Reload = new Map();
+    this.Reload.set('start playing ',()=>{alert("start play")});
+    this.Reload.set('calling ready',this._Reload_ready);
+    this.Reload.set('playing',this._Reload_playing);
+  }
+ @observable pbn = {
     event: '国际大赛',
     site: '石家庄赛区',
     date: '2018.10.1',
@@ -78,17 +91,17 @@ class Board {
                     C K 4   
     */
     cards: "",
-    /**
+   
     call:
       [
-        [1D      1S   3H =1= 4S]
-        ['4NT =2=' X    Pass   Pass]
-        [5C      X    5H     X]
-        [Pass    Pass Pass]
-      ]
-     */
+        ['1D','1S','3H =1=','4S'],
+        ['4NT =2=', 'X','Pass','Pass'],
+        ['5C','X','5H','X'],
+        ['Pass', 'Pass', 'Pass']
+      ],
+
     auction: {
-      first: this.dealer,
+      first: 'N',
       call: [],
       note: ["note1", "note2"]
     },
@@ -97,13 +110,17 @@ class Board {
     tricks
     [
       ['SK =1=' H3 S4 S3]
-      [C5 C2 C6 CK]
+      [C5 C2 =2= C6 CK]
       [S2 H6 S5 S7]
     ]
      */
     play: {
       first: 'W',
-      tricks: [],
+      tricks: [
+        ['SK =1=', 'H3' ,'S4', 'S3'],
+        ['C5', 'C2 =2=', 'C6', 'CK'],
+        ['S2','H6','S5','S7']
+      ],
       note: ['note1', 'note2']
     }
   }
@@ -120,19 +137,23 @@ class Board {
     [],
     [],
   ];
+  pollingId=1;
+  delFirstMessage=1;
+  lastState=null;
   // 当前墩，参考 play.tricks 顺序参考 play.first
-  curTrick = ['D4', 'DK', 'H5', '-'];
+  @observable curTrick = [];
   // get player = () =>{
 
   // 准备状态，用户是否已经准备好。
-  ready = { west: false, north: false, east: false, south: false }
+  @observable ready = { west: 1, north: false, east: false, south: false }
   conn = {
     public_channel: 1,
     private_channel: 2
   }
-  my = {
+  @observable my = {
     username: '张三丰',
     seat: 'south',
+    cards:[],
   }
 
   //===========================================================================
@@ -200,6 +221,73 @@ class Board {
       });
     });
   }
-}
+  getMyCards(){
+   var arrCards = this.hands[['N','E','S','W'].indexOf(this.my.seat)].split('.');
+   arrCards.forEach((item,index) => {
+     item.split('').forEach((cardNum)=>{
+       this.my.cards.push(suits[index]+cardNum)
+     })
+   });
 
+  }
+  play(card){
+    Models.play(this.sucPlay,this.failPlay,this.board_id,this.my.seat,card);
+    this.playedCard=card
+  }
+  sucPlay=(data)=>{
+    console.log(data)
+    Models.sendplay(this.recievePlay,()=>{}, this.board_id, data, this.channel_id);  //查询出牌结果
+  }
+  recievePlay=()=>{
+    if(this.curTrick.length===4){
+      this.curTrick=[]
+    }
+    this.curTrick.push(this.playedCard)
+    this.my.cards.remove(this.playedCard)
+  }
+
+  @action.bound
+  _Reload_playing(){
+    this.my.cards=[];
+    this.lastState.unplayed_card.forEach((item)=>{
+      if(item.indexOf(this.my.seat) !=-1){
+        this.my.cards.push(item[1])
+      }
+    })
+    this.lastState.current_trick.forEach((item)=>{
+      this.curTrick.push(item[2])
+    })
+  }
+
+  @action.bound
+  _Reload_ready(){
+    this.ready.east = this.lastState['east_ready'];
+    this.ready.south = this.lastState['south_ready']
+    this.ready.west = this.lastState['west_ready']
+    this.ready.north = this.lastState['north_ready']
+  }
+  @action.bound
+  re_init(){
+    debugger
+    const {state} = this.lastState;
+    
+    this.Reload.get(state)();
+  }
+  handleReady = () => {     //收到牌手的准备消息
+    Models.call_ready(this.sucReady,this.failReady,this.board_id,this.my.seat);
+}
+sucReady=(data)=>{
+
+    this.ready[this.my.seat]='ready' ;
+    const msg = {
+        pos: this.my.seat,
+        state: 'ready',
+        next_board:'',
+    }
+    Models.send_message(this.sucSend,()=>{},this.channel_id,msg);
+}
+sucSend=(data)=>{
+    return false
+}
+}
 export default new Board();
