@@ -10,6 +10,7 @@ import Models from '../../models/model'
 import { TableModel } from '../../stores/tableStore';
 import Card from '../../components/Card';
 import Clock from '../../libs/Clock';
+import Position from '../../common/Position';
 import { tokensToRegExp } from 'path-to-regexp';
 
 /**
@@ -40,15 +41,15 @@ export default class Debug extends Component {
          * time 倒计时妙数
          * callback 倒计时结束回调。
          */
-        o.timing = function (seat, time, callback) {
+        o.timing11 = function (seat, time, callback) {
             const height = this.props.tableStore.height;
             ReactDOM.unmountComponentAtNode(document.querySelector('#clock'));
             const p = height * 0.18;
             const offset = {
-                east: { x: p, y: 0 },
-                south: { x: 0, y: p },
-                west: { x: -p * 0.66, y: 0 },
-                north: { x: 0, y: -p * 0.66 }
+                E: { x: p, y: 0 },
+                S: { x: 0, y: p },
+                W: { x: -p * 0.66, y: 0 },
+                N: { x: 0, y: -p * 0.66 }
             }
 
             const top = this.props.tableStore.seat[seat][1]['y'] + offset[seat].y;
@@ -69,11 +70,20 @@ export default class Debug extends Component {
                 document.querySelector('#clock')
             )
         }
+        o.timing = function (seat, time, callback) {
+            const unseat = new Position(seat).lshift(1).sn;
+            ReactDOM.unmountComponentAtNode(document.querySelector('.'+unseat+'clock'));
+            ReactDOM.un
+            ReactDOM.render(
+                <Clock time={time} callback={callback} />,
+                document.querySelector('.'+seat+'clock')
+            )
+        }
         o.testClock = function () {
-            this.timing('east', 200,
-                () => this.timing('south', 200,
-                    () => this.timing('west', 200,
-                        () => this.timing('north', 200,
+            this.timing('E', 10,
+                () => this.timing('S', 10,
+                    () => this.timing('W', 10,
+                        () => this.timing('N', 10,
                             () => console.log('倒计时结束！')
                         )
                     )
@@ -160,24 +170,53 @@ export default class Debug extends Component {
         /**
        * 叫牌测试
        */
-        o.testBid1 = function () {
-            const bids = [{ seat: 'west', bid: 'A1C' }, { seat: 'north', bid: 'PASS' },
-            { seat: 'east', bid: 'PASS' }, { seat: 'south', bid: '2H' },
-            { seat: 'west', bid: 'PASS' }, { seat: 'north', bid: 'PASS' },
-            { seat: 'east', bid: 'A3C' }, { seat: 'south', bid: 'PASS' },
-            { seat: 'west', bid: 'PASS' }, { seat: 'north', bid: '3H' },
-            { seat: 'east', bid: 'PASS' }, { seat: 'south', bid: 'PASS' },
-            { seat: 'west', bid: 'A3S' }, { seat: 'north', bid: 'PASS' },
-            { seat: 'east', bid: 'PASS' }, { seat: 'south', bid: 'PASS' }]
-            bids.forEach((item) => {
-                o.props.tableStore.call(item.seat, item.bid)
-            })
-            console.log('calldata111....')
-            //console.log(this.state.calldata)
+        o.testBid1 = function(){
+            o.props.tableStore.state.calldata = {
+                first:'S',
+                call:[
+                    ['1C =1=','PASS','PASS','2H'],
+                    ['PASS','PASS','3C =2=','PASS'],
+                    ['PASS','3H','PASS','PASS'],
+                    ['3S =3=','PASS','PASS','PASS'],
+                ],
+                note:[
+                    "约定叫1：说明内容预先输入...",
+                    "约定叫2：说明内容预先输入...",
+                    "约定叫3：说明内容预先输入..."
+                ]
+            }
             o.setState({
-                calldata: o.props.tableStore.state.calldata
+                calldata: o.props.tableStore.state.calldata['call']
             })
         }
+        // 准备废弃
+        // o.testBid2 = function () {
+        //     const bids = [{ seat: 'W', bid: 'A1C' }, { seat: 'N', bid: 'PASS' },
+        //     { seat: 'E', bid: 'PASS' }, { seat: 'S', bid: '2H' },
+        //     { seat: 'W', bid: 'PASS' }, { seat: 'N', bid: 'PASS' },
+        //     { seat: 'E', bid: 'A3C' }, { seat: 'S', bid: 'PASS' },
+        //     { seat: 'W', bid: 'PASS' }, { seat: 'N', bid: '3H' },
+        //     { seat: 'E', bid: 'PASS' }, { seat: 'S', bid: 'PASS' },
+        //     { seat: 'W', bid: 'A3S' }, { seat: 'N', bid: 'PASS' },
+        //     { seat: 'E', bid: 'PASS' }, { seat: 'S', bid: 'PASS' }]
+
+        //     const bids1 = [{ seat: 'west', bid: 'A1C' }, { seat: 'north', bid: 'PASS' },
+        //     { seat: 'east', bid: 'PASS' }, { seat: 'south', bid: '2H' },
+        //     { seat: 'west', bid: 'PASS' }, { seat: 'north', bid: 'PASS' },
+        //     { seat: 'east', bid: 'A3C' }, { seat: 'south', bid: 'PASS' },
+        //     { seat: 'west', bid: 'PASS' }, { seat: 'north', bid: '3H' },
+        //     { seat: 'east', bid: 'PASS' }, { seat: 'south', bid: 'PASS' },
+        //     { seat: 'west', bid: 'A3S' }, { seat: 'north', bid: 'PASS' },
+        //     { seat: 'east', bid: 'PASS' }, { seat: 'south', bid: 'PASS' }]            
+        //     bids.forEach((item) => {
+        //         o.props.tableStore.call(item.seat, item.bid)
+        //     })
+        //     console.log('calldata111....')
+        //     //console.log(this.state.calldata)
+        //     o.setState({
+        //         calldata: o.props.tableStore.state.calldata
+        //     })
+        // }
 
         o.testUsersReady = function () {
             const login = (seat, uname) => {

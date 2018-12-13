@@ -91,7 +91,7 @@ class Board {
                     C K 4   
     */
     cards: "",
-   
+/*   
     call:
       [
         ['1D','1S','3H =1=','4S'],
@@ -99,7 +99,7 @@ class Board {
         ['5C','X','5H','X'],
         ['Pass', 'Pass', 'Pass']
       ],
-
+*/
     auction: {
       first: 'N',
       call: [],

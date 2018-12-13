@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 //import TweenOne from 'rc-tween-one';
-
+import './Clock.css';
 
 
 /**
@@ -11,7 +11,7 @@ import React, { Component } from 'react';
  */
 class Clock extends Component {
     state = {
-        time: 95
+        time: 0
     }
     constructor(props) {
         super(props);
@@ -33,11 +33,24 @@ class Clock extends Component {
         this._clock = setInterval(this.timing, 1000)
     }
     render() {
+        const style={
+            animation: {
+                animation:'twinkling 1s infinite ease-in-out',
+                animationFillMode:'both',
+                width:'100%'
+            },
+            animation2: {
+                animation:'twinkling 1s infinite ease-in-out',
+                animationFillMode:'both',
+                width:'100%'
+            }            
+        };
         const time = this.state.time;
         const clock = Clock.svg.replace('{time}', time)
                                 .replace(/{color1}/g,this.color1)
                                 .replace(/{color2}/g,this.color2);
-        return <div style={{ width: '100%' }} dangerouslySetInnerHTML={{ __html: `${clock}` }} />
+        return <div style={style.animation2} dangerouslySetInnerHTML={{ __html: `${clock}` }} />
+        //return <div style={{ width: '100%' }} dangerouslySetInnerHTML={{ __html: `${clock}` }} />
 
     }
 }

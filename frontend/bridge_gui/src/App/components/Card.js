@@ -84,6 +84,7 @@ class Card extends React.Component {
             >
                 <Motion animation={this.props.animation} style={getStyle()}>
                     <img onClick={this.handleClick(`${this.props.index}`)}
+                        // onDragStart={(e)=>e.preventDefault()}
                         alt={this.props.key}
                         src={`/cards/${card}.svg`}
                         style={{

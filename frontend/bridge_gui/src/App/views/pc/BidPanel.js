@@ -8,6 +8,8 @@ import React, { Component } from 'react';
 import Motion from '../../libs/Motion'
 import './BidPanel.css'
 import { inject, observer } from 'mobx-react';
+import { toJS } from 'mobx';
+import Position from '../../common/Position';
 
 /**
  * BidPanel 叫牌面板
@@ -23,7 +25,7 @@ class BidPanel extends Component {
     bidblocks: [],
     bidcards: [],
     active: 1,
-    calling:"5D"
+    calling: ""
   }
   constructor(props) {
     super(props)
@@ -43,6 +45,7 @@ class BidPanel extends Component {
     // console.log(bidblocks)
     this.state.bidblocks = bidblocks;
     this.ref = React.createRef();
+    this.initPanel(); // 删除不需要的
 
   }
   /**
@@ -58,6 +61,7 @@ class BidPanel extends Component {
   }
 
   getCallData() {
+    window.__calldata = toJS(this.props.tableStore.state.calldata);
     return this.props.tableStore.state.calldata;
   }
 
@@ -85,13 +89,13 @@ class BidPanel extends Component {
     }
 
     let calling = this.state.calling;
-    if(item.name == 'ALERT'){
-      if(this.state.calling.indexOf('ALERT') == -1) calling += ' ' + item.name;
+    if (item.name == 'ALERT') {
+      if (this.state.calling.indexOf('ALERT') == -1) calling += ' ' + item.name;
     } else calling = item.name;
     this.setState({
       bidblocks: this.state.bidblocks,
       bidcards: this.state.bidcards,
-      calling:calling
+      calling: calling
     })
   }
   /**
@@ -106,22 +110,22 @@ class BidPanel extends Component {
     const bidblocks = this.state.bidblocks;
     for (let i = 0; i < bidblocks.length; i++) {
       for (let j = 0; j < bidblocks[i].length; j++) {
-        if (i < item.row ||
-          (i == item.row && j >= item.col)) bidblocks[i][j].active = 0;
-        if (i > item.row ||
-          (i == item.row && j < item.col)) bidblocks[i][j].active = 1;
+        if (i < item.row || (i == item.row && j >= item.col))
+          if (bidblocks[i][j].active != null) bidblocks[i][j].active = 0;
+        if (i > item.row || (i == item.row && j < item.col))
+          if (bidblocks[i][j].active != null) bidblocks[i][j].active = 1;
 
       }
     }
     this.state.bidcards.map((item) => {
       item.active = 1;
       return item;
-    })  
+    })
     //console.log('...item...',item,this.state.bidblocks[item.row][item.col]);  
     this.setState({
       bidblocks: this.state.bidblocks,
       bidcards: this.state.bidcards,
-      calling:this.state.bidblocks[item.row][item.col].name
+      calling: this.state.bidblocks[item.row][item.col].name
     })
   }
   /**
@@ -138,7 +142,7 @@ class BidPanel extends Component {
     this.setState({
       bidblocks: this.state.bidblocks.map((item) => {
         return item.map((i) => {
-          i.active = 1;
+          if (i.active != null) i.active = 1;
           return i;
         });
       }),
@@ -149,6 +153,70 @@ class BidPanel extends Component {
     });
   }
 
+  /**
+   * 通过 curCall 初始化 bidPanel 隐藏无效的叫品。
+   */
+  initPanel() {
+    const curCall = this.props.tableStore.curCall;
+    const bidblocks = this.state.bidblocks;
+    const suits = ['NT', 'S', 'H', 'D', 'C'];
+    if (curCall) {
+      bidblocks.splice(0, curCall.slice(0, 1) - 1 - (7 - bidblocks.length));
+      bidblocks[0].forEach((item, index) => {
+        if (index >= suits.indexOf(curCall.slice(1, 2))) item.active = null;
+      })
+    }
+  }
+  getCallRows() {
+    //debugger;
+    const { first, call, note } = this.props.tableStore.state.calldata;
+    if (!first) return [];
+    const lsto = new Position('N').lsto(first);
+    const pos = [
+      new Position('N').lshift(lsto).cn,
+      new Position('E').lshift(lsto).cn,
+      new Position('S').lshift(lsto).cn,
+      new Position('W').lshift(lsto).cn,
+    ];
+    const header = <tr>
+      <td>&nbsp;</td><td>{pos[0]}</td><td>{pos[1]}</td><td>{pos[2]}</td><td>{pos[3]}</td>
+    </tr>
+
+    const rows = call.map((item, index) => {
+      //console.log(item)
+      let call = null; // 用于处理 "2H =1="
+      return <tr key={index}>
+        <td key='0'>&nbsp;{index + 1}</td>
+        {item.map((item1, index1) => {
+          call = item1.split(' ');
+          if (!call[0]) return ' ';
+          if (call.length == 2) {
+            call[1] = call[1].slice(1,2);
+            return (
+              <td key={index + index1 + 1} className='alertTd'>
+                <img title={note[call[1]-1]} className='suit' src={`/cards/bids/${call[0]}.svg`} />
+              </td>
+            );
+          }
+          return (
+            <td key={index + index1 + 1}>
+              <img className='suit' src={`/cards/bids/${call[0].toUpperCase()}.svg`} />
+            </td>
+          );
+        })}
+      </tr>
+    })
+    return (
+      <table>
+        <thead>
+          {header}
+        </thead>
+        <tbody>
+          {rows}
+        </tbody>
+      </table>
+    );
+  }
   render() {
     //console.log('ffff:' + this.width)
     const bidblocks = this.state.bidblocks.map((e1, i1) => e1.map((e2, i2) => {
@@ -158,46 +226,36 @@ class BidPanel extends Component {
         active={e2.active}
         onclick={this.handleCall.bind(this, { row: i1, col: i2 })} />
     }))
-    //console.log(bidblocks)
-    const rows = this.getCallData().map((item, index) => {
-      //console.log(item)
-      return <tr key={index}>
-        <td key='0'>&nbsp;{index + 1}</td>
-        {item.map((item1, index1) => {
-          if (!item1) return ' ';
-          if (item1.slice(0, 1) == 'A') return (
-            <td key={index + index1 + 1} className='alertTd'>
-              <img className='suit' src={`/cards/bids/${item1.slice(1)}.svg`} />
-            </td>
-          );
-          return (
-            <td key={index + index1 + 1}>
-              <img className='suit' src={`/cards/bids/${item1.toUpperCase()}.svg`} />
-            </td>
-          );
-        })}
-      </tr>
-    })
+    // 叫牌记录。
+    const rows = this.getCallRows();
+    // const rows = this.getCallData().map((item, index) => {
+    //   window.___rows = rows;
+    //   //console.log(item)
+    //   return <tr key={index}>
+    //     <td key='0'>&nbsp;{index + 1}</td>
+    //     {item.map((item1, index1) => {
+    //       if (!item1) return ' ';
+    //       if (item1.slice(0, 1) == 'A') return (
+    //         <td key={index + index1 + 1} className='alertTd'>
+    //           <img className='suit' src={`/cards/bids/${item1.slice(1)}.svg`} />
+    //         </td>
+    //       );
+    //       return (
+    //         <td key={index + index1 + 1}>
+    //           <img className='suit' src={`/cards/bids/${item1.toUpperCase()}.svg`} />
+    //         </td>
+    //       );
+    //     })}
+    //   </tr>
+    // })
     return (
       <div id='bidpanel' className='bidpanel' ref={this.ref}>
         <div>
-          <table>
-            <thead>
-              <tr>
-                <td>&nbsp;</td><td>东</td><td>南</td><td>西</td><td>北</td>
-              </tr>
-            </thead>
-            <tbody>
-              {rows}
-            </tbody>
-          </table>
+          {rows}
         </div>
         {bidblocks}
         <BidCard name='PASS' active={this.state.bidcards[0].active}
           onclick={this.handleCall.bind(this, { name: 'PASS' })}
-        />
-        <BidCard name='ALERT' active={this.state.bidcards[1].active}
-          onclick={this.handleCall.bind(this, { name: 'ALERT' })}
         />
         <BidCard name='X' active={this.state.bidcards[2].active}
           onclick={this.handleCall.bind(this, { name: 'X' })}
@@ -205,6 +263,10 @@ class BidPanel extends Component {
         <BidCard name='XX' active={this.state.bidcards[3].active}
           onclick={this.handleCall.bind(this, { name: 'XX' })}
         />
+        <BidCard name='ALERT' active={this.state.bidcards[1].active}
+          onclick={this.handleCall.bind(this, { name: 'ALERT' })}
+        />
+
         <button onClick={this.handleConfirm}>确认</button>
         <button onClick={this.handleReset}>重置</button>
         <div className='calling'>{this.state.calling}</div>
@@ -224,8 +286,8 @@ class BidBlock extends Component {
   render() {
     const suit = this.props.name.slice(-1);
     const bgcolor = {
-      T: '#eeeeee', S: '#ddddFF', H: '#FFdddd'
-      , D: '#ffffcc', C: '#ccffcc'
+      T: '#eeeeee', S: '#eeeeFF', H: '#FFeeee'
+      , D: '#ffffee', C: '#eeffee'
     };
     //const bgcolor = { T: '#eeeeee', S: '#eeeeee', H: '#eeeeee'
     //  , D: '#eeeeee', C: '#eeeeee' };
@@ -233,12 +295,17 @@ class BidBlock extends Component {
       backgroundColor: `${bgcolor[suit]}`,
     }
     let animation = { brightness: 0 };
-    if (this.props.active == 0) animation['brightness'] = 0.6
-    if (this.props.active == 1) animation['brightness'] = 1
+    let onclick = this.props.onclick;
+    if (this.props.active == null) {
+      animation['opacity'] = 0;
+      onclick = (e) => e.preventDefault();
+    }
+    if (this.props.active == 0) animation['brightness'] = 0.6;
+    if (this.props.active == 1) animation['brightness'] = 1;
 
     return (
       <Motion animation={animation} className='bidblock'>
-        <div className='cn1' onClick={this.props.onclick} style={style}>
+        <div className='cn1' onClick={onclick} style={style}>
           <img className='suit' src={`/cards/bids/${this.props.name}.svg`} />
         </div>
       </Motion>

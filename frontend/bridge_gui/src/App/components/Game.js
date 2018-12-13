@@ -19,6 +19,7 @@ class Game extends React.Component {
          *  屏幕大小
          */
         super(props);
+        this.debug=true;
         this.init();// 屏蔽鼠标右键
         // this.width = window.screen.width;
         // this.height = window.screen.height;
@@ -33,11 +34,14 @@ class Game extends React.Component {
     init() {
         // new Process().start()
         this.props.tableStore.tableId = this.props.match.params.tableid;
-        if (1) return;  // 去掉本行
+        if (this.debug) return;  // 去掉本行
         window.document.oncontextmenu = function () {
             //alert('请不要点击鼠标右键！');
             return false;
         }
+        document.ondragstart=(e)=>e.preventDefault(); // 屏蔽拖拽
+        document.onselectstart=(e)=>e.preventDefault(); // 屏蔽选中
+        //document.onclick=()=>alert(22);
 
         document.onkeydown = function (e) { // 屏蔽f5,f12 keycode == 116,123
             e = window.event || e;

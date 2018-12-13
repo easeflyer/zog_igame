@@ -35,13 +35,13 @@ class TableModel {
   board = []; // 出牌区域的四张牌
   seat = {}
   zindex = 10;
-  myseat = 'W'               // 用户坐在 南
+  myseat = 'N'               // 用户坐在 南
   deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
   @observable uiState = {} // 未启用。
   @observable state = {
     cards: null, // 考虑这里不用 cards 只用必要的数字
     scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
-    calldata: [], // todo 补充 calldata 4列（东西南北）若干行的数组参考 call 方法
+    calldata: {first:'W',call:[],note:null}, // todo 补充 calldata 4列（东西南北）若干行的数组参考 call 方法
     user: {},
     lastTrick: false,  // 最后一墩牌是否显示
     //playseat:null, // 倒计时解决
@@ -49,6 +49,7 @@ class TableModel {
     unPlayCardNumber: null,
   }
   dummySeat = "N";
+  curCall = '3S';  // 当前叫品，用于bidpanel 显示。
   // boardState = {
   //   boardId: null,
   //   contract: null,
@@ -70,11 +71,11 @@ class TableModel {
 
   constructor() {
     this.state.user = {
-      E: { ready: 0, name: '张三', face: '/imgs/face1.png', rank: '大师' },
-      S: { ready: 0, name: '李四', face: '/imgs/face2.png', rank: '专家' },
-      W: { ready: 0, name: '王五', face: '/imgs/face1.png', rank: '王者' },
-      N: { ready: 0, name: '赵六', face: '/imgs/face2.png', rank: '钻石' }
-    };    
+      E: { ready: 0, name: '张三', face: '/imgs/face1.png', rank: '大师', seat:'E' },
+      S: { ready: 0, name: '李四', face: '/imgs/face2.png', rank: '专家', seat:'S' },
+      W: { ready: 0, name: '王五', face: '/imgs/face1.png', rank: '王者', seat:'W' },
+      N: { ready: 0, name: '赵六', face: '/imgs/face2.png', rank: '钻石', seat:'N' }
+    };
     const seat = Position.SNames.split('');
     seat.forEach(key=>this.seat[key] = [{ x: 0, y: 0 }, { x: 0, y: 0 }]);
     this.initCards();
@@ -105,41 +106,42 @@ class TableModel {
       return this.size * 0.18;
     })()
   }
-  /**
- * initCards 从 this.deals 初始化成 cards 数组 为渲染输出做准备，返回到 this.cards
- * 把 cards 字符串 变为 数组
+/**
+ * 从 this.deals 字符串转换成 ui用的 cards 数组
  * 
- * TODO：把一手牌 变成
+ * 为渲染输出做准备，返回到 this.cards
+ * deals：[XXXXXXXXXXXXX,QJ98.A5.J853.QT4,XXXXXXXXXXXXX,XXXXXXXXXXXXX]
+ * 备注：
+ * Card.suits.slice(0);  返回新数组。 因为要对花色进行交换。
+ * this._swDC() 为了岔开颜色显示。交换 方片和梅花的牌。
  */
 
   initCards() {
-    const suits = Card.suits                    //['S', 'H', 'D', 'C'];
+    let suits = Card.suits.slice(0);                    //['S', 'H', 'D', 'C'];
+    this._swDC(suits);
     const deals = this.deals.split(' ')
     let index = 0;                              // 复位index 可以让四个人的牌同时发出来
     const cards = [[], [], [], []];             // 初始化二维数组 保存四个方位的牌
-    //deals. [XXXXXXXXXXXXX,QJ98.A5.J853.QT4,XXXXXXXXXXXXX,XXXXXXXXXXXXX]
-    // 注意避免用 X 暴露花色的数量 index1 是方位编号
-    deals.forEach((item, index1) => {
+    deals.forEach((item, index1) => {           // index1 是方位编号
       const suit = item.split('.')
+      this._swDC(suit);
       suit.forEach((s, index2) => {           // index2 四个花色  s 'QJ98' 牌点字串
-        //cards[index1][index2] = [];
         for (var i = 0; i < s.length; i++) {
           cards[index1].push({
-            onclick: () => false,              // onclick 必须是个函数
+            onclick: () => false,             // onclick 必须是个函数
             active: ACT0,
             index: index,
-            key: index++,
-            seat: TableModel.seats[index1],       // 这张牌是那个方位的
+            key: index,
+            seat: TableModel.seats[index1],  // 这张牌是那个方位的
             //table: this,
             size: this.csize,                // 牌的大小
             card: s[i] + suits[index2],       //s[i]  5D
             position: { x: this.height / 2, y: this.height * 2 }     // 考虑一个默认位置。
-          })
+          });
+          index++;
         }
       });
     });
-    // console.log('cards.......333.............')
-    // console.log(cards)
     this.state.cards = cards;
   }
   @action.bound
@@ -251,7 +253,7 @@ class TableModel {
 
   // }
 
-  /**
+  /** 
    * 出牌 打出去
    * 首先要进行 preplay 然后才能 play
    * 
@@ -585,6 +587,17 @@ class TableModel {
     return TableModel.seats[(index + offset) % 4]
     //return 
   }
+  /**
+   * 把方片和梅花做一个交换。
+   * @param {*} cards 四个花色的牌构成的。
+   */
+  _swDC(arr){
+    let sw = null;
+    sw = arr[2];
+    arr[2] = arr[3];
+    arr[3] = sw;
+    return arr;
+  }
   @action.bound
   userReady(se) {
 
@@ -612,6 +625,9 @@ class TableModel {
    * 
    * 输入：方位（E）,叫品（3H 或者 A3H）
    * 输出：this.state.calldata 修改
+   * 
+   * 
+   * 这里 push 的顺序考虑。
    */
   @action.bound
   call = (seat, bid) => {
