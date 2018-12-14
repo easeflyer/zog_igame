@@ -15,6 +15,7 @@ import ResultPanel from '../views/pc/ResultPanel';
 import { inject, observer } from 'mobx-react';
 import { TableModel } from '../stores/tableStore';
 import {ACT0, ACT1, ACT2, ACT3} from '../components/Card';
+import Position from '../common/Position';
 /**
  * Table 一桌游戏
  *      1 是牌桌的容器组件，或者说是控制器组件(MVC)
@@ -44,7 +45,8 @@ class Table extends Component {
     constructor(props) {
         super(props);
         this.ref = {};
-        TableModel.seats.forEach(key => this.ref[key] = React.createRef())
+        //TableModel.seats.forEach(key => this.ref[key] = React.createRef())
+        Position.SNames.split("").forEach(key => this.ref[key] = React.createRef());
         this.ref.board = React.createRef();
     }
 
@@ -100,7 +102,7 @@ class Table extends Component {
 
     /**
      * 打出一张牌 TODO: 最值得优化的一个函数。
-     * @param {card} item
+     * @param {index} 52张牌的编号0 - 51
      */
     play = (index) => {
         const _play = function () {

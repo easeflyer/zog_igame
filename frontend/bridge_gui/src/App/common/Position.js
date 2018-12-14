@@ -77,4 +77,10 @@ class Position {
 Position.SNames = 'NESW';
 Position.ENames = ['north', 'east', 'south', 'west'];
 Position.CNames = ['北', '东', '南', '西'];
+Position.getSNames = (firstPos) =>{
+  const pos = ['NESW','ESWN','SWNE','WNES'];
+  for(let p of pos){
+    if(p.slice(0,1)==firstPos.toUpperCase()) return p;
+  }
+}
 export default Position;

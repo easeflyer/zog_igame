@@ -101,10 +101,10 @@ class TableView extends React.Component {
               <Claim number='8' onSubmit={table.handleClaim} />
               : null}
             <div id='clock'></div>
-            <div id='east' className='east' ref={table.ref.E}></div>
-            <div id='west' className='west' ref={table.ref.W}></div>
-            <div id='south' className='south' ref={table.ref.S}></div>
             <div id='north' className='north' ref={table.ref.N}></div>
+            <div id='east' className='east' ref={table.ref.E}></div>
+            <div id='south' className='south' ref={table.ref.S}></div>
+            <div id='west' className='west' ref={table.ref.W}></div>
             <div id='board' className='board' ref={table.ref.board}>
               <UserTags user={table.props.tableStore.state.user} myseat={table.props.tableStore.myseat} />
               {table.props.tableStore.state.scene == 0 ? <Prepare stat={stat} ready={table.handleReady} /> : null}

@@ -32,9 +32,10 @@ describe("Position：",()=>{
     expect(posN).toBe('E');
     posN = new Position('E').rshift(3).sn;
     expect(posN).toBe('N');
-
-
     expect(p2.lsto(p3)).toBe(1);
     expect(p3.lsto(p2)).toBe(3);
+
+    expect(Position.getSNames('E')).toBe('ESWN');
+    expect(Position.getSNames('S')).toBe('SWNE');
   });
 });

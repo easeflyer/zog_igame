@@ -10,6 +10,7 @@ import './BidPanel.css'
 import { inject, observer } from 'mobx-react';
 import { toJS } from 'mobx';
 import Position from '../../common/Position';
+import Out from '../pc/Output';
 
 /**
  * BidPanel 叫牌面板
@@ -133,6 +134,8 @@ class BidPanel extends Component {
    * 这里应该 补充 确认后，叫品是什么。比如：this.bid 记录最后叫品。
    */
   handleConfirm = () => {
+    // 调用 聊天打牌 发送数据
+    Out.call(this.state.calling);
     this.setState({
       active: 0
     })
@@ -228,26 +231,6 @@ class BidPanel extends Component {
     }))
     // 叫牌记录。
     const rows = this.getCallRows();
-    // const rows = this.getCallData().map((item, index) => {
-    //   window.___rows = rows;
-    //   //console.log(item)
-    //   return <tr key={index}>
-    //     <td key='0'>&nbsp;{index + 1}</td>
-    //     {item.map((item1, index1) => {
-    //       if (!item1) return ' ';
-    //       if (item1.slice(0, 1) == 'A') return (
-    //         <td key={index + index1 + 1} className='alertTd'>
-    //           <img className='suit' src={`/cards/bids/${item1.slice(1)}.svg`} />
-    //         </td>
-    //       );
-    //       return (
-    //         <td key={index + index1 + 1}>
-    //           <img className='suit' src={`/cards/bids/${item1.toUpperCase()}.svg`} />
-    //         </td>
-    //       );
-    //     })}
-    //   </tr>
-    // })
     return (
       <div id='bidpanel' className='bidpanel' ref={this.ref}>
         <div>

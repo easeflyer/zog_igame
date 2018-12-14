@@ -64,6 +64,8 @@ class Game extends React.Component {
         //const tableId = this.props.params.tableid;
         gameModel.ckLogin();
         return <Table user={gameModel.user} />;
+        // const table = new Table();
+        // return table.test1();
         // unitTest
         //return <div style={{width:'80vh',height:'60vh',backgroundColor:'#eeeeee'}}></div>;
     }

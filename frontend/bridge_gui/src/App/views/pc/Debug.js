@@ -8,7 +8,7 @@ import ReactDOM from 'react-dom';
 import React, { Component } from 'react';
 import Models from '../../models/model'
 import { TableModel } from '../../stores/tableStore';
-import Card from '../../components/Card';
+import Card,{ACT0,ACT1,ACT2,ACT3} from '../../components/Card';
 import Clock from '../../libs/Clock';
 import Position from '../../common/Position';
 import { tokensToRegExp } from 'path-to-regexp';
@@ -22,7 +22,7 @@ import { tokensToRegExp } from 'path-to-regexp';
  */
 export default class Debug extends Component {
     render() {
-        const o = this.props.o;
+        const o = this.props.o;  // o 是 table.js
 
         /**
          * 从上级组件 传递古来 Table 实例。
@@ -177,7 +177,7 @@ export default class Debug extends Component {
                     ['1C =1=','PASS','PASS','2H'],
                     ['PASS','PASS','3C =2=','PASS'],
                     ['PASS','3H','PASS','PASS'],
-                    ['3S =3=','PASS','PASS','PASS'],
+                    ['3S =3=','PASS','PASS',''],
                 ],
                 note:[
                     "约定叫1：说明内容预先输入...",
@@ -189,6 +189,27 @@ export default class Debug extends Component {
                 calldata: o.props.tableStore.state.calldata['call']
             })
         }
+        o.testBid2 = function(){
+            o.props.tableStore.state.calldata = {
+                first:'S',
+                call:[
+                    ['1C =1=','PASS','PASS','2H'],
+                    ['PASS','PASS','3C =2=','PASS'],
+                    ['PASS','3H','PASS','PASS'],
+                    ['3S =3=','PASS','PASS','3NT =4='],
+                ],
+                note:[
+                    "约定叫1：说明内容预先输入...",
+                    "约定叫2：说明内容预先输入...",
+                    "约定叫3：说明内容预先输入...",
+                    "约定叫4：说明内容预先输入...",
+                ]
+            }
+            o.setState({
+                calldata: o.props.tableStore.state.calldata['call']
+            })
+        }
+
         // 准备废弃
         // o.testBid2 = function () {
         //     const bids = [{ seat: 'W', bid: 'A1C' }, { seat: 'N', bid: 'PASS' },
@@ -239,19 +260,22 @@ export default class Debug extends Component {
         // 给所有牌添加可点击，可以测试出牌
         o.addClick = function () {
             // 南 方块 可点击。
-            let cards = o.props.tableStore.selectCards([0,1,2,3], 'SHDC');
-            o.props.tableStore.setCardsState(cards, { active: 3, onclick: o.play });
+            const tableStore = o.props.tableStore;
+            //let cards = tableStore.selectCards([0,1,2,3], 'SHDC');
+            let cards = tableStore.selectCardsByAct([ACT1.L]);
+            tableStore.setCardsState(cards, { active: ACT1.LC, onclick: tableStore.play });
         }
 
-        // 部分牌课点击
+        // 部分牌可点击
         o.addClick1 = function () {
             // 南 方块 可点击。
-            let cards = o.props.tableStore.selectCards([1], 'D');
-            o.props.tableStore.setCardsState(cards, { active: 3, onclick: o.play });
+            const tableStore = o.props.tableStore;
+            let cards = tableStore.selectCards([1], 'D');
+            tableStore.setCardsState(cards, { active: ACT1.LC, onclick: tableStore.play });
             // 其他牌都不可点击
-            cards = o.props.tableStore.selectCards([0, 2, 3], 'SHDC');
-            cards = cards.concat(o.props.tableStore.selectCards([1], 'SHC'));
-            o.props.tableStore.setCardsState(cards, { active: 1, onclick: o.play });
+            cards = tableStore.selectCards([0, 2, 3], 'SHDC');
+            cards = cards.concat(tableStore.selectCards([1], 'SHC'));
+            tableStore.setCardsState(cards, { active: ACT1.D, onclick: tableStore.play });
             //o.props.tableStore.addClick2Cards(cards, 0);
         }
 
@@ -294,6 +318,7 @@ export default class Debug extends Component {
                 <br />
                 <button onClick={o.bid.bind(o)}>显示叫牌</button>&nbsp;
                 <button onClick={o.testBid1.bind()}>叫牌</button>&nbsp;
+                <button onClick={o.testBid2.bind()}>叫牌1</button>&nbsp;
                 <button onClick={o.testClock.bind(o)}>倒计时</button>&nbsp;
                 <button onClick={o.testLastTrick.bind(o)}>上一墩牌</button>&nbsp;
                 <br />
