@@ -270,11 +270,11 @@ export default class Debug extends Component {
         o.addClick1 = function () {
             // 南 方块 可点击。
             const tableStore = o.props.tableStore;
-            let cards = tableStore.selectCards([1], 'D');
+            let cards = tableStore.selectCards("S", 'D');
             tableStore.setCardsState(cards, { active: ACT1.LC, onclick: tableStore.play });
             // 其他牌都不可点击
-            cards = tableStore.selectCards([0, 2, 3], 'SHDC');
-            cards = cards.concat(tableStore.selectCards([1], 'SHC'));
+            cards = tableStore.selectCards("NEW", 'SHDC');
+            cards = cards.concat(tableStore.selectCards("S", 'SHC'));
             tableStore.setCardsState(cards, { active: ACT1.D, onclick: tableStore.play });
             //o.props.tableStore.addClick2Cards(cards, 0);
         }
@@ -300,6 +300,21 @@ export default class Debug extends Component {
 
         }
 
+        o.restore = function (){
+            const deals = 'K34.J3.Q742.K238 XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX';
+            const cards = o.props.tableStore.dealCards();
+            const userCards = [
+                ['S3','S4','HJ','H3','D7','D4','D2','CK','C8',],
+                ['','','','','','','','','',],
+                ['','','','','','','','','',],
+                ['','','','','','','','','',],
+            ];
+            const board = [
+                ['D5','D2','D7'],
+                ['C4','C2','C7','CA']
+            ];
+
+        }
 
         // =====  测试用例结束 =================================================
 
@@ -322,6 +337,7 @@ export default class Debug extends Component {
                 <button onClick={o.testClock.bind(o)}>倒计时</button>&nbsp;
                 <button onClick={o.testLastTrick.bind(o)}>上一墩牌</button>&nbsp;
                 <br />
+                <button onClick={o.restore}>断线重连</button>&nbsp;
                 <button onClick={o.addClick}>牌可点击</button>&nbsp;
                 <button onClick={o.showResult}>显示结果</button>&nbsp;
                 <button onClick={o.showTableId}>显示桌号</button>&nbsp;
