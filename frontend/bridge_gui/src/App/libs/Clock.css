@@ -1,0 +1,33 @@
+@-webkit-keyframes twinkling {
+	0% {
+	opacity:0.8;
+	filter:alpha(opacity=50);
+	-webkit-transform:scale(1);
+}
+50% {
+	opacity:1;
+	filter:alpha(opacity=80);
+	-webkit-transform:scale(1.12);
+}
+100% {
+	opacity:0.8;
+	filter:alpha(opacity=100);
+	-webkit-transform:scale(1);
+}
+}@keyframes twinkling {
+	0% {
+	opacity:0.8;
+	filter:alpha(opacity=50);
+	-webkit-transform:scale(1);
+}
+50% {
+	opacity:1;
+	filter:alpha(opacity=80);
+	-webkit-transform:scale(1.12);
+}
+100% {
+	opacity:0.8;
+	filter:alpha(opacity=100);
+	-webkit-transform:scale(1);
+}
+}

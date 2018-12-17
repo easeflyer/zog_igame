@@ -32,3 +32,8 @@ Array.prototype.RightMove=function(num){
       case 'N': return 'north';
     }
   }
+
+
+/**
+ * 
+ */

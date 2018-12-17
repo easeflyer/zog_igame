@@ -93,12 +93,12 @@ class Board {
                     C K 4   
     */
     cards: "",
-   
+/*   
     call:
       [
         [],
       ],
-
+*/
     auction: {
       first: 'N',
       call: [],

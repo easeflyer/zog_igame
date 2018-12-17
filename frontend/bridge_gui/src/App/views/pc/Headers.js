@@ -13,15 +13,25 @@ class Imps extends Component {
         )
     }
 }
-
+/**
+ * s1-s4  NWES
+ */
 class Seats extends Component{
     render(){
-        return(
+        const vuls = {EW:'',SN:''};
+        if( this.props.vul.toUpperCase()=='BOTH'){
+            vuls['EW'] = 'hasVul';
+            vuls['SN'] = 'hasVul';
+        }else{
+            vuls[this.props.vul.toUpperCase()] = 'hasVul';
+        }
+
+        return( 
             <div className='seats'>
-                <div className='s1'>D</div>
-                <div className='s2'></div>
-                <div className='s3'></div>
-                <div className='s4'></div>
+                <div className={'s1 '+vuls['SN']}>D</div>
+                <div className={'s2 '+vuls['EW']}></div>
+                <div className={'s3 '+vuls['EW']}></div>
+                <div className={'s4 '+vuls['SN']}></div>
             </div>
         )
     }

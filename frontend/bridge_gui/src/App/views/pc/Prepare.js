@@ -1,33 +1,31 @@
 import React, { Component } from 'react';
 import './Prepare.css'
-import {inject,observer} from 'mobx-react';
-import {rotateSeat} from '../../common/util'
+import { inject, observer } from 'mobx-react';
+import Position from '../../common/Position';
+//import { rotateSeat } from '../../common/util'
 @inject('tableStore')
 @observer
 export default class Prepare extends Component {
+    /**
+     * 四个按钮的顺序为：ESWN
+     * <button className="ready" ready(0)>准备/就绪</button>
+     * 四个按钮方位定位是死的。具体对应的玩家 利用 position 进行转圈。
+     */
     render() {
-        const stat = Object.values(this.props.tableStore.state.user).map(e => e.ready);
         const state = ['准备', '就绪'];
-        const ready = stat.map(element => element ? 'ready' : '');
-        const ArrPrepare = [
-            <button key='0' className={ready[0]}
-                    onClick={() => this.props.ready(0)}
-                >{state[stat[0]]}
-                </button>,
-                <button key='1' className={ready[1] }
-                    onClick={() => this.props.ready(1)}
-                >{state[stat[1]]}
-                </button>,
-                <button key='2' className={ready[2]}
-                    onClick={() => this.props.ready(2)}
-                >{state[stat[2]]}
-                </button>,
-                <button key='3' className={ready[3]}
-                    onClick={() => this.props.ready(3)}
-                >{state[stat[3]]}
-                </button>
-        ]
-        rotateSeat(ArrPrepare,this.props.tableStore.myseat)
+        const clsName = ['', 'ready'];
+        const user = this.props.tableStore.state.user;
+
+        const myseat = this.props.tableStore.myseat;
+        const lsto = new Position('S').lsto(myseat);
+        const ArrPrepare = "ESWN".split('').map((seat) => {
+            const pos = new Position(seat).lshift(lsto);
+            const ready = user[pos.sn].ready;
+            const cls = clsName[ready];
+            return <button key='0' className={cls}
+                onClick={() => this.props.ready(pos.sn)}>
+                {state[ready]}</button>
+        });
         return (
             <div className='prepare'>
                 {ArrPrepare}

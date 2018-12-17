@@ -2,6 +2,7 @@ import React from 'react';
 import Motion from '../libs/Motion'
 //import TweenOne from 'rc-tween-one';
 //* active define 0,1,2,3  0 灰色不能点，1 亮色不能点，2 亮色能点, 3 亮色能点突出
+// D dark, L light,LC light click,LCO light click out
 const ACT0 = 0;                             // initCards
 const ACT1 = { D: 1, L: 2, LC: 3, LCO: 4 }  // dealCards
 const ACT2 = 5;                             // play() in board
@@ -84,6 +85,7 @@ class Card extends React.Component {
             >
                 <Motion animation={this.props.animation} style={getStyle()}>
                     <img onClick={this.handleClick(`${this.props.index}`)}
+                        // onDragStart={(e)=>e.preventDefault()}
                         alt={this.props.key}
                         src={`/cards/${card}.svg`}
                         style={{

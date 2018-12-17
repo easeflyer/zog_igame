@@ -23,8 +23,19 @@ describe("Position：",()=>{
     expect(p1.lshift(1).cn).toBe('西');
     expect(p2.lshift(1).cn).toBe('南');
     expect(p3.lshift(1).cn).toBe('东');
-
+    let posE = new Position('E').lshift(3).sn;
+    expect(posE).toBe('S');
+    posE = new Position('S').rshift(3).sn;
+    expect(posE).toBe('E');
+    
+    let posN = new Position('N').lshift(3).sn;
+    expect(posN).toBe('E');
+    posN = new Position('E').rshift(3).sn;
+    expect(posN).toBe('N');
     expect(p2.lsto(p3)).toBe(1);
     expect(p3.lsto(p2)).toBe(3);
+
+    expect(Position.getSNames('E')).toBe('ESWN');
+    expect(Position.getSNames('S')).toBe('SWNE');
   });
 });

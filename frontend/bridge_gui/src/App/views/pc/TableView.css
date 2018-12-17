@@ -12,8 +12,8 @@ button{
     border:0px solid #ffffff;
     color:#FFFFFF;
     border-radius:4px;
-    height:2vw;
-    font-size: 1vw;
+    height:2.5vh;
+    font-size: 2vh;
     font-family:monospace !important;
     /* box-shadow: 0 2px 0 #0880d7, 0 2px 1px rgba(0, 0, 0, 0.3); */
 }
@@ -46,7 +46,7 @@ button.disable{
 .panel{
     position: absolute;
     z-index:2;
-    top: 5vh;
+    top: 10vh;
     left: 40vh;
     width: 60vh;
     /* height: 60vh; */
@@ -264,6 +264,8 @@ button.disable{
 .board > .userTag:nth-child(4){
     width:100%;    left:0%;
 }
+
+
 .resultmask{
     width:100vw;
     height:100vh;
@@ -303,3 +305,4 @@ button.disable{
     width:20vh;
     height:6vh;
 }
+
