@@ -10,7 +10,7 @@ import { inject, observer } from 'mobx-react';
 import Login from './Login';
 import Test from './Test';
 import Game from './Game';
-import LogicPlay from './logicPlay'
+import LogicPlay from './logicPlay';
 @inject('testStore', 'commonStore')
 @withRouter
 @observer

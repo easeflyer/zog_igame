@@ -1,8 +1,8 @@
-._body{
+.lbody{
     position: relative;
     height: 100vh;
 }
-._current{
+.lcurrent{
     background-color: yellow;
     width:200px;
     height: 200px;
@@ -13,7 +13,7 @@
     margin-top: -100px;
     text-align: center;
 } 
-._tricks{
+.ltricks{
     position: absolute;
     right: 0;
     top: 0;
@@ -21,18 +21,21 @@
     height: 400px;
     text-align: center;
 }
-._my{
+.lmy{
     width:100vw;
     position: absolute;
     bottom: 150px;
     text-align: center;
     font-size: 20px;
 }
- ._ready{
+ .lready{
     width: 400px;
     margin-top: 50px;
     border: 1px solid  black;
 }
-._ready div:nth-child(1){
+.lready div:nth-child(1){
     text-align: center
+}
+.activePlayer{
+    position: absolute;
 }
