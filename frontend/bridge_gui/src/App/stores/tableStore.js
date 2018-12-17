@@ -119,7 +119,7 @@ class TableModel {
   initCards(sdeals) {
     let suits = Card.suits.slice(0);            //['S', 'H', 'D', 'C'];
     this._swDC(suits);
-    const deals = sdeals.slice(2).split(' ');
+    const deals = sdeals.split(' ');
     let index = 0;                              // 复位index 可以让四个人的牌同时发出来
     const cards = [[], [], [], []];             // 初始化二维数组 保存四个方位的牌
     deals.forEach((item, index1) => {           // index1 是方位编号
@@ -132,7 +132,7 @@ class TableModel {
             active: ACT0,
             index: index,
             key: index,
-            seat: TableModel.seats[index1],  // 这张牌是那个方位的
+            seat: Position.SNames[index1],  // 这张牌是那个方位的 动画位置需要
             //table: this,
             size: this.csize,                // 牌的大小
             card: s[i] + suits[index2],       //s[i]  5D
@@ -173,7 +173,7 @@ class TableModel {
    */
   @action.bound
   dealCards() {
-    this.deals = 'N:XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
+    this.deals = 'XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX';
     this.initCards(this.deals);
     const cards = this.state.cards;
     // const sepY = this.csize * 0.15;
@@ -182,9 +182,9 @@ class TableModel {
     const offset = this.csize * 0.7 / 2
     cards.forEach((item, index) => {
       let rotate = 0;
-      let seat = TableModel.seats[index]
+      let seat = Position.SNames[index]
       let [x, y] = [this.seat[seat][0].x, this.seat[seat][0].y]
-      if ('02'.indexOf(index) !== -1) rotate = -90;
+      if ('EW'.indexOf(seat) !== -1) rotate = -90;
       x = x + size / 16 / 5;
       y = y + size / 16 / 5; // margin
       item.forEach((item1, index1) => {
@@ -198,7 +198,7 @@ class TableModel {
         }
         cards[index][index1].active = ACT1.L; // 测试用
       });
-      item = this.resetCards(item, index)
+      item = this.resetCards(item, seat)
     })
     this.state.cards = cards;
     return cards;
@@ -286,12 +286,12 @@ class TableModel {
     item['animation']['delay'] = 0;
     item['zIndex'] = this.zindex++;
 
-    this.resetTable(); // 牌恢复为不可点击状态 ACT1.L
+    //this.resetTable(); // 牌恢复为不可点击状态 ACT1.L
 
-    const seatIndex = TableModel.seats.indexOf(item.seat);
+    const seatIndex = Position.SNames.indexOf(item.seat);
     //const seatIndex = Position.SNames.indexOf(item.seat);
     let cards = this.state.cards[seatIndex];
-    cards = this.resetCards(cards, seatIndex, true);
+    cards = this.resetCards(cards, item.seat, true);
   }
   /**
    * 清理桌面上的牌
@@ -467,8 +467,8 @@ class TableModel {
    * Array.shift() 从开头弹出一个值
    */
   @action.bound
-  resetCards(cards, seatIndex, resetDelay = false) {
-    const pos = [0, 2].indexOf(seatIndex) == -1 ? 'left' : 'top';
+  resetCards(cards, seat, resetDelay = false) {
+    const pos = "EW".indexOf(seat) == -1 ? 'left' : 'top';
     let length = 0;
     let ps = 0;
     cards.forEach(card => {
@@ -500,7 +500,7 @@ class TableModel {
     let preCard = cards[0];
     let offsetTop = 0;
     let offsetLeft = 0;
-    //let seat = TableModel.seats[seatIndex];
+    //let seat = Position.SNames[seatIndex];
     cards.map((card, index) => {
       if (card.card.slice(1, 2) != preCard.card.slice(1, 2)) {
         offsetTop += 40;
@@ -583,10 +583,10 @@ class TableModel {
       card = this.cardIndexOf(item.index)
       //card.size = card.size * 0.8
       card['animation']['left'] = (show == true) ?
-        this.seat[TableModel.seats[index]][1].x - this.size / 2.9
+        this.seat[Position.SNames[index]][1].x - this.size / 2.9
         : this.size / 2;
       card['animation']['top'] = (show == true) ?
-        this.seat[TableModel.seats[index]][1].y - this.size / 2.9
+        this.seat[Position.SNames[index]][1].y - this.size / 2.9
         : -this.size * 2;
       //card['size'] = card['size'] * 0.7
       // card['animation']['rotate'] = 180;
@@ -605,7 +605,7 @@ class TableModel {
     const dummySeat = this.dummySeat;
     let index = 0;
     const dCards = Models.openDummy().cards.split('.');
-    let cards = this.state.cards[TableModel.seats.indexOf(dummySeat)];
+    let cards = this.state.cards[Position.SNames.indexOf(dummySeat)];
     console.log('seatnumber:', dCards);
     dCards.forEach((item1, index1) => {
       item1.split('').forEach((item2, index2) => {
@@ -623,9 +623,9 @@ class TableModel {
    * 输出：另外一个方位
    */
   _shift(seat) {
-    const offset = TableModel.seats.indexOf(this.myseat) - 1
-    const index = TableModel.seats.indexOf(seat)
-    return TableModel.seats[(index + offset) % 4]
+    const offset = Position.SNames.indexOf(this.myseat) - 1
+    const index = Position.SNames.indexOf(seat)
+    return Position.SNames[(index + offset) % 4]
     //return 
   }
   /**
@@ -670,12 +670,12 @@ class TableModel {
     const calldata = this.state.calldata
     if (calldata.length == 0) {
       calldata.push(Array(4).fill(null))
-      calldata[0][TableModel.seats.indexOf(seat)] = bid;
+      calldata[0][Position.SNames.indexOf(seat)] = bid;
     } else if (seat == 'E') {
       calldata.push(Array(4).fill(null))
-      calldata[calldata.length - 1][TableModel.seats.indexOf(seat)] = bid;
+      calldata[calldata.length - 1][Position.SNames.indexOf(seat)] = bid;
     } else {
-      calldata[calldata.length - 1][TableModel.seats.indexOf(seat)] = bid;
+      calldata[calldata.length - 1][Position.SNames.indexOf(seat)] = bid;
     }
   }
   /**
@@ -690,9 +690,10 @@ class TableModel {
 
 
 }
-// TableModel.seatsen = ['E', 'S', 'W', 'N'];
-TableModel.seats = ['E', 'S', 'W', 'N'];
-// TableModel.seatscn = ['东', '南', '西', '北'];
+// Position.SNamesen = ['E', 'S', 'W', 'N'];
+//Position.SNames = ['E', 'S', 'W', 'N'];
+Position.SNames = "NESW";
+// Position.SNamescn = ['东', '南', '西', '北'];
 
 
 /**
