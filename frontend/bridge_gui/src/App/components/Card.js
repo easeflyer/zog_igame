@@ -72,8 +72,9 @@ class Card extends React.Component {
         }
         // 根据 active 调整 card 的状态。影响显示和点击
         this.setActive(this.props.active);
-        const card = this.props.card.slice(0, 1) == 'X' ?   // XH  XS XD 都是扣着的
+        const card = this.props.card.slice(-1) == 'X' ?   // XH  XS XD 都是扣着的
             'back' : this.props.card;
+
 
 
         return (

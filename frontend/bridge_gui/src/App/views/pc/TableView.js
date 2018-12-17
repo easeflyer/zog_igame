@@ -96,7 +96,7 @@ class TableView extends React.Component {
           </div>
 
           <div id='body' className='body'>
-            {table.props.tableStore.state.lastTrick ? <div id='lastTrick' className='lastTrick'></div> : null}
+            {table.props.tableStore.state.lastTrick ? <div id='lastTrick' className='lastTrick'>33333</div> : null}
             {table.props.tableStore.state.scene == 3 ?
               <Claim number='8' onSubmit={table.handleClaim} />
               : null}
