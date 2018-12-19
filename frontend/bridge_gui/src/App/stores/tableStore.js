@@ -35,8 +35,9 @@ class TableModel {
   board = [[]]; // 出牌区域的四张牌
   seat = {}
   zindex = 10;
-  myseat = 'W'               // 用户坐在 南
-  deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
+  myseat = 'S'               // 用户坐在 南
+  //deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
+  deals = 'AT62.A6.JT6.QT85 XXX.XX.XXXX.XXXX QJ4.Q4.A9743.A43 XXX.XX.XXXX.XXXX';
   //@observable uiState = {} // 未启用。
   @observable state = {
     cards: null, // 考虑这里不用 cards 只用必要的数字
@@ -176,7 +177,8 @@ class TableModel {
    */
   @action.bound
   dealCards() {
-    this.deals = 'XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX';
+    //this.deals = 'XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX';
+    this.deals = 'K34.J3.Q742.K832 XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX'
     this.initCards(this.deals);
     const cards = this.state.cards;
     // const sepY = this.csize * 0.15;
@@ -303,28 +305,112 @@ class TableModel {
    * @param {*} userCards 
    * @param {*} board  0 当前墩，1上一墩
    */
-  restore(userCards,board){
+  restore1(userCards,board){
+    debugger;
     const cards = this.state.cards;
     this.board = board;
     cards.forEach((ucards,index)=>{
       ucards.forEach((card)=>{
         // 如果不在用户手中
+        
         if(userCards[index].indexOf(card.card) === -1){
           // 1） 如果在当前墩
           if(board[0].indexOf(card.card)){ // index 越大 zindex 越大
-            this.setCardACT2(card);
+            this._setCardACT2(card);
           // 2） 如果已经飞走
           }else{
-            card.animation.left = this.size / 2;
-            card.animation.top = -this.size * 2;
-            card.active = ACT3;            
+            this._setCardACT3(card);
           }
         }
       });
     });
   }
+  /**
+   * 
+   * @param {*} userCards  0-1 NESW
+   * @param {*} board 0 当前墩，1 上一墩
+   * [ [['N','H3'],[],[],[]]  ]
+   */
+  restore(userCards,board){
+    const openSeat = this.myseat + this.dummySeat;
+    const cards = this.state.cards;
+    let cardNum = 0;
+    // 1） 飞走不在手里的牌。
+    userCards.forEach((uCards,uindex)=>{
+      if( openSeat.indexOf(Position.SNames[uindex])!==-1 ){
+        cards[uindex].forEach((card)=>{
+          // 不在手里的牌 全部 飞走
+          window.___card = card;
+          // window.___uindex = uindex;
+          if(uCards.indexOf(card.card)===-1) this._setCardACT3(card)
+        });
+      }else{
+        cardNum = 13 - uCards.length;
+        for(let i=0;i<cardNum;i++){
+          // 不在手里的牌飞走 因为是暗牌因此从0开始飞走
+          this._setCardACT3(cards[uindex][i]);
+        }
+      }
+    });
 
-  setCardACT2(card){
+    this.board = [[],[]];
+    // 2) 设置当前墩和上一墩
+    board[0].forEach((ucard)=>{
+      const seatIndex = Position.SNames.indexOf(ucard.seat);
+      // 暗牌处理
+      if(openSeat.indexOf(ucard.seat)===-1){
+        cards[seatIndex][0].card = ucard.card;
+        this._setCardACT2(cards[seatIndex][0]);
+        this.board[0].push(cards[seatIndex][0]);
+      // 明牌处理
+      }else{
+        cards[seatIndex].forEach((card)=>{
+          if(card.card === ucard.card) this._setCardACT2(card);
+          this.board[0].push(card);
+        });
+      }
+    });
+
+    board[1].forEach((ucard)=>{
+      const seatIndex = Position.SNames.indexOf(ucard.seat);
+      // 暗牌处理
+      if(openSeat.indexOf(ucard.seat)===-1){
+        cards[seatIndex][1].card = ucard.card;
+        this._setCardACT3(cards[seatIndex][1]);
+        this.board[1].push(cards[seatIndex][1]);
+      // 明牌处理
+      }else{
+        cards[seatIndex].forEach((card)=>{
+          if(card.card === ucard.card) this._setCardACT3(card);
+          this.board[1].push(card);
+        });
+      }
+    });
+
+    Position.SNames.split('').forEach((seat,index)=>{
+      this.resetCards(this.state.cards[index],seat);
+    })
+
+
+
+  }
+
+  /**
+   * 设置一张牌为 已经飞走了。
+   * @param {} card 
+   */
+  _setCardACT3(card){
+    card.animation.left = this.size / 2;
+    card.animation.top = -this.size * 2;
+    card['animation']['delay'] = 0;
+    card.active = ACT3;          
+  }
+
+  /**
+   * 把牌设置为 打在桌面上。
+   * @param {*} card 
+   */
+  _setCardACT2(card){
     card.active = ACT2;    // 已经打出去的牌
     card['animation']['left'] = this.seat[card.seat][1].x;
     card['animation']['top'] = this.seat[card.seat][1].y;

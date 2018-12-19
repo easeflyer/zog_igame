@@ -33,3 +33,9 @@ board索引恢复。
 myseat,dummySeat 是名牌，其他人是暗的。
 1） board 遍历 
     
+
+[
+    [{seat:'N',card:'h3'},[],[],[]]
+]
+
+当前问题。牌不飞走。等问题。

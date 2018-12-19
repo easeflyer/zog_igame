@@ -299,20 +299,21 @@ export default class Debug extends Component {
             else ReactDOM.render(dv1, document.querySelector('#clock'))
 
         }
-
+        // 
         o.restore = function (){
-            const deals = 'K34.J3.Q742.K238 XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX';
+            const deals = 'K34.J3.Q742.K832 XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX';
             const cards = o.props.tableStore.dealCards();
             const userCards = [
-                ['S3','S4','HJ','H3','D7','D4','D2','CK','C8',],
-                ['','','','','','','','','',],
-                ['','','','','','','','','',],
-                ['','','','','','','','','',],
+                ['SK','S3','S4','HJ','H3','DQ','D4','D2','CK','C8','C3'],
+                ['SX','SX','SX','HX','HX','HX','DX','DX','DX','CX','CX','CX'],
+                ['SQ','SJ','S9','S8','HA','H5','DJ','D8','D3','CT','C4'],
+                ['SX','SX','SX','SX','SX','HX','HX','HX','HX','DX','CX'],
             ];
             const board = [
-                ['D5','D2','D7'],
-                ['C4','C2','C7','CA']
+                [{seat:'S',card:'D5'},{seat:'W',card:'D6'},{seat:'N',card:'D7'}],
+                [{seat:'W',card:'C6'},{seat:'N',card:'C2'},{seat:'E',card:'C7'},{seat:'S',card:'CQ'}],
             ];
+            o.props.tableStore.restore(userCards,board);
 
         }
 
