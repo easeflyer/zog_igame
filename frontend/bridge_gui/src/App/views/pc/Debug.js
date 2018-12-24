@@ -309,6 +309,7 @@ export default class Debug extends Component {
                 ['SQ','SJ','S9','S8','HA','H5','DJ','D8','D3','CT','C4'],
                 ['SX','SX','SX','SX','SX','HX','HX','HX','HX','DX','CX'],
             ];
+            // 出牌顺序同下标顺序
             const board = [
                 [{seat:'S',card:'D5'},{seat:'W',card:'D6'},{seat:'N',card:'D7'}],
                 [{seat:'W',card:'C6'},{seat:'N',card:'C2'},{seat:'E',card:'C7'},{seat:'S',card:'CQ'}],
@@ -317,11 +318,24 @@ export default class Debug extends Component {
 
         }
 
+        o.dplay = function(){
+            o.props.tableStore.dplay('E','S2');
+        }
+
+        o.wLogin = function(){
+            o.props.tableStore.userLogin('W',{ ready: 0, name: '王五', face: '/imgs/face1.png', rank: '王者', seat: 'W' });
+        }
+        o.initcards = function(){
+            const deals = "K34.J3.Q742.K832 XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX";
+            o.props.tableStore.initCards(deals);
+        }
         // =====  测试用例结束 =================================================
 
         return (
             <div className='debug' style={{ position: 'absolute' }}>
                 <button onClick={o.testUsersReady}>登录</button>&nbsp;
+                <button onClick={o.wLogin}>西玩家登录</button>&nbsp;
+                <button onClick={o.initcards}>准备牌</button>&nbsp;
                 <button onClick={o.deal}>发牌</button>&nbsp;
                 <button onClick={o.testSeat}>出牌位置显示</button>&nbsp;
                 <button onClick={o.test1.bind(o)}>出牌</button>&nbsp;
@@ -342,6 +356,7 @@ export default class Debug extends Component {
                 <button onClick={o.addClick}>牌可点击</button>&nbsp;
                 <button onClick={o.showResult}>显示结果</button>&nbsp;
                 <button onClick={o.showTableId}>显示桌号</button>&nbsp;
+                <button onClick={o.dplay}>东出牌</button>&nbsp;
             </div>
         )
     }

@@ -1,3 +1,7 @@
+/**
+ * 废弃。
+ */
+
 import Models from '../models/model'
 
 /**
