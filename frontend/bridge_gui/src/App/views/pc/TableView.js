@@ -50,6 +50,8 @@ const _tableObj = {
  * 单元测试：
  * 开启：//const table = _tableObj;
  */
+@inject('tableStore')
+@observer
 class TableView extends React.Component {
   /* 这里应该对 props 做处理，提高 view 的独立性。
     换句话说，这里对入口数据进行判断。如果入口数据有错误，照样正常显示view
@@ -61,8 +63,9 @@ class TableView extends React.Component {
     const props = this.props;
     const table = props.table;
     const tableStore = props.tableStore;
+    let cards = table.props.tableStore.state.cards;
 
-    const cards = Card.createComponents(table.props.tableStore.state.cards);
+    cards = cards ? Card.createComponents(cards) : null;
     const stat = Object.values(table.props.tableStore.state.user).map(e => e.ready);
 
     return (
@@ -96,9 +99,10 @@ class TableView extends React.Component {
           </div>
 
           <div id='body' className='body'>
-            {table.props.tableStore.state.lastTrick ? <div id='lastTrick' className='lastTrick'></div> : null}
+            {table.props.tableStore.state.lastTrick ? <div id='lastTrick' className='lastTrick'>33333</div> : null}
+            {/* onSubmit 不需要了 */}
             {table.props.tableStore.state.scene == 3 ?
-              <Claim number='8' onSubmit={table.handleClaim} />
+              <Claim number='8' onSubmit={table.handleClaim} /> 
               : null}
             <div id='clock'></div>
             <div id='north' className='north' ref={table.ref.N}></div>
@@ -150,5 +154,6 @@ class TableView extends React.Component {
 
 }
 
-const ObTableView = inject('tableStore')(observer(TableView));
-export default ObTableView;
+// const ObTableView = inject('tableStore')(observer(TableView));
+// export default ObTableView;
+export default TableView;

@@ -123,7 +123,8 @@ class Table extends Component {
      * 考虑增加参数为 seat
      */
     claim = () => {
-        this.props.tableStore.claim();
+        //this.props.tableStore.claim('E',3);
+        this.props.tableStore.claim('S','东（E）玩家摊牌，定约：3NT + 3');
         // Sound.play('claim');
     }
 
@@ -176,7 +177,7 @@ class Table extends Component {
      * cards: this.TableModel.lastTrick(show),
      */
     lastTrick = () => {
-        this.props.tableStore.lastTrick();
+        this.props.tableStore.lastTrick1();
     }
     /**
      * 视频接口

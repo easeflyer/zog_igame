@@ -23,7 +23,7 @@ export default class Timer extends React.Component {
     }
 
     componentDidMount() {
-        this.start();
+        //this.start();
     }
 
     start = () => {
