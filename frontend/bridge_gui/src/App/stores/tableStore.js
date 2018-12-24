@@ -2,7 +2,7 @@ import Card from '../components/Card'  // 也应该从模型引入
 import { ACT0, ACT1, ACT2, ACT3 } from '../components/Card'
 import Models from '../models/model'
 import { flexLayout } from '../libs/layout.js'
-import { observable, computed, action } from 'mobx';
+import { observable, computed, action,toJS } from 'mobx';
 import Position from '../common/Position';
 // import Modals from '../models/model';
 import Board from './board'
@@ -32,12 +32,13 @@ class TableModel {
   _tableId = null;
   width = window.innerWidth;
   height = window.innerHeight;
-  board = []; // 出牌区域的四张牌
+  board = [[]]; // 出牌区域的四张牌
   seat = {}
   zindex = 10;
-  myseat = 'W'               // 用户坐在 南
-  deals = 'N:XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
-  @observable uiState = {} // 未启用。
+  myseat = 'S'               // 用户坐在 南
+  //deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
+  deals = 'AT62.A6.JT6.QT85 XXX.XX.XXXX.XXXX QJ4.Q4.A9743.A43 XXX.XX.XXXX.XXXX';
+  //@observable uiState = {} // 未启用。
   @observable state = {
     cards: null, // 考虑这里不用 cards 只用必要的数字
     scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
@@ -47,6 +48,10 @@ class TableModel {
     //playseat:null, // 倒计时解决
     debug: false,
     unPlayCardNumber: null,
+    claim: { seat: null, msg: null },
+    contract:null, // 暂时没用
+    winEW:0,
+    winSN:0,
   }
   dummySeat = "N";
   curCall = '3S';  // 当前叫品，用于bidpanel 显示。
@@ -70,15 +75,23 @@ class TableModel {
   // _result = "";
 
   constructor() {
+    // this.state.user = {
+    //   E: { ready: 0, name: '张三', face: '/imgs/face1.png', rank: '大师', seat: 'E' },
+    //   S: { ready: 0, name: '李四', face: '/imgs/face2.png', rank: '专家', seat: 'S' },
+    //   W: { ready: 0, name: '王五', face: '/imgs/face1.png', rank: '王者', seat: 'W' },
+    //   N: { ready: 0, name: '赵六', face: '/imgs/face2.png', rank: '钻石', seat: 'N' }
+    // };
     this.state.user = {
       E: { ready: 0, name: '张三', face: '/imgs/face1.png', rank: '大师', seat: 'E' },
-      S: { ready: 0, name: '李四', face: '/imgs/face2.png', rank: '专家', seat: 'S' },
-      W: { ready: 0, name: '王五', face: '/imgs/face1.png', rank: '王者', seat: 'W' },
-      N: { ready: 0, name: '赵六', face: '/imgs/face2.png', rank: '钻石', seat: 'N' }
+      S: { ready: 0, name: '', face: '', rank: '', seat: '' },
+      W: { ready: 0, name: '', face: '', rank: '', seat: '' },
+      N: { ready: 0, name: '', face: '', rank: '', seat: '' }
     };
+
+    //this.state.user = {N:null,E:null,S:null,W:null};
     const seat = Position.SNames.split('');
     seat.forEach(key => this.seat[key] = [{ x: 0, y: 0 }, { x: 0, y: 0 }]);
-    this.initCards(this.deals);
+    //this.initCards(this.deals);
   }
   set tableId(data) {
     this._tableId = data;
@@ -132,10 +145,10 @@ class TableModel {
             active: ACT0,
             index: index,
             key: index,
-            seat: Position.SNames[index1],  // 这张牌是那个方位的
+            seat: Position.SNames[index1],  // 这张牌是那个方位的 动画位置需要
             //table: this,
             size: this.csize,                // 牌的大小
-            card: s[i] + suits[index2],       //s[i]  5D
+            card: suits[index2] + s[i],       //s[i]  5D
             position: { x: this.height / 2, y: this.height * 2 }     // 考虑一个默认位置。
           });
           index++;
@@ -162,19 +175,23 @@ class TableModel {
    *  5） '02'.indexOf(index) 东西的牌 rotate 旋转90度
    *  6） .onclick=this.onclick(item2) onclick 函数引用
    *      this.onclick(item2) 仍然返回一个函数 用来处理点击事件，传入item2
+   *  7)  if(item1.active !== 0) return; 只有active ==0 的牌被发出来。
    * sepY 纵向扑克间隔
    * sepX 横向扑克间隔
    * 
    * active define 0,1,2,3  0 灰色不能点，1 亮色不能点，2 亮色能点, 3 亮色能点突出
    * ACT000  ACT100 ACT110 ACT111 (考虑编码)
    * 
+   * 
+   * 
    * 输入参数：play 是出牌的 事件处理方法。传递进来用于绑定到牌上
    * 输出：this.state.cards
    */
   @action.bound
   dealCards() {
-    this.deals = 'XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX';
-    this.initCards(this.deals);
+    //this.deals = 'XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX';
+    // this.deals = 'K34.J3.Q742.K832 XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX'
+    // this.initCards(this.deals);
     const cards = this.state.cards;
     // const sepY = this.csize * 0.15;
     // const sepX = this.csize * 0.25;
@@ -188,6 +205,7 @@ class TableModel {
       x = x + size / 16 / 5;
       y = y + size / 16 / 5; // margin
       item.forEach((item1, index1) => {
+        if(item1.active !== 0) return;
         cards[index][index1].animation = {
           top: y,
           left: x,
@@ -213,10 +231,29 @@ class TableModel {
       } else if (card.active == ACT1.LCO) {
         this._play(card);
         //Sound.play('play');
-        if (this.board.length == 4) setTimeout(this.clearBoard, 1000)
+        //if (this.board[0].length == 4) setTimeout(this.clearBoard, 1000)
       } else return;
     }
     return _play.bind(this);
+  }
+  /**
+   * 扣着的牌 play
+   * @param {*} seat  "NESW"
+   * @param {*} card  "C2"
+   */
+  @action.bound
+  dplay(seat,card){
+    //debugger;
+    const cards = this.state.cards;
+    let ucard = null;
+    for(let c of cards[Position.SNames.indexOf(seat)]){
+      if(c.active===ACT1.L) {
+        ucard = c;
+        break;
+      }
+    }
+    ucard.card = card;
+    this._play(ucard);
   }
 
 
@@ -278,39 +315,200 @@ class TableModel {
   _play = (item) => {
     // if(item.active != 3) return; // 只有突出的牌能打出去。
     item.active = ACT2;    // 已经打出去的牌
-    if (this.board.length === 4) return false;
-    this.board.push(item);
+    if (this.board[0].length === 4) return false;
+    this.board[0].push(item);
     //console.log(this.board)
     item['animation']['left'] = this.seat[item.seat][1].x;
     item['animation']['top'] = this.seat[item.seat][1].y;
     item['animation']['delay'] = 0;
     item['zIndex'] = this.zindex++;
 
-    this.resetTable(); // 牌恢复为不可点击状态 ACT1.L
+    //this.resetTable(); // 牌恢复为不可点击状态 ACT1.L
 
     const seatIndex = Position.SNames.indexOf(item.seat);
     //const seatIndex = Position.SNames.indexOf(item.seat);
     let cards = this.state.cards[seatIndex];
     cards = this.resetCards(cards, item.seat, true);
+    if (this.board[0].length === 4) setTimeout(this.clearBoard, 1000)
   }
+
+  /**
+   * userCards 0-3  NESW
+   * @param {*} userCards 
+   * @param {*} board  0 当前墩，1上一墩
+   */
+  // restore1(userCards,board){
+  //   debugger;
+  //   const cards = this.state.cards;
+  //   this.board = board;
+  //   cards.forEach((ucards,index)=>{
+  //     ucards.forEach((card)=>{
+  //       // 如果不在用户手中
+        
+  //       if(userCards[index].indexOf(card.card) === -1){
+  //         // 1） 如果在当前墩
+  //         if(board[0].indexOf(card.card)){ // index 越大 zindex 越大
+  //           this._setCardACT2(card);
+  //         // 2） 如果已经飞走
+  //         }else{
+  //           this._setCardACT3(card);
+  //         }
+  //       }
+  //     });
+  //   });
+  // }
+  /**
+   * 
+   * @param {*} userCards  0-1 NESW
+   * @param {*} board 0 当前墩，1 上一墩
+   * [ [['N','H3'],[],[],[]]  ]
+   */
+  restore(userCards,board1){
+    const openSeat = this.myseat + this.dummySeat;
+    const cards = this.state.cards; // 这里应该从原始牌初始化。因为 state.cards 状态不确定
+    this.board = [[],[]];
+    let cardNum = 0;
+    // 1） 飞走不在手里的牌。
+    userCards.forEach((uCards,uindex)=>{
+      if( openSeat.indexOf(Position.SNames[uindex])!==-1 ){
+        cards[uindex].forEach((card)=>{
+          // 不在手里的牌 全部 飞走
+          window.___card = card;
+          // window.___uindex = uindex;
+          if(uCards.indexOf(card.card)===-1) this._setCardACT3(card)
+        });
+      }else{
+        cardNum = 13 - uCards.length;
+        for(let i=0;i<cardNum;i++){
+          // 不在手里的牌飞走 因为是暗牌因此从0开始飞走
+          this._setCardACT3(cards[uindex][i]);
+        }
+      }
+    });
+
+    // 2) 设置当前墩和上一墩
+    board1[0].forEach((ucard)=>{
+      const seatIndex = Position.SNames.indexOf(ucard.seat);
+      // 暗牌处理
+      if(openSeat.indexOf(ucard.seat)===-1){
+        cards[seatIndex][0].card = ucard.card;
+        this._setCardACT2(cards[seatIndex][0]);
+        //this.board[0].push(cards[seatIndex][0]);
+      // 明牌处理
+      }else{
+        cards[seatIndex].forEach((card)=>{
+          if(card.card === ucard.card) this._setCardACT2(card);
+          //this.board[0].push(card);
+        });
+      }
+    },this);
+
+    board1[1].forEach((ucard)=>{
+      const seatIndex = Position.SNames.indexOf(ucard.seat);
+      // 暗牌处理
+      if(openSeat.indexOf(ucard.seat)===-1){
+        cards[seatIndex][1].card = ucard.card;
+        this._setCardACT3(cards[seatIndex][1]);
+        this.board[1].push(cards[seatIndex][1]);
+      // 明牌处理
+      }else{
+        cards[seatIndex].forEach((card)=>{
+          if(card.card === ucard.card){
+            this._setCardACT3(card);
+            this.board[1].push(card);
+          }
+        },this);
+      }
+    },this);
+
+    Position.SNames.split('').forEach((seat,index)=>{
+      this.resetCards(this.state.cards[index],seat);
+    })
+
+
+
+  }
+
+  /**
+   * 设置一张牌为 已经飞走了。
+   * @param {} card 
+   */
+  _setCardACT3(card){
+    card['animation']['left'] = this.size / 2;
+    card['position']['x'] = this.size / 2;
+    card['animation']['top'] = -this.size * 2;
+    card['position']['y'] = -this.size * 2;
+    card['animation']['delay'] = 0;
+    card.active = ACT3;
+    //this.board[1].push(card);
+  }
+
+  /**
+   * 把牌设置为 打在桌面上。
+   * @param {*} card 
+   */
+  _setCardACT2(card){
+    card.active = ACT2;    // 已经打出去的牌
+    card['position']['x'] = this.seat[card.seat][1].x;
+    card['animation']['left'] = this.seat[card.seat][1].x;
+    card['position']['y'] = this.seat[card.seat][1].y;
+    card['animation']['top'] = this.seat[card.seat][1].y;
+    card['animation']['delay'] = 0;
+    card['zIndex'] = this.zindex++;
+    this.board[0].push(card);
+  }
+
+
+  // restore1(userCards,board){
+  //   const cards = this.state.cards;
+  //   this.board = board;
+
+    
+
+
+  //   cards.forEach((ucards,index)=>{
+  //     ucards.forEach((card)=>{
+  //       // 如果不在用户手中
+  //       if(userCards[index].indexOf(card.card) === -1){
+  //         // 1） 如果在当前墩
+  //         if(board[0].indexOf(card.card)){ // index 越大 zindex 越大
+  //           card.active = ACT2;    // 已经打出去的牌
+  //           card['animation']['left'] = this.seat[card.seat][1].x;
+  //           card['animation']['top'] = this.seat[card.seat][1].y;
+  //           card['animation']['delay'] = 0;
+  //           card['zIndex'] = this.zindex++;            
+  //         // 2） 如果已经飞走
+  //         }else{
+  //           card.animation.left = this.size / 2;
+  //           card.animation.top = -this.size * 2;
+  //           card.active = ACT3;            
+  //         }
+  //       }
+  //     });
+  //   });
+  // }
+
+
+
   /**
    * 清理桌面上的牌
    * 定位参考：
    *  -this.size * 0.2;  计分位置
    * 
    * board[i].active = ACT3;  飞到桌面以外。                      
+   * board.unshift([]); 四张牌飞走后，当前墩为空。
    */
   //model
   @action.bound
   clearBoard() {
     //if(this.board.length < 4) return false;
     const board = this.board;
-    for (let i = 0; i < board.length; i++) {
-      board[i].animation.left = this.size / 2;
-      board[i].animation.top = -this.size * 2;
-      board[i].active = ACT3;
-    }
-    this.board = [];
+    for (let i = 0; i < board[0].length; i++) {
+      board[0][i].animation.left = this.size / 2;
+      board[0][i].animation.top = -this.size * 2;
+      board[0][i].active = ACT3;
+    };
+    board.unshift([]);
     this.state.cards = Object.assign([], this.state.cards);
   }
 
@@ -350,14 +548,16 @@ class TableModel {
 
   /**
    * 根据用户和花色选出指定的牌对象数组
-   * @param {*} user 用户0-3 NESW
+   * @param {*} user 用户 NESW
    * @param {*} suit 花色
    */
-  selectCards(user, suit) {
+  selectCards(userSeats, suit) {
     const cards = this.state.cards;
+    const seats = userSeats.split('');
     let destCards = [];
-    user.forEach((j) => {
-      cards[j].forEach((card, i) => {
+    seats.forEach((seat) => {
+      const seatIndex = new Position(seat).in;
+      cards[seatIndex].forEach((card, i) => {
         if (suit.indexOf(card.card.slice(-1)) !== -1) destCards.push(card);
       });
     });
@@ -518,19 +718,29 @@ class TableModel {
   }
 
 
+  // @action.bound
+  // claim1(seat,num) {
+  //   //this._claim.seat = this.myseat;
+  //   //this.state.claim.seat = this.myseat;
+  //   this.state.claim = {seat:seat,value:num};
+  //   this.state.scene = 3;
+  // }
   @action.bound
-  claim() {
+  claim(seat,claimMsg) {
     //this._claim.seat = this.myseat;
-    this.boardState.claim.seat = this.myseat;
+    this.state.claim.seat = seat;
+    this.state.claim.msg = claimMsg;
     this.state.scene = 3;
   }
+
 
   @action.bound
   getUnPlayCardNumber() {
     // const p = new Promise(this.fetchNumber);
     // const number =  await p;  
-    const number = 3;
+    const number = 6;
     this.state.unPlayCardNumber = number;
+    return number;
   }
 
 
@@ -574,9 +784,9 @@ class TableModel {
    *       this.state.lastTrick
    */
   @action
-  lastTrick = () => {
+  lastTrick222 = () => {
     // 在模型里 应该先判断当前 trick 编号。然后决定是否能看lasttrick
-    const show = !this.lastTrick;
+    const show = !this.state.lastTrick;
     const lt = Models.lastTrick();
     let card = null;
     lt.forEach((item, index) => {
@@ -596,8 +806,38 @@ class TableModel {
       //card['animation']['delay'] = 0;
       card.active = ACT3; // 测试用
     })
+    this.state.lastTrick = !this.state.lastTrick;
     return this.state.cards;
   }
+  @action
+  lastTrick1 = () => {
+    // 在模型里 应该先判断当前 trick 编号。然后决定是否能看lasttrick
+    //debugger;
+    const show = !this.state.lastTrick;
+    const lt = this.board[1];
+    window.___board1 = toJS(this.board);
+    let card = null;
+    lt.forEach((item, index) => {
+      //card = this.cardIndexOf(item.index)
+      //card.size = card.size * 0.8
+      item['animation']['left'] = (show == true) ?
+        this.seat[item.seat][1].x - this.size / 2.9
+        : this.size / 2;
+      item['animation']['top'] = (show == true) ?
+        this.seat[item.seat][1].y - this.size / 2.9
+        : -this.size * 2;
+      //card['size'] = card['size'] * 0.7
+      // card['animation']['rotate'] = 180;
+      // card['position']['x'] = this.seat[Table.seatsen[index]][1].x;
+      // card['position']['y'] = this.seat[Table.seatsen[index]][1].y;
+      //card['animation'] = '';
+      //card['animation']['delay'] = 0;
+      item.active = ACT3; // 测试用
+    })
+    this.state.lastTrick = !this.state.lastTrick;
+    return this.state.cards;
+  }
+
 
   @action.bound
   openDummy() {
@@ -653,7 +893,10 @@ class TableModel {
     if (ready) this.state.scene = 1;
     return ready;
   }
-
+  @action.bound
+  userLogin(seat,user){
+    this.state.user[seat]=user;
+  }
   /**   -----------------------------------------------------
    * 叫牌
    * seat 座位
