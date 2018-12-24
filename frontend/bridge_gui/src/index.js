@@ -11,11 +11,13 @@ import testStore from './App/stores/testStore';
 import commonStore from './App/stores/commonStore';
 import tableStore from './App/stores/tableStore';
 import boardStore from './App/stores/board'
+import newBoardStore from './App/stores/newBoard'
 const stores = {
   testStore,
   commonStore,
   tableStore,
-  boardStore
+  boardStore,
+  newBoardStore
 };
 
 // For easier debugging

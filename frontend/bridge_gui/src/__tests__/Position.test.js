@@ -20,7 +20,7 @@ describe("Position：",()=>{
     expect(p1.sn).toBe('S');
     expect(p1.lshift(1).en).toBe('east');
     expect(p1.lshift(1).sn).toBe('N');
-    expect(p1.lshift(1).cn).toBe('西');
+    expect(p1.lshift(1).cn).toBe('西'); 
     expect(p2.lshift(1).cn).toBe('南');
     expect(p3.lshift(1).cn).toBe('东');
     let posE = new Position('E').lshift(3).sn;
