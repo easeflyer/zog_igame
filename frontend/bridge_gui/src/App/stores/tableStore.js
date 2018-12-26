@@ -4,6 +4,7 @@ import Models from '../models/model'
 import { flexLayout } from '../libs/layout.js'
 import { observable, computed, action,toJS } from 'mobx';
 import Position from '../common/Position';
+import Out from '../views/pc/Output';
 // import Modals from '../models/model';
 import Board from './board'
 //import Claim from '../views/pc/Claim';
@@ -323,12 +324,13 @@ class TableModel {
     item['animation']['delay'] = 0;
     item['zIndex'] = this.zindex++;
 
-    //this.resetTable(); // 牌恢复为不可点击状态 ACT1.L
+    this.resetTable(); // 牌恢复为不可点击状态 ACT1.L
 
     const seatIndex = Position.SNames.indexOf(item.seat);
     //const seatIndex = Position.SNames.indexOf(item.seat);
     let cards = this.state.cards[seatIndex];
     cards = this.resetCards(cards, item.seat, true);
+    Out.play(item);
     if (this.board[0].length === 4) setTimeout(this.clearBoard, 1000)
   }
 
@@ -558,7 +560,7 @@ class TableModel {
     seats.forEach((seat) => {
       const seatIndex = new Position(seat).in;
       cards[seatIndex].forEach((card, i) => {
-        if (suit.indexOf(card.card.slice(-1)) !== -1) destCards.push(card);
+        if (suit.indexOf(card.card.slice(0,1)) !== -1) destCards.push(card);
       });
     });
     return destCards;

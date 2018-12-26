@@ -275,7 +275,10 @@ export default class Debug extends Component {
             // 其他牌都不可点击
             cards = tableStore.selectCards("NEW", 'SHDC');
             cards = cards.concat(tableStore.selectCards("S", 'SHC'));
-            tableStore.setCardsState(cards, { active: ACT1.D, onclick: tableStore.play });
+            tableStore.setCardsState(cards, {
+                active: ACT1.D, onclick: tableStore.play,
+//                animation:Object.assign({},)
+            });
             //o.props.tableStore.addClick2Cards(cards, 0);
         }
 

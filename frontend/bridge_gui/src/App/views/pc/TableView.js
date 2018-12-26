@@ -63,14 +63,14 @@ class TableView extends React.Component {
     const props = this.props;
     const table = props.table;
     const tableStore = props.tableStore;
-    let cards = table.props.tableStore.state.cards;
+    let cards = tableStore.state.cards;
 
     cards = cards ? Card.createComponents(cards) : null;
-    const stat = Object.values(table.props.tableStore.state.user).map(e => e.ready);
+    const stat = Object.values(tableStore.state.user).map(e => e.ready);
 
     return (
       <div>
-        {(table.props.tableStore.state.scene == 1) ?
+        {(tableStore.state.scene == 1) ?
           <div className='panel'>
             <BidPanel />
           </div> : null
@@ -99,9 +99,9 @@ class TableView extends React.Component {
           </div>
 
           <div id='body' className='body'>
-            {table.props.tableStore.state.lastTrick ? <div id='lastTrick' className='lastTrick'>33333</div> : null}
+            {tableStore.state.lastTrick ? <div id='lastTrick' className='lastTrick'>33333</div> : null}
             {/* onSubmit 不需要了 */}
-            {table.props.tableStore.state.scene == 3 ?
+            {tableStore.state.scene == 3 ?
               <Claim number='8' onSubmit={table.handleClaim} /> 
               : null}
             <div id='clock'></div>
@@ -110,12 +110,12 @@ class TableView extends React.Component {
             <div id='south' className='south' ref={table.ref.S}></div>
             <div id='west' className='west' ref={table.ref.W}></div>
             <div id='board' className='board' ref={table.ref.board}>
-              <UserTags user={table.props.tableStore.state.user} myseat={table.props.tableStore.myseat} />
-              {table.props.tableStore.state.scene == 0 ? <Prepare stat={stat} ready={table.handleReady} /> : null}
+              <UserTags user={tableStore.state.user} myseat={tableStore.myseat} />
+              {tableStore.state.scene == 0 ? <Prepare stat={stat} ready={table.handleReady} /> : null}
             </div>
             {cards}
           </div>
-          {table.props.tableStore.state.debug ? <Debug o={table} /> : null}
+          {tableStore.state.debug ? <Debug o={table} /> : null}
 
           <div id='footer' className='footer'>
             <div id='video'></div>
