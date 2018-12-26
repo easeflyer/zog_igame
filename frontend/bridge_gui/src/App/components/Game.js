@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Table from './Table';
 import GameModel from '../models/Game'
-
+import Process from '../models/newProcess'
 import { inject, observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
 import Out from "../views/pc/Output";
@@ -22,6 +22,7 @@ class Game extends React.Component {
         super(props);
         this.debug=true;
         this.init();// 屏蔽鼠标右键
+        Process.start()
         // this.width = window.screen.width;
         // this.height = window.screen.height;
         // console.log('width:' + this.width)

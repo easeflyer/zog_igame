@@ -275,7 +275,7 @@ export default class Debug extends Component {
             // 其他牌都不可点击
             cards = tableStore.selectCards("NEW", 'SHDC');
             cards = cards.concat(tableStore.selectCards("S", 'SHC'));
-            tableStore.setCardsState(cards, { active: ACT1.D, onclick: tableStore.play });
+            tableStore.setCardsState(cards, { active: ACT1.D, onclick: tableStore.play });alert(1)
             //o.props.tableStore.addClick2Cards(cards, 0);
         }
 
@@ -323,7 +323,7 @@ export default class Debug extends Component {
         }
 
         o.wLogin = function(){
-            o.props.tableStore.userLogin('W',{ ready: 0, name: '王五', face: '/imgs/face1.png', rank: '王者', seat: 'W' });
+            o.props.tableStore.userLogin('S',{ ready: 0, name: '王五', face: '/imgs/face1.png', rank: '王者', seat: 'W' });
         }
         o.initcards = function(){
             const deals = "K34.J3.Q742.K832 XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX";
