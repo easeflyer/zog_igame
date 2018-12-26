@@ -326,7 +326,7 @@ export default class Debug extends Component {
         }
 
         o.wLogin = function(){
-            o.props.tableStore.userLogin('W',{ ready: 0, name: '王五', face: '/imgs/face1.png', rank: '王者', seat: 'W' });
+            o.props.tableStore.userLogin('S',{ ready: 0, name: '王五', face: '/imgs/face1.png', rank: '王者', seat: 'W' });
         }
         o.initcards = function(){
             const deals = "K34.J3.Q742.K832 XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX";

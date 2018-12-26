@@ -17,7 +17,7 @@ class NormalLoginForm extends React.Component {
             session.set_sid(data.sid);
             session.set_name(formData.phone);       //把用户名也保存到session里面
             alert("登录成功！");
-            this.props.history.push('/game')
+            this.props.history.push('/logicPlay')
         }
         const errorCallback =()=>{
             alert('登录失败，请稍后重试！');

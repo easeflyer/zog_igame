@@ -56,9 +56,11 @@ Array.prototype.remove= function(removeItem){
 class Board {
   constructor(){
     this.Reload = new Map();
-    this.Reload.set('start playing ',()=>{alert("start play")});
-    this.Reload.set('calling ready',this._Reload_ready);
-    this.Reload.set('playing',this._Reload_playing);
+    this.Reload.set('start playing ',()=>{alert("start play")});//进入房间，所有玩家没有点击准备，重连
+    this.Reload.set('calling ready',this._Reload_ready); //准备阶段重连
+    
+    this.Reload.set('playing',this._Reload_playing);//打牌阶段重连
+    this.Reload.set('biding',this._Reload_biding); //叫牌阶段重连
   }
  @observable pbn = {
     event: '国际大赛',
@@ -73,8 +75,8 @@ class Board {
     vulnerable: 'None',
     deal: 'N:.63.AKQ987.A9732 A8654.KQ5.T.QJT6 J973.J98742.3.K4 KQT2.AT.J6542.85',
     scoring: "IMP",
-    declarer: "S",
-    contract: "5HX",
+    declarer: "",
+    contract: "",
     result: null,
     /* cards 字符串
                     S
@@ -91,15 +93,7 @@ class Board {
                     C K 4   
     */
     cards: "",
-/*   
-    call:
-      [
-        ['1D','1S','3H =1=','4S'],
-        ['4NT =2=', 'X','Pass','Pass'],
-        ['5C','X','5H','X'],
-        ['Pass', 'Pass', 'Pass']
-      ],
-*/
+
     auction: {
       first: 'N',
       call: [],
@@ -140,6 +134,7 @@ class Board {
   pollingId=1;
   delFirstMessage=1;
   lastState=null;
+  passNum=0;
   // 当前墩，参考 play.tricks 顺序参考 play.first
   @observable curTrick = [];
   // get player = () =>{
@@ -155,7 +150,7 @@ class Board {
     seat: 'south',
     cards:[],
   }
-
+  @observable activePlayer = ''
   //===========================================================================
   // 以下为方法
   //===========================================================================
@@ -186,8 +181,9 @@ class Board {
   }
 
   allReady() {
-    return Object.values(this.ready)
-      .reduce((previousValue, currentValue) => previousValue && currentValue);
+    // return Object.values(this.ready)
+    //   .reduce((previousValue, currentValue) => previousValue && currentValue);
+    this.activePlayer=this.dealer;
   }
   /**
    * 名称：初始化 board
@@ -233,17 +229,23 @@ class Board {
   play(card){
     Models.play(this.sucPlay,this.failPlay,this.board_id,this.my.seat,card);
     this.playedCard=card
+    this.my.cards.remove(this.playedCard)
   }
+  /**
+   * 10986
+   */
   sucPlay=(data)=>{
     console.log(data)
-    Models.sendplay(this.recievePlay,()=>{}, this.board_id, data, this.channel_id);  //查询出牌结果
+    Models.sendplay(()=>{},()=>{}, this.board_id, data, this.channel_id);  //查询出牌结果
   }
-  recievePlay=()=>{
+  recievePlay=(body)=>{
+    console.log(this.curTrick.length)
     if(this.curTrick.length===4){
       this.curTrick=[]
     }
-    this.curTrick.push(this.playedCard)
-    this.my.cards.remove(this.playedCard)
+    this.curTrick.push(body.card)
+    this.activePlayer = body.nextplayer;
+    
   }
 
   @action.bound
@@ -257,18 +259,37 @@ class Board {
     this.lastState.current_trick.forEach((item)=>{
       this.curTrick.push(item[2])
     })
+   this.pbn.declarer = this.lastState.declarer;
+   this.pbn.contract = this.lastState.contract;
+   this.activePlayer = this.lastState.player;
   }
-
+ 
   @action.bound
   _Reload_ready(){
     this.ready.east = this.lastState['east_ready'];
-    this.ready.south = this.lastState['south_ready']
-    this.ready.west = this.lastState['west_ready']
-    this.ready.north = this.lastState['north_ready']
+    this.ready.south = this.lastState['south_ready'];
+    this.ready.west = this.lastState['west_ready'];
+    this.ready.north = this.lastState['north_ready'];
+    const isAllReady = Object.values(this.ready).every((item)=>{
+      console.log(item);
+      return item==='R';
+    })
+    if (isAllReady){
+      this.activePlayer = this.dealer;
+    }
   }
   @action.bound
+  _Reload_biding=()=>{
+    //bidder表示该谁叫牌了
+    const {bidder,call_info}= this.lastState;
+    this.activePlayer = bidder;
+    call_info.forEach((item)=>{
+     
+      this.saveCall(item[2]);
+    })
+  }
   re_init(){
-    debugger
+    
     const {state} = this.lastState;
     
     this.Reload.get(state)();
@@ -288,6 +309,46 @@ sucReady=(data)=>{
 }
 sucSend=(data)=>{
     return false
+}
+bidCall=(card)=>{   //牌手的叫牌事件，发送叫牌消息
+      
+  Models.bid(()=>{alert(1)},()=>{},this.board_id,this.my.seat,card,this.channel_id);
+}
+saveCall=(data)=>{
+  const {call} = this.pbn;
+  
+   if(data=="Pass"){
+     this.passNum+=1;
+   }else{
+     this.passNum=0;
+   }
+  call.forEach((item,index)=>{
+    if(item.length<4){
+      item.push(data)
+    }else if(index==call.length-1){
+      call.push([data]);
+    }
+  })
+  if(call[0][0]=="Pass"){
+    if(this.passNum==4){
+      alert("下一局")
+    }
+  }else{
+    if(this.passNum==3){
+      
+      Models.call_result(()=>{},()=>{},this.board_id,this.channel_id);
+    }
+  }   
+}
+
+/**
+ * {'declarer': 'N', 'openlead': 'E', 'nextplayer': 'E', 'dummy': 'S', 'contract': '2H'}
+ */
+handleBidResult=(data)=>{
+  this.pbn.declarer = data.declarer;
+  this.pbn.play.first = data.openlead;
+  this.pbn.contract = data.contract;
+  this.activePlayer = data.openlead;
 }
 }
 export default new Board();

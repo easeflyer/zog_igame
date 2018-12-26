@@ -11,6 +11,15 @@ window._boardStore = boardStore;
  * 1. 供四个玩家打牌之间的通信，同一桌的玩家的table_id相同
  * 2. 查询成绩需要table_id
  */
+/**
+ * 叫牌阶段没有下一个玩家提示信息
+ */
+const NEXTPLAYER = {
+    E:'S',
+    S:'W',
+    W:'N',
+    N:'E'
+}
 export default class Process{
 
     // ********************************************没有用的函数，防止报错*******************************************************************
@@ -72,7 +81,7 @@ export default class Process{
         // {cards:"AQ93.T9632.T7.73 6.K7.K984.AQJ964 K42.AQ5.AJ3.KT85 JT875.J84.Q652.2",dealer:'E',players:[["111 1111 1111", "S", 7],["222 2222 2222", "N", 8],["333 3333 3333", "E", 9],["444 4444 4444", "W", 10]],vulnerable:"NS"}
             this.originData = data;
             boardStore.hands = data.cards.split(' ')
-           
+            boardStore.dealer = data.dealer
             console.log(session.get_name())
             data.players.forEach(item=>{    //存储‘我’的方位
                 if(item[0]===session.get_name()){
@@ -105,11 +114,10 @@ export default class Process{
             // }
         }
         dealMessageBody=(body)=>{
-           
+            
             if(body.substring(3,body.length-4)==='all ready'){
-                boardStore.dealCards();
-                boardStore.state.scene=1;// 去掉准备按钮
-                // Sound.play('deal')
+                boardStore.allReady()
+               
             }else if(body.substring(3,body.length-4)==='claim agreed'){
                     this.setState({scene:2});
                     this.addChatMsg('系统消息','庄家claim成功，正在为您计算本副牌成绩...')
@@ -117,42 +125,25 @@ export default class Process{
             }else{
                 body = body.replace(/u'/g,"'").replace(/ /g,'')
                 body = eval('('+body.substring(3,body.length-4)+')')
-                debugger
+               
             
     
                 if(body.pos&&body.send_msg){         //收到聊天消息  {pos:'W',send_msg:'msg'}
                     this.addChatMsg(body.pos,body.send_msg)
                 }
-                // if(body.board_id&&body.name&&body.pos&&body.number){  //收到叫牌消息  
-                //     this.setState({
-                //         next:NEXTPLAYER[body.pos]
-                //     })
+                if(body.board_id&&body.name&&body.pos&&body.number){  //收到叫牌消息  
+                    boardStore.activePlayer = NEXTPLAYER[body.pos]
                     
-                //     this.timing(null,0,()=>{},true)   //提示下一个叫牌人
-                //     this.validatePass(body)
-                // }
-                // if(body.dummy&&body.openlead&&body.declarer){   //收到叫牌结果信息   {dummy:'N',openlead:'W',declarer:'S',nextplayer:'W',contract:'1S'}
-                //     ReactDOM.unmountComponentAtNode(document.querySelector('#clock'));
-                //     this.setState({
-                //         nextplayer:body.nextplayer,
-                //         next:body.openlead
-                //     })
-                   
-                //     this.timing(null,0,()=>{},true);
-                //     this.playRules(body.nextplayer,null,null);      //根据打牌规则提示
-                //     this.setState({
-                //         cards:boardStore.state.cards,
-                //         contract:body.contract,
-                //         declarer:body.declarer,
-                //         dummy:body.dummy,
-                //         scene:2
-                //     })
-                // }
+                    
+                    boardStore.saveCall(body.name)
+                }
+                if(body.dummy&&body.openlead&&body.declarer){   //收到叫牌结果信息   {dummy:'N',openlead:'W',declarer:'S',nextplayer:'W',contract:'1S'}
+                   boardStore.handleBidResult(body)
+                }
                 if(body.number&&body.rank&&body.card){    //收到打牌消息 {ns_win:0,number:1,rank:'5',pos:'W',suit:'C',nextplayer:'W',card:'C5',ew_win:0}
-                    debugger
-                    if(boardStore.curTrick.indexOf(body.card)===-1){
-                        boardStore.curTrick.push(body.card)
-                    }
+                   
+                    
+                    boardStore.recievePlay(body)
                 }
                 // if(body.pos&&body.num&&body.board){   //收到庄家claim消息  {pos:'W', num:3, board:['SQ','ST']}
                 //     this.setState({claimnum:body})

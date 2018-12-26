@@ -55,7 +55,7 @@ class TableModel {
     winSN:0,
   }
   dummySeat = "N";
-  curCall = '3S';  // 当前叫品，用于bidpanel 显示。
+  @observable curCall = '';  // 当前叫品，用于bidpanel 显示。
   // boardState = {
   //   boardId: null,
   //   contract: null,
@@ -88,7 +88,9 @@ class TableModel {
       W: { ready: 0, name: '', face: '', rank: '', seat: '' },
       N: { ready: 0, name: '', face: '', rank: '', seat: '' }
     };
-
+    window._user=this.state.user;
+    window._curCall = this.curCall;
+    window._tableStore= this;
     //this.state.user = {N:null,E:null,S:null,W:null};
     const seat = Position.SNames.split('');
     seat.forEach(key => this.seat[key] = [{ x: 0, y: 0 }, { x: 0, y: 0 }]);
@@ -130,10 +132,11 @@ class TableModel {
    * this._swDC() 为了岔开颜色显示。交换 方片和梅花的牌。
    */
 
-  initCards(sdeals) {
+  initCards(sdeals) {debugger
     let suits = Card.suits.slice(0);            //['S', 'H', 'D', 'C'];
     this._swDC(suits);
     const deals = sdeals.split(' ');
+    console.log(deals)
     let index = 0;                              // 复位index 可以让四个人的牌同时发出来
     const cards = [[], [], [], []];             // 初始化二维数组 保存四个方位的牌
     deals.forEach((item, index1) => {           // index1 是方位编号
@@ -330,7 +333,11 @@ class TableModel {
     //const seatIndex = Position.SNames.indexOf(item.seat);
     let cards = this.state.cards[seatIndex];
     cards = this.resetCards(cards, item.seat, true);
+<<<<<<< HEAD
     Out.play(item);
+=======
+    Out.play(item)
+>>>>>>> 07e6a04cfcc52128d26c1fcaa1f21552f30f4f3d
     if (this.board[0].length === 4) setTimeout(this.clearBoard, 1000)
   }
 

@@ -221,6 +221,7 @@ class BidPanel extends Component {
     );
   }
   render() {
+    this.initPanel();  //zsx修改：解决根据叫品，隐藏部分叫牌
     //console.log('ffff:' + this.width)
     const bidblocks = this.state.bidblocks.map((e1, i1) => e1.map((e2, i2) => {
       //if (e2.active == 0) animation['brightness'] = 0.6;
