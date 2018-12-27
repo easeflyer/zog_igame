@@ -54,7 +54,7 @@ class TableModel {
     winEW:0,
     winSN:0,
   }
-  dummySeat = "N";
+  dummySeat = "N"; // 固定界面方位，非逻辑方位
   @observable curCall = '';  // 当前叫品，用于bidpanel 显示。
   // boardState = {
   //   boardId: null,
@@ -246,14 +246,13 @@ class TableModel {
    */
   @action.bound
   dplay(seat,card){
-    //debugger;
+    //debugger; seat === this.dummySeat 
     const cards = this.state.cards;
     let ucard = null;
     for(let c of cards[Position.SNames.indexOf(seat)]){
-      if(c.active===ACT1.L) {
-        ucard = c;
-        break;
-      }
+      if(seat !== this.dummySeat && c.active===ACT1.L) ucard = c;
+      if(seat === this.dummySeat && c.card === card) ucard = c;
+      if(ucard) break;
     }
     ucard.card = card;
     this._play(ucard);
