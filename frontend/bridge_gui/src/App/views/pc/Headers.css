@@ -82,10 +82,14 @@
     height:60%;
     background-color: #eeeeee;
     border-radius:10%;
+    line-height: 4vh;
+    padding:2vh 0vh;
 }
 .tricks > .s3{
     margin-top:2%;
     width:100%;
     height:30%;
     background-color: #eeeeee;
+    line-height:4vh;
+    padding:1vh 0vh;
 }

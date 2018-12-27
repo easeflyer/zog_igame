@@ -3,6 +3,22 @@ output.js 里面完善 claim 动作。 显示定约。
 
 
 
+{
+  board: 对cards 的引用。
+  state:{
+    cards: 合理的cards 数组。
+    scene: 场景
+    calldata:根据需要
+    claim:{}
+    winEW:
+    winSN:
+  }
+  dummySeat:
+  curCall
+}
+
+
+
 
 
 

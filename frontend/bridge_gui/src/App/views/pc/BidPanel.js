@@ -61,10 +61,10 @@ class BidPanel extends Component {
     }
   }
 
-  getCallData() {
-    window.__calldata = toJS(this.props.tableStore.state.calldata);
-    return this.props.tableStore.state.calldata;
-  }
+  // getCallData() {
+  //   //window.__calldata = toJS(this.props.tableStore.state.calldata);
+  //   return this.props.tableStore.state.calldata;
+  // }
 
   /**
    * 处理 pass,alert,x,xx

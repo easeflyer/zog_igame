@@ -128,8 +128,13 @@ class Table extends Component {
         // Sound.play('claim');
     }
 
+    /**
+     * seat 界面方位。
+     */
     openDummy = () => {
-        this.props.tableStore.openDummy();
+        const seat = "E";
+        const cards = ['SQ','SJ','S9','S8','HA','H5','DJ','D8','D3','CT','C4','CT','C4'];
+        this.props.tableStore.openDummy(seat,cards);
     }
     /**
      * 预留发送 数据接口
@@ -153,7 +158,10 @@ class Table extends Component {
     handleReady = (se) => {
         //this.TableModel.userReady(se);
         this.props.tableStore.userReady(se);
-        if (this.props.tableStore.userAllReady()) this.deal();
+        if (this.props.tableStore.userAllReady()) {
+            this.props.tableStore.state.scene = 1;
+            this.deal();
+        }
     }
     /**
      * 发牌
