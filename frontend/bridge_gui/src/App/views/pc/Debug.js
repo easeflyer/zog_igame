@@ -270,7 +270,7 @@ export default class Debug extends Component {
         o.addClick1 = function () {
             // 南 方块 可点击。
             const tableStore = o.props.tableStore;
-            let cards = tableStore.selectCards("S", 'D');
+            let cards = tableStore.selectCards("S", 'D');console.log(cards)
             tableStore.setCardsState(cards, { active: ACT1.LC, onclick: tableStore.play });
             // 其他牌都不可点击
             cards = tableStore.selectCards("NEW", 'SHDC');

@@ -1,8 +1,13 @@
+import ReactDOM from 'react-dom';
+import React, { Component } from 'react';
+import Position from '../common/Position';
 import ODOO from '../libs/odoo-bridge-rpc/src';
 import boardStore from '../stores/newBoard'
 import tableStore from '../stores/tableStore'
 import {cardString,Two} from '../common/util'
+import Clock from '../libs/Clock';
 import Sound from '../components/Sound';
+import Card,{ACT0,ACT1,ACT2,ACT3} from '../components/Card';
 const arr = [['E','east_id'],['N','north_id'],['S','south_id'],['W','west_id']]
 const arr1 = [['east_id','E'],['north_id','N'],['south_id','S'],['west_id','W']]
 const dirMap = new Map(arr);
@@ -40,7 +45,7 @@ var tables = null;
 var table = null;
 var boards = null;
 var bd = null;
-var seats=null;//桌子的方位都是哪些玩家
+var seats=null;//{玩家真实方位：桌子上的方位}
 const dir = ['W','N','E','S'];
 const odoo = new ODOO({ host, db, models })
 
@@ -218,13 +223,14 @@ var bd = null;
       recover =()=>{
         const bd2 = bd.look(fields.doing_table_ids.board_ids)
         console.log(bd2)  //得到当前游戏的全部内容
-        const {state,dealer,auction} = bd2;
+        const {state,dealer,auction,player} = bd2;
         var deals =cardString(tableStore.myseat,bd2.hands) ;
         var call=null;
         console.log(deals)
         tableStore.initCards(deals);
         tableStore.dealCards();
         Sound.play('deal');
+        this.timing(seats[bd2.player],10,()=>{})
         if(state=='bidding'){
           var curCall = ''
           tableStore.bid();
@@ -240,6 +246,10 @@ var bd = null;
             }
           }
           tableStore.curCall = curCall;
+        }
+        if(state=='playing'){
+
+          
         }
 
       }
@@ -262,9 +272,37 @@ var bd = null;
           }
       }
       dealPlay = (info,args) => {
-        var {mySeat} = tableStore;
-        var player=seats[mySeat][args[0]]
-        tableStore.dplay(player,args[1])
+        var myseat = tableStore.myseat;
+        var player=seats[args[0]]
+        console.log(player)
+        if(player!='S'){
+          tableStore.dplay(player,args[1]);
+        }
+        debugger
+        this.timing(seats[info.player],10,()=>{})
+        if(info.player==myseat){
+         // args[1][1] 表示花色
+         console.log(args[1][0])
+          let cards = tableStore.selectCards("S", args[1][0]);
+          if(cards.length==0){
+            cards = tableStore.selectCards("S", 'SHDC');
+            tableStore.setCardsState(cards, { active: ACT1.LC, onclick: tableStore.play });
+           
+          }else{
+            tableStore.setCardsState(cards, { active: ACT1.LC, onclick: tableStore.play });
+            var reg = new RegExp(args[1][0],"g");
+            var a = 'SHDC'.replace(reg,"");
+            cards = tableStore.selectCards("S", a);
+            tableStore.setCardsState(cards, {active: ACT1.D, onclick: tableStore.play});
+          }
+          cards = tableStore.selectCards("NEW", 'SHDC');
+          tableStore.setCardsState(cards, {active: ACT1.L, onclick: tableStore.play});
+        }else{
+          let cards = tableStore.selectCards("NEWS", 'SHDC');
+          tableStore.setCardsState(cards, {
+              active: ACT1.L, onclick: tableStore.play,
+          });
+        }
         if(boardStore.gameState=='done'){
            alert('done')
         }
@@ -279,5 +317,14 @@ var bd = null;
         boardStore.claim.state = args;
         boardStore.gameState = info.state;
       }
+      timing = function (seat, time, callback) {
+        const unseat = new Position(seat).lshift(1).sn;
+        ReactDOM.unmountComponentAtNode(document.querySelector('.'+unseat+'clock'));
+        ReactDOM.un
+        ReactDOM.render(
+            <Clock time={time} callback={callback} />,
+            document.querySelector('.'+seat+'clock')
+        )
+    }
 }
 export default new Process();

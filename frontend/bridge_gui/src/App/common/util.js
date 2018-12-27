@@ -55,8 +55,19 @@ function _getOneDeal(card){ debugger
       console.log(i)
       deal += card[i][1];
     }else{
-      deal += `.${card[i][1]}`;
+      deal += `.`;
       suitInd+=1;
+      i--;
+    }
+  }
+  var str =JSON.stringify(card);
+  if(str.indexOf('C')==-1){
+    deal += `.`;
+    if(str.indexOf('D')==-1){
+      deal += `.`;
+      if(str.indexOf('H')==-1){
+        deal += `.`;
+      }
     }
   }
   return deal;

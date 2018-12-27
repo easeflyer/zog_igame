@@ -333,11 +333,7 @@ class TableModel {
     //const seatIndex = Position.SNames.indexOf(item.seat);
     let cards = this.state.cards[seatIndex];
     cards = this.resetCards(cards, item.seat, true);
-<<<<<<< HEAD
     Out.play(item);
-=======
-    Out.play(item)
->>>>>>> 07e6a04cfcc52128d26c1fcaa1f21552f30f4f3d
     if (this.board[0].length === 4) setTimeout(this.clearBoard, 1000)
   }
 
@@ -859,7 +855,7 @@ class TableModel {
     dCards.forEach((item1, index1) => {
       item1.split('').forEach((item2, index2) => {
         // 这里。
-        cards[index].card = item2 + Card.suits[index1]
+        cards[index].card =  Card.suits[index1] + item2 
         //cards[index].onclick = o.play(cards[index]);
         index++;
       })
