@@ -59,15 +59,19 @@ class TableView extends React.Component {
   */
   render() {
     console.log('******************')
-
+    
     const props = this.props;
     const table = props.table;
     const tableStore = props.tableStore;
     let cards = tableStore.state.cards;
-
+    console.log(tableStore.scene);
     cards = cards ? Card.createComponents(cards) : null;
     const stat = Object.values(tableStore.state.user).map(e => e.ready);
-
+    const tricks = {
+      winEW:tableStore.state.winEW,
+      winSN:tableStore.state.winSN,
+      contract:tableStore.state.contract
+    }
     return (
       <div>
         {(tableStore.state.scene == 1) ?
@@ -79,7 +83,7 @@ class TableView extends React.Component {
           <div id='header' className='header'>
             <div className='re imps'><Imps /></div>
             <div onClick={table.openDebug} className='re seats'><Seats vul='EW' /></div>
-            <div onClick={table.lastTrick.bind(table)} className='re tricks'><Tricks /></div>
+            <div onClick={table.lastTrick.bind(table)} className='re tricks'><Tricks data={tricks} /></div>
             <div className='re time'>
               <Timer
                 name='Timer'

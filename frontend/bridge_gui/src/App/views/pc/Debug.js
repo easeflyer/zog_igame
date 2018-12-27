@@ -11,7 +11,8 @@ import { TableModel } from '../../stores/tableStore';
 import Card,{ACT0,ACT1,ACT2,ACT3} from '../../components/Card';
 import Clock from '../../libs/Clock';
 import Position from '../../common/Position';
-import { tokensToRegExp } from 'path-to-regexp';
+//import { tokensToRegExp } from 'path-to-regexp';
+import {restoreData} from '../../stores/mockdata';
 
 /**
  * props.o  
@@ -185,9 +186,9 @@ export default class Debug extends Component {
                     "约定叫3：说明内容预先输入..."
                 ]
             }
-            o.setState({
-                calldata: o.props.tableStore.state.calldata['call']
-            })
+            // o.setState({
+            //     calldata: o.props.tableStore.state.calldata['call']
+            // })
         }
         o.testBid2 = function(){
             o.props.tableStore.state.calldata = {
@@ -205,9 +206,9 @@ export default class Debug extends Component {
                     "约定叫4：说明内容预先输入...",
                 ]
             }
-            o.setState({
-                calldata: o.props.tableStore.state.calldata['call']
-            })
+            // o.setState({
+            //     calldata: o.props.tableStore.state.calldata['call']
+            // })
         }
 
         // 准备废弃
@@ -274,11 +275,9 @@ export default class Debug extends Component {
             tableStore.setCardsState(cards, { active: ACT1.LC, onclick: tableStore.play });
             // 其他牌都不可点击
             cards = tableStore.selectCards("NEW", 'SHDC');
-            cards = cards.concat(tableStore.selectCards("S", 'SHC'));
-            tableStore.setCardsState(cards, {
-                active: ACT1.D, onclick: tableStore.play,
-//                animation:Object.assign({},)
-            });
+            tableStore.setCardsState(cards, {active: ACT1.L, onclick: tableStore.play});
+            cards = tableStore.selectCards("S", 'SHC');
+            tableStore.setCardsState(cards, {active: ACT1.D, onclick: tableStore.play,});
             //o.props.tableStore.addClick2Cards(cards, 0);
         }
 
@@ -303,8 +302,8 @@ export default class Debug extends Component {
 
         }
         // 
-        o.restore = function (){
-            const deals = 'K34.J3.Q742.K832 XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX';
+        o.restore1 = function (){
+            // const deals = 'K34.J3.Q742.K832 XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX';
             const cards = o.props.tableStore.dealCards();
             const userCards = [
                 ['SK','S3','S4','HJ','H3','DQ','D4','D2','CK','C8','C3'],
@@ -312,14 +311,25 @@ export default class Debug extends Component {
                 ['SQ','SJ','S9','S8','HA','H5','DJ','D8','D3','CT','C4'],
                 ['SX','SX','SX','SX','SX','HX','HX','HX','HX','DX','CX'],
             ];
-            // 出牌顺序同下标顺序
+            // 出牌顺序同下标顺序,(业务方位？)
             const board = [
                 [{seat:'S',card:'D5'},{seat:'W',card:'D6'},{seat:'N',card:'D7'}],
                 [{seat:'W',card:'C6'},{seat:'N',card:'C2'},{seat:'E',card:'C7'},{seat:'S',card:'CQ'}],
             ];
-            o.props.tableStore.restore(userCards,board);
+            o.props.tableStore.restore_2(userCards,board);
 
         }
+        /**
+         * scene: 0 准备阶段，1 叫牌阶段，2 打牌阶段，3 摊牌阶段
+         * restoreData 模拟数据
+         */
+        o.restore = function(){
+            const data = restoreData;
+            //data.scene = 3;
+            //o.props.tableStore['restore'+data.scene](data);
+            o.props.tableStore.restore(data);
+        }
+
 
         o.dplay = function(){
             o.props.tableStore.dplay('E','S2');
@@ -359,6 +369,7 @@ export default class Debug extends Component {
                 <button onClick={o.addClick}>牌可点击</button>&nbsp;
                 <button onClick={o.showResult}>显示结果</button>&nbsp;
                 <button onClick={o.showTableId}>显示桌号</button>&nbsp;
+                <button onClick={o.dplay}>东出牌</button>&nbsp;
                 <button onClick={o.dplay}>东出牌</button>&nbsp;
             </div>
         )

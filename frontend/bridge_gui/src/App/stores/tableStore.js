@@ -16,7 +16,7 @@ import Board from './board'
  * Table.js 也就是 Table 控制器（容器）类调用本类
  * 
  * 输入：
- * 输出：
+ * 输出：HEAD
  * 
  * 
  * 其他参考：
@@ -88,13 +88,12 @@ class TableModel {
       W: { ready: 0, name: '', face: '', rank: '', seat: '' },
       N: { ready: 0, name: '', face: '', rank: '', seat: '' }
     };
-    window._user=this.state.user;
-    window._curCall = this.curCall;
-    window._tableStore= this;
     //this.state.user = {N:null,E:null,S:null,W:null};
     const seat = Position.SNames.split('');
     seat.forEach(key => this.seat[key] = [{ x: 0, y: 0 }, { x: 0, y: 0 }]);
     //this.initCards(this.deals);
+    window.___tableStore= this;
+    window.toJS = toJS;
   }
   set tableId(data) {
     this._tableId = data;
@@ -132,7 +131,7 @@ class TableModel {
    * this._swDC() 为了岔开颜色显示。交换 方片和梅花的牌。
    */
 
-  initCards(sdeals) {debugger
+  initCards(sdeals) {
     let suits = Card.suits.slice(0);            //['S', 'H', 'D', 'C'];
     this._swDC(suits);
     const deals = sdeals.split(' ');
@@ -333,11 +332,7 @@ class TableModel {
     //const seatIndex = Position.SNames.indexOf(item.seat);
     let cards = this.state.cards[seatIndex];
     cards = this.resetCards(cards, item.seat, true);
-<<<<<<< HEAD
     Out.play(item);
-=======
-    Out.play(item)
->>>>>>> 07e6a04cfcc52128d26c1fcaa1f21552f30f4f3d
     if (this.board[0].length === 4) setTimeout(this.clearBoard, 1000)
   }
 
@@ -367,12 +362,60 @@ class TableModel {
   //   });
   // }
   /**
-   * 
-   * @param {*} userCards  0-1 NESW
-   * @param {*} board 0 当前墩，1 上一墩
-   * [ [['N','H3'],[],[],[]]  ]
+   * 准备阶段断线重连
+   * 该谁 叫牌，该谁打牌？
    */
-  restore(userCards,board1){
+  @action.bound
+  restore(data){
+    this['restore'+data.scene](data);
+  }
+
+  @action.bound
+  restore0(data){
+    this.state.scene = data.scene;
+    this.state.user = data.user;
+  }
+  @action.bound
+  restore1(data){
+    this.restore0(data);
+    this.initCards(data.deals);
+    this.dealCards();
+    this.curCall = data.curCall;
+    this.state.contract = data.contract;
+    this.state.calldata = data.calldata;
+
+  }
+  @action.bound
+  restore2(data){  //  注意这里需要先发牌才能恢复。
+    this.restore1(data);
+    this.dummySeat = data.dummySeat;
+    this.state.winEW = data.winEW;
+    this.state.winSN = data.winSN;
+    // this.initCards(data.deals);
+    // this.dealCards();
+    this.restore_2(data.userCards,data.board);
+  }
+  @action.bound
+  restore3(data){
+    this.restore2(data);
+    this.state.claim = data.claim;
+  }
+
+  /**
+   * 
+   * 
+   * 输入参数：
+   * @param {*} userCards  0-1 NESW
+   * 用户手里的牌
+   * @param {*} board [0] 当前墩，[1] 上一墩
+   * 参考: debug.js o.restore
+   * 
+   * 输出：
+   * this.state.cards   调整牌数组。调整 active 的值等。
+   * this.board         调整board 赋值当前墩和上一墩。
+   * 
+   */
+  restore_2(userCards,board1){
     const openSeat = this.myseat + this.dummySeat;
     const cards = this.state.cards; // 这里应该从原始牌初始化。因为 state.cards 状态不确定
     this.board = [[],[]];
@@ -847,36 +890,55 @@ class TableModel {
     return this.state.cards;
   }
 
-
+  /**
+   * 
+   * @param {*} seat   界面方位。业务方位需要进行转换。
+   * @param {*} dcards 明手的牌数组  ['SQ','SJ' ....
+   */
   @action.bound
-  openDummy() {
+  openDummy(seat,dcards) {
     // await 获得数据 然后更新 state
-    const dummySeat = this.dummySeat;
+    if(!this.dummySeat) this.dummySeat = seat;
+    const dummySeat = seat;
     let index = 0;
-    const dCards = Models.openDummy().cards.split('.');
+    //const dCards = Models.openDummy().cards.split('.');
     let cards = this.state.cards[Position.SNames.indexOf(dummySeat)];
-    console.log('seatnumber:', dCards);
-    dCards.forEach((item1, index1) => {
-      item1.split('').forEach((item2, index2) => {
-        // 这里。
-        cards[index].card = item2 + Card.suits[index1]
-        //cards[index].onclick = o.play(cards[index]);
-        index++;
-      })
-    })
+    dcards.forEach((card,index)=>{
+      cards[index].card = card;
+    });
   }
+
+  // @action.bound
+  // openDummy() {
+  //   // await 获得数据 然后更新 state
+  //   const dummySeat = this.dummySeat;
+  //   let index = 0;
+  //   const dCards = Models.openDummy().cards.split('.');
+  //   let cards = this.state.cards[Position.SNames.indexOf(dummySeat)];
+  //   console.log('seatnumber:', dCards);
+  //   dCards.forEach((item1, index1) => {
+  //     item1.split('').forEach((item2, index2) => {
+  //       // 这里。
+  //       cards[index].card = item2 + Card.suits[index1]
+  //       //cards[index].onclick = o.play(cards[index]);
+  //       index++;
+  //     })
+  //   })
+  // }
+
+
 
 
   /**
    * 输入：某个方位"E", this.myseat
    * 输出：另外一个方位
    */
-  _shift(seat) {
-    const offset = Position.SNames.indexOf(this.myseat) - 1
-    const index = Position.SNames.indexOf(seat)
-    return Position.SNames[(index + offset) % 4]
-    //return 
-  }
+  // _shift(seat) {
+  //   const offset = Position.SNames.indexOf(this.myseat) - 1
+  //   const index = Position.SNames.indexOf(seat)
+  //   return Position.SNames[(index + offset) % 4]
+  //   //return 
+  // }
   /**
    * 把方片和梅花做一个交换。
    * @param {*} cards 四个花色的牌构成的。
@@ -899,7 +961,7 @@ class TableModel {
     Object.values(user).forEach(el => {
       if (el.ready == 0) ready = false
     })
-    if (ready) this.state.scene = 1;
+    //if (ready) this.state.scene = 1;
     return ready;
   }
   @action.bound
@@ -917,19 +979,24 @@ class TableModel {
    * 
    * 这里 push 的顺序考虑。
    */
-  @action.bound
-  call = (seat, bid) => {
-    const calldata = this.state.calldata
-    if (calldata.length == 0) {
-      calldata.push(Array(4).fill(null))
-      calldata[0][Position.SNames.indexOf(seat)] = bid;
-    } else if (seat == 'E') {
-      calldata.push(Array(4).fill(null))
-      calldata[calldata.length - 1][Position.SNames.indexOf(seat)] = bid;
-    } else {
-      calldata[calldata.length - 1][Position.SNames.indexOf(seat)] = bid;
-    }
+  // @action.bound
+  // call = (seat, bid) => {
+  //   const calldata = this.state.calldata
+  //   if (calldata.length == 0) {
+  //     calldata.push(Array(4).fill(null))
+  //     calldata[0][Position.SNames.indexOf(seat)] = bid;
+  //   } else if (seat == 'E') {
+  //     calldata.push(Array(4).fill(null))
+  //     calldata[calldata.length - 1][Position.SNames.indexOf(seat)] = bid;
+  //   } else {
+  //     calldata[calldata.length - 1][Position.SNames.indexOf(seat)] = bid;
+  //   }
+  // }
+
+  call = (data)=>{
+    this.state.calldata = data;
   }
+
   /**
    * 恢复牌局
    * 主要用于断线重连，或者和服务器数据不同步时执行。

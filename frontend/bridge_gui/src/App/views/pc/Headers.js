@@ -38,14 +38,30 @@ class Seats extends Component{
 }
 
 class Tricks extends Component{
+    static defaultProps = {
+            data:{
+                winEW:0,
+                winSN:0,
+                contract:''
+            }
+        };
     render(){
+        const winEW = this.props.data.winEW;
+        const winSN = this.props.data.winSN;
+        const contract = this.props.data.contract;
         return(
             <div className='tricks'>
-                <div className='s1'><br />1</div>
-                <div className='s2'>2</div>
-                <div className='s3'>3</div>
+                <div className='s1'><br />{winSN}</div>
+                <div className='s2'>{contract}</div>
+                <div className='s3'>{winEW}</div>
             </div>
         )
     }
 }
+
+function fun1(data = false){
+    if(typeof(data) == undefined) return false;
+    return data;
+}
+
 export {Imps, Seats, Tricks}
