@@ -54,7 +54,7 @@ class TableModel {
     winEW:0,
     winSN:0,
   }
-  dummySeat = "N";
+  dummySeat = "N"; // 固定界面方位，非逻辑方位
   @observable curCall = '';  // 当前叫品，用于bidpanel 显示。
   // boardState = {
   //   boardId: null,
@@ -246,14 +246,13 @@ class TableModel {
    */
   @action.bound
   dplay(seat,card){
-    //debugger;
+    //debugger; seat === this.dummySeat 
     const cards = this.state.cards;
     let ucard = null;
     for(let c of cards[Position.SNames.indexOf(seat)]){
-      if(c.active===ACT1.L) {
-        ucard = c;
-        break;
-      }
+      if(seat !== this.dummySeat && c.active===ACT1.L) ucard = c;
+      if(seat === this.dummySeat && c.card === card) ucard = c;
+      if(ucard) break;
     }
     ucard.card = card;
     this._play(ucard);
@@ -326,7 +325,7 @@ class TableModel {
     item['animation']['delay'] = 0;
     item['zIndex'] = this.zindex++;
 
-    this.resetTable(); // 牌恢复为不可点击状态 ACT1.L
+    //this.resetTable(); // 牌恢复为不可点击状态 ACT1.L
 
     const seatIndex = Position.SNames.indexOf(item.seat);
     //const seatIndex = Position.SNames.indexOf(item.seat);
@@ -447,6 +446,86 @@ class TableModel {
         this._setCardACT2(cards[seatIndex][0]);
         //this.board[0].push(cards[seatIndex][0]);
       // 明牌处理
+      }else{  // 赋值了多次。
+        for(let card of cards[seatIndex]){
+        //cards[seatIndex].forEach((card)=>{
+          //if(card.card === ucard.card) this._setCardACT2(card);
+          if(card.card.slice(-1) === 'X') {
+            card.card = ucard.card;
+            this._setCardACT2(card);
+            break;
+          }
+          //this.board[0].push(card);
+        };
+      }
+    },this);
+
+    board1[1].forEach((ucard)=>{
+      const seatIndex = Position.SNames.indexOf(ucard.seat);
+      // 暗牌处理
+      if(openSeat.indexOf(ucard.seat)===-1){
+        cards[seatIndex][1].card = ucard.card;
+        this._setCardACT3(cards[seatIndex][1]);
+        this.board[1].push(cards[seatIndex][1]);
+      // 明牌处理
+      }else{
+        for(let card of cards[seatIndex]){
+        //cards[seatIndex].forEach((card)=>{
+          // if(card.card === ucard.card){
+          //   this._setCardACT3(card);
+          //   this.board[1].push(card);
+          // }
+          
+          if(card.card.slice(-1) === 'X'){
+            card.card = ucard.card;
+            this._setCardACT3(card);
+            this.board[1].push(card);
+          }
+
+        };
+      }
+    },this);
+
+    Position.SNames.split('').forEach((seat,index)=>{
+      this.resetCards(this.state.cards[index],seat);
+    })
+
+
+
+  }
+
+  restore_3(userCards,board1){
+    const openSeat = this.myseat + this.dummySeat;
+    const cards = this.state.cards; // 这里应该从原始牌初始化。因为 state.cards 状态不确定
+    this.board = [[],[]];
+    let cardNum = 0;
+    // 1） 飞走不在手里的牌。
+    userCards.forEach((uCards,uindex)=>{
+      if( openSeat.indexOf(Position.SNames[uindex])!==-1 ){
+        cards[uindex].forEach((card)=>{
+          // 不在手里的牌 全部 飞走
+          window.___card = card;
+          // window.___uindex = uindex;
+          if(uCards.indexOf(card.card)===-1) this._setCardACT3(card)
+        });
+      }else{
+        cardNum = 13 - uCards.length;
+        for(let i=0;i<cardNum;i++){
+          // 不在手里的牌飞走 因为是暗牌因此从0开始飞走
+          this._setCardACT3(cards[uindex][i]);
+        }
+      }
+    });
+
+    // 2) 设置当前墩和上一墩
+    board1[0].forEach((ucard)=>{
+      const seatIndex = Position.SNames.indexOf(ucard.seat);
+      // 暗牌处理
+      if(openSeat.indexOf(ucard.seat)===-1){
+        cards[seatIndex][0].card = ucard.card;
+        this._setCardACT2(cards[seatIndex][0]);
+        //this.board[0].push(cards[seatIndex][0]);
+      // 明牌处理
       }else{
         cards[seatIndex].forEach((card)=>{
           if(card.card === ucard.card) this._setCardACT2(card);
@@ -479,8 +558,7 @@ class TableModel {
 
 
 
-  }
-
+  }  
   /**
    * 设置一张牌为 已经飞走了。
    * @param {} card 
