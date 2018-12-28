@@ -7,7 +7,7 @@
  * restore(data) 的参数数据。
  */
 export const restoreData = {
-  scene:3,
+  scene:2,
   deals:'K34.J3.Q742.K832 XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX',
   claim: { seat: 'E', msg: '3NT X +3' },
   winEW:2,

@@ -15,11 +15,11 @@ const Output = {
     if(calling==='PASS'){
       calling = 'Pass'
     }
-    //Process.bid(tableStore.myseat,calling)
+    Process.bid(tableStore.myseat,calling)
   },
   play:(data) => {
     console.log(data.card);
-    //Process.play(tableStore.myseat,data.card)
+    Process.play(tableStore.myseat,data.card)
   },
   claim:(seat,num)=>{
     console.log(seat,"摊牌",num);

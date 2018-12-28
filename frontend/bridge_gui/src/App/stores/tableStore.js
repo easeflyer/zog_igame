@@ -377,7 +377,7 @@ class TableModel {
   }
   @action.bound
   restore1(data){
-    this.restore0(data);
+    this.restore0(data);this.state.cards=[];
     this.initCards(data.deals);
     this.dealCards();
     this.curCall = data.curCall;

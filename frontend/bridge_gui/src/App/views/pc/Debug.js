@@ -306,10 +306,10 @@ export default class Debug extends Component {
             // const deals = 'K34.J3.Q742.K832 XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX';
             const cards = o.props.tableStore.dealCards();
             const userCards = [
-                ['SK','S3','S4','HJ','H3','DQ','D4','D2','CK','C8','C3'],
-                ['SX','SX','SX','HX','HX','HX','DX','DX','DX','CX','CX','CX'],
-                ['SQ','SJ','S9','S8','HA','H5','DJ','D8','D3','CT','C4'],
-                ['SX','SX','SX','SX','SX','HX','HX','HX','HX','DX','CX'],
+                ['SK','S3','S4','HJ','H3','DQ','D4','D2','CK',],
+                ['SX','SX','SX','HX','HX','HX','DX','DX','DX','CX',],
+                ['SQ','SJ','S9','S8','HA','H5','DJ','D8','D3',],
+                ['SX','SX','SX','SX','SX','HX','HX','HX','HX',],
             ];
             // 出牌顺序同下标顺序,(业务方位？)
             const board = [

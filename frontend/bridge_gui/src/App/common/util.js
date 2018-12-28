@@ -23,7 +23,20 @@ Array.prototype.RightMove=function(num){
       ArrSeats.RightMove(2);break;
     }
   }
-
+  //接收牌 W N E S    桌面的上的牌 N E S W 
+  function _rotateCard(ArrSeats,player){
+    switch(player){
+      case "E":
+      ArrSeats.RightMove(0);break;
+      case "S":
+      ArrSeats.RightMove(3);break;
+      case "W":
+      ArrSeats.RightMove(2);break;
+      case "N":
+      ArrSeats.RightMove(1);break;
+    }
+    return ArrSeats;
+  }
   export function Etoeast(x){
     switch(x){
       case 'E': return 'east';
@@ -83,8 +96,14 @@ function _getOneDeal(card){ debugger
  * N E S W
  * const deals = 'K34.J3.Q742.K832 XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX';
  */
-
-const arr1 = ['W','N','E','S']
+const seatMap = {
+  "E":{N:'E',E:'S',S:'W',W:'N'},
+  "S":{E:'E',S:'S',W:'W',N:'N'},
+  "W":{S:'E',W:'S',N:'W',E:'N'},
+  "N":{W:'E',N:'S',E:'W',S:'N'}
+}
+const arr1 = ['W','N','E','S'];
+const arr2 = ['N','E','S','W'];
 export function cardString(user,cardsArr){
   cardsArr = JSON.parse(cardsArr);
   var ind = arr1.indexOf(user);
@@ -93,6 +112,42 @@ export function cardString(user,cardsArr){
   return deals;
 }
 
+
+//user 表示玩家的真实方位  
+// 得到自己和明手的牌 和 扣着的牌
+export function getUserCards(user,dummy,cardsArr){
+   let userCards = null;
+   cardsArr = JSON.parse(cardsArr);
+   userCards = _rotateCard(cardsArr,user)
+   debugger
+   var dummyInd = arr2.indexOf(seatMap[user][dummy]) 
+   userCards.forEach((item,ind)=>{
+      if(ind==2 || ind==dummyInd){
+      }else{
+        item.fill('CX')
+      }
+   });
+   console.log(userCards)
+   return userCards;
+}
+export function getUserCardsDeal(user,dummy,cardsArr){
+  let userCardsDeal = null;
+  cardsArr = JSON.parse(cardsArr);
+  userCardsDeal = _rotateCard(cardsArr,user)
+  debugger
+  var dummyInd = arr2.indexOf(seatMap[user][dummy]) 
+  userCardsDeal.forEach((item,ind)=>{
+     if(ind==2 || ind==dummyInd){
+       var num = 13-item.length;
+       var XArr=new Array(num).fill('X')
+       item = item.concat(XArr)
+     }else{
+       item = new Array(13).fill('X');
+     }
+  });
+  console.log(userCardsDeal)
+  return userCardsDeal.join(' ') ;
+}
 function _removeNull(arr){
   if(arr[0]==null){
     arr.shift();
@@ -119,5 +174,20 @@ export function Two(arr){
       result.push(arr4);
     }
   }
+  return result;
+}
+
+/**
+ * 
+ * @param {*} seats 每一个玩家对应的座位
+ */
+export function getCurOrLast(seats,trick){
+  let result = []
+  trick.forEach((item,ind)=>{
+    if(item!=null){
+     var player =  arr1[ind%4]; //真实玩家
+     result.push({seat:seats[player],card:item})
+    }
+  });
   return result;
 }

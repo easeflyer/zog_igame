@@ -4,7 +4,7 @@ import Position from '../common/Position';
 import ODOO from '../libs/odoo-bridge-rpc/src';
 import boardStore from '../stores/newBoard'
 import tableStore from '../stores/tableStore'
-import {cardString,Two} from '../common/util'
+import {cardString,Two,getUserCards,getCurOrLast,getUserCardsDeal} from '../common/util'
 import Clock from '../libs/Clock';
 import Sound from '../components/Sound';
 import Card,{ACT0,ACT1,ACT2,ACT3} from '../components/Card';
@@ -19,7 +19,12 @@ const seatMap = {
     "W":{S:'E',W:'S',N:'W',E:'N'},
     "N":{W:'E',N:'S',E:'W',S:'N'}
 }
-
+const Dummy={
+  E:'W',
+  S:'N',
+  W:'E',
+  N:'S'
+}
 
 const host = 'http://192.168.1.8:8069'
 const db = 'TT'
@@ -75,7 +80,7 @@ var tables = null;
 var table = null;
 var boards = null;
 var bd = null;
-
+var user=null;
  class Process{
     constructor(){
         this.dealMsg = new Map();
@@ -138,7 +143,12 @@ var bd = null;
             tableStore.userLogin('E',{ ready: 0, name: data[dirMap.get('E')]['name'], face: '/imgs/face1.png', rank: '王者', seat: 'E' });
             tableStore.userLogin('W',{ ready: 0, name: data[dirMap.get('W')]['name'], face: '/imgs/face1.png', rank: '王者', seat: 'W' });
             tableStore.userLogin('N',{ ready: 0, name: data[dirMap.get('N')]['name'], face: '/imgs/face1.png', rank: '王者', seat: 'N' });
-         
+            user={
+              'S':{ ready: 0, name: data[dirMap.get('S')]['name'], face: '/imgs/face1.png', rank: '王者11', seat: 'S' },
+              'E':{ ready: 0, name: data[dirMap.get('E')]['name'], face: '/imgs/face1.png', rank: '王者', seat: 'E' },
+              'W':{ ready: 0, name: data[dirMap.get('W')]['name'], face: '/imgs/face1.png', rank: '王者', seat: 'W' },
+              'N':{ ready: 0, name: data[dirMap.get('N')]['name'], face: '/imgs/face1.png', rank: '王者', seat: 'N' }
+            }
          }
         }
         console.log(table)
@@ -223,7 +233,7 @@ var bd = null;
       recover =()=>{
         const bd2 = bd.look(fields.doing_table_ids.board_ids)
         console.log(bd2)  //得到当前游戏的全部内容
-        const {state,dealer,auction,player} = bd2;
+        const {state,dealer,auction,player,declarer,hands,current_trick,last_trick} = bd2;
         var deals =cardString(tableStore.myseat,bd2.hands) ;
         var call=null;
         console.log(deals)
@@ -248,7 +258,17 @@ var bd = null;
           tableStore.curCall = curCall;
         }
         if(state=='playing'){
-
+          let allData ={
+            scene:2,
+            deals:getUserCardsDeal(tableStore.myseat,Dummy[declarer],hands),
+            userCards: getUserCards(tableStore.myseat,Dummy[declarer],hands),
+            user:user,
+            board:[
+              getCurOrLast(seats,JSON.parse(current_trick)),
+              getCurOrLast(seats,JSON.parse(last_trick)),
+          ],
+          } 
+            tableStore.restore(allData)
           
         }
 

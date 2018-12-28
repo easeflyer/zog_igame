@@ -98,7 +98,7 @@ button.disable{
     width: 30%;
     height:30%;
     background-color:#eeee99;
-    z-index: 1;
+    z-index: 0;
     border-radius:5%;
 
 }
