@@ -58,7 +58,7 @@ Array.prototype.RightMove=function(num){
  * ["S5","S4","S3", "S2", "H5", "H4", "H3", "D5", "D4", "D3", "C5", "C4", "C3"] =>
  * 5432.543.543.543
  */
-function _getOneDeal(card){ debugger
+function _getOneDeal(card){ 
   let suit = ['S','H','D','C'];
   let suitInd = 0;
   let deal = '';
@@ -118,8 +118,7 @@ export function cardString(user,cardsArr){
 export function getUserCards(user,dummy,cardsArr){
    let userCards = null;
    cardsArr = JSON.parse(cardsArr);
-   userCards = _rotateCard(cardsArr,user)
-   debugger
+   userCards = _rotateCard(cardsArr,user);
    var dummyInd = arr2.indexOf(seatMap[user][dummy]) 
    userCards.forEach((item,ind)=>{
       if(ind==2 || ind==dummyInd){
@@ -131,6 +130,7 @@ export function getUserCards(user,dummy,cardsArr){
    return userCards;
 }
 export function getUserCardsDeal(user,dummy,cardsArr){
+  let result = [];
   let userCardsDeal = null;
   cardsArr = JSON.parse(cardsArr);
   userCardsDeal = _rotateCard(cardsArr,user)
@@ -139,14 +139,21 @@ export function getUserCardsDeal(user,dummy,cardsArr){
   userCardsDeal.forEach((item,ind)=>{
      if(ind==2 || ind==dummyInd){
        var num = 13-item.length;
-       var XArr=new Array(num).fill('X')
+       var XArr=new Array(num).fill('CX')
        item = item.concat(XArr)
+       result.push(item)
      }else{
-       item = new Array(13).fill('X');
+       item = new Array(13).fill('CX');
+       result.push(item)
      }
   });
   console.log(userCardsDeal)
-  return userCardsDeal.join(' ') ;
+  console.log(result);
+ var res =  result.map((item1)=>{
+    return _getOneDeal(item1);
+  })
+  debugger
+  return res.join(' ') ;
 }
 function _removeNull(arr){
   if(arr[0]==null){

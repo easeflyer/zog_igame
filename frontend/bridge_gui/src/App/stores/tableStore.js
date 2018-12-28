@@ -140,7 +140,7 @@ class TableModel {
     const cards = [[], [], [], []];             // 初始化二维数组 保存四个方位的牌
     deals.forEach((item, index1) => {           // index1 是方位编号
       const suit = item.split('.')
-      this._swDC(suit);
+      this._swDC(suit);debugger
       suit.forEach((s, index2) => {           // index2 四个花色  s 'QJ98' 牌点字串
         for (var i = 0; i < s.length; i++) {
           cards[index1].push({

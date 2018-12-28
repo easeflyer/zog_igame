@@ -258,16 +258,20 @@ var user=null;
           tableStore.curCall = curCall;
         }
         if(state=='playing'){
+          console.log(getUserCardsDeal(tableStore.myseat,Dummy[declarer],hands))
+          var cur = getCurOrLast(seats,JSON.parse(current_trick));
+          var last = getCurOrLast(seats,JSON.parse(last_trick));debugger
           let allData ={
             scene:2,
             deals:getUserCardsDeal(tableStore.myseat,Dummy[declarer],hands),
             userCards: getUserCards(tableStore.myseat,Dummy[declarer],hands),
             user:user,
             board:[
-              getCurOrLast(seats,JSON.parse(current_trick)),
-              getCurOrLast(seats,JSON.parse(last_trick)),
+              cur,
+              last,
           ],
-          } 
+          } ;
+          console.log(allData)
             tableStore.restore(allData)
           
         }

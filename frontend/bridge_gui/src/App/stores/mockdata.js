@@ -7,18 +7,6 @@
  * restore(data) 的参数数据。
  */
 export const restoreData = {
-<<<<<<< HEAD
-  scene:2,
-  deals:'K34.J3.Q742.K832 XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX',
-  claim: { seat: 'E', msg: '3NT X +3' },
-  winEW:2,
-  winSN:3,
-  dummySeat:'N',
-  curCall:'3H',
-  contract:'3NT X',
-  user:{
-    E: { ready: 1, name: '张三', face: '/imgs/face1.png', rank: '大师', seat: 'E' },
-=======
     scene: 2,
     //deals: 'K34.J3.Q742.K832 XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX',
     deals: 'XXX.J3.Q742.K832 XXX.XX.XXXX.XXXX XXX8.A5.J853.QT4 XXX.XX.XXXX.XXXX',
@@ -111,7 +99,6 @@ export const userData1 = {
 };
 export const userData2 = {
     E: { ready: 0, name: '张三', face: '/imgs/face1.png', rank: '大师', seat: 'E' },
->>>>>>> bui-mobx
     S: { ready: 0, name: '', face: '', rank: '', seat: '' },
     W: { ready: 0, name: '', face: '', rank: '', seat: '' },
     N: { ready: 0, name: '', face: '', rank: '', seat: '' }
