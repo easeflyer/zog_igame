@@ -295,6 +295,8 @@ export default class Debug extends Component {
             //data.scene = 3;
             //o.props.tableStore['restore'+data.scene](data);
             o.props.tableStore.restore(data);
+            window.___board = o.props.tableStore.board;
+
         }
 
 
