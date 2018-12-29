@@ -153,7 +153,6 @@ class Process {
           'W': { ready: 0, name: data[dirMap.get('W')]['name'], face: '/imgs/face1.png', rank: '王者', seat: 'W' },
           'N': { ready: 0, name: data[dirMap.get('N')]['name'], face: '/imgs/face1.png', rank: '王者', seat: 'N' }
         }
-<<<<<<< HEAD
     
         boards = table.attr('board_ids')
     
@@ -199,8 +198,6 @@ class Process {
           // const bd_msg = odoo.env('og.board').poll(msg.attr('id'))
           // console.log(bd_msg)
         } while (msg)
-=======
->>>>>>> bui-mobx
       }
     }
     debugger; //1
@@ -213,7 +210,6 @@ class Process {
   }
   getBoard = async () => {
 
-<<<<<<< HEAD
       recover =()=>{
         const bd2 = bd.look(fields.doing_table_ids.board_ids)
         console.log(bd2)  //得到当前游戏的全部内容
@@ -381,137 +377,6 @@ class Process {
         boardStore.claim.owner = args[0];
         boardStore.claim.number = args[1];
         boardStore.gameState = info.state;
-=======
-    if (!this.sid) {
-      alert('你还没有登陆！')
-      return
-    }
-
-    boards = table.attr('board_ids')
-
-    // 当前正在进行的board
-    bd = boards.get_doing_board()
-    console.log(bd)
-
-    // 读取到的牌桌数据
-
-    this.recover()
-
-  }
-  before_poll = async () => {
-    console.log('before 0')
-    // before_poll0(odoo)
-  }
-  after_poll = async (result) => {
-    // 这个返回值暂时也没有用
-    console.log('after:', result)
-    // console.log('after:', result[0]['message']['subject'])
-
-    // 收到消息后到消息模型取数据
-    const Chn = odoo.env('mail.channel')
-    let msg = null
-    // 取到的消息数据可能有多条，做了循环处理
-    do {
-      msg = await Chn.poll('og_game_board')
-      if (msg) {
-        const bd_msg = odoo.env('og.board').poll(msg.attr('id'))
-        // TODO：这是收到消息后的数据，自行渲染页面，包含牌桌信息和牌手动作
-        debugger
-        console.log(bd_msg)
-        const { method, info, args } = bd_msg;
-        debugger
-        this.dealMsg.get(method)(info, args)
-      }
-    } while (msg)
-
-    // 非打牌消息，聊天消息，待处理
-    msg = null
-    do {
-      msg = await Chn.poll('channel')
-      // const bd_msg = odoo.env('og.board').poll(msg.attr('id'))
-      // console.log(bd_msg)
-    } while (msg)
-  }
-
-  bid = async (player, bid) => {
-    const res = await bd.bid(player, bid)
-    console.log(res)
-  }
-  // 打牌
-  play = async (player, card) => {
-    const res = await bd.play(player, card)
-    console.log(res)
-  }
-  // 摊牌
-  claim = async (player, cl) => {
-    const res = await bd.claim(player, cl);
-    console.log(res)
-  }
-  // 同意/不同意 摊牌 (number=1表示同意)
-  claim_ack = async (player, ack) => {
-    const res = await bd.claim_ack(player, ack)
-  }
-
-  recover = () => {
-    const bd2 = bd.look(fields.doing_table_ids.board_ids)
-    console.log(bd2)  //得到当前游戏的全部内容
-    const { state, dealer, auction, player, declarer, hands, current_trick, last_trick } = bd2;
-    // var deals = cardString(tableStore.myseat, bd2.hands);
-    // var call = null;
-    // console.log(deals)
-    // tableStore.initCards(deals);
-    // tableStore.dealCards();
-    // Sound.play('deal');
-    // this.timing(seats[bd2.player], 10, () => { })
-    // if (state == 'bidding') {
-    //   var curCall = ''
-    //   tableStore.bid();
-    //   tableStore.state.calldata.first = dealer;
-    //   console.log(typeof JSON.parse(bd2.auction))
-    //   call = JSON.parse(bd2.auction);
-    //   console.log(Two(call))
-    //   tableStore.state.calldata.call = Two(call);
-    //   for (let i = 0; i < call.length; i++) {
-    //     if (call[call.length - 1 - i] != 'Pass') {
-    //       curCall = call[call.length - i - 1];
-    //       break;
-    //     }
-    //   }
-    //   tableStore.curCall = curCall;
-    // }
-    if (state == 'playing') {
-      console.log(getUserCardsDeal(tableStore.myseat, Dummy[declarer], hands))
-      var cur = getCurOrLast(seats, JSON.parse(current_trick));
-      var last = getCurOrLast(seats, JSON.parse(last_trick)); debugger
-      let allData = {
-        scene: 2,
-        deals: getUserCardsDeal(tableStore.myseat, Dummy[declarer], hands),
-        userCards: getUserCards(tableStore.myseat, Dummy[declarer], hands),
-        user: user,
-        board: [
-          cur,
-          last,
-        ],
-      };
-      console.log(allData)
-      window.___allData = allData;
-      tableStore.restore(allData)
-
-    }
-
-  }
-  dealBid = (info) => {
-    var call = null;
-    var curCall = null;
-    boardStore.pbn.auction.call = JSON.parse(info.auction);
-    boardStore.gameState = info.state;
-    call = JSON.parse(info.auction);
-    tableStore.state.calldata.call = Two(call);
-    for (let i = 0; i < call.length; i++) {
-      if (call[call.length - 1 - i] != 'Pass') {
-        curCall = call[call.length - i - 1];
-        break;
->>>>>>> bui-mobx
       }
     }
     tableStore.curCall = curCall;

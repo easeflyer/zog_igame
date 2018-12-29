@@ -334,13 +334,8 @@ class TableModel {
     //const seatIndex = Position.SNames.indexOf(item.seat);
     let cards = this.state.cards[seatIndex];
     cards = this.resetCards(cards, item.seat, true);
-<<<<<<< HEAD
-    if(window.event != undefined) Out.play(item)
-    if (this.board[0].length === 4) setTimeout(this.clearBoard, 1000)
-=======
     if (window.event != undefined) Out.play(item);
     if (this.board[0].length === 4) setTimeout(this.clearBoard, 1000);
->>>>>>> bui-mobx
   }
 
   /**
@@ -422,11 +417,7 @@ class TableModel {
    * this.board         调整board 赋值当前墩和上一墩。
    * 
    */
-<<<<<<< HEAD
-  restore_2(userCards,board1){
-=======
   restore_2(userCards, board1) {
->>>>>>> bui-mobx
     const openSeat = 'S' + this.dummySeat;
     const cards = this.state.cards; // 这里应该从原始牌初始化。因为 state.cards 状态不确定
     this.board = [[], []];
@@ -598,11 +589,7 @@ class TableModel {
     card['animation']['delay'] = 0;
     card['zIndex'] = this.zindex++;
     this.board[0].push(card);
-<<<<<<< HEAD
-    if(this.board[0].length==4) this.clearBoard()
-=======
     if (this.board[0].length === 4) this.clearBoard();
->>>>>>> bui-mobx
   }
 
 
