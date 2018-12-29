@@ -875,7 +875,9 @@ class TableModel {
   getUnPlayCardNumber() {
     // const p = new Promise(this.fetchNumber);
     // const number =  await p;  
-    const number = 6;
+    //const number = 6;
+    const cards = this.selectCards('S','SHDC',[ACT1.D,ACT1.L,ACT1.LC,ACT1.LCO])
+    const number = cards.length;
     this.state.unPlayCardNumber = number;
     return number;
   }
