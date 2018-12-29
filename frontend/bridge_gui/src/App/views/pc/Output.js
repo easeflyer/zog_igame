@@ -19,7 +19,7 @@ const Output = {
   },
   play:(data) => {
     console.log('oplay。。。。：',data.card);
-    Process.play(tableStore.myseat,data.card)
+    //Process.play(tableStore.myseat,data.card)
   },
   claim:(seat,num)=>{
     console.log(seat,"摊牌",num);

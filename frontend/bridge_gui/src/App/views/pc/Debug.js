@@ -312,7 +312,7 @@ export default class Debug extends Component {
             const deals = "...XXXXXXXXXXXXX 43.5..XXXXXXXXXX 7...AXXXXXXXXXXX ...XXXXXXXXXXXXX"
             o.props.tableStore.initCards(deals);
 
-            setTimeout(o.dplay,5000);
+            //setTimeout(o.dplay,5000);
         }
         // =====  测试用例结束 =================================================
 
