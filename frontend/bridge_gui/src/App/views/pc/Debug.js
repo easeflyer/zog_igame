@@ -308,8 +308,11 @@ export default class Debug extends Component {
             o.props.tableStore.userLogin('S',{ ready: 0, name: '王五', face: '/imgs/face1.png', rank: '王者', seat: 'W' });
         }
         o.initcards = function(){
-            const deals = "K34.J3.Q742.K832 XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX";
+            //const deals = "K34.J3.Q742.K832 XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX";
+            const deals = "...XXXXXXXXXXXXX 43.5..XXXXXXXXXX 7...AXXXXXXXXXXX ...XXXXXXXXXXXXX"
             o.props.tableStore.initCards(deals);
+
+            setTimeout(o.dplay,5000);
         }
         // =====  测试用例结束 =================================================
 
@@ -338,7 +341,6 @@ export default class Debug extends Component {
                 <button onClick={o.addClick}>牌可点击</button>&nbsp;
                 <button onClick={o.showResult}>显示结果</button>&nbsp;
                 <button onClick={o.showTableId}>显示桌号</button>&nbsp;
-                <button onClick={o.dplay}>东出牌</button>&nbsp;
                 <button onClick={o.dplay}>东出牌</button>&nbsp;
             </div>
         )

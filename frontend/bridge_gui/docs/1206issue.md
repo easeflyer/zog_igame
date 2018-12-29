@@ -37,3 +37,11 @@
       state 里面的数据都没用了。
 
 1. userTag, 旋转用到 myseat myseat 用的是真实方位。存在矛盾。
+
+
+选中的牌，包含桌子上的。
+打牌后，resetCards 执行错误。
+restore 可能对 act 处理有问题。
+
+自己打牌 reset 有问题。
+别人打牌 桌子中间无故出现牌。
