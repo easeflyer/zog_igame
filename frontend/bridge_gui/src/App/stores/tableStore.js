@@ -140,7 +140,7 @@ class TableModel {
     const cards = [[], [], [], []];             // 初始化二维数组 保存四个方位的牌
     deals.forEach((item, index1) => {           // index1 是方位编号
       const suit = item.split('.')
-      this._swDC(suit);debugger
+      this._swDC(suit);
       suit.forEach((s, index2) => {           // index2 四个花色  s 'QJ98' 牌点字串
         for (var i = 0; i < s.length; i++) {
           cards[index1].push({
@@ -325,13 +325,13 @@ class TableModel {
     item['animation']['delay'] = 0;
     item['zIndex'] = this.zindex++;
 
-    //this.resetTable(); // 牌恢复为不可点击状态 ACT1.L
+    this.resetTable(); // 牌恢复为不可点击状态 ACT1.L
 
     const seatIndex = Position.SNames.indexOf(item.seat);
     //const seatIndex = Position.SNames.indexOf(item.seat);
     let cards = this.state.cards[seatIndex];
     cards = this.resetCards(cards, item.seat, true);
-    Out.play(item);
+    if(window.event != undefined) Out.play(item)
     if (this.board[0].length === 4) setTimeout(this.clearBoard, 1000)
   }
 
@@ -415,7 +415,7 @@ class TableModel {
    * 
    */
   restore_2(userCards,board1){
-    const openSeat = this.myseat + this.dummySeat;
+    const openSeat = 'S' + this.dummySeat;
     const cards = this.state.cards; // 这里应该从原始牌初始化。因为 state.cards 状态不确定
     this.board = [[],[]];
     let cardNum = 0;
@@ -586,6 +586,7 @@ class TableModel {
     card['animation']['delay'] = 0;
     card['zIndex'] = this.zindex++;
     this.board[0].push(card);
+    if(this.board[0].length==4) this.clearBoard()
   }
 
 

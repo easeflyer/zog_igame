@@ -4,7 +4,7 @@ import Position from '../common/Position';
 import ODOO from '../libs/odoo-bridge-rpc/src';
 import boardStore from '../stores/newBoard'
 import tableStore from '../stores/tableStore'
-import {cardString,Two,getUserCards,getCurOrLast,getUserCardsDeal} from '../common/util'
+import {cardString,Two,getUserCards,getCurOrLast,getUserCardsDeal,removeNull} from '../common/util'
 import Clock from '../libs/Clock';
 import Sound from '../components/Sound';
 import Card,{ACT0,ACT1,ACT2,ACT3} from '../components/Card';
@@ -194,10 +194,10 @@ var user=null;
           if (msg) {
             const bd_msg = odoo.env('og.board').poll(msg.attr('id'))
             // TODO：这是收到消息后的数据，自行渲染页面，包含牌桌信息和牌手动作
-            debugger
+           
             console.log(bd_msg)
             const {method,info,args} = bd_msg;
-            debugger
+          
             this.dealMsg.get(method)(info,args)
           }
         } while (msg)
@@ -242,6 +242,7 @@ var user=null;
         Sound.play('deal');
         this.timing(seats[bd2.player],10,()=>{})
         if(state=='bidding'){
+        
           var curCall = ''
           tableStore.bid();
           tableStore.state.calldata.first = dealer;
@@ -258,26 +259,66 @@ var user=null;
           tableStore.curCall = curCall;
         }
         if(state=='playing'){
-          console.log(getUserCardsDeal(tableStore.myseat,Dummy[declarer],hands))
           var cur = getCurOrLast(seats,JSON.parse(current_trick));
-          var last = getCurOrLast(seats,JSON.parse(last_trick));debugger
+          var last = getCurOrLast(seats,JSON.parse(last_trick));
           let allData ={
             scene:2,
+            dummySeat: seats[Dummy[declarer]],
             deals:getUserCardsDeal(tableStore.myseat,Dummy[declarer],hands),
             userCards: getUserCards(tableStore.myseat,Dummy[declarer],hands),
             user:user,
-            board:[
-              cur,
-              last,
-          ],
+            board:[cur,last],
           } ;
-          console.log(allData)
-            tableStore.restore(allData)
-          
+         tableStore.restore(allData);
+         debugger
+         //验证打牌规则
+         //1. 确定花色
+         var suit= null;
+         var current = JSON.parse(current_trick)
+          removeNull(current)
+          if(current.length==4 || current.length==0 ){
+            suit='SHDC'
+          }else{
+            suit = current[0][0];
+          }
+         if(player==Dummy[declarer]){ 
+          //如果当前该明手玩家出牌，则庄家替明手出牌
+          if(tableStore.myseat==declarer){
+            let cards = tableStore.selectCards(seats[Dummy[declarer]], suit);
+            if(cards.length==0){
+              cards = tableStore.selectCards(seats[Dummy[declarer]], 'SHDC');
+              tableStore.setCardsState(cards, { active: ACT1.LC, onclick: tableStore.play });
+             
+            }else{
+              tableStore.setCardsState(cards, { active: ACT1.LC, onclick: tableStore.play });
+              var reg = new RegExp(suit,"g");
+              var a = 'SHDC'.replace(reg,"");
+              cards = tableStore.selectCards(seats[Dummy[declarer]], a);
+              tableStore.setCardsState(cards, {active: ACT1.D, onclick: tableStore.play});
+            }
+          }
+        } else{
+          if(player==tableStore.myseat){
+            let cards = tableStore.selectCards("S", suit);
+            if(cards.length==0){
+              cards = tableStore.selectCards("S", 'SHDC');
+              tableStore.setCardsState(cards, { active: ACT1.LC, onclick: tableStore.play });
+             
+            }else{
+              tableStore.setCardsState(cards, { active: ACT1.LC, onclick: tableStore.play });
+              var reg = new RegExp(suit,"g");
+              var a = 'SHDC'.replace(reg,"");
+              cards = tableStore.selectCards("S", a);
+              tableStore.setCardsState(cards, {active: ACT1.D, onclick: tableStore.play});
+            }
+          }
+        }
+
         }
 
       }
       dealBid = (info)=>{
+        this.timing(seats[info.player],10,()=>{})
         var call = null;
         var curCall = null;
         boardStore.pbn.auction.call = JSON.parse(info.auction);
@@ -296,41 +337,62 @@ var user=null;
           }
       }
       dealPlay = (info,args) => {
-        var myseat = tableStore.myseat;
-        var player=seats[args[0]]
-        console.log(player)
-        if(player!='S'){
-          tableStore.dplay(player,args[1]);
-        }
-        debugger
-        this.timing(seats[info.player],10,()=>{})
-        if(info.player==myseat){
-         // args[1][1] 表示花色
-         console.log(args[1][0])
-          let cards = tableStore.selectCards("S", args[1][0]);
-          if(cards.length==0){
-            cards = tableStore.selectCards("S", 'SHDC');
-            tableStore.setCardsState(cards, { active: ACT1.LC, onclick: tableStore.play });
-           
-          }else{
-            tableStore.setCardsState(cards, { active: ACT1.LC, onclick: tableStore.play });
-            var reg = new RegExp(args[1][0],"g");
-            var a = 'SHDC'.replace(reg,"");
-            cards = tableStore.selectCards("S", a);
-            tableStore.setCardsState(cards, {active: ACT1.D, onclick: tableStore.play});
+        var myseat = tableStore.myseat;// 自己的真实方位
+        var dummy = Dummy[info.declarer];// 明手的真实方位
+        var player=seats[args[0]] //桌子方位的玩家打了一张牌
+        //明手的牌
+        if(args[0]==dummy){
+          if(myseat!=info.declarer){
+            tableStore.dplay(player,args[1]);
           }
-          cards = tableStore.selectCards("NEW", 'SHDC');
-          tableStore.setCardsState(cards, {active: ACT1.L, onclick: tableStore.play});
         }else{
-          let cards = tableStore.selectCards("NEWS", 'SHDC');
-          tableStore.setCardsState(cards, {
-              active: ACT1.L, onclick: tableStore.play,
-          });
+          if(player!='S'){
+            tableStore.dplay(player,args[1]);
+          }
         }
+       
+        this.timing(seats[info.player],10,()=>{})
+        if(myseat!=Dummy[info.declarer]){
+          if(info.player==myseat){
+            // args[1][1] 表示花色
+            console.log(args[1][0])
+             let cards = tableStore.selectCards("S", args[1][0]);
+             if(cards.length==0){
+               cards = tableStore.selectCards("S", 'SHDC');
+               tableStore.setCardsState(cards, { active: ACT1.LC, onclick: tableStore.play });
+              
+             }else{
+               tableStore.setCardsState(cards, { active: ACT1.LC, onclick: tableStore.play });
+               var reg = new RegExp(args[1][0],"g");
+               var a = 'SHDC'.replace(reg,"");
+               cards = tableStore.selectCards("S", a);
+               tableStore.setCardsState(cards, {active: ACT1.D, onclick: tableStore.play});
+             }
+             cards = tableStore.selectCards("NEW", 'SHDC');
+             tableStore.setCardsState(cards, {active: ACT1.L, onclick: tableStore.play});
+           }else if(info.player==Dummy[info.declarer]){
+             if(myseat==info.declarer){
+              let cards = tableStore.selectCards(seats[Dummy[info.declarer]], args[1][0]);
+              if(cards.length==0){
+                cards = tableStore.selectCards(seats[Dummy[info.declarer]], 'SHDC');
+                tableStore.setCardsState(cards, { active: ACT1.LC, onclick: tableStore.play });
+               
+              }else{
+                tableStore.setCardsState(cards, { active: ACT1.LC, onclick: tableStore.play });
+                var reg = new RegExp(args[1][0],"g");
+                var a = 'SHDC'.replace(reg,"");
+                cards = tableStore.selectCards("S", a);
+                tableStore.setCardsState(cards, {active: ACT1.D, onclick: tableStore.play});
+              }
+             }
+           }
+        }
+        
         if(boardStore.gameState=='done'){
            alert('done')
         }
       }
+
       dealClaim = (info,args) =>{
         boardStore.claim.owner = args[0];
         boardStore.claim.number = args[1];

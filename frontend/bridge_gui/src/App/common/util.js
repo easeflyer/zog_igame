@@ -134,7 +134,7 @@ export function getUserCardsDeal(user,dummy,cardsArr){
   let userCardsDeal = null;
   cardsArr = JSON.parse(cardsArr);
   userCardsDeal = _rotateCard(cardsArr,user)
-  debugger
+  
   var dummyInd = arr2.indexOf(seatMap[user][dummy]) 
   userCardsDeal.forEach((item,ind)=>{
      if(ind==2 || ind==dummyInd){
@@ -152,23 +152,26 @@ export function getUserCardsDeal(user,dummy,cardsArr){
  var res =  result.map((item1)=>{
     return _getOneDeal(item1);
   })
-  debugger
+  
   return res.join(' ') ;
 }
-function _removeNull(arr){
-  if(arr[0]==null){
-    arr.shift();
+export function removeNull(arr){
+  if(arr.length>0){
     if(arr[0]==null){
-      _removeNull(arr)
+      arr.shift();
+      if(arr[0]==null){
+        removeNull(arr)
+      }
     }
   }
+ 
 }
 //一维数组转二维数组
 export function Two(arr){
   var arr4=[];
   var result = []
   if(arr[0]==null){
-    _removeNull(arr);
+    removeNull(arr);
   }
   console.log(arr);
   for(let i = 0 ;i<arr.length;i++){
