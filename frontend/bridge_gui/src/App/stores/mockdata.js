@@ -9,13 +9,14 @@
 export const restoreData = {
     scene: 2,
     //deals: 'K34.J3.Q742.K832 XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX',
-    deals: 'XXX.J3.Q742.K832 XXX.XX.XXXX.XXXX XXX8.A5.J853.QT4 XXX.XX.XXXX.XXXX',
+    //deals: 'XXX.J3.Q742.K832 XXX.XX.XXXX.XXXX XXX8.A5.J853.QT4 XXX.XX.XXXX.XXXX',
+    deals: "...XXXXXXXXXXXXX 43.5..XXXXXXXXXX 7...AXXXXXXXXXXX ...XXXXXXXXXXXXX",
     //deals: 'XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX',
     //deals: 'K34.X.X.X XXX.X.X.X X.X.X.XXT4 X.XX.X.X',
     claim: { seat: 'E', msg: '3NT X +3' },
     winEW: 2,
     winSN: 3,
-    dummySeat: 'N',
+    dummySeat: 'E',
     curCall: '3H',
     contract: '3NT X',
     user: {
@@ -45,17 +46,27 @@ export const restoreData = {
     //     ['SQ', 'SJ', 'S9', 'S8', 'HA', 'H5', 'DJ', 'D8', 'D3', 'CT', 'C4'],
     //     ['SX', 'SX', 'SX', 'SX', 'SX', 'HX', 'HX', 'HX', 'HX', 'DX', 'CX'],
     // ],
-    userCards: [
-        [ 'HJ', 'H3', 'DQ', 'D4', 'D2', 'CK', 'C8', 'C3'],
-        [ 'HX', 'HX', 'HX', 'DX', 'DX', 'DX', 'CX', 'CX', 'CX'],
-        [ 'S8', 'HA', 'H5', 'DJ', 'D8', 'D3', 'CT', 'C4'],
-        [ 'SX', 'SX', 'HX', 'HX', 'HX', 'HX', 'DX', 'CX'],
+    // userCards: [
+    //     [ 'HJ', 'H3', 'DQ', 'D4', 'D2', 'CK', 'C8', 'C3'],
+    //     [ 'HX', 'HX', 'HX', 'DX', 'DX', 'DX', 'CX', 'CX', 'CX'],
+    //     [ 'S8', 'HA', 'H5', 'DJ', 'D8', 'D3', 'CT', 'C4'],
+    //     [ 'SX', 'SX', 'HX', 'HX', 'HX', 'HX', 'DX', 'CX'],
+    // ],
+    userCards:[
+        ["CX", "CX"],
+        ["S4", "S3", "H5"],
+        ["S7", "CA"],
+        ["CX", "CX"]
     ],
+    board:[
+        [{seat: "S", card: "HA"},{seat: "W", card: "HJ"},{seat: "N", card: "H7"}],
+        [{seat: "S", card: "HK"},{seat: "W", card: "HT"},{seat: "N", card: "H6"},{seat: "E", card: "H4"}],
+    ]
 
-    board: [ // 这里seat 为固定的图形方位，非业务逻辑方位
-        [{ seat: 'S', card: 'D5' }, { seat: 'W', card: 'D6' }, { seat: 'N', card: 'D7' }],
-        [{ seat: 'W', card: 'C6' }, { seat: 'N', card: 'C2' }, { seat: 'E', card: 'C7' }, { seat: 'S', card: 'CQ' }],
-    ],
+    // board: [ // 这里seat 为固定的图形方位，非业务逻辑方位
+    //     [{ seat: 'S', card: 'D5' }, { seat: 'W', card: 'D6' }, { seat: 'N', card: 'D7' }],
+    //     [{ seat: 'W', card: 'C6' }, { seat: 'N', card: 'C2' }, { seat: 'E', card: 'C7' }, { seat: 'S', card: 'CQ' }],
+    // ],
 
 }
 

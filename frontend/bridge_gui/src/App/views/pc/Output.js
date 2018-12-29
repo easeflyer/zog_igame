@@ -18,7 +18,7 @@ const Output = {
     Process.bid(tableStore.myseat,calling)
   },
   play:(data) => {
-    console.log(data.card);
+    console.log('oplay。。。。：',data.card);
     Process.play(tableStore.myseat,data.card)
   },
   claim:(seat,num)=>{
