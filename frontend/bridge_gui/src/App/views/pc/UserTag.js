@@ -51,7 +51,7 @@ class UserTag extends React.Component {
         return (
             <div className='UserTag'>
                 <div className='face'>
-                    <div className={position + 'clock'}></div>
+                    <div className={position + 'clock'+' clock'}></div>
                     <img src={user.face} />
                 </div>
                 {user.name ? login : noLogin}

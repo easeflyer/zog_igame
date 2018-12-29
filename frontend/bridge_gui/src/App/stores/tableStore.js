@@ -49,7 +49,7 @@ class TableModel {
     //playseat:null, // 倒计时解决
     debug: false,
     unPlayCardNumber: null,
-    claim: { seat: null, msg: null },
+    claim: { seat: "W", msg: null },
     contract: null, // 暂时没用
     winEW: 0,
     winSN: 0,
@@ -334,7 +334,8 @@ class TableModel {
     //const seatIndex = Position.SNames.indexOf(item.seat);
     let cards = this.state.cards[seatIndex];
     cards = this.resetCards(cards, item.seat, true);
-    if (window.event != undefined) Out.play(item);
+    // if (window.event != undefined)
+    {Out.play(item)} ;
     if (this.board[0].length === 4) setTimeout(this.clearBoard, 1000);
   }
 
