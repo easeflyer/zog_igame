@@ -1007,6 +1007,12 @@ class TableModel {
     });
 
   }
+  
+  setTricks(ew=false,sn=false,contract=false){
+    if(ew) this.winEW = ew;
+    if(sn) this.winSN = sn;
+    if(contract) this.state.contract = contract;
+  }
 
   // @action.bound
   // openDummy() {
