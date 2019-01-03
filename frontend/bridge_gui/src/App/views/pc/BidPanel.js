@@ -136,9 +136,9 @@ class BidPanel extends Component {
   handleConfirm = () => {
     // 调用 聊天打牌 发送数据
     Out.call(this.state.calling);
-    this.setState({
-      active: 0
-    })
+    // this.setState({
+    //   active: 0
+    // })
   }
 
   handleReset = () => {
