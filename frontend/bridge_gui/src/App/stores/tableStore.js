@@ -53,6 +53,7 @@ class TableModel {
     contract: '2H', // 暂时没用
     winEW: 1,
     winSN: 2,
+    vulnerable:'None',//局况
   }
   dummySeat = "N"; // 固定界面方位，非逻辑方位
   @observable curCall = '';  // 当前叫品，用于bidpanel 显示。
@@ -246,7 +247,7 @@ class TableModel {
    */
   @action.bound
   dplay(seat, card) {
-    //debugger; seat === this.dummySeat 
+    debugger; //seat === this.dummySeat 
     const cards = this.state.cards;
     let ucard = null;//null 修改成{}
     for (let c of cards[Position.SNames.indexOf(seat)]) {
@@ -1008,9 +1009,9 @@ class TableModel {
 
   }
   
-  setTricks(ew=false,sn=false,contract=false){
-    if(ew) this.winEW = ew;
-    if(sn) this.winSN = sn;
+  setTricks(ew=false,sn=false,contract=false){debugger
+    if(ew) this.state.winEW = ew;
+    if(sn) this.state.winSN = sn;
     if(contract) this.state.contract = contract;
   }
 

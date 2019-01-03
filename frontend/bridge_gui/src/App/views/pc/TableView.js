@@ -82,7 +82,7 @@ class TableView extends React.Component {
         <div id='table' className='table'>
           <div id='header' className='header'>
             <div className='re imps'><Imps /></div>
-            <div onClick={table.openDebug} className='re seats'><Seats vul='EW' /></div>
+            <div onClick={table.openDebug} className='re seats'><Seats vul={tableStore.state.vulnerable} /></div>
             <div onClick={table.lastTrick.bind(table)} className='re tricks'><Tricks data={tricks} /></div>
             <div className='re time'>
               <Timer

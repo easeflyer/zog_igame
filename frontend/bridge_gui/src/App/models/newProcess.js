@@ -239,8 +239,13 @@ var user=null;
           alert('游戏已经结束');
           return;
         }
-        const {state,dealer,auction,player,declarer,hands,current_trick,last_trick,tricks,contract,claim_result} = bd2;
+        const {state,dealer,auction,player,declarer,hands,current_trick,last_trick,tricks,contract,claim_result,vulnerable} = bd2;
         TRICKS = tricks;
+        if(vulnerable == 'NS'){
+          tableStore.vulnerable='SN';
+        }else{
+          tableStore.vulnerable = vulnerable;
+        }
         var deals =cardString(tableStore.myseat,bd2.hands) ;
         var call=null;
         var callArr = [];
@@ -270,6 +275,7 @@ var user=null;
         }
         tableStore.state.claim.seat= declarer;
         if(state=='playing' || state=='openlead'){
+         
           if(state=='playing'){
             var cur = getCurOrLast(seats,JSON.parse(current_trick));
             var last = getCurOrLast(seats,JSON.parse(last_trick));
@@ -332,9 +338,10 @@ var user=null;
             }
           }
         }
-
+        tableStore.setTricks(bd2.ew_win,bd2.ns_win,bd2.contract )
         }
-        if(state=='claiming' || state=='claiming.RHO' || state=='claiming.LHO'){debugger
+        if(state=='claiming' || state=='claiming.RHO' || state=='claiming.LHO'){
+          tableStore.setTricks(bd2.ew_win,bd2.ns_win,bd2.contract )
           var cur = getCurOrLast(seats,JSON.parse(current_trick));
             var last = getCurOrLast(seats,JSON.parse(last_trick));
             let allData ={
@@ -355,6 +362,7 @@ var user=null;
               }
             } ;
            tableStore.restore(allData);
+           tableStore.setTricks(bd2.ew_win,bd2.ns_win,bd2.contract )
            var suit= null;
          var current = JSON.parse(current_trick)
           removeNull(current)
@@ -455,6 +463,7 @@ var user=null;
             tableStore.dplay(player,args[1]);
           }
         }
+        tableStore.setTricks(info.ew_win,info.ns_win,info.contract )
        if(info.player){
         this.timing(seats[info.player],10,()=>{})
        }

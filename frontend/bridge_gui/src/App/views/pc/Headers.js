@@ -17,7 +17,7 @@ class Imps extends Component {
  * s1-s4  NWES
  */
 class Seats extends Component{
-    render(){
+    render(){ console.log(this.props)
         const vuls = {EW:'',SN:''};
         if( this.props.vul.toUpperCase()=='BOTH'){
             vuls['EW'] = 'hasVul';
