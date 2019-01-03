@@ -248,7 +248,7 @@ class TableModel {
   dplay(seat, card) {
     //debugger; seat === this.dummySeat 
     const cards = this.state.cards;
-    let ucard = {};//null 修改成{}
+    let ucard = null;//null 修改成{}
     for (let c of cards[Position.SNames.indexOf(seat)]) {
       if (seat !== this.dummySeat && c.active === ACT1.L) ucard = c;
       if (seat === this.dummySeat && c.card === card) ucard = c;

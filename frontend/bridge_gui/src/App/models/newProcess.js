@@ -235,6 +235,10 @@ var user=null;
       recover =()=>{
         const bd2 = bd.look(fields.doing_table_ids.board_ids)
         console.log(bd2)  //得到当前游戏的全部内容
+        if(!bd2){
+          alert('游戏已经结束');
+          return;
+        }
         const {state,dealer,auction,player,declarer,hands,current_trick,last_trick,tricks,contract,claim_result} = bd2;
         TRICKS = tricks;
         var deals =cardString(tableStore.myseat,bd2.hands) ;
@@ -455,7 +459,22 @@ var user=null;
         this.timing(seats[info.player],10,()=>{})
        }
         
-      
+       if(info.state=='done'){
+        tableStore.state.scene = 5;
+        //显示结果
+        var result = '';
+        result=info.declarer + info.contract;
+        if(info.ew_point){
+          result=result +' EW ' +info.ew_point
+        }
+        if(info.ns_point){
+          result=result +' NS ' +info.ns_point
+        }
+        tableStore._result = result;
+        const result1 = document.querySelector('.result');
+        if(!result1)
+          ReactDOM.render(<ResultPanel />,document.querySelector('#result'));
+      }
         var suit= null;
         var current = JSON.parse(current_trick)
          removeNull(current)
