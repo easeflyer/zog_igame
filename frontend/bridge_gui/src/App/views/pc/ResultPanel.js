@@ -10,6 +10,7 @@ class ResultPanel extends React.Component {
     */
   hideResult = () => {
     ReactDOM.unmountComponentAtNode(document.querySelector('#result'));
+    tableStore.nextGame()
   }
   render() {
     const height = tableStore.height;

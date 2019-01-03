@@ -50,9 +50,9 @@ class TableModel {
     debug: false,
     unPlayCardNumber: null,
     claim: { seat: "W", msg: null },
-    contract: null, // 暂时没用
-    winEW: 0,
-    winSN: 0,
+    contract: '2H', // 暂时没用
+    winEW: 1,
+    winSN: 2,
   }
   dummySeat = "N"; // 固定界面方位，非逻辑方位
   @observable curCall = '';  // 当前叫品，用于bidpanel 显示。
@@ -73,7 +73,7 @@ class TableModel {
   // _boardId = null;
   // _contract = null;
   // _claim = {seat:null,value:null};
-  // _result = "";
+  @observable _result = "";
 
   constructor() {
     // this.state.user = {
@@ -162,9 +162,9 @@ class TableModel {
   }
   @action.bound
   bid() {
-    this.state.scene !== 1 ?
-      this.state.scene = 1 :
-      this.state.scene = 2;
+    // this.state.scene !== 1 ?
+      this.state.scene = 1 
+  //     this.state.scene = 2;
   }
   /**
    * 发牌
@@ -248,7 +248,7 @@ class TableModel {
   dplay(seat, card) {
     //debugger; seat === this.dummySeat 
     const cards = this.state.cards;
-    let ucard = null;
+    let ucard = {};//null 修改成{}
     for (let c of cards[Position.SNames.indexOf(seat)]) {
       if (seat !== this.dummySeat && c.active === ACT1.L) ucard = c;
       if (seat === this.dummySeat && c.card === card) ucard = c;
@@ -866,7 +866,7 @@ class TableModel {
   @action.bound
   claim(seat, claimMsg) {
     //this._claim.seat = this.myseat;
-    this.state.claim.seat = seat;
+   // this.state.claim.seat = seat;
     this.state.claim.msg = claimMsg;
     this.state.scene = 3;
   }
@@ -1113,7 +1113,12 @@ class TableModel {
 
   }
 
-
+  reConnect = () => {
+    Out.reConnect()
+  }
+  nextGame = () => {
+    Out.nextGame()
+  }
 }
 // Position.SNamesen = ['E', 'S', 'W', 'N'];
 //Position.SNames = ['E', 'S', 'W', 'N'];

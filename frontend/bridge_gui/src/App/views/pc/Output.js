@@ -19,15 +19,24 @@ const Output = {
   },
   play:(data) => {
     console.log('oplay。。。。：',data.card);
-    //Process.play(tableStore.myseat,data.card)
+    Process.play(tableStore.myseat,data.card)
   },
   claim:(seat,num)=>{
     console.log(seat,"摊牌",num);
+    Process.claim(tableStore.myseat,num);
   },
   claimConfirm:(value)=>{
     const msg = value ? "同意": "拒绝";
     console.log(msg);
-  }
+    Process.claim_ack(tableStore.myseat,value);
+  },
+  reConnect:()=>{
+    Process.getBoard()
+  },
+  nextGame : ()=>{
+    
+    Process.getBoard()
+  } 
 }
 
 export default Output;

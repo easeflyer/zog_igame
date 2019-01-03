@@ -95,6 +95,7 @@ class TableView extends React.Component {
             <button onClick={() => table.timer.stop()} onDoubleClick={() => table.timer.start()} className="calljudge">呼叫裁判</button>
             <button onClick={table.lastTrick.bind(table)} className="lasttrick">上一墩牌</button>
             <button onClick={table.bid.bind(table)} className="showbid">显示叫牌</button>
+            <button onClick={table.reConnect.bind(table)} className="showbid">刷新</button>
 
             {/* <div className='re' id='lastTrick'>上墩牌</div>*/}
             {/* 注意比赛结果会挂载到下面的div */}
