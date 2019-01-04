@@ -4,10 +4,13 @@ import style from './Timer.module.css'
 console.log(style.timername)
 
 export default class Timer extends React.Component {
+    seats = '';
     state = {
         h: 0,
         m: 0,
         s: 0,
+        ew:0,
+        sn:0,
     }
     constructor(props) {
         super(props)
@@ -23,11 +26,12 @@ export default class Timer extends React.Component {
     }
 
     componentDidMount() {
-        //this.start();
+        this.start('ew');
     }
 
-    start = () => {
-        this.timer = setInterval(this.dida, 1000)
+    start = (seats) => {
+        this.seats = seats;
+        if(!this.timer)this.timer = setInterval(this.dida, 1000)
     }
 
     stop = () => {
@@ -35,6 +39,7 @@ export default class Timer extends React.Component {
     }
     dida = () => {
         this.state.s--;
+        this.state[this.seats]++;
         if (this.state.s == -1) {
             this.state.s = 59;
             this.state.m--;
@@ -56,6 +61,10 @@ export default class Timer extends React.Component {
             s: this.state.s
         });
     }
+    getTime(sec){
+        const date = new Date(sec * 1000); // 格式化成 居中美观。
+        return date.getMinutes() + ':' + date.getSeconds();
+    }
     render() {
         const fmt = (n) => n < 10 ? '0' + n : '' + n;
         return (
@@ -65,6 +74,10 @@ export default class Timer extends React.Component {
                     <div>{fmt(this.state.h)}</div>
                     <div>{fmt(this.state.m)}</div>
                     <div>{fmt(this.state.s)}</div>
+                </div>
+                <div className='timer1'>
+                东西&nbsp;{this.getTime(this.state.ew)}<br />
+                南北&nbsp;{this.getTime(this.state.sn)}<br />
                 </div>
             </div>
         );

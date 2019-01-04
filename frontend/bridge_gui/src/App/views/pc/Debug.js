@@ -330,6 +330,8 @@ export default class Debug extends Component {
                 <button onClick={o.testDummy.bind(o, 'east')}>明手东</button>&nbsp;
                 <button onClick={o.testDummy.bind(o, 'west')}>明手西</button>&nbsp;
                 <button onClick={o.testDummy.bind(o, 'north')}>明手北</button>&nbsp;
+                <button onClick={o.timer.start.bind(o,'ew')}>东西计时</button>&nbsp;
+                <button onClick={o.timer.start.bind(o,'sn')}>南北计时</button>&nbsp;
                 <br />
                 <button onClick={o.bid.bind(o)}>显示叫牌</button>&nbsp;
                 <button onClick={o.testBid1.bind()}>叫牌</button>&nbsp;
@@ -342,6 +344,7 @@ export default class Debug extends Component {
                 <button onClick={o.showResult}>显示结果</button>&nbsp;
                 <button onClick={o.showTableId}>显示桌号</button>&nbsp;
                 <button onClick={o.dplay}>东出牌</button>&nbsp;
+
             </div>
         )
     }

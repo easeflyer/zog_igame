@@ -147,6 +147,11 @@ setClaimtrick() 设置当前可摊牌的墩数
 
 1. 12月15日设计：界面方位永远是NESW。 UI Cards 数组也永远是NESW，从业务逻辑给数据的时候。直接旋转之后再给。 state.user表是数据方位。根据赋值变化。
 
+1. tableStore 里面的方位：
+  state.claim.seat  逻辑方位
+  myseat            逻辑方位
+  
+  dummySeat         界面方位
 
 1. 叫牌
 

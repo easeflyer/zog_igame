@@ -17,8 +17,10 @@ class Imps extends Component {
  * s1-s4  NWES
  */
 class Seats extends Component{
-    render(){ console.log(this.props)
+    render(){
         const vuls = {EW:'',SN:''};
+        const dealer = {N:'',E:'',S:'',W:''};
+        dealer[this.props.dealer] = this.props.dealer + '-Dealer';
         if( this.props.vul.toUpperCase()=='BOTH'){
             vuls['EW'] = 'hasVul';
             vuls['SN'] = 'hasVul';
@@ -28,10 +30,15 @@ class Seats extends Component{
 
         return( 
             <div className='seats'>
-                <div className={'s1 '+vuls['SN']}>D</div>
-                <div className={'s2 '+vuls['EW']}></div>
-                <div className={'s3 '+vuls['EW']}></div>
-                <div className={'s4 '+vuls['SN']}></div>
+                {/* <div className={'s1 '+vuls['SN']}>N-D</div>
+                <div className={'s2 '+vuls['EW']}>W-Dealer</div>
+                <div className={'s3 '+vuls['EW']}>E-D</div>
+                <div className={'s4 '+vuls['SN']}>S-D</div> */}
+            
+                <div className={'s1 '+vuls['SN']}>{dealer['N']}</div>
+                <div className={'s2 '+vuls['EW']}>{dealer['W']}</div>
+                <div className={'s3 '+vuls['EW']}>{dealer['E']}</div>
+                <div className={'s4 '+vuls['SN']}>{dealer['S']}</div>
             </div>
         )
     }

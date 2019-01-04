@@ -37,7 +37,7 @@ class Claim extends Component {
             const seat = this.props.tableStore.myseat;
             const num = this.state.value;
             Out.claim(seat, num);
-        }else{
+        } else {
             Out.claimConfirm(value);
         }
     }
@@ -54,7 +54,7 @@ class Claim extends Component {
         )
         return (
             <div id='myclaim' className='claim'>
-                <h3>请选择你要Claim的墩数？</h3>
+                <b>请选择墩数？</b><br />
                 {cblocks}
                 {this.state.submit ?
                     <button disabled='true'>等待确认..</button> :
@@ -66,11 +66,17 @@ class Claim extends Component {
 
     oClaim() {
         const claimMsg = this.props.tableStore.state.claim.msg;
+        const dummySeat = this.props.tableStore.dummySeat;
         return (
             <div id='otherclaim' className='claim'>
+                <br />
                 {claimMsg}
-                <button onClick={this.handleSubmit.bind(this, 1)}>同意</button>
-                <button onClick={this.handleSubmit.bind(this, 0)}>拒绝</button>
+                {dummySeat == 'S' ? <div><i><br />等待确认..</i></div>:
+                    <div>
+                        <button onClick={this.handleSubmit.bind(this, 1)}>同意</button>
+                        <button onClick={this.handleSubmit.bind(this, 0)}>拒绝</button>
+                    </div>
+                }
             </div>
         );
     }

@@ -40,6 +40,7 @@ class TableModel {
   //deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
   deals = 'AT62.A6.JT6.QT85 XXX.XX.XXXX.XXXX QJ4.Q4.A9743.A43 XXX.XX.XXXX.XXXX';
   //@observable uiState = {} // 未启用。
+  @observable showBid = false;
   @observable state = {
     cards: null, // 考虑这里不用 cards 只用必要的数字
     scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
@@ -50,12 +51,12 @@ class TableModel {
     debug: false,
     unPlayCardNumber: null,
     claim: { seat: "W", msg: null },
-    contract: '2H', // 暂时没用
-    winEW: 1,
-    winSN: 2,
-    vulnerable:'None',//局况
+    contract: '', // 暂时没用
+    winEW: '',
+    winSN: '',
+    vulnerable:'EW',//局况
   }
-  dummySeat = "N"; // 固定界面方位，非逻辑方位
+  dummySeat = "W"; // 固定界面方位，非逻辑方位
   @observable curCall = '';  // 当前叫品，用于bidpanel 显示。
   // boardState = {
   //   boardId: null,
@@ -123,6 +124,25 @@ class TableModel {
     })()
   }
   /**
+   * 初始化 state 
+   * 每局开始的时候调用。给state 赋初值。
+   */
+  initState(){
+    this.board=[[],[]];
+    this.seat = {};
+    this.state.cards = null;
+    this.state.scene = 0;
+    this.state.calldata =  { first: '', call: [], note: null };
+    this.state.claim = {seat:'',msg:null};
+    this.state.contract = '';
+    this.state.winEW = '';
+    this.state.winSN = '';
+    this.state.vulnerable = '';
+    this.dummySeat = '';
+    this.curCall = '';
+  }
+
+  /**
    * 从 this.deals 字符串转换成 ui用的 cards 数组
    * 
    * 为渲染输出做准备，返回到 this.cards
@@ -162,10 +182,9 @@ class TableModel {
     this.state.cards = cards;
   }
   @action.bound
-  bid() {
-    // this.state.scene !== 1 ?
-      this.state.scene = 1 
-  //     this.state.scene = 2;
+  toggleBid() {
+      this.hideLastTrick();
+      this.showBid = !this.showBid;
   }
   /**
    * 发牌
@@ -250,13 +269,30 @@ class TableModel {
     debugger; //seat === this.dummySeat 
     const cards = this.state.cards;
     let ucard = null;//null 修改成{}
-    for (let c of cards[Position.SNames.indexOf(seat)]) {
-      if (seat !== this.dummySeat && c.active === ACT1.L) ucard = c;
-      if (seat === this.dummySeat && c.card === card) ucard = c;
-      if (ucard) break;
+
+    if (seat === this.dummySeat){
+      for (let c of cards[Position.SNames.indexOf(seat)])
+        if(c.card === card) {
+          ucard = c;break;
+        }
+    }else{
+      // 非明手摊牌时 也是明手
+      for (let c of cards[Position.SNames.indexOf(seat)]){
+        if(c.card === card) {
+          ucard = c;
+          this._play(ucard);
+          return;
+        }
+      }
+      for (let c of cards[Position.SNames.indexOf(seat)]){
+        if( c.active === ACT1.L) {
+          ucard = c;
+          ucard.card = card;
+          this._play(ucard);
+          return;
+        }
+      }
     }
-    ucard.card = card;
-    this._play(ucard);
   }
 
 
@@ -499,71 +535,71 @@ class TableModel {
 
   }
 
-  restore_3(userCards, board1) {
-    const openSeat = this.myseat + this.dummySeat;
-    const cards = this.state.cards; // 这里应该从原始牌初始化。因为 state.cards 状态不确定
-    this.board = [[], []];
-    let cardNum = 0;
-    // 1） 飞走不在手里的牌。
-    userCards.forEach((uCards, uindex) => {
-      if (openSeat.indexOf(Position.SNames[uindex]) !== -1) {
-        cards[uindex].forEach((card) => {
-          // 不在手里的牌 全部 飞走
-          window.___card = card;
-          // window.___uindex = uindex;
-          if (uCards.indexOf(card.card) === -1) this._setCardACT3(card)
-        });
-      } else {
-        cardNum = 13 - uCards.length;
-        for (let i = 0; i < cardNum; i++) {
-          // 不在手里的牌飞走 因为是暗牌因此从0开始飞走
-          this._setCardACT3(cards[uindex][i]);
-        }
-      }
-    });
+  // restore_3(userCards, board1) {
+  //   const openSeat = this.myseat + this.dummySeat;
+  //   const cards = this.state.cards; // 这里应该从原始牌初始化。因为 state.cards 状态不确定
+  //   this.board = [[], []];
+  //   let cardNum = 0;
+  //   // 1） 飞走不在手里的牌。
+  //   userCards.forEach((uCards, uindex) => {
+  //     if (openSeat.indexOf(Position.SNames[uindex]) !== -1) {
+  //       cards[uindex].forEach((card) => {
+  //         // 不在手里的牌 全部 飞走
+  //         window.___card = card;
+  //         // window.___uindex = uindex;
+  //         if (uCards.indexOf(card.card) === -1) this._setCardACT3(card)
+  //       });
+  //     } else {
+  //       cardNum = 13 - uCards.length;
+  //       for (let i = 0; i < cardNum; i++) {
+  //         // 不在手里的牌飞走 因为是暗牌因此从0开始飞走
+  //         this._setCardACT3(cards[uindex][i]);
+  //       }
+  //     }
+  //   });
 
-    // 2) 设置当前墩和上一墩
-    board1[0].forEach((ucard) => {
-      const seatIndex = Position.SNames.indexOf(ucard.seat);
-      // 暗牌处理
-      if (openSeat.indexOf(ucard.seat) === -1) {
-        cards[seatIndex][0].card = ucard.card;
-        this._setCardACT2(cards[seatIndex][0]);
-        //this.board[0].push(cards[seatIndex][0]);
-        // 明牌处理
-      } else {
-        cards[seatIndex].forEach((card) => {
-          if (card.card === ucard.card) this._setCardACT2(card);
-          //this.board[0].push(card);
-        });
-      }
-    }, this);
+  //   // 2) 设置当前墩和上一墩
+  //   board1[0].forEach((ucard) => {
+  //     const seatIndex = Position.SNames.indexOf(ucard.seat);
+  //     // 暗牌处理
+  //     if (openSeat.indexOf(ucard.seat) === -1) {
+  //       cards[seatIndex][0].card = ucard.card;
+  //       this._setCardACT2(cards[seatIndex][0]);
+  //       //this.board[0].push(cards[seatIndex][0]);
+  //       // 明牌处理
+  //     } else {
+  //       cards[seatIndex].forEach((card) => {
+  //         if (card.card === ucard.card) this._setCardACT2(card);
+  //         //this.board[0].push(card);
+  //       });
+  //     }
+  //   }, this);
 
-    board1[1].forEach((ucard) => {
-      const seatIndex = Position.SNames.indexOf(ucard.seat);
-      // 暗牌处理
-      if (openSeat.indexOf(ucard.seat) === -1) {
-        cards[seatIndex][1].card = ucard.card;
-        this._setCardACT3(cards[seatIndex][1]);
-        this.board[1].push(cards[seatIndex][1]);
-        // 明牌处理
-      } else {
-        cards[seatIndex].forEach((card) => {
-          if (card.card === ucard.card) {
-            this._setCardACT3(card);
-            this.board[1].push(card);
-          }
-        }, this);
-      }
-    }, this);
+  //   board1[1].forEach((ucard) => {
+  //     const seatIndex = Position.SNames.indexOf(ucard.seat);
+  //     // 暗牌处理
+  //     if (openSeat.indexOf(ucard.seat) === -1) {
+  //       cards[seatIndex][1].card = ucard.card;
+  //       this._setCardACT3(cards[seatIndex][1]);
+  //       this.board[1].push(cards[seatIndex][1]);
+  //       // 明牌处理
+  //     } else {
+  //       cards[seatIndex].forEach((card) => {
+  //         if (card.card === ucard.card) {
+  //           this._setCardACT3(card);
+  //           this.board[1].push(card);
+  //         }
+  //       }, this);
+  //     }
+  //   }, this);
 
-    Position.SNames.split('').forEach((seat, index) => {
-      this.resetCards(this.state.cards[index], seat);
-    })
+  //   Position.SNames.split('').forEach((seat, index) => {
+  //     this.resetCards(this.state.cards[index], seat);
+  //   })
 
 
 
-  }
+  // }
   /**
    * 设置一张牌为 已经飞走了。
    * @param {} card 
@@ -950,21 +986,62 @@ class TableModel {
     this.state.lastTrick = !this.state.lastTrick;
     return this.state.cards;
   }
+  // @action
+  // showLastTrick = (s = null) => {
+  //   // 在模型里 应该先判断当前 trick 编号。然后决定是否能看lasttrick
+  //   //debugger;
+  //   const show = s !== null ? s : !this.state.lastTrick;
+  //   const lt = this.board[1];
+  //   window.___board1 = toJS(this.board);
+  //   let card = null;
+  //   lt.forEach((item, index) => {
+  //     //card = this.cardIndexOf(item.index)
+  //     //card.size = card.size * 0.8
+  //     item['animation']['left'] = (show == true) ?
+  //       this.seat[item.seat][1].x - this.size / 2.9
+  //       : this.size / 2;
+  //     item['animation']['top'] = (show == true) ?
+  //       this.seat[item.seat][1].y - this.size / 2.9
+  //       : -this.size * 2;
+  //     //card['size'] = card['size'] * 0.7
+  //     // card['animation']['rotate'] = 180;
+  //     // card['position']['x'] = this.seat[Table.seatsen[index]][1].x;
+  //     // card['position']['y'] = this.seat[Table.seatsen[index]][1].y;
+  //     //card['animation'] = '';
+  //     //card['animation']['delay'] = 0;
+  //     item.active = ACT3; // 测试用
+  //   })
+  //   this.state.lastTrick = !this.state.lastTrick;
+  //   //this.showBid = false;
+  //   return this.state.cards;
+  // }
+  @action.bound
+  toggleLastTrick(){
+    this.showBid = false;
+    this._setShowLastTrick(!this.state.lastTrick);
+  }
+  @action.bound
+  showLastTrick(){
+    this._setShowLastTrick(true);
+  }
+  @action.bound
+  hideLastTrick(){
+    this._setShowLastTrick(false);
+  }
   @action
-  lastTrick1 = () => {
+  _setShowLastTrick(isShow){
     // 在模型里 应该先判断当前 trick 编号。然后决定是否能看lasttrick
     //debugger;
-    const show = !this.state.lastTrick;
     const lt = this.board[1];
     window.___board1 = toJS(this.board);
     let card = null;
-    lt.forEach((item, index) => {
+    if(lt) lt.forEach((item, index) => {
       //card = this.cardIndexOf(item.index)
       //card.size = card.size * 0.8
-      item['animation']['left'] = (show == true) ?
+      item['animation']['left'] = (isShow == true) ?
         this.seat[item.seat][1].x - this.size / 2.9
         : this.size / 2;
-      item['animation']['top'] = (show == true) ?
+      item['animation']['top'] = (isShow == true) ?
         this.seat[item.seat][1].y - this.size / 2.9
         : -this.size * 2;
       //card['size'] = card['size'] * 0.7
@@ -975,9 +1052,11 @@ class TableModel {
       //card['animation']['delay'] = 0;
       item.active = ACT3; // 测试用
     })
-    this.state.lastTrick = !this.state.lastTrick;
+    this.state.lastTrick = isShow;
+    //this.showBid = false;
     return this.state.cards;
   }
+
 
   /**
    * 

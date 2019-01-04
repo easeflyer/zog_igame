@@ -3,13 +3,14 @@
 */
 .claim{
     position: absolute;
-    margin:10%;
-    padding:5%;
-    width:70%;
-    height:40%;
+    margin:29% 26%;
+    padding:2%;
+    width:47%;
+    height:30%;
     background-color:#0099cc;
     z-index:1000;
     text-align: center;
+    font-size:3vh;
 }
 #myclaim.claim button{
     position: absolute;
@@ -24,8 +25,8 @@
     width:30%;
     height:15%;
 }
-#otherclaim.claim button:nth-child(1){ left:18%}
-#otherclaim.claim button:nth-child(2){ left:52%}
+#otherclaim.claim button:nth-child(2){ left:18%}
+#otherclaim.claim button:nth-child(3){ left:52%}
 
 .cblock{
     position: relative;

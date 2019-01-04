@@ -14,7 +14,7 @@ import TableView from '../views/pc/TableView'; // 包含 TableView.css
 import ResultPanel from '../views/pc/ResultPanel';
 import { inject, observer } from 'mobx-react';
 import { TableModel } from '../stores/tableStore';
-import {ACT0, ACT1, ACT2, ACT3} from '../components/Card';
+import { ACT0, ACT1, ACT2, ACT3 } from '../components/Card';
 import Position from '../common/Position';
 /**
  * Table 一桌游戏
@@ -48,6 +48,7 @@ class Table extends Component {
         //TableModel.seats.forEach(key => this.ref[key] = React.createRef())
         Position.SNames.split("").forEach(key => this.ref[key] = React.createRef());
         this.ref.board = React.createRef();
+        this.timer = { stop: null, start: null }; // 用于控制 倒计时
     }
 
     /**
@@ -124,7 +125,7 @@ class Table extends Component {
      */
     claim = () => {
         //this.props.tableStore.claim('E',3);
-        this.props.tableStore.claim('N','东（E）玩家摊牌，定约：3NT + 3');
+        this.props.tableStore.claim('N', '东（E）玩家摊牌，定约：3NT + 3');
         // Sound.play('claim');
     }
 
@@ -133,8 +134,8 @@ class Table extends Component {
      */
     openDummy = () => {
         const seat = "E";
-        const cards = ['SQ','SJ','S9','S8','HA','H5','DJ','D8','D3','CT','C4','CT','C4'];
-        this.props.tableStore.openDummy(seat,cards);
+        const cards = ['SQ', 'SJ', 'S9', 'S8', 'HA', 'H5', 'DJ', 'D8', 'D3', 'CT', 'C4', 'CT', 'C4'];
+        this.props.tableStore.openDummy(seat, cards);
     }
     /**
      * 预留发送 数据接口
@@ -175,8 +176,8 @@ class Table extends Component {
 
     showResult = () => {
         const result = document.querySelector('.result');
-        if(!result)
-            ReactDOM.render(<ResultPanel />,document.querySelector('#result'))
+        if (!result)
+            ReactDOM.render(<ResultPanel />, document.querySelector('#result'))
     }
 
     /**
@@ -185,7 +186,8 @@ class Table extends Component {
      * cards: this.TableModel.lastTrick(show),
      */
     lastTrick = () => {
-        this.props.tableStore.lastTrick1();
+        //this.props.tableStore.showLastTrick();
+        this.props.tableStore.toggleLastTrick();
     }
     /**
      * 视频接口
@@ -208,7 +210,7 @@ class Table extends Component {
      * 根据 场景 scene 决定是否显示叫牌。
      */
     bid = () => {
-        this.props.tableStore.bid();
+        this.props.tableStore.toggleBid();
     }
 
     /**
@@ -217,7 +219,7 @@ class Table extends Component {
     recovery = () => {
         this.props.tableStore.recovery();
     }
-    reConnect = ()=>{
+    reConnect = () => {
         this.props.tableStore.reConnect()
     }
 

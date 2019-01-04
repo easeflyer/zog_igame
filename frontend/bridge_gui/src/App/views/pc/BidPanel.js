@@ -196,8 +196,8 @@ class BidPanel extends Component {
           if (call.length == 2) {
             call[1] = call[1].slice(1,2);
             return (
-              <td key={index + index1 + 1} className='alertTd'>
-                <img title={note[call[1]-1]} className='suit' src={`/cards/bids/${call[0]}.svg`} />
+              <td title={note[call[1]-1]} key={index + index1 + 1} className='alertTd'>
+                <img className='suit' src={`/cards/bids/${call[0]}.svg`} />
               </td>
             );
           }
