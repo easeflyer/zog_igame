@@ -8,10 +8,16 @@
     text-align: center;
     line-height: 5vh;
     height:5vh;
-    width:30%;
-    margin:8% 1.66%;
+    width:31.2%;
+    margin:2% 1%;
     float:left;
     background-color: aliceblue;
-    border-radius:1vh;
+    border-radius:0.5vh;
     color: black;
+}
+.time .timer1{
+    text-align: center;
+    color:#FFF;
+    margin:0vh 0.5vh;
+    font-size:2.5vh;
 }

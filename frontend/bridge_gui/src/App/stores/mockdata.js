@@ -78,21 +78,21 @@ export const restoreData = {
         W: { ready: 0, name: '', face: '', rank: '', seat: '' },
         N: { ready: 0, name: '', face: '', rank: '', seat: '' }
     },
-    // calldata: {
-    //     first: 'S',
-    //     call: [
-    //         ['1C =1=', 'PASS', 'PASS', '2H'],
-    //         ['PASS', 'PASS', '3C =2=', 'PASS'],
-    //         ['PASS', '3H', 'PASS', 'PASS'],
-    //         ['3S =3=', 'PASS', 'PASS', '3NT =4='],
-    //     ],
-    //     note: [
-    //         "约定叫1：说明内容预先输入...",
-    //         "约定叫2：说明内容预先输入...",
-    //         "约定叫3：说明内容预先输入...",
-    //         "约定叫4：说明内容预先输入...",
-    //     ]
-    // },
+    calldata: {
+        first: 'S',
+        call: [
+            ['1C =1=', 'PASS', 'PASS', '2H'],
+            ['PASS', 'PASS', '3C =2=', 'PASS'],
+            ['PASS', '3H', 'PASS', 'PASS'],
+            ['3S =3=', 'PASS', 'PASS', '3NT =4='],
+        ],
+        note: [
+            "约定叫1：说明内容预先输入...",
+            "约定叫2：说明内容预先输入...",
+            "约定叫3：说明内容预先输入...",
+            "约定叫4：说明内容预先输入...",
+        ]
+    },
     // userCards: [
     //     ['SK', 'S3', 'S4', 'HJ', 'H3', 'DQ', 'D4', 'D2', 'CK', 'C8', 'C3'],
     //     ['SX', 'SX', 'SX', 'HX', 'HX', 'HX', 'DX', 'DX', 'DX', 'CX', 'CX', 'CX'],

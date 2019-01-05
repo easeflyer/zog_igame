@@ -56,7 +56,7 @@ button.disable{
     opacity: 0.5;     */
 }
 .header{
-    font-size:3.5vh;
+    font-size:3vh;
     line-height:3.8vh;
     /*position: relative;*/
     float:left;
@@ -71,7 +71,7 @@ button.disable{
     width:18vh;
 }
 .imps {height:12vh;vertical-align: middle}
-.time {height:12vh;}
+/* .time {height:12vh;} */
 .header > .seats, .header > .tricks{height:18vh;}
 
 .header button{
