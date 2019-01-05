@@ -247,10 +247,11 @@ class TableModel {
    */
   @action.bound
   dplay(seat, card) {
-    debugger; //seat === this.dummySeat 
+    //seat === this.dummySeat 
     const cards = this.state.cards;
     let ucard = null;//null 修改成{}
     for (let c of cards[Position.SNames.indexOf(seat)]) {
+      console.log(seat,this.dummySeat,c.active,ucard)
       if (seat !== this.dummySeat && c.active === ACT1.L) ucard = c;
       if (seat === this.dummySeat && c.card === card) ucard = c;
       if (ucard) break;
@@ -1009,7 +1010,7 @@ class TableModel {
 
   }
   
-  setTricks(ew=false,sn=false,contract=false){debugger
+  setTricks(ew=false,sn=false,contract=false){
     if(ew) this.state.winEW = ew;
     if(sn) this.state.winSN = sn;
     if(contract) this.state.contract = contract;

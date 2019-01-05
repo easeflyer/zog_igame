@@ -2,13 +2,13 @@
 <!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1"
-	 id="svg2" inkscape:version="0.48.0 r9654" sodipodi:docname="ace_of_diamonds.svg" inkscape:export-xdpi="215.44792" inkscape:export-ydpi="215.44792" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" inkscape:export-filename="/home/byron/art/cards/final/PNGs/ace_of_diamonds.png"
+	 id="svg2" inkscape:export-ydpi="215.44792" inkscape:export-xdpi="215.44792" sodipodi:docname="ace_of_diamonds.svg" inkscape:version="0.48.0 r9654" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" inkscape:export-filename="/home/byron/art/cards/final/PNGs/ace_of_diamonds.png"
 	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="167.086px"
 	 height="242.667px" viewBox="0 0 167.086 242.667" enable-background="new 0 0 167.086 242.667" xml:space="preserve">
-<filter  x="-0.13934441" y="-0.16242018" height="1.3248404" id="filter3834-6-0" width="1.2786888" inkscape:collect="always" color-interpolation-filters="sRGB">
-	<feGaussianBlur  id="feGaussianBlur3836-6-6" stdDeviation="9.5105772" inkscape:collect="always"></feGaussianBlur>
+<filter  id="filter3834-6-0" width="1.2786888" inkscape:collect="always" color-interpolation-filters="sRGB" height="1.3248404" x="-0.13934441" y="-0.16242018">
+	<feGaussianBlur  id="feGaussianBlur3836-6-6" inkscape:collect="always" stdDeviation="9.5105772"></feGaussianBlur>
 </filter>
-<sodipodi:namedview  id="namedview39" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-width="1680" inkscape:window-height="977" inkscape:window-x="0" inkscape:window-y="25" inkscape:current-layer="svg2" inkscape:cy="147.27218" bordercolor="#666666" showgrid="false" borderopacity="1" objecttolerance="10" inkscape:zoom="1.7208768" gridtolerance="10" guidetolerance="10" inkscape:cx="72.124594" pagecolor="#ffffff" inkscape:window-maximized="1">
+<sodipodi:namedview  id="namedview39" inkscape:current-layer="svg2" inkscape:window-y="25" inkscape:window-x="0" inkscape:window-height="977" inkscape:window-width="1680" inkscape:pageshadow="2" inkscape:pageopacity="0" inkscape:cy="147.27218" inkscape:cx="72.124594" guidetolerance="10" gridtolerance="10" inkscape:zoom="1.7208768" objecttolerance="10" borderopacity="1" showgrid="false" bordercolor="#666666" pagecolor="#ffffff" inkscape:window-maximized="1">
 	</sodipodi:namedview>
 <g id="Layer_x0020_1">
 	<path id="path5" fill="#FFFFFF" stroke="#000000" stroke-width="0.5" d="M166.836,235.548c0,3.777-3.086,6.869-6.871,6.869H7.111
@@ -30,12 +30,12 @@
 		</g>
 	</g>
 </g>
-<text transform="matrix(0.9802 0 0 1 4.5566 32.7695)" fill="#DF0000" font-family="'ArialMT'" font-size="38.0433">A</text>
-<text transform="matrix(-0.9802 0 0 -1 162.8545 211.9038)" fill="#DF0000" font-family="'ArialMT'" font-size="38.0433">A</text>
+<text transform="matrix(0.9802 0 0 1 4.5566 35.147)" fill="#DF0000" font-family="'ArialMT'" font-size="38.0433">A</text>
+<text transform="matrix(-0.9802 0 0 -1 162.8535 209.853)" fill="#DF0000" font-family="'ArialMT'" font-size="38.0433">A</text>
 <g id="g3011" transform="matrix(0.17001436,0,0,0.17001436,19.517107,29.794341)">
 	<g id="layer1-2" transform="matrix(35.005102,0,0,35.005102,369.18369,512.27289)">
 		
-			<radialGradient id="dl_1_" cx="-61.5043" cy="54.4198" r="8" gradientTransform="matrix(-39.7546 0.1952 -0.322 -65.5359 -2427.5542 3574.21)" gradientUnits="userSpaceOnUse">
+			<radialGradient id="dl_1_" cx="-61.6064" cy="58.3556" r="8" gradientTransform="matrix(-236.5943 1.1617 1.9163 390.0284 -14687.5361 -22693.0293)" gradientUnits="userSpaceOnUse">
 			<stop  offset="0" style="stop-color:#DF0000"/>
 			<stop  offset="1" style="stop-color:#DF0000;stop-opacity:0.6412"/>
 		</radialGradient>
@@ -45,22 +45,22 @@
 	</g>
 	<g id="path3762-6" inkscape:connector-curvature="0" sodipodi:nodetypes="cscsc" filter="url(#filter3834-6-0)">
 		
-			<radialGradient id="SVGID_1_" cx="187.0565" cy="-121406.4375" r="81.9027" gradientTransform="matrix(-0.0441 0.0375 -0.0215 -0.0269 -2308.7163 -2846.9836)" gradientUnits="userSpaceOnUse">
+			<radialGradient id="SVGID_1_" cx="244.6575" cy="380.8343" r="19.6942" gradientTransform="matrix(-0.0075 0.0064 0.0037 0.0046 -3586.334 -4610.4863)" gradientUnits="userSpaceOnUse">
 			<stop  offset="0" style="stop-color:#FFFFFF;stop-opacity:0.4351"/>
 			<stop  offset="1" style="stop-color:#000000;stop-opacity:0"/>
 		</radialGradient>
-		<path fill="url(#SVGID_1_)" d="M340.16,259.587c0,0,35.119,142.164-3.343,191.839c-43.235,55.838-202.327,50.516-202.327,50.516
+		<path fill="url(#SVGID_1_)" d="M340.16,259.587c0,0,35.119,142.164-3.343,191.839c-43.235,55.84-202.327,50.519-202.327,50.519
 			s98.728-54.637,134.602-97.395C303.396,363.663,340.16,259.587,340.16,259.587z"/>
 	</g>
 </g>
 <g id="layer1-2-6" transform="matrix(1.4769065,0,0,1.4769065,16.968095,44.236162)">
-	<path id="dl-6" inkscape:connector-curvature="0" sodipodi:nodetypes="ccccccccc" fill="#DF0000" d="M2.934-2.427
+	<path id="dl-6" inkscape:connector-curvature="0" sodipodi:nodetypes="ccccccccc" fill="#DF0000" d="M2.934,2.058
 		c-1.881-1.939-2.882-3.91-2.882-3.91s-1.001,1.971-2.882,3.91c-1.883,1.939-4.227,3.2-4.227,3.2s2.345,1.26,4.227,3.2
-		c1.881,1.938,2.882,3.909,2.882,3.909s1-1.971,2.882-3.909c1.883-1.94,4.228-3.2,4.228-3.2S4.817-0.488,2.934-2.427z"/>
+		c1.881,1.938,2.882,3.909,2.882,3.909s1-1.971,2.882-3.909c1.883-1.94,4.228-3.2,4.228-3.2S4.817,3.997,2.934,2.058z"/>
 </g>
 <g id="layer1-2-6-4" transform="matrix(1.4769065,0,0,1.4769065,150.62089,198.50346)">
-	<path id="dl-6-9" inkscape:connector-curvature="0" sodipodi:nodetypes="ccccccccc" fill="#DF0000" d="M2.882-3.199
-		C1-5.139,0-7.109,0-7.109s-1.001,1.97-2.883,3.91C-4.764-1.261-7.11,0-7.11,0s2.345,1.26,4.227,3.2C-1.001,5.139,0,7.109,0,7.109
-		S1,5.139,2.882,3.2C4.765,1.26,7.109,0,7.109,0S4.765-1.261,2.882-3.199z"/>
+	<path id="dl-6-9" inkscape:connector-curvature="0" sodipodi:nodetypes="ccccccccc" fill="#DF0000" d="M2.882-6.926
+		C1-8.866,0-10.836,0-10.836s-1.001,1.97-2.883,3.91C-4.764-4.987-7.11-3.727-7.11-3.727s2.345,1.26,4.227,3.2
+		C-1.001,1.412,0,3.383,0,3.383s1-1.97,2.882-3.909c1.883-1.94,4.227-3.2,4.227-3.2S4.765-4.987,2.882-6.926z"/>
 </g>
 </svg>
