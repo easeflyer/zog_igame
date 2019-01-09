@@ -15,6 +15,12 @@ const Output = {
     if(calling==='PASS'){
       calling = 'Pass'
     }
+    if(calling==='X'){
+      calling = 'x'
+    }
+    if(calling==='XX'){
+      calling = 'xx'
+    }
     Process.bid(tableStore.myseat,calling)
   },
   play:(data) => {

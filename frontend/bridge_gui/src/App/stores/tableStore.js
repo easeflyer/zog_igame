@@ -40,7 +40,7 @@ class TableModel {
   //deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
   deals = 'AT62.A6.JT6.QT85 XXX.XX.XXXX.XXXX QJ4.Q4.A9743.A43 XXX.XX.XXXX.XXXX';
   //@observable uiState = {} // 未启用。
-  @observable bidState = {showBid:false,showBlock:true};
+  @observable bidState = {showBid:false,showBlock:false};
   @observable state = {
     cards: null, // 考虑这里不用 cards 只用必要的数字
     scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
@@ -361,14 +361,13 @@ class TableModel {
    * 只有 点击打出去的牌 才会执行 Out.play();
    */
   @action.bound
-  _play = (item) => {
+  _play = (item) => { 
     // if(item.active != 3) return; // 只有突出的牌能打出去。
-    //if (this.board[0].length === 4) return false;
-    if (this.board[0].length === 4) setTimeout(this._play, 1100)
-    item.active = ACT2;    // 已经打出去的牌
-    //if (this.board[0].length === 4) {setTimeout(()=>{this._play(item)},1100);return;};
+    // if (this.board[0].length === 4) return false;
+        // 已经打出去的牌
     if (this.board[0].length === 4) {setTimeout(this._play.bind(this,item),1100);return;};
-    this.board[0].push(item);
+    // item.active = ACT2;debugger
+    // this.board[0].push(item);
     //console.log(this.board)
     // item['animation']['left'] = this.seat[item.seat][1].x;
     // item['animation']['top'] = this.seat[item.seat][1].y;
@@ -378,7 +377,7 @@ class TableModel {
     // if (this.board[0].length === 4) setTimeout(this.clearBoard, 1000);
     this._setCardACT2(item,true)
 
-    //this.resetTable(); // 牌恢复为不可点击状态 ACT1.L
+    this.resetTable(); // 牌恢复为不可点击状态 ACT1.L
 
     const seatIndex = Position.SNames.indexOf(item.seat);
     //const seatIndex = Position.SNames.indexOf(item.seat);

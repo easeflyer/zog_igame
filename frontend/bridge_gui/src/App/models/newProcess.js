@@ -263,17 +263,18 @@ var user=null;
         tableStore.dealCards();
         Sound.play('deal');
         this.timing(seats[bd2.player],999,()=>{})
-        if('EW'.indexOf(bd2.player)!=-1){
-          window.__Timer.start('ew');
-        }else{
+        if('SW'.indexOf(seats[bd2.player])!=-1){
           window.__Timer.start('sn');
+        }else{
+          window.__Timer.start('ew');
         }
+        
         tableStore.state.calldata.first = dealer;
         if(state=='bidding'){
          
           var curCall = ''
 
-          tableStore.toggleBid();
+          
           console.log(typeof JSON.parse(bd2.auction))
           call = JSON.parse(bd2.auction); 
           console.log(Two(call))
@@ -285,6 +286,12 @@ var user=null;
             }
           }
           tableStore.curCall = curCall;
+          tableStore.toggleBid();
+          if(bd2.player==tableStore.myseat){
+            tableStore.bidState.showBlock = true
+          }else{
+            tableStore.bidState.showBlock = false
+          }
         }
         tableStore.state.claim.seat= declarer;
         if(state=='playing' || state=='openlead'){
@@ -351,10 +358,14 @@ var user=null;
             }
           }
         }
-        tableStore.setTricks(bd2.ew_win,bd2.ns_win,bd2.contract )
+        if("EW".indexOf(tableStore.myseat)!=-1){
+          tableStore.setTricks(bd2.ew_win,bd2.ns_win,bd2.contract )
+        }else{
+          tableStore.setTricks(bd2.ns_win,bd2.ew_win,bd2.contract )
+        }
+        
         }
         if(state=='claiming' || state=='claiming.RHO' || state=='claiming.LHO'){
-          tableStore.setTricks(bd2.ew_win,bd2.ns_win,bd2.contract )
           var cur = getCurOrLast(seats,JSON.parse(current_trick));
             var last = getCurOrLast(seats,JSON.parse(last_trick));
             let allData ={
@@ -375,7 +386,11 @@ var user=null;
               }
             } ;
            tableStore.restore(allData);
-           tableStore.setTricks(bd2.ew_win,bd2.ns_win,bd2.contract )
+            if("EW".indexOf(tableStore.myseat)!=-1){
+              tableStore.setTricks(bd2.ew_win,bd2.ns_win,bd2.contract )
+            }else{
+              tableStore.setTricks(bd2.ns_win,bd2.ew_win,bd2.contract )
+            }
            var suit= null;
          var current = JSON.parse(current_trick)
           removeNull(current)
@@ -424,13 +439,17 @@ var user=null;
       dealBid = (info)=>{
         if(info.player){
           this.timing(seats[info.player],999,()=>{});
-          if('EW'.indexOf(info.player)!=-1){
-            window.__Timer.start('ew');
-          }else{
+          if('SN'.indexOf(seats[info.player])!=-1){
             window.__Timer.start('sn');
+          }else{
+            window.__Timer.start('ew');
+          }
+          if(info.player==tableStore.myseat){
+            tableStore.bidState.showBlock = true
+          }else{
+            tableStore.bidState.showBlock = false
           }
         }
-       
         var call = null;
         var curCall = null;
         boardStore.pbn.auction.call = JSON.parse(info.auction);
@@ -447,7 +466,8 @@ var user=null;
           if(info.state=='openlead'){
             let cards =null;
             tableStore.state.scene = 2;
-            tableStore.toggleBid()
+            tableStore.bidState.showBid = false
+            tableStore.bidState.showBlock = false
             tableStore.state.declarer = info.declarer;
             if(info.player==tableStore.myseat){
               cards = tableStore.selectCards("S", 'SHDC',[ACT1.L]);
@@ -497,13 +517,19 @@ var user=null;
             tableStore.dplay(player,args[1]);
           }
         }
-        tableStore.setTricks(info.ew_win,info.ns_win,info.contract )
+        if('EW'.indexOf(tableStore.myseat) !=-1){
+          tableStore.setTricks(info.ew_win,info.ns_win,info.contract )
+        }else{
+          tableStore.setTricks(info.ns_win,info.ew_win,info.contract )
+        }
+
+        
        if(info.player){
         this.timing(seats[info.player],999,()=>{})
-          if('EW'.indexOf(info.player)!=-1){
-            window.__Timer.start('ew');
-          }else{
+          if('SN'.indexOf(seats[info.player])!=-1){
             window.__Timer.start('sn');
+          }else{
+            window.__Timer.start('ew');
           }
        }
         
@@ -515,17 +541,17 @@ var user=null;
         result=info.declarer +' ' + info.contract;
         if('EW'.indexOf(info.declarer)!=-1){
             var num =  info.ew_win - info.contract[0] -6;
-            if(num>0 || num==0){
+            if(info.ew_point){
               result = result + ' ' + num +' ' + info.ew_point;
             }else{
-              result = result + ' ' + num +' -'+ info.ew_point
+              result = result + ' ' + num +' -'+ info.ns_point
             }
         }else{
           var num =  info.ns_win - info.contract[0] -6;
-          if(num>0 || num==0){
+          if(info.ns_point){
             result = result + ' ' + num +' ' + info.ns_point;
           }else{
-            result = result + ' ' + num +' -'+ info.ns_point
+            result = result + ' ' + num +' -'+ info.ew_point
           }
         }
        
