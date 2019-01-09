@@ -3,6 +3,21 @@ import React from 'react';
 import style from './Timer.module.css'
 console.log(style.timername)
 
+Date.prototype.Format = function (fmt) { //author: meizz 
+    var o = {
+        "M+": this.getMonth() + 1, //月份 
+        "d+": this.getDate(), //日 
+        "h+": this.getHours(), //小时 
+        "m+": this.getMinutes(), //分 
+        "s+": this.getSeconds(), //秒 
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+        "S": this.getMilliseconds() //毫秒 
+    };
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+}
 export default class Timer extends React.Component {
     seats = '';
     state = {
@@ -64,7 +79,8 @@ export default class Timer extends React.Component {
     }
     getTime(sec){
         const date = new Date(sec * 1000); // 格式化成 居中美观。
-        return date.getMinutes() + ':' + date.getSeconds();
+        //return date.getMinutes() + ':' + date.getSeconds();
+        return date.Format("mm:ss");
     }
     render() {
         const fmt = (n) => n < 10 ? '0' + n : '' + n;
@@ -77,8 +93,8 @@ export default class Timer extends React.Component {
                     <div>{fmt(this.state.s)}</div>
                 </div>
                 <div className='timer1'>
-                东西&nbsp;{this.getTime(this.state.ew)}<br />
-                南北&nbsp;{this.getTime(this.state.sn)}<br />
+                对手：{this.getTime(this.state.ew)}<br />
+                我方：{this.getTime(this.state.sn)}<br />
                 </div>
             </div>
         );

@@ -17,7 +17,7 @@
     border-bottom: 1px solid #666699;
 }
 .bidpanel td {width:7vh;height:4vh}
-.bidpanel button{height:5vh;width:15vh;margin:1vh;float:right}
+.bidpanel button{height:5vh;width:9vh;margin:1vh;float:right}
 .bidblock,.bidcard{
     position: relative;
     float: left;
@@ -26,7 +26,8 @@
     box-shadow: 2px 2px 1px #888888;
 
 }
-.bidblock{    height:5vh;width: 19%;}
+/* .bidblock{    height:5vh;width: 19%;} */
+.bidblock{    height:5vh;width: 8.5vh;}
 .bidcard{    height:5vh;}
 .bidblock > div{
     width: 100%;
@@ -86,7 +87,7 @@
 .calling{
     position: relative;
     height:5vh;
-    width:22vh;
+    width:18vh;
     margin:1vh;
     float:right;
     font-size:3vh;
