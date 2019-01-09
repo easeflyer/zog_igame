@@ -59,7 +59,8 @@ class TableModel {
   }
   dummySeat = "W"; // 固定界面方位，非逻辑方位
   dealer ='E';  //固定方位
-  logicDealer=''//逻辑方位
+  logicDealer='';//逻辑方位
+  sequence = ''; //表示当前是第几副牌
   @observable curCall = '';  // 当前叫品，用于bidpanel 显示。
   // boardState = {
   //   boardId: null,

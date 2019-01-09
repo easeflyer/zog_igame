@@ -241,11 +241,12 @@ var user=null;
         const bd2 = bd.look(fields.doing_table_ids.board_ids)
         console.log(bd2)  //得到当前游戏的全部内容
         
-        const {state,dealer,auction,player,declarer,hands,current_trick,last_trick,tricks,contract,claim_result,vulnerable} = bd2;
+        const {state,dealer,auction,player,declarer,hands,current_trick,last_trick,tricks,contract,claim_result,vulnerable,sequence} = bd2;
         TRICKS = tricks;
         tableStore.dummySeat = seats[Dummy[declarer]];
         tableStore.dealer=seats[dealer];
         tableStore.logicDealer=dealer;
+        tableStore.sequence = sequence;
         tableStore.state.declarer=declarer;
         if(vulnerable == 'NS'){
           tableStore.state.vulnerable='SN';

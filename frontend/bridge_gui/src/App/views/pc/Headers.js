@@ -34,7 +34,7 @@ class Seats extends Component{
                 <div className={'s2 '+vuls['EW']}>W-Dealer</div>
                 <div className={'s3 '+vuls['EW']}>E-D</div>
                 <div className={'s4 '+vuls['SN']}>S-D</div> */}
-            
+                <div className ='sequence'>第{this.props.sequence}副</div>
                 <div className={'s1 '+vuls['SN']}>{dealer['N']}</div>
                 <div className={'s2 '+vuls['EW']}>{dealer['W']}</div>
                 <div className={'s3 '+vuls['EW']}>{dealer['E']}</div>
