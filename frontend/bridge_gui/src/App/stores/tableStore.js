@@ -55,7 +55,7 @@ class TableModel {
     winEW: '',
     winSN: '',
     vulnerable:'EW',//局况
-    declarer:'',//逻辑方位
+    declarer:'',//逻辑方位 庄家
   }
   dummySeat = "W"; // 固定界面方位，非逻辑方位
   dealer ='E';  //固定方位
@@ -184,7 +184,7 @@ class TableModel {
     this.state.cards = cards;
   }
   @action.bound
-  toggleBid(showBlock=false) {
+  toggleBid(showBlock=true) {
     this.hideLastTrick();
     //this.showBid = !this.showBid;
     this.bidState.showBid = !this.bidState.showBid;

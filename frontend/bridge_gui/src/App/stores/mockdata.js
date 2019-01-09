@@ -70,7 +70,7 @@ export const restoreData = {
     winEW: 2,
     winSN: 3,
     dummySeat: 'E',
-    curCall: '3H',
+    curCall: '3NT',
     contract: '3NT X',
     user: {
         E: { ready: 1, name: '张三', face: '/imgs/face1.png', rank: '大师', seat: 'E' },
