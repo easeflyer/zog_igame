@@ -4,7 +4,7 @@
  *        或者根据新睿桥牌 改造叫牌过程。
  */
 
-import React, { Component } from 'react';
+import React, { Component,Fragment } from 'react';
 import Motion from '../../libs/Motion'
 import './BidPanel.css'
 import { inject, observer } from 'mobx-react';
@@ -161,6 +161,7 @@ class BidPanel extends Component {
    */
   initPanel() {
     const curCall = this.props.tableStore.curCall;
+    //const showBlock = this.props.tableStore.bidState.showBlock;
     const bidblocks = this.state.bidblocks;
     const suits = ['NT', 'S', 'H', 'D', 'C'];
     if (curCall) {
@@ -224,20 +225,18 @@ class BidPanel extends Component {
     this.initPanel();  //zsx修改：解决根据叫品，隐藏部分叫牌
     //console.log('ffff:' + this.width)
     const bidblocks = this.state.bidblocks.map((e1, i1) => e1.map((e2, i2) => {
+    
       //if (e2.active == 0) animation['brightness'] = 0.6;
 
       return <BidBlock key={e2.name} name={e2.name}
         active={e2.active}
         onclick={this.handleCall.bind(this, { row: i1, col: i2 })} />
     }))
+    
     // 叫牌记录。
     const rows = this.getCallRows();
-    return (
-      <div id='bidpanel' className='bidpanel' ref={this.ref}>
-        <div>
-          {rows}
-        </div>
-        {bidblocks}
+    const showBlock = this.props.tableStore.bidState.showBlock;
+    const bidCards = <Fragment>
         <BidCard name='PASS' active={this.state.bidcards[0].active}
           onclick={this.handleCall.bind(this, { name: 'PASS' })}
         />
@@ -250,10 +249,22 @@ class BidPanel extends Component {
         <BidCard name='ALERT' active={this.state.bidcards[1].active}
           onclick={this.handleCall.bind(this, { name: 'ALERT' })}
         />
+    </Fragment>
 
+    const opPad = <Fragment>
+        {bidblocks}
+        {bidCards}
         <button onClick={this.handleConfirm}>确认</button>
         <button onClick={this.handleReset}>重置</button>
         <div className='calling'>{this.state.calling}</div>
+    </Fragment>
+
+    return (
+      <div id='bidpanel' className='bidpanel' ref={this.ref}>
+        <div>
+          {rows}
+        </div>
+        {showBlock ? opPad : null}
       </div>
     );
   }
@@ -309,7 +320,8 @@ class BidBlock extends Component {
 class BidCard extends Component {
   render() {
     const bgcolor = { PASS: '#88FF88', X: '#FF8888', XX: '#FF3333', ALERT: '#8888FF' };
-    const width = { PASS: '23.3vh', X: '11.4vh', XX: '11.4vh', ALERT: '11.4vh' };
+    // const width = { PASS: '23.3vh', X: '11.4vh', XX: '11.4vh', ALERT: '11.4vh' };
+    const width = { PASS: '17.35vh', X: '8.5vh', XX: '8.5vh', ALERT: '8.5vh' };
     const style = {
       backgroundColor: `${bgcolor[this.props.name]}`,
       width: `${width[this.props.name]}`,

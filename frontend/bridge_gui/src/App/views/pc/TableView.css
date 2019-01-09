@@ -45,10 +45,10 @@ button.disable{
 }
 .panel{
     position: absolute;
-    z-index:2;
-    top: 10vh;
-    left: 40vh;
-    width: 60vh;
+    z-index:1000;
+    top: 25vh;
+    left: 47vh;
+    width:45.2vh;
     /* height: 60vh; */
     /* filter:alpha(opacity=50);
     -moz-opacity:0.5;

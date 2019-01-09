@@ -40,7 +40,7 @@ class TableModel {
   //deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
   deals = 'AT62.A6.JT6.QT85 XXX.XX.XXXX.XXXX QJ4.Q4.A9743.A43 XXX.XX.XXXX.XXXX';
   //@observable uiState = {} // 未启用。
-  @observable showBid = false;
+  @observable bidState = {showBid:false,showBlock:true};
   @observable state = {
     cards: null, // 考虑这里不用 cards 只用必要的数字
     scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
@@ -54,7 +54,7 @@ class TableModel {
     contract: '', // 暂时没用
     winEW: '',
     winSN: '',
-    vulnerable:'EW',//局况
+    vulnerable: 'EW',//局况
   }
   dummySeat = "W"; // 固定界面方位，非逻辑方位
   @observable curCall = '';  // 当前叫品，用于bidpanel 显示。
@@ -127,13 +127,13 @@ class TableModel {
    * 初始化 state 
    * 每局开始的时候调用。给state 赋初值。
    */
-  initState(){
-    this.board=[[],[]];
+  initState() {
+    this.board = [[], []];
     this.seat = {};
     this.state.cards = null;
     this.state.scene = 0;
-    this.state.calldata =  { first: '', call: [], note: null };
-    this.state.claim = {seat:'',msg:null};
+    this.state.calldata = { first: '', call: [], note: null };
+    this.state.claim = { seat: '', msg: null };
     this.state.contract = '';
     this.state.winEW = '';
     this.state.winSN = '';
@@ -182,9 +182,11 @@ class TableModel {
     this.state.cards = cards;
   }
   @action.bound
-  toggleBid() {
-      this.hideLastTrick();
-      this.showBid = !this.showBid;
+  toggleBid(showBlock=false) {
+    this.hideLastTrick();
+    //this.showBid = !this.showBid;
+    this.bidState.showBid = !this.bidState.showBid;
+    this.bidState.showBlock = showBlock;
   }
   /**
    * 发牌
@@ -270,22 +272,22 @@ class TableModel {
     const cards = this.state.cards;
     let ucard = null;//null 修改成{}
 
-    if (seat === this.dummySeat){
+    if (seat === this.dummySeat) {
       for (let c of cards[Position.SNames.indexOf(seat)])
-        if(c.card === card) {
-          ucard = c;break;
+        if (c.card === card) {
+          ucard = c; break;
         }
-    }else{
+    } else {
       // 非明手摊牌时 也是明手
-      for (let c of cards[Position.SNames.indexOf(seat)]){
-        if(c.card === card) {
+      for (let c of cards[Position.SNames.indexOf(seat)]) {
+        if (c.card === card) {
           ucard = c;
           this._play(ucard);
           return;
         }
       }
-      for (let c of cards[Position.SNames.indexOf(seat)]){
-        if( c.active === ACT1.L) {
+      for (let c of cards[Position.SNames.indexOf(seat)]) {
+        if (c.active === ACT1.L) {
           ucard = c;
           ucard.card = card;
           this._play(ucard);
@@ -356,24 +358,27 @@ class TableModel {
   @action.bound
   _play = (item) => {
     // if(item.active != 3) return; // 只有突出的牌能打出去。
+    //if (this.board[0].length === 4) return false;
+    if (this.board[0].length === 4) setTimeout(this._play, 1100)
     item.active = ACT2;    // 已经打出去的牌
-    if (this.board[0].length === 4) return false;
-    this.board[0].push(item);
     //console.log(this.board)
-    item['animation']['left'] = this.seat[item.seat][1].x;
-    item['animation']['top'] = this.seat[item.seat][1].y;
-    item['animation']['delay'] = 0;
-    item['zIndex'] = this.zindex++;
+    // item['animation']['left'] = this.seat[item.seat][1].x;
+    // item['animation']['top'] = this.seat[item.seat][1].y;
+    // item['animation']['delay'] = 0;
+    // item['zIndex'] = this.zindex++;
+    // this.board[0].push(item);
+    // if (this.board[0].length === 4) setTimeout(this.clearBoard, 1000);
+    this._setCardACT2(item,true)
 
-    this.resetTable(); // 牌恢复为不可点击状态 ACT1.L
+    //this.resetTable(); // 牌恢复为不可点击状态 ACT1.L
 
     const seatIndex = Position.SNames.indexOf(item.seat);
     //const seatIndex = Position.SNames.indexOf(item.seat);
     let cards = this.state.cards[seatIndex];
     cards = this.resetCards(cards, item.seat, true);
     // if (window.event != undefined)
-    {Out.play(item)} ;
-    if (this.board[0].length === 4) setTimeout(this.clearBoard, 1000);
+    { Out.play(item) };
+
   }
 
   /**
@@ -617,17 +622,24 @@ class TableModel {
   /**
    * 把牌设置为 打在桌面上。
    * @param {*} card 
+   * @param {boolean} isAnim true 有动画普通打牌 false 无动画断线重连
+   * 
    */
-  _setCardACT2(card) {
+  _setCardACT2(card, isAnim = false) {
     card.active = ACT2;    // 已经打出去的牌
-    card['position']['x'] = this.seat[card.seat][1].x;
     card['animation']['left'] = this.seat[card.seat][1].x;
-    card['position']['y'] = this.seat[card.seat][1].y;
     card['animation']['top'] = this.seat[card.seat][1].y;
     card['animation']['delay'] = 0;
     card['zIndex'] = this.zindex++;
     this.board[0].push(card);
-    if (this.board[0].length === 4) this.clearBoard();
+
+    if (isAnim) {
+      if (this.board[0].length === 4) setTimeout(this.clearBoard, 1000);
+    } else {
+      card['position']['x'] = this.seat[card.seat][1].x;
+      card['position']['y'] = this.seat[card.seat][1].y;
+      if (this.board[0].length === 4) this.clearBoard();
+    }
   }
 
 
@@ -732,8 +744,8 @@ class TableModel {
     seats.forEach((seat) => {
       const seatIndex = new Position(seat).in;
       cards[seatIndex].forEach((card, i) => {
-        if (  suit.indexOf(card.card.slice(0, 1)) !== -1 &&
-              active.indexOf(card.active) != -1 ) destCards.push(card);
+        if (suit.indexOf(card.card.slice(0, 1)) !== -1 &&
+          active.indexOf(card.active) != -1) destCards.push(card);
       });
     });
     return destCards;
@@ -903,7 +915,7 @@ class TableModel {
   @action.bound
   claim(seat, claimMsg) {
     //this._claim.seat = this.myseat;
-   // this.state.claim.seat = seat;
+    // this.state.claim.seat = seat;
     this.state.claim.msg = claimMsg;
     this.state.scene = 3;
   }
@@ -914,7 +926,7 @@ class TableModel {
     // const p = new Promise(this.fetchNumber);
     // const number =  await p;  
     //const number = 6;
-    const cards = this.selectCards('S','SHDC',[ACT1.D,ACT1.L,ACT1.LC,ACT1.LCO])
+    const cards = this.selectCards('S', 'SHDC', [ACT1.D, ACT1.L, ACT1.LC, ACT1.LCO])
     const number = cards.length;
     this.state.unPlayCardNumber = number;
     return number;
@@ -1016,26 +1028,26 @@ class TableModel {
   //   return this.state.cards;
   // }
   @action.bound
-  toggleLastTrick(){
+  toggleLastTrick() {
     this.showBid = false;
     this._setShowLastTrick(!this.state.lastTrick);
   }
   @action.bound
-  showLastTrick(){
+  showLastTrick() {
     this._setShowLastTrick(true);
   }
   @action.bound
-  hideLastTrick(){
+  hideLastTrick() {
     this._setShowLastTrick(false);
   }
   @action
-  _setShowLastTrick(isShow){
+  _setShowLastTrick(isShow) {
     // 在模型里 应该先判断当前 trick 编号。然后决定是否能看lasttrick
     //debugger;
     const lt = this.board[1];
     window.___board1 = toJS(this.board);
     let card = null;
-    if(lt) lt.forEach((item, index) => {
+    if (lt) lt.forEach((item, index) => {
       //card = this.cardIndexOf(item.index)
       //card.size = card.size * 0.8
       item['animation']['left'] = (isShow == true) ?
@@ -1087,11 +1099,12 @@ class TableModel {
     });
 
   }
-  
-  setTricks(ew=false,sn=false,contract=false){debugger
-    if(ew) this.state.winEW = ew;
-    if(sn) this.state.winSN = sn;
-    if(contract) this.state.contract = contract;
+
+  setTricks(ew = false, sn = false, contract = false) {
+    debugger
+    if (ew) this.state.winEW = ew;
+    if (sn) this.state.winSN = sn;
+    if (contract) this.state.contract = contract;
   }
 
   // @action.bound

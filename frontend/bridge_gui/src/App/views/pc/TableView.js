@@ -74,7 +74,7 @@ class TableView extends React.Component {
     }
     return (
       <div>
-        {(tableStore.showBid) ?
+        {(tableStore.bidState.showBid) ?
           <div className='panel'>
             <BidPanel />
           </div> : null
@@ -86,7 +86,7 @@ class TableView extends React.Component {
             <div onClick={table.lastTrick.bind(table)} className='re tricks'><Tricks data={tricks} /></div>
             <div className='re time'>
               <Timer
-                name='剩余时间1'
+                name='剩余时间'
                 handle={table.timer}
                 time='1:2:5'
                 callback={() => console.log('计时结束')} />
