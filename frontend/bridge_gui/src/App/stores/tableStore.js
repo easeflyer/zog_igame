@@ -40,7 +40,7 @@ class TableModel {
   //deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
   deals = 'AT62.A6.JT6.QT85 XXX.XX.XXXX.XXXX QJ4.Q4.A9743.A43 XXX.XX.XXXX.XXXX';
   //@observable uiState = {} // 未启用。
-  @observable bidState = {showBid:false,showBlock:true};
+  @observable bidState = {showBid:false,showBlock:false};
   @observable state = {
     cards: null, // 考虑这里不用 cards 只用必要的数字
     scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
@@ -54,9 +54,12 @@ class TableModel {
     contract: '', // 暂时没用
     winEW: '',
     winSN: '',
-    vulnerable: 'EW',//局况
+    vulnerable:'EW',//局况
+    declarer:'',//逻辑方位 庄家
   }
   dummySeat = "W"; // 固定界面方位，非逻辑方位
+  dealer ='E';  //固定方位
+  logicDealer=''//逻辑方位
   @observable curCall = '';  // 当前叫品，用于bidpanel 显示。
   // boardState = {
   //   boardId: null,
@@ -127,10 +130,9 @@ class TableModel {
    * 初始化 state 
    * 每局开始的时候调用。给state 赋初值。
    */
-  initState() {
-    this.board = [[], []];
-    this.seat = {};
-    this.state.cards = null;
+  initState(){
+    this.board=[[],[]];
+    // this.state.cards = [];
     this.state.scene = 0;
     this.state.calldata = { first: '', call: [], note: null };
     this.state.claim = { seat: '', msg: null };
@@ -182,7 +184,7 @@ class TableModel {
     this.state.cards = cards;
   }
   @action.bound
-  toggleBid(showBlock=false) {
+  toggleBid(showBlock=true) {
     this.hideLastTrick();
     //this.showBid = !this.showBid;
     this.bidState.showBid = !this.bidState.showBid;
@@ -268,16 +270,19 @@ class TableModel {
    */
   @action.bound
   dplay(seat, card) {
-    debugger; //seat === this.dummySeat 
+    //seat === this.dummySeat 
     const cards = this.state.cards;
     let ucard = null;//null 修改成{}
 
-    if (seat === this.dummySeat) {
-      for (let c of cards[Position.SNames.indexOf(seat)])
-        if (c.card === card) {
-          ucard = c; break;
+    if (seat === this.dummySeat){
+      for (let c of cards[Position.SNames.indexOf(seat)]){
+        if(c.card === card) {
+          ucard = c;
+          this._play(ucard);
+          break;
         }
-    } else {
+      }
+    }else{
       // 非明手摊牌时 也是明手
       for (let c of cards[Position.SNames.indexOf(seat)]) {
         if (c.card === card) {
@@ -356,11 +361,13 @@ class TableModel {
    * 只有 点击打出去的牌 才会执行 Out.play();
    */
   @action.bound
-  _play = (item) => {
+  _play = (item) => { 
     // if(item.active != 3) return; // 只有突出的牌能打出去。
-    //if (this.board[0].length === 4) return false;
-    if (this.board[0].length === 4) setTimeout(this._play.bind(this,item), 1100)
-    //item.active = ACT2;    // 已经打出去的牌
+    // if (this.board[0].length === 4) return false;
+        // 已经打出去的牌
+    if (this.board[0].length === 4) {setTimeout(this._play.bind(this,item),1100);return;};
+    // item.active = ACT2;debugger
+    // this.board[0].push(item);
     //console.log(this.board)
     // item['animation']['left'] = this.seat[item.seat][1].x;
     // item['animation']['top'] = this.seat[item.seat][1].y;
@@ -370,7 +377,7 @@ class TableModel {
     // if (this.board[0].length === 4) setTimeout(this.clearBoard, 1000);
     this._setCardACT2(item,true)
 
-    //this.resetTable(); // 牌恢复为不可点击状态 ACT1.L
+    this.resetTable(); // 牌恢复为不可点击状态 ACT1.L
 
     const seatIndex = Position.SNames.indexOf(item.seat);
     //const seatIndex = Position.SNames.indexOf(item.seat);
@@ -1076,14 +1083,14 @@ class TableModel {
    * @param {*} dcards 明手的牌数组  ['SQ','SJ' ....
    */
   @action.bound
-  openDummy(seat, dcards) {
+  openDummy(seat, dcards) { debugger
     // await 获得数据 然后更新 state
     if (!this.dummySeat) this.dummySeat = seat;
     const dummySeat = seat;
     let index = 0;
     //const dCards = Models.openDummy().cards.split('.');
-    let cards = this.state.cards[Position.SNames.indexOf(dummySeat)];
-
+    // let cards = this.state.cards[Position.SNames.indexOf(dummySeat)];
+    let cards = this.selectCards(dummySeat, 'SHDC',[ACT1.L]);
     // console.log('seatnumber:', dCards);
     // dCards.forEach((item1, index1) => {
     //   item1.split('').forEach((item2, index2) => {
@@ -1099,12 +1106,11 @@ class TableModel {
     });
 
   }
-
-  setTricks(ew = false, sn = false, contract = false) {
-    debugger
-    if (ew) this.state.winEW = ew;
-    if (sn) this.state.winSN = sn;
-    if (contract) this.state.contract = contract;
+  
+  setTricks(ew=false,sn=false,contract=false){
+    if(ew) this.state.winEW = ew;
+    if(sn) this.state.winSN = sn;
+    if(contract) this.state.contract = contract;
   }
 
   // @action.bound

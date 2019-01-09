@@ -14,6 +14,7 @@ const arr1 = [['east_id','E'],['north_id','N'],['south_id','S'],['west_id','W']]
 const dirMap = new Map(arr);
 const dirMap1 = new Map(arr1);
 //每一个玩家在桌子上的方位
+
 let TRICKS = '';
 const seatMap = {
     "E":{N:'E',E:'S',S:'W',W:'N'},
@@ -174,7 +175,7 @@ var user=null;
         console.log(bd)
     
         // 读取到的牌桌数据
-       
+        tableStore.initState()
        this.recover()
        
       }
@@ -233,18 +234,25 @@ var user=null;
       }
 
       recover =()=>{
-        const bd2 = bd.look(fields.doing_table_ids.board_ids)
-        console.log(bd2)  //得到当前游戏的全部内容
-        if(!bd2){
+        if(!bd){
           alert('游戏已经结束');
           return;
         }
+        const bd2 = bd.look(fields.doing_table_ids.board_ids)
+        console.log(bd2)  //得到当前游戏的全部内容
+        
         const {state,dealer,auction,player,declarer,hands,current_trick,last_trick,tricks,contract,claim_result,vulnerable} = bd2;
         TRICKS = tricks;
+        tableStore.dummySeat = seats[Dummy[declarer]];
+        tableStore.dealer=seats[dealer];
+        tableStore.logicDealer=dealer;
+        tableStore.state.declarer=declarer;
         if(vulnerable == 'NS'){
-          tableStore.vulnerable='SN';
+          tableStore.state.vulnerable='SN';
+        }else if(vulnerable == 'BO'){
+          tableStore.state.vulnerable = 'BOTH';
         }else{
-          tableStore.vulnerable = vulnerable;
+          tableStore.state.vulnerable = vulnerable;
         }
         var deals =cardString(tableStore.myseat,bd2.hands) ;
         var call=null;
@@ -254,13 +262,19 @@ var user=null;
         tableStore.initCards(deals);
         tableStore.dealCards();
         Sound.play('deal');
-        this.timing(seats[bd2.player],10,()=>{})
+        this.timing(seats[bd2.player],999,()=>{})
+        if('SW'.indexOf(seats[bd2.player])!=-1){
+          window.__Timer.start('sn');
+        }else{
+          window.__Timer.start('ew');
+        }
+        
         tableStore.state.calldata.first = dealer;
         if(state=='bidding'){
          
           var curCall = ''
 
-          tableStore.bid();
+          
           console.log(typeof JSON.parse(bd2.auction))
           call = JSON.parse(bd2.auction); 
           console.log(Two(call))
@@ -272,6 +286,12 @@ var user=null;
             }
           }
           tableStore.curCall = curCall;
+          tableStore.toggleBid();
+          if(bd2.player==tableStore.myseat){
+            tableStore.bidState.showBlock = true
+          }else{
+            tableStore.bidState.showBlock = false
+          }
         }
         tableStore.state.claim.seat= declarer;
         if(state=='playing' || state=='openlead'){
@@ -295,7 +315,7 @@ var user=null;
           }else{
             tableStore.dummySeat=seats[Dummy[declarer]];
           }
-         debugger
+        
          //验证打牌规则
          //1. 确定花色
          var suit= null;
@@ -338,10 +358,14 @@ var user=null;
             }
           }
         }
-        tableStore.setTricks(bd2.ew_win,bd2.ns_win,bd2.contract )
+        if("EW".indexOf(tableStore.myseat)!=-1){
+          tableStore.setTricks(bd2.ew_win,bd2.ns_win,bd2.contract )
+        }else{
+          tableStore.setTricks(bd2.ns_win,bd2.ew_win,bd2.contract )
+        }
+        
         }
         if(state=='claiming' || state=='claiming.RHO' || state=='claiming.LHO'){
-          tableStore.setTricks(bd2.ew_win,bd2.ns_win,bd2.contract )
           var cur = getCurOrLast(seats,JSON.parse(current_trick));
             var last = getCurOrLast(seats,JSON.parse(last_trick));
             let allData ={
@@ -362,7 +386,11 @@ var user=null;
               }
             } ;
            tableStore.restore(allData);
-           tableStore.setTricks(bd2.ew_win,bd2.ns_win,bd2.contract )
+            if("EW".indexOf(tableStore.myseat)!=-1){
+              tableStore.setTricks(bd2.ew_win,bd2.ns_win,bd2.contract )
+            }else{
+              tableStore.setTricks(bd2.ns_win,bd2.ew_win,bd2.contract )
+            }
            var suit= null;
          var current = JSON.parse(current_trick)
           removeNull(current)
@@ -409,7 +437,19 @@ var user=null;
         }
       }
       dealBid = (info)=>{
-        this.timing(seats[info.player],10,()=>{})
+        if(info.player){
+          this.timing(seats[info.player],999,()=>{});
+          if('SN'.indexOf(seats[info.player])!=-1){
+            window.__Timer.start('sn');
+          }else{
+            window.__Timer.start('ew');
+          }
+          if(info.player==tableStore.myseat){
+            tableStore.bidState.showBlock = true
+          }else{
+            tableStore.bidState.showBlock = false
+          }
+        }
         var call = null;
         var curCall = null;
         boardStore.pbn.auction.call = JSON.parse(info.auction);
@@ -426,15 +466,29 @@ var user=null;
           if(info.state=='openlead'){
             let cards =null;
             tableStore.state.scene = 2;
+            tableStore.bidState.showBid = false
+            tableStore.bidState.showBlock = false
+            tableStore.state.declarer = info.declarer;
             if(info.player==tableStore.myseat){
               cards = tableStore.selectCards("S", 'SHDC',[ACT1.L]);
               tableStore.setCardsState(cards, { active: ACT1.LC, onclick: tableStore.play });
             }
+            tableStore.state.contract = info.contract;
           }
+          if(info.state=='done'){
+            tableStore.state.scene = 5;
+            //显示结果
+            var result = 'Allpass';
+            tableStore._result = result;
+            const result1 = document.querySelector('.result');
+            if(!result1)
+              ReactDOM.render(<ResultPanel />,document.querySelector('#result'))
+          }
+          
       }
       dealPlay = (info,args) => {
         //处理过的消息不再处理d
-        debugger
+       
         if(TRICKS.indexOf(args[1])!=-1) return;
         const {current_trick,declarer,tricks} = info;
         tableStore.state.claim.seat= declarer;
@@ -463,22 +517,44 @@ var user=null;
             tableStore.dplay(player,args[1]);
           }
         }
-        tableStore.setTricks(info.ew_win,info.ns_win,info.contract )
+        if('EW'.indexOf(tableStore.myseat) !=-1){
+          tableStore.setTricks(info.ew_win,info.ns_win,info.contract )
+        }else{
+          tableStore.setTricks(info.ns_win,info.ew_win,info.contract )
+        }
+
+        
        if(info.player){
-        this.timing(seats[info.player],10,()=>{})
+        this.timing(seats[info.player],999,()=>{})
+          if('SN'.indexOf(seats[info.player])!=-1){
+            window.__Timer.start('sn');
+          }else{
+            window.__Timer.start('ew');
+          }
        }
         
        if(info.state=='done'){
+        window.__Timer.stop()
         tableStore.state.scene = 5;
         //显示结果
         var result = '';
-        result=info.declarer + info.contract;
-        if(info.ew_point){
-          result=result +' EW ' +info.ew_point
+        result=info.declarer +' ' + info.contract;
+        if('EW'.indexOf(info.declarer)!=-1){
+            var num =  info.ew_win - info.contract[0] -6;
+            if(info.ew_point){
+              result = result + ' ' + num +' ' + info.ew_point;
+            }else{
+              result = result + ' ' + num +' -'+ info.ns_point
+            }
+        }else{
+          var num =  info.ns_win - info.contract[0] -6;
+          if(info.ns_point){
+            result = result + ' ' + num +' ' + info.ns_point;
+          }else{
+            result = result + ' ' + num +' -'+ info.ew_point
+          }
         }
-        if(info.ns_point){
-          result=result +' NS ' +info.ns_point
-        }
+       
         tableStore._result = result;
         const result1 = document.querySelector('.result');
         if(!result1)
@@ -507,9 +583,17 @@ var user=null;
              cards = tableStore.selectCards(seats[Dummy[declarer]], a,[ACT1.L]);
              tableStore.setCardsState(cards, {active: ACT1.D, onclick: tableStore.play});
            }
+           //最后一张牌自动出
+          var unplayCards = tableStore.selectCards(seats[Dummy[declarer]],'SHDC',[ACT1.D,ACT1.L,ACT1.LC,ACT1.LCO]);
+          if(unplayCards.length==1){
+            setTimeout(()=>{
+              tableStore.dplay(seats[Dummy[declarer]],unplayCards[0]['card'])
+            },1200)
+            
+          }
          }
        } else{
-         if(info.player==tableStore.myseat){ debugger;
+         if(info.player==tableStore.myseat){ 
            let cards = tableStore.selectCards("S", suit,[ACT1.L]);
            if(cards.length==0){
              cards = tableStore.selectCards("S", 'SHDC',[ACT1.L]);
@@ -522,21 +606,38 @@ var user=null;
              cards = tableStore.selectCards("S", a,[ACT1.L]);
              tableStore.setCardsState(cards, {active: ACT1.D, onclick: tableStore.play});
            }
+           var unplayCards = tableStore.selectCards('S','SHDC',[ACT1.D,ACT1.L,ACT1.LC,ACT1.LCO]);
+          if(unplayCards.length==1){
+            setTimeout(()=>{
+              tableStore.dplay('S',unplayCards[0]['card'])
+            })
+            
+          }
          }
        }
+       
         if(boardStore.gameState=='done'){
            alert('done')
         }
+        //自动打最后一张牌
+       
       }
 
       dealClaim = (info,args) =>{
         console.log(info,args)
-        tableStore.claim(args[0],args[1])
-        debugger
+        let claimMsg = `${args[0]}玩家摊牌：${info.contract}  +${args[1]}`
+        tableStore.claim(args[0],claimMsg)
+        var hands = JSON.parse(info.hands)
+        var ind = dir.indexOf(info.declarer)
+        if(args[0] != tableStore.myseat){
+          //庄家亮牌
+          tableStore.openDummy(seats[info.declarer],hands[ind]);
+        }
+        
       }
       dealClaimAck = (info,args) =>{
         console.log(111);
-        debugger
+        
         if(info.state=='playing'){
           tableStore.state.scene = 2;
         }
@@ -544,17 +645,27 @@ var user=null;
           tableStore.state.scene = 5;
           //显示结果
           var result = '';
-          result=info.declarer + info.contract;
-          if(info.ew_point){
-            result=result +' EW ' +info.ew_point
+          result=info.declarer +' ' + info.contract;
+          if('EW'.indexOf(info.declarer)!=-1){
+              var num =  info.ew_win - info.contract[0] -6;
+              if(num>0 || num==0){
+                result = result + ' ' + num +' ' + info.ew_point;
+              }else{
+                result = result + ' ' + num +' -'+ info.ew_point
+              }
+          }else{
+            var num =  info.ns_win - info.contract[0] -6;
+            if(num>0 || num==0){
+              result = result + ' ' + num +' ' + info.ns_point;
+            }else{
+              result = result + ' ' + num +' -'+ info.ns_point
+            }
           }
-          if(info.ns_point){
-            result=result +' NS ' +info.ns_point
-          }
+         
           tableStore._result = result;
           const result1 = document.querySelector('.result');
           if(!result1)
-            ReactDOM.render(<ResultPanel />,document.querySelector('#result'))
+            ReactDOM.render(<ResultPanel />,document.querySelector('#result'));
         }
       }
       timing = function (seat, time, callback) {

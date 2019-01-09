@@ -20,7 +20,7 @@ class Seats extends Component{
     render(){
         const vuls = {EW:'',SN:''};
         const dealer = {N:'',E:'',S:'',W:''};
-        dealer[this.props.dealer] = this.props.dealer + '-Dealer';
+        dealer[this.props.dealer] = this.props.logicDealer + '-Dealer';
         if( this.props.vul.toUpperCase()=='BOTH'){
             vuls['EW'] = 'hasVul';
             vuls['SN'] = 'hasVul';
@@ -49,17 +49,19 @@ class Tricks extends Component{
             data:{
                 winEW:0,
                 winSN:0,
-                contract:''
+                contract:'',
+                declarer:''
             }
         };
     render(){
         const winEW = this.props.data.winEW;
         const winSN = this.props.data.winSN;
         const contract = this.props.data.contract;
+        const declarer = this.props.data.declarer;
         return(
             <div className='tricks'>
                 <div className='s1'><br />{winSN}</div>
-                <div className='s2'>{contract}</div>
+                <div className='s2'><div>庄:{declarer}</div>{contract}</div>
                 <div className='s3'>{winEW}</div>
             </div>
         )

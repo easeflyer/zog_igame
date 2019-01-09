@@ -2,19 +2,19 @@
 <!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1"
-	 id="svg2" inkscape:version="0.48.0 r9654" sodipodi:docname="A_of_clubs.svg" inkscape:export-xdpi="215.44792" inkscape:export-ydpi="215.44792" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" inkscape:export-filename="/home/byron/art/cards/final/PNGs/A_of_clubs.png"
+	 id="svg2" inkscape:export-ydpi="215.44792" inkscape:export-xdpi="215.44792" sodipodi:docname="A_of_clubs.svg" inkscape:version="0.48.0 r9654" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" inkscape:export-filename="/home/byron/art/cards/final/PNGs/A_of_clubs.png"
 	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="167.086px"
 	 height="242.667px" viewBox="0 0 167.086 242.667" enable-background="new 0 0 167.086 242.667" xml:space="preserve">
-<filter  x="-0.13934441" y="-0.16242018" height="1.3248404" id="filter3834-7" width="1.2786888" inkscape:collect="always" color-interpolation-filters="sRGB">
-	<feGaussianBlur  id="feGaussianBlur3836-0" stdDeviation="9.5105772" inkscape:collect="always"></feGaussianBlur>
+<filter  id="filter3834-7" width="1.2786888" inkscape:collect="always" color-interpolation-filters="sRGB" height="1.3248404" x="-0.13934441" y="-0.16242018">
+	<feGaussianBlur  id="feGaussianBlur3836-0" inkscape:collect="always" stdDeviation="9.5105772"></feGaussianBlur>
 </filter>
-<filter  x="-0.13934441" y="-0.16242018" height="1.3248404" id="filter3834-6" width="1.2786888" inkscape:collect="always" color-interpolation-filters="sRGB">
-	<feGaussianBlur  id="feGaussianBlur3836-6" stdDeviation="9.5105772" inkscape:collect="always"></feGaussianBlur>
+<filter  id="filter3834-6" width="1.2786888" inkscape:collect="always" color-interpolation-filters="sRGB" height="1.3248404" x="-0.13934441" y="-0.16242018">
+	<feGaussianBlur  id="feGaussianBlur3836-6" inkscape:collect="always" stdDeviation="9.5105772"></feGaussianBlur>
 </filter>
-<filter  x="-0.13934441" y="-0.16242018" height="1.3248404" id="filter3834" width="1.2786888" inkscape:collect="always" color-interpolation-filters="sRGB">
-	<feGaussianBlur  id="feGaussianBlur3836" stdDeviation="9.5105772" inkscape:collect="always"></feGaussianBlur>
+<filter  id="filter3834" width="1.2786888" inkscape:collect="always" color-interpolation-filters="sRGB" height="1.3248404" x="-0.13934441" y="-0.16242018">
+	<feGaussianBlur  id="feGaussianBlur3836" inkscape:collect="always" stdDeviation="9.5105772"></feGaussianBlur>
 </filter>
-<sodipodi:namedview  id="namedview39" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-width="1680" inkscape:window-height="977" inkscape:window-x="0" inkscape:window-y="25" inkscape:current-layer="svg2" inkscape:cy="148.16686" bordercolor="#666666" showgrid="false" borderopacity="1" objecttolerance="10" inkscape:zoom="2.4336873" gridtolerance="10" guidetolerance="10" inkscape:cx="188.71531" pagecolor="#ffffff" inkscape:window-maximized="1">
+<sodipodi:namedview  id="namedview39" inkscape:current-layer="svg2" inkscape:window-y="25" inkscape:window-x="0" inkscape:window-height="977" inkscape:window-width="1680" inkscape:pageshadow="2" inkscape:pageopacity="0" inkscape:cy="148.16686" inkscape:cx="188.71531" guidetolerance="10" gridtolerance="10" inkscape:zoom="2.4336873" objecttolerance="10" borderopacity="1" showgrid="false" bordercolor="#666666" pagecolor="#ffffff" inkscape:window-maximized="1">
 	</sodipodi:namedview>
 <g id="Layer_x0020_1">
 	<path id="path5" fill="#FFFFFF" stroke="#000000" stroke-width="0.5" d="M166.836,235.548c0,3.777-3.086,6.869-6.871,6.869H7.111
@@ -36,11 +36,11 @@
 		</g>
 	</g>
 </g>
-<text transform="matrix(0.9802 0 0 1 4.5571 32.6436)" font-family="'ArialMT'" font-size="38.0433">A</text>
+<text transform="matrix(0.9802 0 0 1 4.5566 35.147)" font-family="'ArialMT'" font-size="38.0433">A</text>
 <g id="g3804" transform="matrix(0.20614599,0,0,0.20614599,8.8705463,16.512759)">
 	<g id="layer1-1" transform="matrix(28.969925,0,0,28.969925,-1031.5368,-187.37665)">
 		
-			<radialGradient id="cl_1_" cx="-3.4657" cy="74.5459" r="9.4966" gradientTransform="matrix(-55.6564 0.6521 -0.9573 -81.707 -73.2955 6111.3022)" gradientUnits="userSpaceOnUse">
+			<radialGradient id="cl_1_" cx="-3.7304" cy="78.0337" r="9.4839" gradientTransform="matrix(-332.3819 3.8944 5.717 487.957 -1637.7946 -38044.418)" gradientUnits="userSpaceOnUse">
 			<stop  offset="0" style="stop-color:#000000"/>
 			<stop  offset="1" style="stop-color:#000000;stop-opacity:0.6565"/>
 		</radialGradient>
@@ -52,7 +52,7 @@
 	</g>
 	<g id="path3762" inkscape:connector-curvature="0" sodipodi:nodetypes="cscsc" filter="url(#filter3834)">
 		
-			<radialGradient id="SVGID_1_" cx="4530.4688" cy="93441.9844" r="81.9018" gradientTransform="matrix(0.0543 -0.0346 0.0186 0.0347 -1838.6641 -2588.978)" gradientUnits="userSpaceOnUse">
+			<radialGradient id="SVGID_1_" cx="38067.7891" cy="-670859.875" r="81.9016" gradientTransform="matrix(0.0112 -0.0071 -0.0038 -0.0072 -2853.0476 -4030.6116)" gradientUnits="userSpaceOnUse">
 			<stop  offset="0" style="stop-color:#FFFFFF;stop-opacity:0.5344"/>
 			<stop  offset="1" style="stop-color:#000000;stop-opacity:0"/>
 		</radialGradient>
@@ -61,7 +61,7 @@
 	</g>
 	<g id="path3762-6" inkscape:connector-curvature="0" sodipodi:nodetypes="cscsc" filter="url(#filter3834-6)">
 		
-			<radialGradient id="SVGID_2_" cx="4530.4546" cy="93441.9922" r="81.9031" gradientTransform="matrix(0.0543 -0.0346 0.0186 0.0347 -1684.0642 -2809.9038)" gradientUnits="userSpaceOnUse">
+			<radialGradient id="SVGID_2_" cx="38067.7188" cy="-670859.875" r="81.903" gradientTransform="matrix(0.0112 -0.0071 -0.0038 -0.0072 -2698.448 -4251.5376)" gradientUnits="userSpaceOnUse">
 			<stop  offset="0" style="stop-color:#FFFFFF;stop-opacity:0.5191"/>
 			<stop  offset="1" style="stop-color:#000000;stop-opacity:0"/>
 		</radialGradient>
@@ -70,7 +70,7 @@
 	</g>
 	<g id="path3762-7" inkscape:connector-curvature="0" sodipodi:nodetypes="cscsc" filter="url(#filter3834-7)">
 		
-			<radialGradient id="SVGID_3_" cx="27334.6328" cy="61086.0859" r="81.9026" gradientTransform="matrix(0.0801 -0.0047 -0.005 0.0511 -1359.8805 -2554.3796)" gradientUnits="userSpaceOnUse">
+			<radialGradient id="SVGID_3_" cx="203245" cy="-438240.9688" r="81.9026" gradientTransform="matrix(0.0165 -9.688862e-004 0.001 -0.0105 -2380.1401 -3980.8906)" gradientUnits="userSpaceOnUse">
 			<stop  offset="0" style="stop-color:#FFFFFF;stop-opacity:0.7023"/>
 			<stop  offset="1" style="stop-color:#000000;stop-opacity:0"/>
 		</radialGradient>
@@ -85,17 +85,17 @@
 		c0,0-68.813-55.037-68.813-131.345C231.293,293.85,270.947,219.651,362.636,219.651z"/>
 </g>
 <g id="layer1-1-4" transform="matrix(1.4856506,0,0,1.4856506,-54.024661,10.018072)">
-	<path id="cl-9" inkscape:connector-curvature="0" d="M49.478,23.243c0,0,1.767-1.414,1.767-3.373c0-1.147-1.019-3.052-3.373-3.052
+	<path id="cl-9" inkscape:connector-curvature="0" d="M49.478,27.616c0,0,1.767-1.414,1.767-3.373c0-1.147-1.019-3.052-3.373-3.052
 		c-2.355,0-3.373,1.905-3.373,3.052c0,1.959,1.767,3.373,1.767,3.373c-1.962-1.529-5.461-0.485-5.461,2.57
 		c0,1.53,1.25,3.212,3.212,3.212c2.355,0,3.373-2.57,3.373-2.57s0.299,2.93-1.445,4.497H49.8c-1.745-1.567-1.445-4.497-1.445-4.497
-		s1.02,2.57,3.373,2.57c1.963,0,3.212-1.683,3.212-3.212C54.939,22.758,51.44,21.714,49.478,23.243z"/>
+		s1.02,2.57,3.373,2.57c1.963,0,3.212-1.683,3.212-3.212C54.939,27.131,51.44,26.087,49.478,27.616z"/>
 </g>
-<text transform="matrix(-0.9802 0 0 -1 162.2285 212.8568)" font-family="'ArialMT'" font-size="38.0433">A</text>
+<text transform="matrix(-0.9802 0 0 -1 162.2285 209.8529)" font-family="'ArialMT'" font-size="38.0433">A</text>
 <g id="layer1-1-4-1" transform="matrix(-1.4856506,0,0,-1.4856506,221.19916,232.46182)">
-	<path id="cl-9-7" inkscape:connector-curvature="0" d="M49.739,22.919c0,0,1.766-1.413,1.766-3.373
-		c0-1.147-1.018-3.051-3.373-3.051c-2.355,0-3.373,1.906-3.373,3.051c0,1.96,1.767,3.373,1.767,3.373
-		c-1.963-1.528-5.462-0.485-5.462,2.57c0,1.53,1.25,3.212,3.213,3.212c2.355,0,3.373-2.569,3.373-2.569s0.299,2.93-1.445,4.497
-		h3.855c-1.745-1.567-1.445-4.497-1.445-4.497s1.019,2.569,3.373,2.569c1.963,0,3.212-1.683,3.212-3.212
-		C55.2,22.434,51.701,21.391,49.739,22.919z"/>
+	<path id="cl-9-7" inkscape:connector-curvature="0" d="M49.739,25.92c0,0,1.766-1.413,1.766-3.373c0-1.146-1.018-3.051-3.373-3.051
+		c-2.355,0-3.373,1.906-3.373,3.051c0,1.96,1.767,3.373,1.767,3.373c-1.963-1.528-5.462-0.485-5.462,2.57
+		c0,1.53,1.25,3.212,3.213,3.212c2.355,0,3.373-2.569,3.373-2.569s0.299,2.93-1.445,4.496h3.855
+		c-1.745-1.566-1.445-4.496-1.445-4.496s1.019,2.569,3.373,2.569c1.963,0,3.212-1.683,3.212-3.212
+		C55.2,25.434,51.701,24.392,49.739,25.92z"/>
 </g>
 </svg>

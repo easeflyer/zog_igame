@@ -101,7 +101,7 @@ button.disable{
     background-color:#eeee99;
     z-index: 0;
     border-radius:5%;
-
+    display: none;
 }
 .footer{
     position: relative;

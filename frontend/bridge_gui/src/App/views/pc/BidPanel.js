@@ -8,7 +8,7 @@ import React, { Component,Fragment } from 'react';
 import Motion from '../../libs/Motion'
 import './BidPanel.css'
 import { inject, observer } from 'mobx-react';
-import { toJS } from 'mobx';
+import { toJS, autorun } from 'mobx';
 import Position from '../../common/Position';
 import Out from '../pc/Output';
 
@@ -46,7 +46,8 @@ class BidPanel extends Component {
     // console.log(bidblocks)
     this.state.bidblocks = bidblocks;
     this.ref = React.createRef();
-    this.initPanel(); // 删除不需要的
+    var at = autorun(this.initPanel);  // 是否可以通过生命周期函数
+    // 通过 props 修改不会引发重新渲染。
 
   }
   /**
@@ -159,17 +160,21 @@ class BidPanel extends Component {
   /**
    * 通过 curCall 初始化 bidPanel 隐藏无效的叫品。
    */
-  initPanel() {
+  // @autorun 不好使
+  initPanel = () => {
     const curCall = this.props.tableStore.curCall;
     //const showBlock = this.props.tableStore.bidState.showBlock;
     const bidblocks = this.state.bidblocks;
     const suits = ['NT', 'S', 'H', 'D', 'C'];
     if (curCall) {
       bidblocks.splice(0, curCall.slice(0, 1) - 1 - (7 - bidblocks.length));
-      bidblocks[0].forEach((item, index) => {
-        if (index >= suits.indexOf(curCall.slice(1, 2))) item.active = null;
+      debugger;
+      if(curCall.slice(1)=="NT") bidblocks.splice(0,1) // 如果是 nt 直接删除本行
+      else bidblocks[0].forEach((item, index) => {
+        if (index >= suits.indexOf(curCall.slice(1))) item.active = null;
       })
     }
+    this.setState({bidblocks:bidblocks})
   }
   getCallRows() {
     //debugger;
@@ -222,7 +227,7 @@ class BidPanel extends Component {
     );
   }
   render() {
-    this.initPanel();  //zsx修改：解决根据叫品，隐藏部分叫牌
+    //this.initPanel();  //zsx修改：解决根据叫品，隐藏部分叫牌
     //console.log('ffff:' + this.width)
     const bidblocks = this.state.bidblocks.map((e1, i1) => e1.map((e2, i2) => {
     
@@ -292,7 +297,7 @@ class BidBlock extends Component {
     let animation = { brightness: 0 };
     let onclick = this.props.onclick;
     if (this.props.active == null) {
-      animation['opacity'] = 0;
+      animation['opacity'] = 0.5;
       onclick = (e) => e.preventDefault();
     }
     if (this.props.active == 0) animation['brightness'] = 0.6;
