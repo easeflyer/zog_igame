@@ -1,0 +1,23 @@
+.infoDrawer .ant-drawer-header{
+  padding: 16px 24px;
+  border-radius: 4px 4px 0 0;
+  background: #000;
+  color: rgba(255, 255, 255, 0.65);
+  border-bottom: 1px solid #454545;
+  position: relative;
+}
+.infoDrawer .ant-drawer-body{
+  padding:0vh;
+}
+.infoDrawer .ant-drawer-title{
+  color:#fff;
+}
+.infoDrawer .ant-drawer-wrapper-body{
+  background: #000;
+}
+.infoDrawer .bidpanel{
+  background:#444;
+}
+.infoDrawer .bidpanel tr{
+  border-bottom: 0px #918787 dashed;
+}

@@ -4,16 +4,17 @@
     /* font-family:'Courier New', Courier, monospace; */
     font-family:monospace !important;
 }
-button{
+button,
+.header button{
 
     position: relative;
     padding:0px;
     background-color: #1B9AF7;
     border:0px solid #ffffff;
-    color:#FFFFFF;
+    color:#FFFFFF !important;
     border-radius:4px;
     height:2.5vh;
-    font-size: 2vh;
+    font-size: 2.5vh;
     font-family:monospace !important;
     /* box-shadow: 0 2px 0 #0880d7, 0 2px 1px rgba(0, 0, 0, 0.3); */
 }

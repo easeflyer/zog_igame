@@ -16,6 +16,7 @@ import Timer from './Timer'
 import Card from '../../components/Card';
 import './TableView.css'
 import { inject, observer } from 'mobx-react';
+import InfoDrawer from './InfoDrawer';
 /**
  * 用来模拟 table 对象保证 tableview 组件可独立测试。
   */
@@ -96,6 +97,7 @@ class TableView extends React.Component {
             <button onClick={table.lastTrick.bind(table)} className="lasttrick">上一墩牌</button>
             <button onClick={table.bid.bind(table)} className="showbid">显示叫牌</button>
             <button onClick={table.reConnect.bind(table)} className="showbid">刷新</button>
+            <InfoDrawer />
 
             {/* <div className='re' id='lastTrick'>上墩牌</div>*/}
             {/* 注意比赛结果会挂载到下面的div */}

@@ -359,8 +359,8 @@ class TableModel {
   _play = (item) => {
     // if(item.active != 3) return; // 只有突出的牌能打出去。
     //if (this.board[0].length === 4) return false;
-    if (this.board[0].length === 4) setTimeout(this._play, 1100)
-    item.active = ACT2;    // 已经打出去的牌
+    if (this.board[0].length === 4) setTimeout(this._play.bind(this,item), 1100)
+    //item.active = ACT2;    // 已经打出去的牌
     //console.log(this.board)
     // item['animation']['left'] = this.seat[item.seat][1].x;
     // item['animation']['top'] = this.seat[item.seat][1].y;

@@ -1,0 +1,11 @@
+.debug{
+  position: absolute;
+  bottom:0px;
+  line-height: 18px;
+}
+.debug button{
+  margin:0px;
+  padding:0px;
+  line-height:14px;
+  font-size:2vh;
+}

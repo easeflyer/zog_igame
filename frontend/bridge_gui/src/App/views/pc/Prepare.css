@@ -10,6 +10,12 @@
      width:20%;
      height:10%;
      font-size: 13.333px;
+
+     background-color: #1B9AF7;
+     border:0px solid #ffffff;
+     color:#FFFFFF;
+     border-radius:4px;
+ 
     }
 .prepare > .ready {
     opacity: 0.5;

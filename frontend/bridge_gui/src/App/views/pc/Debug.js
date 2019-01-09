@@ -13,6 +13,7 @@ import Clock from '../../libs/Clock';
 import Position from '../../common/Position';
 //import { tokensToRegExp } from 'path-to-regexp';
 import {restoreData,callData1,callData2} from '../../stores/mockdata';
+import './debug.css'
 
 /**
  * props.o  
@@ -318,7 +319,7 @@ export default class Debug extends Component {
         // =====  测试用例结束 =================================================
 
         return (
-            <div className='debug' style={{ position: 'absolute' }}>
+            <div className='debug'>
                 <button onClick={o.testUsersReady}>登录</button>&nbsp;
                 <button onClick={o.wLogin}>西玩家登录</button>&nbsp;
                 <button onClick={o.initcards}>准备牌</button>&nbsp;
