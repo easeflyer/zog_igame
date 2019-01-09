@@ -14,7 +14,7 @@ export default class Timer extends React.Component {
     }
     constructor(props) {
         super(props)
-        this.timer = null;
+        this.timer = null;window.__Timer=this;
         const time = this.props.time.split(':')
         this.state.h = time[0];
         this.state.m = time[1];
@@ -26,7 +26,7 @@ export default class Timer extends React.Component {
     }
 
     componentDidMount() {
-        this.start('ew');
+        // this.start('ew');
     }
 
     start = (seats) => {
@@ -36,6 +36,7 @@ export default class Timer extends React.Component {
 
     stop = () => {
         clearInterval(this.timer);
+        this.timer = 0;
     }
     dida = () => {
         this.state.s--;

@@ -55,8 +55,11 @@ class TableModel {
     winEW: '',
     winSN: '',
     vulnerable:'EW',//局况
+    declarer:'',//逻辑方位
   }
   dummySeat = "W"; // 固定界面方位，非逻辑方位
+  dealer ='E';  //固定方位
+  logicDealer=''//逻辑方位
   @observable curCall = '';  // 当前叫品，用于bidpanel 显示。
   // boardState = {
   //   boardId: null,
@@ -129,8 +132,7 @@ class TableModel {
    */
   initState(){
     this.board=[[],[]];
-    this.seat = {};
-    this.state.cards = null;
+    // this.state.cards = [];
     this.state.scene = 0;
     this.state.calldata =  { first: '', call: [], note: null };
     this.state.claim = {seat:'',msg:null};
@@ -271,10 +273,13 @@ class TableModel {
     let ucard = null;//null 修改成{}
 
     if (seat === this.dummySeat){
-      for (let c of cards[Position.SNames.indexOf(seat)])
+      for (let c of cards[Position.SNames.indexOf(seat)]){
         if(c.card === card) {
-          ucard = c;break;
+          ucard = c;
+          this._play(ucard);
+          break;
         }
+      }
     }else{
       // 非明手摊牌时 也是明手
       for (let c of cards[Position.SNames.indexOf(seat)]){
@@ -357,7 +362,8 @@ class TableModel {
   _play = (item) => {
     // if(item.active != 3) return; // 只有突出的牌能打出去。
     item.active = ACT2;    // 已经打出去的牌
-    if (this.board[0].length === 4) return false;
+    //if (this.board[0].length === 4) {setTimeout(()=>{this._play(item)},1100);return;};
+    if (this.board[0].length === 4) {setTimeout(this._play.bind(this,item),1100);return;};
     this.board[0].push(item);
     //console.log(this.board)
     item['animation']['left'] = this.seat[item.seat][1].x;
@@ -1064,14 +1070,14 @@ class TableModel {
    * @param {*} dcards 明手的牌数组  ['SQ','SJ' ....
    */
   @action.bound
-  openDummy(seat, dcards) {
+  openDummy(seat, dcards) { debugger
     // await 获得数据 然后更新 state
     if (!this.dummySeat) this.dummySeat = seat;
     const dummySeat = seat;
     let index = 0;
     //const dCards = Models.openDummy().cards.split('.');
-    let cards = this.state.cards[Position.SNames.indexOf(dummySeat)];
-
+    // let cards = this.state.cards[Position.SNames.indexOf(dummySeat)];
+    let cards = this.selectCards(dummySeat, 'SHDC',[ACT1.L]);
     // console.log('seatnumber:', dCards);
     // dCards.forEach((item1, index1) => {
     //   item1.split('').forEach((item2, index2) => {

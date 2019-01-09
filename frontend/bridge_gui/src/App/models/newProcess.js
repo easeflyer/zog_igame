@@ -14,6 +14,7 @@ const arr1 = [['east_id','E'],['north_id','N'],['south_id','S'],['west_id','W']]
 const dirMap = new Map(arr);
 const dirMap1 = new Map(arr1);
 //每一个玩家在桌子上的方位
+
 let TRICKS = '';
 const seatMap = {
     "E":{N:'E',E:'S',S:'W',W:'N'},
@@ -174,7 +175,7 @@ var user=null;
         console.log(bd)
     
         // 读取到的牌桌数据
-       
+        tableStore.initState()
        this.recover()
        
       }
@@ -243,6 +244,9 @@ var user=null;
         const {state,dealer,auction,player,declarer,hands,current_trick,last_trick,tricks,contract,claim_result,vulnerable} = bd2;
         TRICKS = tricks;
         tableStore.dummySeat = seats[Dummy[declarer]];
+        tableStore.dealer=seats[dealer];
+        tableStore.logicDealer=dealer;
+        tableStore.state.declarer=declarer;
         if(vulnerable == 'NS'){
           tableStore.state.vulnerable='SN';
         }else if(vulnerable == 'BO'){
@@ -258,13 +262,18 @@ var user=null;
         tableStore.initCards(deals);
         tableStore.dealCards();
         Sound.play('deal');
-        this.timing(seats[bd2.player],300,()=>{})
+        this.timing(seats[bd2.player],999,()=>{})
+        if('EW'.indexOf(bd2.player)!=-1){
+          window.__Timer.start('ew');
+        }else{
+          window.__Timer.start('sn');
+        }
         tableStore.state.calldata.first = dealer;
         if(state=='bidding'){
          
           var curCall = ''
 
-          tableStore.bid();
+          tableStore.toggleBid();
           console.log(typeof JSON.parse(bd2.auction))
           call = JSON.parse(bd2.auction); 
           console.log(Two(call))
@@ -414,7 +423,12 @@ var user=null;
       }
       dealBid = (info)=>{
         if(info.player){
-          this.timing(seats[info.player],300,()=>{})
+          this.timing(seats[info.player],999,()=>{});
+          if('EW'.indexOf(info.player)!=-1){
+            window.__Timer.start('ew');
+          }else{
+            window.__Timer.start('sn');
+          }
         }
        
         var call = null;
@@ -433,15 +447,18 @@ var user=null;
           if(info.state=='openlead'){
             let cards =null;
             tableStore.state.scene = 2;
+            tableStore.toggleBid()
+            tableStore.state.declarer = info.declarer;
             if(info.player==tableStore.myseat){
               cards = tableStore.selectCards("S", 'SHDC',[ACT1.L]);
               tableStore.setCardsState(cards, { active: ACT1.LC, onclick: tableStore.play });
             }
+            tableStore.state.contract = info.contract;
           }
           if(info.state=='done'){
             tableStore.state.scene = 5;
             //显示结果
-            var result = '本局PASS';
+            var result = 'Allpass';
             tableStore._result = result;
             const result1 = document.querySelector('.result');
             if(!result1)
@@ -482,10 +499,16 @@ var user=null;
         }
         tableStore.setTricks(info.ew_win,info.ns_win,info.contract )
        if(info.player){
-        this.timing(seats[info.player],300,()=>{})
+        this.timing(seats[info.player],999,()=>{})
+          if('EW'.indexOf(info.player)!=-1){
+            window.__Timer.start('ew');
+          }else{
+            window.__Timer.start('sn');
+          }
        }
         
        if(info.state=='done'){
+        window.__Timer.stop()
         tableStore.state.scene = 5;
         //显示结果
         var result = '';
@@ -534,6 +557,14 @@ var user=null;
              cards = tableStore.selectCards(seats[Dummy[declarer]], a,[ACT1.L]);
              tableStore.setCardsState(cards, {active: ACT1.D, onclick: tableStore.play});
            }
+           //最后一张牌自动出
+          var unplayCards = tableStore.selectCards(seats[Dummy[declarer]],'SHDC',[ACT1.D,ACT1.L,ACT1.LC,ACT1.LCO]);
+          if(unplayCards.length==1){
+            setTimeout(()=>{
+              tableStore.dplay(seats[Dummy[declarer]],unplayCards[0]['card'])
+            },1200)
+            
+          }
          }
        } else{
          if(info.player==tableStore.myseat){ 
@@ -549,8 +580,16 @@ var user=null;
              cards = tableStore.selectCards("S", a,[ACT1.L]);
              tableStore.setCardsState(cards, {active: ACT1.D, onclick: tableStore.play});
            }
+           var unplayCards = tableStore.selectCards('S','SHDC',[ACT1.D,ACT1.L,ACT1.LC,ACT1.LCO]);
+          if(unplayCards.length==1){
+            setTimeout(()=>{
+              tableStore.dplay('S',unplayCards[0]['card'])
+            })
+            
+          }
          }
        }
+       
         if(boardStore.gameState=='done'){
            alert('done')
         }
@@ -560,7 +599,8 @@ var user=null;
 
       dealClaim = (info,args) =>{
         console.log(info,args)
-        tableStore.claim(args[0],args[1])
+        let claimMsg = `${args[0]}玩家摊牌：${info.contract}  +${args[1]}`
+        tableStore.claim(args[0],claimMsg)
         var hands = JSON.parse(info.hands)
         var ind = dir.indexOf(info.declarer)
         if(args[0] != tableStore.myseat){

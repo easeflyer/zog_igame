@@ -3,6 +3,7 @@
     position: absolute;
     width: 70%;
     height:70%;
+    display: none;
     /*background-color: aqua;*/
 }
 .prepare > button {
