@@ -4,7 +4,7 @@
  *        或者根据新睿桥牌 改造叫牌过程。
  */
 
-import React, { Component,Fragment } from 'react';
+import React, { Component, Fragment } from 'react';
 import Motion from '../../libs/Motion'
 import './BidPanel.css'
 import { inject, observer } from 'mobx-react';
@@ -35,6 +35,7 @@ class BidPanel extends Component {
     const rank = [1, 2, 3, 4, 5, 6, 7];
     const bids = rank.map((i) => suits.map((j) => i + j))
     //console.log(bids)
+    //this.state.calling = "";
     const bidblocks = bids.map((e, i) => e.map((e1, i1) => {
       //let active = (i<5 && i1<3) ? 1:0;
       return { name: e1, active: 1 }
@@ -136,6 +137,7 @@ class BidPanel extends Component {
    */
   handleConfirm = () => {
     // 调用 聊天打牌 发送数据
+    this.state.calling = "";
     Out.call(this.state.calling);
     // this.setState({
     //   active: 0
@@ -169,12 +171,12 @@ class BidPanel extends Component {
     if (curCall) {
       bidblocks.splice(0, curCall.slice(0, 1) - 1 - (7 - bidblocks.length));
       debugger;
-      if(curCall.slice(1)=="NT") bidblocks.splice(0,1) // 如果是 nt 直接删除本行
+      if (curCall.slice(1) == "NT") bidblocks.splice(0, 1) // 如果是 nt 直接删除本行
       else bidblocks[0].forEach((item, index) => {
         if (index >= suits.indexOf(curCall.slice(1))) item.active = null;
       })
     }
-    this.setState({bidblocks:bidblocks})
+    this.setState({ bidblocks: bidblocks })
   }
   getCallRows() {
     //debugger;
@@ -200,9 +202,9 @@ class BidPanel extends Component {
           call = item1.split(' ');
           if (!call[0]) return ' ';
           if (call.length == 2) {
-            call[1] = call[1].slice(1,2);
+            call[1] = call[1].slice(1, 2);
             return (
-              <td title={note[call[1]-1]} key={index + index1 + 1} className='alertTd'>
+              <td title={note[call[1] - 1]} key={index + index1 + 1} className='alertTd'>
                 <img className='suit' src={`/cards/bids/${call[0]}.svg`} />
               </td>
             );
@@ -230,38 +232,38 @@ class BidPanel extends Component {
     //this.initPanel();  //zsx修改：解决根据叫品，隐藏部分叫牌
     //console.log('ffff:' + this.width)
     const bidblocks = this.state.bidblocks.map((e1, i1) => e1.map((e2, i2) => {
-    
+
       //if (e2.active == 0) animation['brightness'] = 0.6;
 
       return <BidBlock key={e2.name} name={e2.name}
         active={e2.active}
         onclick={this.handleCall.bind(this, { row: i1, col: i2 })} />
     }))
-    
+
     // 叫牌记录。
     const rows = this.getCallRows();
     const showBlock = this.props.tableStore.bidState.showBlock;
     const bidCards = <Fragment>
-        <BidCard name='PASS' active={this.state.bidcards[0].active}
-          onclick={this.handleCall.bind(this, { name: 'PASS' })}
-        />
-        <BidCard name='X' active={this.state.bidcards[2].active}
-          onclick={this.handleCall.bind(this, { name: 'X' })}
-        />
-        <BidCard name='XX' active={this.state.bidcards[3].active}
-          onclick={this.handleCall.bind(this, { name: 'XX' })}
-        />
-        <BidCard name='ALERT' active={this.state.bidcards[1].active}
-          onclick={this.handleCall.bind(this, { name: 'ALERT' })}
-        />
+      <BidCard name='PASS' active={this.state.bidcards[0].active}
+        onclick={this.handleCall.bind(this, { name: 'PASS' })}
+      />
+      <BidCard name='X' active={this.state.bidcards[2].active}
+        onclick={this.handleCall.bind(this, { name: 'X' })}
+      />
+      <BidCard name='XX' active={this.state.bidcards[3].active}
+        onclick={this.handleCall.bind(this, { name: 'XX' })}
+      />
+      <BidCard name='ALERT' active={this.state.bidcards[1].active}
+        onclick={this.handleCall.bind(this, { name: 'ALERT' })}
+      />
     </Fragment>
 
     const opPad = <Fragment>
-        {bidblocks}
-        {bidCards}
-        <button onClick={this.handleConfirm}>确认</button>
-        <button onClick={this.handleReset}>重置</button>
-        <div className='calling'>{this.state.calling}</div>
+      {bidblocks}
+      {bidCards}
+      <button onClick={this.handleConfirm}>确认</button>
+      <button onClick={this.handleReset}>重置</button>
+      <div className='calling'>{this.state.calling}</div>
     </Fragment>
 
     return (
