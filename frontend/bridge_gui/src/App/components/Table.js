@@ -203,8 +203,8 @@ class Table extends Component {
      * {table.state.debug ? <Debug o={table} /> : null}
      */
     openDebug = () => {
-        // const debug = this.props.tableStore.state.debug;
-        // this.props.tableStore.state.debug = !debug;
+        const debug = this.props.tableStore.state.debug;
+        this.props.tableStore.state.debug = !debug;
     }
     /**
      * 显示叫牌
