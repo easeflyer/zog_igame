@@ -179,6 +179,17 @@ var user=null;
        this.recover()
        
       }
+
+      get_done_Board = async () => {
+
+        boards = table.attr('board_ids')
+
+       const dbd = boards.get_done_board()
+      
+        const bd2 = dbd[1].look(fields.doing_table_ids.board_ids)
+        console.log(bd2)
+      }
+
       before_poll = async () => {
         console.log('before 0')
         // before_poll0(odoo)

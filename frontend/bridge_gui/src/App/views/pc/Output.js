@@ -5,6 +5,7 @@
  */
 import tableStore from '../../stores/tableStore'
 import Process from '../../models/newProcess'
+window.Process = Process;
 const Output = {
   ckLogin:()=>{
     console.log("用户已经登录。")
