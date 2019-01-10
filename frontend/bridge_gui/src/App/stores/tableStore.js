@@ -925,7 +925,7 @@ class TableModel {
     //this._claim.seat = this.myseat;
     // this.state.claim.seat = seat;
     this.state.claim.msg = claimMsg;
-    this.state.scene = 3;
+    this.state.scene = this.state.scene==3 ? 2 :3;
   }
 
 

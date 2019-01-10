@@ -73,6 +73,7 @@ class TableView extends React.Component {
       contract:tableStore.state.contract,
       declarer:tableStore.state.declarer
     }
+    const claimBtnClickable = tableStore.state.declarer==tableStore.myseat;
     return (
       <div>
         {(tableStore.bidState.showBid) ?
@@ -92,7 +93,7 @@ class TableView extends React.Component {
                 time='1:2:5'
                 callback={() => console.log('计时结束')} />
             </div>
-            <button onClick={table.claim} className="claimbtn disable">摊牌</button>
+            <button onClick={claimBtnClickable ? table.claim :()=>{}} className={claimBtnClickable?"claimbtn":"claimbtn disable"} >摊牌</button>
             <button onClick={() => table.timer.stop()} onDoubleClick={() => table.timer.start()} className="calljudge">呼叫裁判</button>
             <button onClick={table.lastTrick.bind(table)} className="lasttrick">上一墩牌</button>
             <button onClick={table.bid.bind(table)} className="showbid">显示叫牌</button>
