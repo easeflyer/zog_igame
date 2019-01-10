@@ -259,10 +259,14 @@ var user=null;
         tableStore.logicDealer=dealer;
         tableStore.sequence = sequence;
         tableStore.state.declarer=declarer;
-        if(vulnerable == 'NS'){
-          tableStore.state.vulnerable='SN';
-        }else if(vulnerable == 'BO'){
+        if(vulnerable == 'BO'){
           tableStore.state.vulnerable = 'BOTH';
+        }else if(vulnerable == 'NS' || vulnerable == 'EW'){
+          if(vulnerable.indexOf(tableStore.myseat) != -1){
+            tableStore.state.vulnerable='SN';
+          }else{
+            tableStore.state.vulnerable='EW';
+          }
         }else{
           tableStore.state.vulnerable = vulnerable;
         }
@@ -292,7 +296,7 @@ var user=null;
           console.log(Two(call))
           tableStore.state.calldata.call = Two(call);
           for(let i = 0 ;i<call.length;i++){
-            if(call[call.length-1-i]!='Pass' || call[call.length-1-i]!='x' || call[call.length-1-i]!='xx'){
+            if(call[call.length-1-i]!='Pass' && call[call.length-1-i]!='x' && call[call.length-1-i]!='xx'){
               curCall = call[call.length-i-1];
               break;
             }
@@ -469,7 +473,7 @@ var user=null;
         call = JSON.parse(info.auction); 
           tableStore.state.calldata.call = Two(call);
           for(let i = 0 ;i<call.length;i++){
-            if(call[call.length-1-i]!='Pass' || call[call.length-1-i]!='x' || call[call.length-1-i]!='xx'){
+            if(call[call.length-1-i]!='Pass' && call[call.length-1-i]!='x' && call[call.length-1-i]!='xx'){
               curCall = call[call.length-i-1];
               break;
             }

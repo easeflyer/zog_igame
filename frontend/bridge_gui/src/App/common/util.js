@@ -180,7 +180,7 @@ export function Two(arr){
       result.push(arr4);
       arr4 = new Array()
     }
-    if(i==arr.length-1 && arr4.length<4){
+    if(i==arr.length-1 && arr4.length<4 && arr4.length>0){
       result.push(arr4);
     }
   }
