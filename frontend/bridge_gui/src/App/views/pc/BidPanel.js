@@ -64,14 +64,14 @@ class BidPanel extends Component {
    * 如果 item 是 row,col 则调用 _bidblock() 否则调用 _bidcard
    */
   handleCall = (item) => {
-    debugger;
+   
     //this.atDisposer();
     if ('row' in item) {
       this._bidblock(item);
     } else {
       this._bidcard(item);
     }
-    debugger;
+ 
     //this.at = autorun(this.initPanel);
   }
 
@@ -182,8 +182,7 @@ class BidPanel extends Component {
     //const curCall = "4NT";//this.props.tableStore.curCall;
     const curCall = data;
     //const showBlock = this.props.tableStore.bidState.showBlock;
-    alert(this)
-    debugger;
+    
     const bidblocks = this.state.bidblocks;
     const suits = ['NT', 'S', 'H', 'D', 'C'];
     if (curCall) {

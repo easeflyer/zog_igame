@@ -548,7 +548,7 @@ var user=null;
         var ind = dir.indexOf(dummy)
         if(myseat != dummy){
           if(lastTrick.length==0 && curTrick.length==1){
-            tableStore.openDummy(seats[dummy],hands[ind]);
+            tableStore.openDummy(seats[dummy],hands[ind],Card.suits.join(''));
           }
         }
         if(args[0]==dummy){
@@ -676,7 +676,7 @@ var user=null;
         var ind = dir.indexOf(info.declarer)
         if(args[0] != tableStore.myseat){
           //庄家亮牌
-          tableStore.openDummy(seats[info.declarer],hands[ind]);
+          tableStore.openDummy(seats[info.declarer],hands[ind],Card.suits.join(''));
         }
         
       }
