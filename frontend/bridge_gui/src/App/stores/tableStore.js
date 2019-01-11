@@ -378,7 +378,7 @@ class TableModel {
     // if (this.board[0].length === 4) setTimeout(this.clearBoard, 1000);
     this._setCardACT2(item,true)
 
-    this.resetTable(); // 牌恢复为不可点击状态 ACT1.L
+    //this.resetTable(); // 牌恢复为不可点击状态 ACT1.L
 
     const seatIndex = Position.SNames.indexOf(item.seat);
     //const seatIndex = Position.SNames.indexOf(item.seat);
@@ -689,6 +689,7 @@ class TableModel {
    * 
    * board[i].active = ACT3;  飞到桌面以外。                      
    * board.unshift([]); 四张牌飞走后，当前墩为空。
+   * 定位增加了 this.seat[board[0][i].seat][1].x 飞走的牌保持 相互间距。
    */
   //model
   @action.bound
@@ -696,8 +697,8 @@ class TableModel {
     //if(this.board.length < 4) return false;
     const board = this.board;
     for (let i = 0; i < board[0].length; i++) {
-      board[0][i].animation.left = this.size / 2;
-      board[0][i].animation.top = -this.size * 2;
+      board[0][i].animation.left = this.seat[board[0][i].seat][1].x + this.size / 2;
+      board[0][i].animation.top = this.seat[board[0][i].seat][1].y -this.size * 2;
       board[0][i].active = ACT3;
     };
     board.unshift([]);
@@ -980,32 +981,32 @@ class TableModel {
    * 输出：this.state.cards
    *       this.state.lastTrick
    */
-  @action
-  lastTrick222 = () => {
-    // 在模型里 应该先判断当前 trick 编号。然后决定是否能看lasttrick
-    const show = !this.state.lastTrick;
-    const lt = Models.lastTrick();
-    let card = null;
-    lt.forEach((item, index) => {
-      card = this.cardIndexOf(item.index)
-      //card.size = card.size * 0.8
-      card['animation']['left'] = (show == true) ?
-        this.seat[Position.SNames[index]][1].x - this.size / 2.9
-        : this.size / 2;
-      card['animation']['top'] = (show == true) ?
-        this.seat[Position.SNames[index]][1].y - this.size / 2.9
-        : -this.size * 2;
-      //card['size'] = card['size'] * 0.7
-      // card['animation']['rotate'] = 180;
-      // card['position']['x'] = this.seat[Table.seatsen[index]][1].x;
-      // card['position']['y'] = this.seat[Table.seatsen[index]][1].y;
-      //card['animation'] = '';
-      //card['animation']['delay'] = 0;
-      card.active = ACT3; // 测试用
-    })
-    this.state.lastTrick = !this.state.lastTrick;
-    return this.state.cards;
-  }
+  // @action
+  // lastTrick222 = () => {
+  //   // 在模型里 应该先判断当前 trick 编号。然后决定是否能看lasttrick
+  //   const show = !this.state.lastTrick;
+  //   const lt = Models.lastTrick();
+  //   let card = null;
+  //   lt.forEach((item, index) => {
+  //     card = this.cardIndexOf(item.index)
+  //     //card.size = card.size * 0.8
+  //     card['animation']['left'] = (show == true) ?
+  //       this.seat[Position.SNames[index]][1].x - this.size / 2.9
+  //       : this.size / 2;
+  //     card['animation']['top'] = (show == true) ?
+  //       this.seat[Position.SNames[index]][1].y - this.size / 2.9
+  //       : -this.size * 2;
+  //     //card['size'] = card['size'] * 0.7
+  //     // card['animation']['rotate'] = 180;
+  //     // card['position']['x'] = this.seat[Table.seatsen[index]][1].x;
+  //     // card['position']['y'] = this.seat[Table.seatsen[index]][1].y;
+  //     //card['animation'] = '';
+  //     //card['animation']['delay'] = 0;
+  //     card.active = ACT3; // 测试用
+  //   })
+  //   this.state.lastTrick = !this.state.lastTrick;
+  //   return this.state.cards;
+  // }
   // @action
   // showLastTrick = (s = null) => {
   //   // 在模型里 应该先判断当前 trick 编号。然后决定是否能看lasttrick
@@ -1049,33 +1050,40 @@ class TableModel {
     this._setShowLastTrick(false);
   }
   @action
-  _setShowLastTrick(isShow) {
-    // 在模型里 应该先判断当前 trick 编号。然后决定是否能看lasttrick
-    //debugger;
+  _setShowLastTrick1(isShow) {
     const lt = this.board[1];
     window.___board1 = toJS(this.board);
     let card = null;
     if (lt) lt.forEach((item, index) => {
-      //card = this.cardIndexOf(item.index)
-      //card.size = card.size * 0.8
       item['animation']['left'] = (isShow == true) ?
         this.seat[item.seat][1].x - this.size / 2.9
         : this.size / 2;
       item['animation']['top'] = (isShow == true) ?
         this.seat[item.seat][1].y - this.size / 2.9
         : -this.size * 2;
-      //card['size'] = card['size'] * 0.7
-      // card['animation']['rotate'] = 180;
-      // card['position']['x'] = this.seat[Table.seatsen[index]][1].x;
-      // card['position']['y'] = this.seat[Table.seatsen[index]][1].y;
-      //card['animation'] = '';
-      //card['animation']['delay'] = 0;
       item.active = ACT3; // 测试用
     })
     this.state.lastTrick = isShow;
-    //this.showBid = false;
     return this.state.cards;
   }
+
+  _setShowLastTrick(isShow) {
+    const lt = this.board[1];
+    window.___board1 = toJS(this.board);
+    let card = null;
+    if (lt) lt.forEach((item, index) => {
+      // item['animation']['left'] = (isShow == true) ?
+      //   this.seat[item.seat][1].x - this.size / 2.9
+      //   : this.size / 2;
+      item['animation']['top'] = (isShow == true) ?
+        this.seat[item.seat][1].y
+        : -this.size * 2;
+      item.active = ACT3; // 测试用
+    })
+    this.state.lastTrick = isShow;
+    return this.state.cards;
+  }
+
 
 
   /**

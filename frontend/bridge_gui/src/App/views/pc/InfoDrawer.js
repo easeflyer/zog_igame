@@ -26,7 +26,7 @@ class InfoDrawer extends React.Component {
     return (
       <div>
         <Button type="primary" onClick={this.showDrawer}>
-          Open
+          信息面板
         </Button>
         <Drawer
           title="本局信息"
