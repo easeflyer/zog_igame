@@ -97,7 +97,17 @@ const  _getOneHand= (hand)=>{ console.log(SUITS)
 //   }
 //   return deal;
 // }
-
+//修改牌的花色顺序
+export function changeSuitsOrder(cards,newSuits){
+    var newCards = [];
+    newSuits.forEach((suit)=>{
+        for(let i = 0;i<cards.length;i++){
+          if(cards[i].indexOf(suit) != -1)
+           newCards.push(cards[i]);
+        }
+    })
+    return newCards
+}
 /**  W N E S
  * "[["S5", "S4", "S3", "S2", "H5", "H4", "H3", "D5", "D4", "D3", "C5", "C4", "C3"], 
  *   ["S8", "S7", "S6", "HA", "HK", "HQ", "DA", "DK", "DQ", "CA", "CK", "CQ", "C2"],
