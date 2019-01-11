@@ -299,7 +299,7 @@ class BidBlock extends Component {
     let animation = { brightness: 0 };
     let onclick = this.props.onclick;
     if (this.props.active == null) {
-      animation['opacity'] = 0.5;
+      animation['opacity'] = 0;
       onclick = (e) => e.preventDefault();
     }
     if (this.props.active == 0) animation['brightness'] = 0.6;
