@@ -122,7 +122,7 @@ Card.createComponents = function (cards) {
         });
     });
 }
-Card.suits = ['S', 'H', 'D', 'C'];
+Card.suits = ['S', 'H', 'C', 'D']; window.__Card=Card
 /**
  * 
  * @param {*} deals 字符串 一手牌，比如：J95.K862.J97.643

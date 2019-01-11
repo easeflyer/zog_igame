@@ -927,7 +927,7 @@ class TableModel {
     this.state.claim.msg = claimMsg;
     this.state.scene = this.state.scene==3 ? 2 :3;
   }
-
+  
 
   @action.bound
   getUnPlayCardNumber() {
@@ -1084,7 +1084,7 @@ class TableModel {
    * @param {*} dcards 明手的牌数组  ['SQ','SJ' ....
    */
   @action.bound
-  openDummy(seat, dcards) { debugger
+  openDummy(seat, dcards) { 
     // await 获得数据 然后更新 state
     if (!this.dummySeat) this.dummySeat = seat;
     const dummySeat = seat;

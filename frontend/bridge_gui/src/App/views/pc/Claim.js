@@ -47,14 +47,14 @@ class Claim extends Component {
 
     myClaim() {
         const number = this.props.tableStore.getUnPlayCardNumber();
-        const cblocks = Array(number).fill('').map((_, index) =>
-            <Cblock key={index} number={index + 1}
+        const cblocks = Array(number+1).fill('').map((_, index) =>
+            <Cblock key={index} number={index}
                 active={this.state.value == index + 1 ? 0 : 1}
                 onClick={this.state.submit ? null : this.handleClick.bind(this, index + 1)} />
         )
         return (
             <div id='myclaim' className='claim'>
-                <b>请选择墩数？</b><br />
+                <b>剩下还可赢：</b><br />
                 {cblocks}
                 {this.state.submit ?
                     <button disabled='true'>等待确认..</button> :
