@@ -4,7 +4,7 @@ import Position from '../common/Position';
 import ODOO from '../libs/odoo-bridge-rpc/src';
 import boardStore from '../stores/newBoard'
 import tableStore from '../stores/tableStore'
-import {cardString,Two,getUserCards,getCurOrLast,getUserCardsDeal,removeNull} from '../common/util'
+import {cardString,Two,getUserCards,getCurOrLast,getUserCardsDeal,removeNull,changeSuitsOrder} from '../common/util'
 import Clock from '../libs/Clock';
 import Sound from '../components/Sound';
 import ResultPanel from '../views/pc/ResultPanel';
@@ -545,10 +545,12 @@ var user=null;
         removeNull(curTrick)
         removeNull(lastTrick)
         var hands = JSON.parse(info.hands)
+        debugger
         var ind = dir.indexOf(dummy)
         if(myseat != dummy){
           if(lastTrick.length==0 && curTrick.length==1){
-            tableStore.openDummy(seats[dummy],hands[ind],Card.suits.join(''));
+            var hand = changeSuitsOrder(hands[ind],Card.suits)
+            tableStore.openDummy(seats[dummy],hand);
           }
         }
         if(args[0]==dummy){
@@ -676,7 +678,8 @@ var user=null;
         var ind = dir.indexOf(info.declarer)
         if(args[0] != tableStore.myseat){
           //庄家亮牌
-          tableStore.openDummy(seats[info.declarer],hands[ind],Card.suits.join(''));
+          var hand = changeSuitsOrder(hands[ind],Card.suits)
+          tableStore.openDummy(seats[info.declarer],hand,Card.suits.join(''));
         }
         
       }
