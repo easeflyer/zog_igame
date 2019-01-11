@@ -55,6 +55,12 @@ var boards = null;
 var bd = null;
 var seats=null;//{玩家真实方位：桌子上的方位}
 const dir = ['W','N','E','S'];
+const SUITS = {
+  'S' : ['S','H','C','D'],
+  'H' : ['H','C','D','S'],
+  'C' : ['C','D','S','H'],
+  'D' : ['D','S','H','C'],
+}
 const odoo = new ODOO({ host, db, models })
 
 const fields = {
@@ -259,6 +265,12 @@ var user=null;
         tableStore.logicDealer=dealer;
         tableStore.sequence = sequence;
         tableStore.state.declarer=declarer;
+        if(contract){  
+          if('SHCD'.indexOf(contract[1]) != -1){
+            Card.suits = SUITS[contract[1]]  
+           
+          }
+        }
         if(vulnerable == 'BO'){
           tableStore.state.vulnerable = 'BOTH';
         }else if(vulnerable == 'NS' || vulnerable == 'EW'){
@@ -279,7 +291,7 @@ var user=null;
         tableStore.dealCards();
         Sound.play('deal');
         this.timing(seats[bd2.player],999,()=>{})
-        if('SW'.indexOf(seats[bd2.player])!=-1){
+        if('SN'.indexOf(seats[bd2.player])!=-1){
           window.__Timer.start('sn');
         }else{
           window.__Timer.start('ew');
@@ -315,6 +327,9 @@ var user=null;
           if(state=='playing'){
             var cur = getCurOrLast(seats,JSON.parse(current_trick));
             var last = getCurOrLast(seats,JSON.parse(last_trick));
+            var a = getUserCardsDeal(tableStore.myseat,Dummy[declarer],hands);
+            var b = getUserCards(tableStore.myseat,Dummy[declarer],hands);
+            debugger
             let allData ={
               scene:2,
               dummySeat: seats[Dummy[declarer]],
@@ -388,7 +403,7 @@ var user=null;
               scene:3,
               claim:{
                 seat:declarer,
-                msg:`${contract} + ${claim_result}`
+                msg:`庄家声称还赢 ${claim_result} 墩`
               },
 
               dummySeat: seats[Dummy[declarer]],
@@ -485,11 +500,23 @@ var user=null;
             tableStore.bidState.showBid = false
             tableStore.bidState.showBlock = false
             tableStore.state.declarer = info.declarer;
+            const declarer = info.declarer;
+            const contract = info.contract;
+            tableStore.state.contract = contract
+            if(contract){
+              if('SHCD'.indexOf(contract[1]) != -1){
+                Card.suits = SUITS[contract[1]]
+              }
+            }
+            var deals =cardString(tableStore.myseat,info.hands) ;
+            tableStore.initCards(deals);
+            tableStore.dealCards();
             if(info.player==tableStore.myseat){
               cards = tableStore.selectCards("S", 'SHDC',[ACT1.L]);
               tableStore.setCardsState(cards, { active: ACT1.LC, onclick: tableStore.play });
             }
-            tableStore.state.contract = info.contract;
+            
+           
           }
           if(info.state=='done'){
             tableStore.state.scene = 5;
@@ -641,8 +668,10 @@ var user=null;
 
       dealClaim = (info,args) =>{
         console.log(info,args)
-        let claimMsg = `${args[0]}玩家摊牌：${info.contract}  +${args[1]}`
-        tableStore.claim(args[0],claimMsg)
+        let claimMsg = `庄家声称还赢 ${args[1]}墩`;
+        if(args[0] != tableStore.myseat){
+          tableStore.claim(args[0],claimMsg)
+        }
         var hands = JSON.parse(info.hands)
         var ind = dir.indexOf(info.declarer)
         if(args[0] != tableStore.myseat){

@@ -1,3 +1,5 @@
+import Card from '../components/Card';
+const SUITS = Card.suits;
 /**
  * arr = [1,2,3,4,5];
  * arr.RightMove(3)
@@ -54,37 +56,47 @@ Array.prototype.RightMove=function(num){
     }
     return '...'+str;
 }
+const _getOneSuit = (suit,hand) => {
+  const reg = new RegExp(suit, "g");
+  const h = hand.filter(card => card.substring(0, 1) === suit);
+  return h.toString().replace(reg, "").replace(/,/g, "");
+}
+const  _getOneHand= (hand)=>{ console.log(SUITS)
+  return _getOneSuit(Card.suits[0],hand)+'.'+_getOneSuit(Card.suits[1],hand)+'.'+_getOneSuit(Card.suits[2],hand)+'.'+_getOneSuit(Card.suits[3],hand);
+}
+
+
 /**
  * ["S5","S4","S3", "S2", "H5", "H4", "H3", "D5", "D4", "D3", "C5", "C4", "C3"] =>
  * 5432.543.543.543
  */
-function _getOneDeal(card){ 
-  let suit = ['S','H','D','C'];
-  let suitInd = 0;
-  let deal = '';
-  for(var i = 0; i<card.length;i++){
-  // console.log(i)
-    if(card[i].indexOf(suit[suitInd])==0){
-      console.log(i)
-      deal += card[i][1];
-    }else{
-      deal += `.`;
-      suitInd+=1;
-      i--;
-    }
-  }
-  var str =JSON.stringify(card);
-  if(str.indexOf('C')==-1){
-    deal += `.`;
-    if(str.indexOf('D')==-1){
-      deal += `.`;
-      if(str.indexOf('H')==-1){
-        deal += `.`;
-      }
-    }
-  }
-  return deal;
-}
+// function _getOneHand(card){ 
+//   let suit = ['S','H','D','C'];
+//   let suitInd = 0;
+//   let deal = '';
+//   for(var i = 0; i<card.length;i++){
+//   // console.log(i)
+//     if(card[i].indexOf(suit[suitInd])==0){
+//       console.log(i)
+//       deal += card[i][1];
+//     }else{
+//       deal += `.`;
+//       suitInd+=1;
+//       i--;
+//     }
+//   }
+//   var str =JSON.stringify(card);
+//   if(str.indexOf('C')==-1){
+//     deal += `.`;
+//     if(str.indexOf('D')==-1){
+//       deal += `.`;
+//       if(str.indexOf('H')==-1){
+//         deal += `.`;
+//       }
+//     }
+//   }
+//   return deal;
+// }
 
 /**  W N E S
  * "[["S5", "S4", "S3", "S2", "H5", "H4", "H3", "D5", "D4", "D3", "C5", "C4", "C3"], 
@@ -108,7 +120,7 @@ export function cardString(user,cardsArr){
   cardsArr = JSON.parse(cardsArr);
   var ind = arr1.indexOf(user);
   var myCards = cardsArr[ind];
-  var deals = _X(13)+' '+_X(13)+' '+_getOneDeal(myCards)+' '+_X(13);
+  var deals = _X(13)+' '+_X(13)+' '+_getOneHand(myCards)+' '+_X(13);
   return deals;
 }
 
@@ -150,7 +162,7 @@ export function getUserCardsDeal(user,dummy,cardsArr){
   console.log(userCardsDeal)
   console.log(result);
  var res =  result.map((item1)=>{
-    return _getOneDeal(item1);
+    return _getOneHand(item1);
   })
   
   return res.join(' ') ;

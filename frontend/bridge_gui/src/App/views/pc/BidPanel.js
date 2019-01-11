@@ -30,11 +30,11 @@ class BidPanel extends Component {
   }
   constructor(props) {
     super(props)
-    this.width = window.screen.width;
+    this.width = window.screen.width;window.__BID = this
     const suits = ['NT', 'S', 'H', 'D', 'C'];
     const rank = [1, 2, 3, 4, 5, 6, 7];
     const bids = rank.map((i) => suits.map((j) => i + j))
-    //console.log(bids)
+    console.log(bids)
     //this.state.calling = "";
     const bidblocks = bids.map((e, i) => e.map((e1, i1) => {
       //let active = (i<5 && i1<3) ? 1:0;
@@ -49,14 +49,14 @@ class BidPanel extends Component {
     this.ref = React.createRef();
     var at = autorun(this.initPanel);  // 是否可以通过生命周期函数
     // 通过 props 修改不会引发重新渲染。
-
+    this.initPanel()
   }
   /**
    * 处理 叫牌点击事件。
    * 如果 item 是 row,col 则调用 _bidblock() 否则调用 _bidcard
    */
   handleCall = (item) => {
-    if ('row' in item) {
+    if ('row' in item) { debugger
       this._bidblock(item);
     } else {
       this._bidcard(item);
@@ -137,8 +137,9 @@ class BidPanel extends Component {
    */
   handleConfirm = () => {
     // 调用 聊天打牌 发送数据
-    this.state.calling = "";
+   
     Out.call(this.state.calling);
+    this.state.calling = "";
     // this.setState({
     //   active: 0
     // })
@@ -163,14 +164,13 @@ class BidPanel extends Component {
    * 通过 curCall 初始化 bidPanel 隐藏无效的叫品。
    */
   // @autorun 不好使
-  initPanel = () => {
-    const curCall = this.props.tableStore.curCall;
+  initPanel () {
+    let curCall = this.props.tableStore.curCall;
     //const showBlock = this.props.tableStore.bidState.showBlock;
     const bidblocks = this.state.bidblocks;
     const suits = ['NT', 'S', 'H', 'D', 'C'];
     if (curCall) {
       bidblocks.splice(0, curCall.slice(0, 1) - 1 - (7 - bidblocks.length));
-      debugger;
       if (curCall.slice(1) == "NT") bidblocks.splice(0, 1) // 如果是 nt 直接删除本行
       else bidblocks[0].forEach((item, index) => {
         if (index >= suits.indexOf(curCall.slice(1))) item.active = null;
@@ -230,7 +230,7 @@ class BidPanel extends Component {
   }
   render() {
     //this.initPanel();  //zsx修改：解决根据叫品，隐藏部分叫牌
-    //console.log('ffff:' + this.width)
+    console.log('ffff:' + this.width)
     const bidblocks = this.state.bidblocks.map((e1, i1) => e1.map((e2, i2) => {
 
       //if (e2.active == 0) animation['brightness'] = 0.6;
