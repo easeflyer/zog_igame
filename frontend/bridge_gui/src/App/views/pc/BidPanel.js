@@ -162,10 +162,10 @@ class BidPanel extends Component {
     // 调用 聊天打牌 发送数据
    
     Out.call(this.state.calling);
-    this.state.calling = "";
-    // this.setState({
-    //   active: 0
-    // })
+    // this.state.calling = "";
+    this.setState({
+      calling:""
+    })
   }
 
   handleReset = () => {
