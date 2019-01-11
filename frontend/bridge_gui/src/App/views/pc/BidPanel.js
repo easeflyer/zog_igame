@@ -28,6 +28,13 @@ class BidPanel extends Component {
     active: 1,
     calling: ""
   }
+  /**
+   * 
+   * this.atDisposer = reaction() 查看 mobx 的手册。
+   * 因为使用 autorun 自动观察了当前组件bidpanel 的state 因此出现点击 bidBlock
+   * 时执行了 initpanel 的情况。initPanel 应该只在 cruCall 变的时候执行。
+   * 因此这里使用了 reaction 更加精确的控制。自动执行。
+   */
   constructor(props) {
     super(props)
     this.width = window.screen.width;window.__BID = this
@@ -49,9 +56,10 @@ class BidPanel extends Component {
     this.ref = React.createRef();
     debugger;
     //this.atDisposer = autorun(this.initPanel);  // 是否可以通过生命周期函数
-    this.atDisposer = reaction(() => this.props.tableStore.curCall, 
+    this.atDisposer = reaction(
+      () => this.props.tableStore.curCall, 
       (data, reaction) => { this.initPanel(data) }, 
-      {fireImmediately:true}
+      {fireImmediately:true} // 这里 上面的函数立即执行一次。可查看mobx 手册
     )
     // 通过 props 修改不会引发重新渲染。
     this.initPanel()
