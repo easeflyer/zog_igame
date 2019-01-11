@@ -8,7 +8,7 @@ import React, { Component, Fragment } from 'react';
 import Motion from '../../libs/Motion'
 import './BidPanel.css'
 import { inject, observer } from 'mobx-react';
-import { toJS, autorun } from 'mobx';
+import { toJS, autorun,reaction } from 'mobx';
 import Position from '../../common/Position';
 import Out from '../pc/Output';
 
@@ -47,20 +47,32 @@ class BidPanel extends Component {
     // console.log(bidblocks)
     this.state.bidblocks = bidblocks;
     this.ref = React.createRef();
-    var at = autorun(this.initPanel);  // 是否可以通过生命周期函数
+    debugger;
+    //this.atDisposer = autorun(this.initPanel);  // 是否可以通过生命周期函数
+    this.atDisposer = reaction(() => this.props.tableStore.curCall, 
+      (data, reaction) => { this.initPanel(data) }, 
+      {fireImmediately:true}
+    )
     // 通过 props 修改不会引发重新渲染。
 
+  }
+  componentWillUnmount() {
+    this.atDisposer();
   }
   /**
    * 处理 叫牌点击事件。
    * 如果 item 是 row,col 则调用 _bidblock() 否则调用 _bidcard
    */
   handleCall = (item) => {
+    debugger;
+    //this.atDisposer();
     if ('row' in item) {
       this._bidblock(item);
     } else {
       this._bidcard(item);
     }
+    debugger;
+    //this.at = autorun(this.initPanel);
   }
 
   // getCallData() {
@@ -107,6 +119,9 @@ class BidPanel extends Component {
    * 点击某个叫品，其他叫品要联动（active=0/1）
    */
   _bidblock = (item) => {
+
+    // alert(item.row+"--"+item.col);
+    // window.___bidblocks = this.state.bidblocks;
     if (!this.state.active) return false;
     // console.log('item........................')
     // console.log(item)
@@ -162,15 +177,16 @@ class BidPanel extends Component {
   /**
    * 通过 curCall 初始化 bidPanel 隐藏无效的叫品。
    */
-  // @autorun 不好使
-  initPanel = () => {
-    const curCall = this.props.tableStore.curCall;
+  initPanel = (data) =>{
+    //const curCall = "4NT";//this.props.tableStore.curCall;
+    const curCall = data;
     //const showBlock = this.props.tableStore.bidState.showBlock;
+    alert(this)
+    debugger;
     const bidblocks = this.state.bidblocks;
     const suits = ['NT', 'S', 'H', 'D', 'C'];
     if (curCall) {
       bidblocks.splice(0, curCall.slice(0, 1) - 1 - (7 - bidblocks.length));
-      debugger;
       if (curCall.slice(1) == "NT") bidblocks.splice(0, 1) // 如果是 nt 直接删除本行
       else bidblocks[0].forEach((item, index) => {
         if (index >= suits.indexOf(curCall.slice(1))) item.active = null;
