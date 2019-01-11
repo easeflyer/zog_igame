@@ -6,7 +6,7 @@
 import tableStore from '../../stores/tableStore'
 import Process from '../../models/newProcess'
 window.Process = Process;
-const Output = {
+const _Output = {
   ckLogin:()=>{
     console.log("用户已经登录。")
   },
@@ -45,5 +45,15 @@ const Output = {
     Process.getBoard()
   } 
 }
+
+let handler = {
+  get:function(obj,prop){
+    if(window.__debug)return ()=>null;
+    return obj[prop];
+  }
+}
+
+let Output = new Proxy(_Output,handler);
+
 
 export default Output;

@@ -22,7 +22,8 @@ class Game extends React.Component {
         super(props);
         this.debug=true;
         // this.init();// 屏蔽鼠标右键
-        Process.start()
+        if(!this.debug) Process.start();
+        window.__debug = this.debug;
         // this.width = window.screen.width;
         // this.height = window.screen.height;
         // console.log('width:' + this.width)
