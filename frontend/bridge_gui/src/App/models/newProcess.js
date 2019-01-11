@@ -179,6 +179,17 @@ var user=null;
        this.recover()
        
       }
+
+      get_done_Board = async () => {
+
+        boards = table.attr('board_ids')
+
+       const dbd = boards.get_done_board()
+      
+        const bd2 = dbd[1].look(fields.doing_table_ids.board_ids)
+        console.log(bd2)
+      }
+
       before_poll = async () => {
         console.log('before 0')
         // before_poll0(odoo)
@@ -241,11 +252,12 @@ var user=null;
         const bd2 = bd.look(fields.doing_table_ids.board_ids)
         console.log(bd2)  //得到当前游戏的全部内容
         
-        const {state,dealer,auction,player,declarer,hands,current_trick,last_trick,tricks,contract,claim_result,vulnerable} = bd2;
+        const {state,dealer,auction,player,declarer,hands,current_trick,last_trick,tricks,contract,claim_result,vulnerable,sequence} = bd2;
         TRICKS = tricks;
         tableStore.dummySeat = seats[Dummy[declarer]];
         tableStore.dealer=seats[dealer];
         tableStore.logicDealer=dealer;
+        tableStore.sequence = sequence;
         tableStore.state.declarer=declarer;
         if(vulnerable == 'NS'){
           tableStore.state.vulnerable='SN';
@@ -280,7 +292,7 @@ var user=null;
           console.log(Two(call))
           tableStore.state.calldata.call = Two(call);
           for(let i = 0 ;i<call.length;i++){
-            if(call[call.length-1-i]!='Pass'){
+            if(call[call.length-1-i]!='Pass' || call[call.length-1-i]!='x' || call[call.length-1-i]!='xx'){
               curCall = call[call.length-i-1];
               break;
             }
@@ -457,7 +469,7 @@ var user=null;
         call = JSON.parse(info.auction); 
           tableStore.state.calldata.call = Two(call);
           for(let i = 0 ;i<call.length;i++){
-            if(call[call.length-1-i]!='Pass'){
+            if(call[call.length-1-i]!='Pass' || call[call.length-1-i]!='x' || call[call.length-1-i]!='xx'){
               curCall = call[call.length-i-1];
               break;
             }

@@ -21,6 +21,18 @@ const creator = (options) => {
             const ins = instances.sort( (a,b) => a.attr('number') - b.attr('number') )
             return ins[0]
         }
+        get_done_board () {
+            const instances = this.list().filter(
+               ins => ins.attr('state') === 'done'
+            )
+
+            if (instances.length == 0){
+                return null
+            }
+
+            const ins = instances.sort( (a,b) => a.attr('number') - b.attr('number') )
+            return ins
+        }
 
         async get_random_call(){
             const data = await cls.call('get_random_call', [ this._id])

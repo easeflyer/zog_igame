@@ -59,7 +59,8 @@ class TableModel {
   }
   dummySeat = "W"; // 固定界面方位，非逻辑方位
   dealer ='E';  //固定方位
-  logicDealer=''//逻辑方位
+  logicDealer='';//逻辑方位
+  sequence = ''; //表示当前是第几副牌
   @observable curCall = '';  // 当前叫品，用于bidpanel 显示。
   // boardState = {
   //   boardId: null,
@@ -156,14 +157,14 @@ class TableModel {
 
   initCards(sdeals) {
     let suits = Card.suits.slice(0);            //['S', 'H', 'D', 'C'];
-    this._swDC(suits);
+    //this._swDC(suits);
     const deals = sdeals.split(' ');
     console.log(deals)
     let index = 0;                              // 复位index 可以让四个人的牌同时发出来
     const cards = [[], [], [], []];             // 初始化二维数组 保存四个方位的牌
     deals.forEach((item, index1) => {           // index1 是方位编号
       const suit = item.split('.')
-      this._swDC(suit);
+      //this._swDC(suit);
       suit.forEach((s, index2) => {           // index2 四个花色  s 'QJ98' 牌点字串
         for (var i = 0; i < s.length; i++) {
           cards[index1].push({
@@ -190,7 +191,7 @@ class TableModel {
     this.bidState.showBid = !this.bidState.showBid;
     this.bidState.showBlock = showBlock;
   }
-  /**
+/**
    * 发牌
    * 
    * 算法注解：
@@ -361,7 +362,7 @@ class TableModel {
    * 只有 点击打出去的牌 才会执行 Out.play();
    */
   @action.bound
-  _play = (item) => { 
+  _play = (item) => {
     // if(item.active != 3) return; // 只有突出的牌能打出去。
     // if (this.board[0].length === 4) return false;
         // 已经打出去的牌
@@ -924,7 +925,7 @@ class TableModel {
     //this._claim.seat = this.myseat;
     // this.state.claim.seat = seat;
     this.state.claim.msg = claimMsg;
-    this.state.scene = 3;
+    this.state.scene = this.state.scene==3 ? 2 :3;
   }
 
 
