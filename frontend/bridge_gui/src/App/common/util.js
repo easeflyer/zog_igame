@@ -176,6 +176,7 @@ export function getUserCardsDeal(user,dummy,cardsArr){
   
   return res.join(' ') ;
 }
+//使用filter
 export function removeNull(arr){
   if(arr.length>0){
     if(arr[0]==null){
@@ -188,6 +189,7 @@ export function removeNull(arr){
  
 }
 //一维数组转二维数组
+
 export function Two(arr){
   var arr4=[];
   var result = []
