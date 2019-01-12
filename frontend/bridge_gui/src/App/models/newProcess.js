@@ -327,9 +327,6 @@ var user=null;
           if(state=='playing'){
             var cur = getCurOrLast(seats,JSON.parse(current_trick));
             var last = getCurOrLast(seats,JSON.parse(last_trick));
-            var a = getUserCardsDeal(tableStore.myseat,Dummy[declarer],hands);
-            var b = getUserCards(tableStore.myseat,Dummy[declarer],hands);
-            debugger
             let allData ={
               scene:2,
               dummySeat: seats[Dummy[declarer]],

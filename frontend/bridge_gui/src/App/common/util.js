@@ -1,5 +1,4 @@
 import Card from '../components/Card';
-const SUITS = Card.suits;
 /**
  * arr = [1,2,3,4,5];
  * arr.RightMove(3)
@@ -61,7 +60,7 @@ const _getOneSuit = (suit,hand) => {
   const h = hand.filter(card => card.substring(0, 1) === suit);
   return h.toString().replace(reg, "").replace(/,/g, "");
 }
-const  _getOneHand= (hand)=>{ console.log(SUITS)
+const  _getOneHand= (hand)=>{ 
   return _getOneSuit(Card.suits[0],hand)+'.'+_getOneSuit(Card.suits[1],hand)+'.'+_getOneSuit(Card.suits[2],hand)+'.'+_getOneSuit(Card.suits[3],hand);
 }
 
@@ -177,6 +176,7 @@ export function getUserCardsDeal(user,dummy,cardsArr){
   
   return res.join(' ') ;
 }
+//使用filter
 export function removeNull(arr){
   if(arr.length>0){
     if(arr[0]==null){
@@ -189,6 +189,7 @@ export function removeNull(arr){
  
 }
 //一维数组转二维数组
+
 export function Two(arr){
   var arr4=[];
   var result = []
