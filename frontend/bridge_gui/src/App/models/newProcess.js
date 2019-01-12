@@ -57,8 +57,8 @@ var seats=null;//{玩家真实方位：桌子上的方位}
 const dir = ['W','N','E','S'];
 const SUITS = {
   'S' : ['S','H','C','D'],
-  'H' : ['H','C','D','S'],
-  'C' : ['C','D','S','H'],
+  'H' : ['H','S','D','C'],
+  'C' : ['C','H','S','D'],
   'D' : ['D','S','H','C'],
 }
 const odoo = new ODOO({ host, db, models })
@@ -519,7 +519,7 @@ var user=null;
            
           }
           if(info.state=='done'){
-            tableStore.state.scene = 5;
+            tableStore.bidState.showBid = false
             //显示结果
             var result = 'Allpass';
             tableStore._result = result;
