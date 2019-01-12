@@ -125,7 +125,7 @@ class Table extends Component {
      */
     claim = () => {
         //this.props.tableStore.claim('E',3);
-        this.props.tableStore.claim('N', '东（E）玩家摊牌，定约：3NT + 3');
+        this.props.tableStore.claim('S', '东（E）玩家摊牌，定约：3NT + 3');
         // Sound.play('claim');
     }
 

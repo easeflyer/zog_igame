@@ -50,12 +50,12 @@ class TableModel {
     //playseat:null, // 倒计时解决
     debug: false,
     unPlayCardNumber: null,
-    claim: { seat: "W", msg: null },
+    claim: { seat: "S", msg: null },
     contract: '', // 暂时没用
     winEW: '',
     winSN: '',
     vulnerable:'EW',//局况
-    declarer:'',//逻辑方位 庄家
+    declarer:'S',//逻辑方位 庄家
   }
   dummySeat = "W"; // 固定界面方位，非逻辑方位
   dealer ='E';  //固定方位
