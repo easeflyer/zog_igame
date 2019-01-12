@@ -315,6 +315,7 @@ export default class Debug extends Component {
 
             //setTimeout(o.dplay,5000);
         }
+        
         // =====  测试用例结束 =================================================
 
         return (
@@ -345,6 +346,7 @@ export default class Debug extends Component {
                 <button onClick={o.showResult}>显示结果</button>&nbsp;
                 <button onClick={o.showTableId}>显示桌号</button>&nbsp;
                 <button onClick={o.dplay}>东出牌</button>&nbsp;
+                <button onClick={o.initCards}>初始化</button>&nbsp;
 
             </div>
         )

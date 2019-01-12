@@ -171,7 +171,7 @@ class Table extends Component {
      */
     deal = () => {
         this.props.tableStore.initCards(this.props.tableStore.deals)
-        this.props.tableStore.dealCards();
+        setTimeout(this.props.tableStore.dealCards,10);
         Sound.play('deal')
     }
 

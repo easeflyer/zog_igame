@@ -63,6 +63,7 @@ class Claim extends Component {
             <div id='myclaim' className='claim'>
                 <b>剩下还可赢：</b><br />
                 {cblocks}
+                <div style={{clear:"both"}}></div>
                 {this.state.submit ?
                     <button disabled='true'>等待确认..</button> :
                     <div>
