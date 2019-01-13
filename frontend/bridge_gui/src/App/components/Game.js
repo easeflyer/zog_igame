@@ -38,9 +38,7 @@ class Game extends React.Component {
     init() {
         // new Process().start()
         // 图片预加载
-        // let cardImgs1 = cardImgs()
-        // imgPreLoad(cardImgs());
-        //window.__cardImgs = cardImgs1;
+        imgPreLoad(cardImgs());
 
         this.props.tableStore.tableId = this.props.match.params.tableid;
         if (this.debug) return;  // 去掉本行

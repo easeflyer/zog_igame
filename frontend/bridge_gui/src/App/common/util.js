@@ -72,27 +72,27 @@ function cardImgs() {
   const rank = "23456789TJQKA".split("");
   return suit.map((s) => rank.map((r) => `/cards/${s + r}.svg`));
 }
+// 更简单的预加载
+function _setPreLoad(img){
+  let images = window.document.createElement("img")
+  images.src = img;
+}
+// h5 的预加载
+function _setPreLoad1(img){
+  let hint = window.document.createElement("link")
+  hint.setAttribute("rel", "prefetch");
+  hint.setAttribute("href", img);
+  document.getElementsByTagName("head")[0].appendChild(hint)
+}    
 
 function imgPreLoad(imgs) {
-  let hint = "";
   imgs.forEach((img) => {
-    if (typeof (img) == 'object') {
-      img.forEach((i) => {
-        hint = window.document.createElement("link")
-        hint.setAttribute("rel", "prefetch");
-        hint.setAttribute("href", i);
-      })
-    }
-    else {
-      hint = window.document.createElement("link")
-      hint.setAttribute("rel", "prefetch");
-      hint.setAttribute("href", img);
-    }
+    if (typeof (img) == 'object') img.forEach((i) => _setPreLoad(i))
+    else _setPreLoad(img)
   })
-  document.getElementsByTagName("head")[0].appendChild(hint)
+  
 }
-
-
+//～ 图片预加载结束
 
 /**
  * ["S5","S4","S3", "S2", "H5", "H4", "H3", "D5", "D4", "D3", "C5", "C4", "C3"] =>
