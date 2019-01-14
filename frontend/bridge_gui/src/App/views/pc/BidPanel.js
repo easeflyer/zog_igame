@@ -11,6 +11,7 @@ import { inject, observer } from 'mobx-react';
 import { toJS, autorun,reaction } from 'mobx';
 import Position from '../../common/Position';
 import Out from '../pc/Output';
+import {basename} from '../../../config'
 
 /**
  * BidPanel 叫牌面板
@@ -229,13 +230,13 @@ class BidPanel extends Component {
             call[1] = call[1].slice(1, 2);
             return (
               <td title={note[call[1] - 1]} key={index + index1 + 1} className='alertTd'>
-                <img className='suit' src={`/cards/bids/${call[0]}.svg`} />
+                <img className='suit' src={`${basename}cards/bids/${call[0]}.svg`} />
               </td>
             );
           }
           return (
             <td key={index + index1 + 1}>
-              <img className='suit' src={`/cards/bids/${call[0].toUpperCase()}.svg`} />
+              <img className='suit' src={`${basename}cards/bids/${call[0].toUpperCase()}.svg`} />
             </td>
           );
         })}
@@ -332,7 +333,7 @@ class BidBlock extends Component {
     return (
       <Motion animation={animation} className='bidblock'>
         <div className='cn1' onClick={onclick} style={style}>
-          <img className='suit' src={`/cards/bids/${this.props.name}.svg`} />
+          <img className='suit' src={`${basename}cards/bids/${this.props.name}.svg`} />
         </div>
       </Motion>
     );
@@ -366,7 +367,7 @@ class BidCard extends Component {
     return (
       <Motion animation={animation} className='bidcard'>
         <div className='cn1' onClick={this.props.onclick} style={style}>
-          <img className='suit' src={`/cards/bids/${this.props.name}.svg`} />
+          <img className='suit' src={`${basename}cards/bids/${this.props.name}.svg`} />
         </div>
       </Motion>
     );
