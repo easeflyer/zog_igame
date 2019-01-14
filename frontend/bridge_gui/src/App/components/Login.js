@@ -5,6 +5,7 @@ import 'antd/lib/input/style/css'
 import 'antd/lib/icon/style/css'
 import User from '../libs/odoo/OdooRpc/User';
 import session from '../User/session';
+import {Link} from 'react-router-dom';
 const FormItem = Form.Item;
 
 class NormalLoginForm extends React.Component {
@@ -50,6 +51,7 @@ class NormalLoginForm extends React.Component {
             Log in
           </Button>
         </FormItem>
+        <Link to="/game/1">game</Link>
       </Form>
     );
   }

@@ -29,7 +29,7 @@ window._____APP_STATE_____ = stores;
 
 ReactDOM.render((
   <Provider {...stores}>
-    <BrowserRouter basename={config.basename}>
+    <BrowserRouter basename={config.basename}> 
       <App />
     </BrowserRouter>
   </Provider>
