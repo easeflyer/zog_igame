@@ -29,8 +29,8 @@ window._____APP_STATE_____ = stores;
 
 ReactDOM.render((
   <Provider {...stores}>
-    <BrowserRouter basename={basename}> 
+    <HashRouter basename={basename}> 
       <App />
-    </BrowserRouter>
+    </HashRouter>
   </Provider>
 ), document.getElementById('root'));
