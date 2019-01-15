@@ -2,7 +2,11 @@
   "name": "bridge_gui",
   "version": "0.1.0",
   "private": true,
+<<<<<<< HEAD
   "homepage": ".",
+=======
+  "homepage":".",
+>>>>>>> f06b8f7a3779ac17847df0a6b5b75c0a87db3eb2
   "dependencies": {
     "ant-design": "^1.0.0",
     "antd": "^3.10.9",

@@ -1,5 +1,6 @@
 import React from 'react';
 import Motion from '../libs/Motion'
+import {basename} from '../../config'
 //import TweenOne from 'rc-tween-one';
 //* active define 0,1,2,3  0 灰色不能点，1 亮色不能点，2 亮色能点, 3 亮色能点突出
 // D dark, L light,LC light click,LCO light click out
@@ -76,7 +77,6 @@ class Card extends React.Component {
             'back' : this.props.card;
 
 
-
         return (
             <div id={'card' + this.props.index}  // TODO: 这个div定位不理想，只是起到了 zIndex 作用。
                 style={{
@@ -88,7 +88,7 @@ class Card extends React.Component {
                     <img onClick={this.handleClick(`${this.props.index}`)}
                         // onDragStart={(e)=>e.preventDefault()}
                         alt={this.props.key}
-                        src={`/cards/${card}.svg`}
+                        src={`${basename}cards/${card}.svg`}
                         style={{
                             position: 'absolute',
                             width: "100%",
