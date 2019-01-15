@@ -20,7 +20,7 @@ class Game extends React.Component {
          *  屏幕大小
          */
         super(props);
-        this.debug=true;
+        this.debug=false;
         this.init();// 屏蔽鼠标右键
         if(!this.debug) Process.start();
         window.__debug = this.debug;
