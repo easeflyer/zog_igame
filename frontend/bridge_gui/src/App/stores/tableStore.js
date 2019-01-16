@@ -156,7 +156,7 @@ class TableModel {
    * reset=true 新的一局，重新发牌，reset=false 只是重新整理牌。
    */
   @action
-  initCards(sdeals,reset=false) {
+  initCards(sdeals,reset=true) {
     let suits = Card.suits.slice(0);            //['S', 'H', 'D', 'C'];
     //this._swDC(suits);
     const deals = sdeals.split(' ');
@@ -178,6 +178,7 @@ class TableModel {
             size: this.csize,                // 牌的大小
             card: suits[index2] + s[i],       //s[i]  5D
             position: { x: this.height / 2, y: this.height * 2 },     // 考虑一个默认位置。
+            // animation:{top:this.height * 2,left:this.height / 2,delay:0,duration:0}
           });
           if(reset)cards[index1][i]['animation'] = {
             top:this.height * 2,left:this.height / 2,delay:0,duration:0}
