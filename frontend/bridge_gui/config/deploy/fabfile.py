@@ -26,6 +26,7 @@ def _itable():
     sudo('git checkout master')
     sudo('git pull origin master')
     #sudo('rm -rf build/')
+    sudo('yarn install')
     sudo('yarn build')
     # sudo('rm -rf /var/www/bridge_bui1/itable')
     # sudo('cp -r dist/ /var/www/bridge_bui1/itable')
@@ -42,8 +43,17 @@ def _igame():
     # sudo('rm -rf /var/www/bridge_bui1/igame')
     # sudo('mv build/ /var/www/bridge_bui1/igame')
 
+def _imatch():
+  with cd("/opt/odoo/zog_igame/fronend/imatch"):
+    #sudo('git reset --hard HEAD')
+    sudo('git checkout develop')
+    sudo('git pull origin develop')
+    sudo('yarn install')
+    sudo('yarn build')
 
-# 正常工作的版本。删除重新拷贝
+
+
+# 正常工作的版本。删除重新拷贝,已经用软连接版本替换了。
 def _igame1():
   with cd("/home/s1/zog_igame/frontend/bridge_gui"):
     #run('git reset --hard HEAD')

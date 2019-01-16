@@ -178,10 +178,12 @@ class TableModel {
             size: this.csize,                // 牌的大小
             card: suits[index2] + s[i],       //s[i]  5D
             position: { x: this.height / 2, y: this.height * 2 },     // 考虑一个默认位置。
-            // animation:{top:this.height * 2,left:this.height / 2,delay:0,duration:0}
+            //animation:{top:this.height * 2,left:this.height / 2,delay:0,duration:0}
+            animation:reset? {top:this.height * 2,left:this.height / 2,delay:0,duration:0}:{}
           });
-          if(reset)cards[index1][i]['animation'] = {
-            top:this.height * 2,left:this.height / 2,delay:0,duration:0}
+          // const idx = cards[index1].length-1;
+          // if(reset)cards[index1][idx]['animation'] = {
+          //   top:this.height * 2,left:this.height / 2,delay:0,duration:0}
           index++;
         }
       });
