@@ -1,70 +1,98 @@
 import Card from '../components/Card';
-const SUITS = Card.suits;
 /**
  * arr = [1,2,3,4,5];
  * arr.RightMove(3)
  * console.log(arr);// [3,4,5,1,2]
  */
-Array.prototype.RightMove=function(num){
-    num = num || 0;
-    for(let i=0;i<num;i++){
-      var item =this.pop();
-      this.unshift(item)
-    }
+Array.prototype.RightMove = function (num) {
+  num = num || 0;
+  for (let i = 0; i < num; i++) {
+    var item = this.pop();
+    this.unshift(item)
   }
-
- export function rotateSeat(ArrSeats,player){
-    switch(player){
-      case "E":
-      ArrSeats.RightMove(1);break;
-      case "S":
-      ArrSeats.RightMove(0);break;
-      case "W":
-      ArrSeats.RightMove(3);break;
-      case "N":
-      ArrSeats.RightMove(2);break;
-    }
-  }
-  //接收牌 W N E S    桌面的上的牌 N E S W 
-  function _rotateCard(ArrSeats,player){
-    switch(player){
-      case "E":
-      ArrSeats.RightMove(0);break;
-      case "S":
-      ArrSeats.RightMove(3);break;
-      case "W":
-      ArrSeats.RightMove(2);break;
-      case "N":
-      ArrSeats.RightMove(1);break;
-    }
-    return ArrSeats;
-  }
-  export function Etoeast(x){
-    switch(x){
-      case 'E': return 'east';
-      case 'S': return 'south';
-      case 'W': return 'west';
-      case 'N': return 'north';
-    }
-  }
-
- // X(13) => 'XXXXXXXXXXXXX'
-  function _X(num) {
-    var str = '';
-    for(let i = 0 ;i<num;i++){
-      str += 'X'
-    }
-    return '...'+str;
 }
-const _getOneSuit = (suit,hand) => {
+
+export function rotateSeat(ArrSeats, player) {
+  switch (player) {
+    case "E":
+      ArrSeats.RightMove(1); break;
+    case "S":
+      ArrSeats.RightMove(0); break;
+    case "W":
+      ArrSeats.RightMove(3); break;
+    case "N":
+      ArrSeats.RightMove(2); break;
+  }
+}
+//接收牌 W N E S    桌面的上的牌 N E S W 
+function _rotateCard(ArrSeats, player) {
+  switch (player) {
+    case "E":
+      ArrSeats.RightMove(0); break;
+    case "S":
+      ArrSeats.RightMove(3); break;
+    case "W":
+      ArrSeats.RightMove(2); break;
+    case "N":
+      ArrSeats.RightMove(1); break;
+  }
+  return ArrSeats;
+}
+export function Etoeast(x) {
+  switch (x) {
+    case 'E': return 'east';
+    case 'S': return 'south';
+    case 'W': return 'west';
+    case 'N': return 'north';
+  }
+}
+
+// X(13) => 'XXXXXXXXXXXXX'
+function _X(num) {
+  var str = '';
+  for (let i = 0; i < num; i++) {
+    str += 'X'
+  }
+  return '...' + str;
+}
+const _getOneSuit = (suit, hand) => {
   const reg = new RegExp(suit, "g");
   const h = hand.filter(card => card.substring(0, 1) === suit);
   return h.toString().replace(reg, "").replace(/,/g, "");
 }
-const  _getOneHand= (hand)=>{ console.log(SUITS)
-  return _getOneSuit(Card.suits[0],hand)+'.'+_getOneSuit(Card.suits[1],hand)+'.'+_getOneSuit(Card.suits[2],hand)+'.'+_getOneSuit(Card.suits[3],hand);
+const _getOneHand = (hand) => {
+  return _getOneSuit(Card.suits[0], hand) + '.' + _getOneSuit(Card.suits[1], hand) + '.' + _getOneSuit(Card.suits[2], hand) + '.' + _getOneSuit(Card.suits[3], hand);
 }
 
+/**
+ * 图片预加载
+ */
+function cardImgs() {
+  const suit = "SHDC".split("");
+  const rank = "23456789TJQKA".split("");
+  return suit.map((s) => rank.map((r) => `/cards/${s + r}.svg`));
+}
+// 更简单的预加载
+function _setPreLoad(img){
+  let images = window.document.createElement("img")
+  images.src = img;
+}
+// h5 的预加载
+function _setPreLoad1(img){
+  let hint = window.document.createElement("link")
+  hint.setAttribute("rel", "prefetch");
+  hint.setAttribute("href", img);
+  document.getElementsByTagName("head")[0].appendChild(hint)
+}    
+
+function imgPreLoad(imgs) {
+  imgs.forEach((img) => {
+    if (typeof (img) == 'object') img.forEach((i) => _setPreLoad(i))
+    else _setPreLoad(img)
+  })
+  
+}
+//～ 图片预加载结束
 
 /**
  * ["S5","S4","S3", "S2", "H5", "H4", "H3", "D5", "D4", "D3", "C5", "C4", "C3"] =>
@@ -98,15 +126,15 @@ const  _getOneHand= (hand)=>{ console.log(SUITS)
 //   return deal;
 // }
 //修改牌的花色顺序
-export function changeSuitsOrder(cards,newSuits){
-    var newCards = [];
-    newSuits.forEach((suit)=>{
-        for(let i = 0;i<cards.length;i++){
-          if(cards[i].indexOf(suit) != -1)
-           newCards.push(cards[i]);
-        }
-    })
-    return newCards
+export function changeSuitsOrder(cards, newSuits) {
+  var newCards = [];
+  newSuits.forEach((suit) => {
+    for (let i = 0; i < cards.length; i++) {
+      if (cards[i].indexOf(suit) != -1)
+        newCards.push(cards[i]);
+    }
+  })
+  return newCards
 }
 /**  W N E S
  * "[["S5", "S4", "S3", "S2", "H5", "H4", "H3", "D5", "D4", "D3", "C5", "C4", "C3"], 
@@ -119,90 +147,92 @@ export function changeSuitsOrder(cards,newSuits){
  * const deals = 'K34.J3.Q742.K832 XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX';
  */
 const seatMap = {
-  "E":{N:'E',E:'S',S:'W',W:'N'},
-  "S":{E:'E',S:'S',W:'W',N:'N'},
-  "W":{S:'E',W:'S',N:'W',E:'N'},
-  "N":{W:'E',N:'S',E:'W',S:'N'}
+  "E": { N: 'E', E: 'S', S: 'W', W: 'N' },
+  "S": { E: 'E', S: 'S', W: 'W', N: 'N' },
+  "W": { S: 'E', W: 'S', N: 'W', E: 'N' },
+  "N": { W: 'E', N: 'S', E: 'W', S: 'N' }
 }
-const arr1 = ['W','N','E','S'];
-const arr2 = ['N','E','S','W'];
-export function cardString(user,cardsArr){
+const arr1 = ['W', 'N', 'E', 'S'];
+const arr2 = ['N', 'E', 'S', 'W'];
+export function cardString(user, cardsArr) {
   cardsArr = JSON.parse(cardsArr);
   var ind = arr1.indexOf(user);
   var myCards = cardsArr[ind];
-  var deals = _X(13)+' '+_X(13)+' '+_getOneHand(myCards)+' '+_X(13);
+  var deals = _X(13) + ' ' + _X(13) + ' ' + _getOneHand(myCards) + ' ' + _X(13);
   return deals;
 }
 
 
 //user 表示玩家的真实方位  
 // 得到自己和明手的牌 和 扣着的牌
-export function getUserCards(user,dummy,cardsArr){
-   let userCards = null;
-   cardsArr = JSON.parse(cardsArr);
-   userCards = _rotateCard(cardsArr,user);
-   var dummyInd = arr2.indexOf(seatMap[user][dummy]) 
-   userCards.forEach((item,ind)=>{
-      if(ind==2 || ind==dummyInd){
-      }else{
-        item.fill('CX')
-      }
-   });
-   console.log(userCards)
-   return userCards;
+export function getUserCards(user, dummy, cardsArr) {
+  let userCards = null;
+  cardsArr = JSON.parse(cardsArr);
+  userCards = _rotateCard(cardsArr, user);
+  var dummyInd = arr2.indexOf(seatMap[user][dummy])
+  userCards.forEach((item, ind) => {
+    if (ind == 2 || ind == dummyInd) {
+    } else {
+      item.fill('CX')
+    }
+  });
+  console.log(userCards)
+  return userCards;
 }
-export function getUserCardsDeal(user,dummy,cardsArr){
+export function getUserCardsDeal(user, dummy, cardsArr) {
   let result = [];
   let userCardsDeal = null;
   cardsArr = JSON.parse(cardsArr);
-  userCardsDeal = _rotateCard(cardsArr,user)
-  
-  var dummyInd = arr2.indexOf(seatMap[user][dummy]) 
-  userCardsDeal.forEach((item,ind)=>{
-     if(ind==2 || ind==dummyInd){
-       var num = 13-item.length;
-       var XArr=new Array(num).fill('CX')
-       item = item.concat(XArr)
-       result.push(item)
-     }else{
-       item = new Array(13).fill('CX');
-       result.push(item)
-     }
+  userCardsDeal = _rotateCard(cardsArr, user)
+
+  var dummyInd = arr2.indexOf(seatMap[user][dummy])
+  userCardsDeal.forEach((item, ind) => {
+    if (ind == 2 || ind == dummyInd) {
+      var num = 13 - item.length;
+      var XArr = new Array(num).fill('CX')
+      item = item.concat(XArr)
+      result.push(item)
+    } else {
+      item = new Array(13).fill('CX');
+      result.push(item)
+    }
   });
   console.log(userCardsDeal)
   console.log(result);
- var res =  result.map((item1)=>{
+  var res = result.map((item1) => {
     return _getOneHand(item1);
   })
-  
-  return res.join(' ') ;
+
+  return res.join(' ');
 }
-export function removeNull(arr){
-  if(arr.length>0){
-    if(arr[0]==null){
+//使用filter
+export function removeNull(arr) {
+  if (arr.length > 0) {
+    if (arr[0] == null) {
       arr.shift();
-      if(arr[0]==null){
+      if (arr[0] == null) {
         removeNull(arr)
       }
     }
   }
- 
+
 }
 //一维数组转二维数组
-export function Two(arr){
-  var arr4=[];
+
+export function Two(arr) {
+  var arr4 = [];
   var result = []
-  if(arr[0]==null){
+  if (arr[0] == null) {
     removeNull(arr);
   }
   console.log(arr);
-  for(let i = 0 ;i<arr.length;i++){
+  for (let i = 0; i < arr.length; i++) {
     arr4.push(arr[i]);
-    if(arr4.length==4){
+    if (arr4.length == 4) {
       result.push(arr4);
       arr4 = new Array()
     }
-    if(i==arr.length-1 && arr4.length<4 && arr4.length>0){
+    if (i == arr.length - 1 && arr4.length < 4 && arr4.length > 0) {
       result.push(arr4);
     }
   }
@@ -213,13 +243,15 @@ export function Two(arr){
  * 
  * @param {*} seats 每一个玩家对应的座位
  */
-export function getCurOrLast(seats,trick){
+export function getCurOrLast(seats, trick) {
   let result = []
-  trick.forEach((item,ind)=>{
-    if(item!=null){
-     var player =  arr1[ind%4]; //真实玩家
-     result.push({seat:seats[player],card:item})
+  trick.forEach((item, ind) => {
+    if (item != null) {
+      var player = arr1[ind % 4]; //真实玩家
+      result.push({ seat: seats[player], card: item })
     }
   });
   return result;
 }
+
+export { imgPreLoad, cardImgs };

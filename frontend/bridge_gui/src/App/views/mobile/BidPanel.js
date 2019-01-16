@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import TweenOne from 'rc-tween-one';
 import './BidPanel.css'
+import {basename} from '../../../config'
 // let css1 = {
 //     bidpanel: {
 //         width: '100%',
@@ -66,7 +67,7 @@ class BidPanel extends Component {
                 {item.map((item1,index1)=>(
                     <td key={index+index1 + 1} style={{height:`${this.width*0.05}px`}}>
                         {item1?
-                            <img className='suit' src={`/cards/bids/${item1.toUpperCase()}.svg`} />
+                            <img className='suit' src={`${basename}cards/bids/${item1.toUpperCase()}.svg`} />
                             :' '
                         }
                     </td>
@@ -89,13 +90,13 @@ class BidPanel extends Component {
                 </div>
                 {bidblocks}
                 <div className='pass'>
-                    <img className='suit' src={`/cards/bids/PASS.svg`} />
+                    <img className='suit' src={`${basename}cards/bids/PASS.svg`} />
                 </div>
                 <div className='double'>
-                    <img className='suit' src={`/cards/bids/X.svg`} />
+                    <img className='suit' src={`${basename}cards/bids/X.svg`} />
                 </div>
                 <div className='redouble'>
-                    <img className='suit' src={`/cards/bids/XX.svg`} />
+                    <img className='suit' src={`${basename}cards/bids/XX.svg`} />
                 </div>
             </div>
         );
@@ -127,7 +128,7 @@ class BidBlock extends Component {
             >
 
                 <div className='cn1' onClick={this.props.onclick} style={style}>
-                    <img className='suit' src={`/cards/bids/${this.props.name}.svg`} />
+                    <img className='suit' src={`${basename}cards/bids/${this.props.name}.svg`} />
                 </div>
             </TweenOne>
         );

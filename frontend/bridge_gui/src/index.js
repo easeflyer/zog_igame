@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom';
 //import promiseFinally from 'promise.prototype.finally';
 import React from 'react';
+import {basename} from './config'
 import { HashRouter,BrowserRouter } from 'react-router-dom';
 
 import { Provider } from 'mobx-react';
@@ -28,8 +29,8 @@ window._____APP_STATE_____ = stores;
 
 ReactDOM.render((
   <Provider {...stores}>
-    <BrowserRouter>
+    <HashRouter basename={basename}> 
       <App />
-    </BrowserRouter>
+    </HashRouter>
   </Provider>
 ), document.getElementById('root'));

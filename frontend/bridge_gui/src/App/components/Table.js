@@ -125,7 +125,7 @@ class Table extends Component {
      */
     claim = () => {
         //this.props.tableStore.claim('E',3);
-        this.props.tableStore.claim('N', '东（E）玩家摊牌，定约：3NT + 3');
+        this.props.tableStore.claim('S', '东（E）玩家摊牌，定约：3NT + 3');
         // Sound.play('claim');
     }
 
@@ -171,7 +171,7 @@ class Table extends Component {
      */
     deal = () => {
         this.props.tableStore.initCards(this.props.tableStore.deals)
-        this.props.tableStore.dealCards();
+        setTimeout(this.props.tableStore.dealCards,10);
         Sound.play('deal')
     }
 

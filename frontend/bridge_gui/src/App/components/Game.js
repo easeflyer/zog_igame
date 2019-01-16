@@ -5,7 +5,7 @@ import Process from '../models/newProcess'
 import { inject, observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
 import Out from "../views/pc/Output";
-
+import {cardImgs,imgPreLoad} from '../common/util'
 /**
  * Game  是一局比赛，涉及到了比赛者，以及和比赛相关的其他信息。重点在于比赛。
  * Table 是一桌游戏的界面：重点在于 一桌
@@ -20,8 +20,8 @@ class Game extends React.Component {
          *  屏幕大小
          */
         super(props);
-        this.debug=true;
-        // this.init();// 屏蔽鼠标右键
+        this.debug=false;
+        this.init();// 屏蔽鼠标右键
         if(!this.debug) Process.start();
         window.__debug = this.debug;
         // this.width = window.screen.width;
@@ -29,6 +29,7 @@ class Game extends React.Component {
         // console.log('width:' + this.width)
         // console.log('height:' + this.height)
         //if (this.width < 400) settings.scale = 0.5;
+
     }
     /**
      * 做一些初始化操作，比如屏蔽鼠标右键。
@@ -36,6 +37,9 @@ class Game extends React.Component {
      */
     init() {
         // new Process().start()
+        // 图片预加载
+        imgPreLoad(cardImgs());
+
         this.props.tableStore.tableId = this.props.match.params.tableid;
         if (this.debug) return;  // 去掉本行
         window.document.oncontextmenu = function () {

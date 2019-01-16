@@ -15,8 +15,12 @@ class Claim extends Component {
 
     state = {
         number: 0,
-        value: 0,
+        value: -1,
         submit: 0
+    }
+    constructor(props){
+        super(props);
+        this.state.value = -1;
     }
 
     handleClick = (value) => {
@@ -30,6 +34,7 @@ class Claim extends Component {
     // }
     handleSubmit = (value) => {
         if (value === 2) {
+            if(this.state.value == -1) return;
             this.setState({
                 submit: 1
             })
@@ -37,6 +42,8 @@ class Claim extends Component {
             const seat = this.props.tableStore.myseat;
             const num = this.state.value;
             Out.claim(seat, num);
+        } else if(value === 3){
+            this.props.tableStore.state.scene = 2;
         } else {
             Out.claimConfirm(value);
         }
@@ -49,16 +56,20 @@ class Claim extends Component {
         const number = this.props.tableStore.getUnPlayCardNumber();
         const cblocks = Array(number+1).fill('').map((_, index) =>
             <Cblock key={index} number={index}
-                active={this.state.value == index + 1 ? 0 : 1}
+                active={this.state.value == index ? 0 : 1}
                 onClick={this.state.submit ? null : this.handleClick.bind(this, index)} />
         )
         return (
             <div id='myclaim' className='claim'>
                 <b>剩下还可赢：</b><br />
                 {cblocks}
+                <div style={{clear:"both"}}></div>
                 {this.state.submit ?
                     <button disabled='true'>等待确认..</button> :
-                    <button onClick={this.handleSubmit.bind(this, 2)}>　确　认　</button>
+                    <div>
+                        <button onClick={this.handleSubmit.bind(this, 3)}>取消</button>
+                        <button onClick={this.handleSubmit.bind(this, 2)}>确认</button>
+                    </div>
                 }
             </div>
         );

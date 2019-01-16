@@ -27,8 +27,8 @@
 
 }
 /* .bidblock{    height:5vh;width: 19%;} */
-.bidblock{    height:5vh;width: 8.5vh;}
-.bidcard{    height:5vh;}
+.bidblock{    height:4vh;width: 8.5vh;}
+.bidcard{    height:4vh;}
 .bidblock > div{
     width: 100%;
     height:100%;

@@ -24,6 +24,7 @@ import TableView from '../views/pc/PCTableView' // 包含 TableView.css
 //import TableView from '../views/mobile/MobileTableView';
 
 import TableModel from '../models/Table';
+import {basename} from '../../config'
 /**
  * Table 一桌游戏
  *      1 是牌桌的容器组件，或者说是控制器组件(MVC)
@@ -274,7 +275,7 @@ class Table extends Component {
     showResult = () => {
         const result = Models.getResult();
         const re = <div className='result'>
-            <img src='/cards/medal.svg' width="20%" />
+            <img src={`${basename}/cards/medal.svg`} width="20%" />
             <div style={{ lineHeight: this.height * 0.12 + 'px', }}>{result}</div>
             <button onClick={this.hideResult}>下一局</button>
         </div>;
