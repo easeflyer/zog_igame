@@ -96,8 +96,8 @@ class TableView extends React.Component {
             </div>
             <button onClick={claimBtnClickable ? table.claim :()=>{}} className={claimBtnClickable?"claimbtn":"claimbtn disable"} >摊牌</button>
             <button onClick={() => table.timer.stop()} onDoubleClick={() => table.timer.start()} className="calljudge">呼叫裁判</button>
-            <button onClick={table.lastTrick.bind(table)} className="lasttrick">上一墩牌</button>
-            <button onClick={table.bid.bind(table)} className="showbid">显示叫牌</button>
+            {/* <button onClick={table.lastTrick.bind(table)} className="lasttrick">上一墩牌</button> */}
+            {/* <button onClick={table.bid.bind(table)} className="showbid">显示叫牌</button> */}
             <button onClick={table.reConnect.bind(table)} className="showbid">刷新</button>
             <InfoDrawer />
 
