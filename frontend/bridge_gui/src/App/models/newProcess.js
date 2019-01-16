@@ -162,10 +162,13 @@ var user=null;
         }
         console.log(table)
         this.getBoard()// 拿到相关数据：玩家 牌 
-        // 启用长连接
+        // // 启用长连接
         const Bus = odoo.env('bus.bus')
         Bus.start_poll(this.before_poll, this.after_poll)
-
+        window.onbeforeunload=function(){
+          Bus.longpoll_stop = true
+          return "1";
+        }
       }
       getBoard = async () => {
 
@@ -196,10 +199,11 @@ var user=null;
         console.log(bd2)
       }
 
-      before_poll = async () => {
+      before_poll =  () => {
         console.log('before 0')
         // before_poll0(odoo)
       }
+
       after_poll = async (result) => {
         // 这个返回值暂时也没有用
         console.log('after:', result)
@@ -249,12 +253,12 @@ var user=null;
       claim_ack = async (player, ack) => {
         const res = await bd.claim_ack(player, ack)
       }
-
-      recover =()=>{
+     
+      recover =()=>{ 
         if(!bd){
           alert('游戏已经结束');
           return;
-        }
+        } 
         const bd2 = bd.look(fields.doing_table_ids.board_ids)
         console.log(bd2)  //得到当前游戏的全部内容
         
@@ -582,16 +586,16 @@ var user=null;
         var result = '';
         result=info.declarer +' ' + info.contract;
         if('EW'.indexOf(info.declarer)!=-1){
-            var num =  info.ew_win - info.contract[0] -6;
+            var num = info.claim_result +  info.ew_win - info.contract[0] -6;
             if(info.ew_point){
-              result = result + ' ' + num +' ' + info.ew_point;
+              result = result + ' ' + num +' +' + info.ew_point;
             }else{
               result = result + ' ' + num +' -'+ info.ns_point
             }
         }else{
-          var num =  info.ns_win - info.contract[0] -6;
+          var num = info.claim_result + info.ns_win - info.contract[0] -6;
           if(info.ns_point){
-            result = result + ' ' + num +' ' + info.ns_point;
+            result = result + ' ' + num +' +' + info.ns_point;
           }else{
             result = result + ' ' + num +' -'+ info.ew_point
           }
@@ -692,16 +696,16 @@ var user=null;
           var result = '';
           result=info.declarer +' ' + info.contract;
           if('EW'.indexOf(info.declarer)!=-1){
-              var num =  info.ew_win - info.contract[0] -6;
-              if(num>0 || num==0){
-                result = result + ' ' + num +' ' + info.ew_point;
+              var num = info.claim_result + info.ew_win - info.contract[0] -6;
+              if(info.ew_point){
+                result = result + ' ' + num +' +' + info.ew_point;
               }else{
                 result = result + ' ' + num +' -'+ info.ew_point
               }
           }else{
-            var num =  info.ns_win - info.contract[0] -6;
-            if(num>0 || num==0){
-              result = result + ' ' + num +' ' + info.ns_point;
+            var num = info.claim_result + info.ns_win - info.contract[0] -6;
+            if(info.ns_point){
+              result = result + ' ' + num +' +' + info.ns_point;
             }else{
               result = result + ' ' + num +' -'+ info.ns_point
             }
