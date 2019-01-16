@@ -515,7 +515,7 @@ class TableModel {
       }
     }, this);
 
-    board1[1].forEach((ucard) => {
+    board1[1].forEach((ucard,index) => {
       const seatIndex = Position.SNames.indexOf(ucard.seat);
       // 暗牌处理
       if (openSeat.indexOf(ucard.seat) === -1) {
@@ -532,6 +532,7 @@ class TableModel {
           // }
 
           if (card.card.slice(-1) === 'X') {
+            card.index = 50 + index;
             card.card = ucard.card;
             this._setCardACT3(card);
             this.board[1].push(card);
