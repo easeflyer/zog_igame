@@ -535,6 +535,7 @@ class TableModel {
             card.card = ucard.card;
             this._setCardACT3(card);
             this.board[1].push(card);
+            break;
           }
 
         };
