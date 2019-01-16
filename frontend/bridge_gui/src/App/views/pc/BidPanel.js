@@ -55,7 +55,6 @@ class BidPanel extends Component {
     // console.log(bidblocks)
     this.state.bidblocks = bidblocks;
     this.ref = React.createRef();
-    debugger;
     //this.atDisposer = autorun(this.initPanel);  // 是否可以通过生命周期函数
     this.atDisposer = reaction(
       () => this.props.tableStore.curCall, 

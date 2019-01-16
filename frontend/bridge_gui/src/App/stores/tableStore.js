@@ -418,6 +418,7 @@ class TableModel {
   /**
    * 准备阶段断线重连
    * 该谁 叫牌，该谁打牌？
+   * 根据不同的场景执行不同的断线重连：data.scene
    */
   @action.bound
   restore(data) {
@@ -474,7 +475,7 @@ class TableModel {
     const cards = this.state.cards; // 这里应该从原始牌初始化。因为 state.cards 状态不确定
     this.board = [[], []];
     let cardNum = 0;
-    // 1） 飞走不在手里的牌。
+    // 1） 飞走不在手里的牌。userCards.forEach 遍历4个玩家手里的牌
     userCards.forEach((uCards, uindex) => {
       if (openSeat.indexOf(Position.SNames[uindex]) !== -1) {
         cards[uindex].forEach((card) => {
@@ -515,11 +516,11 @@ class TableModel {
       }
     }, this);
 
-    board1[1].forEach((ucard) => {
+    board1[1].forEach((ucard,index) => {
       const seatIndex = Position.SNames.indexOf(ucard.seat);
       // 暗牌处理
       if (openSeat.indexOf(ucard.seat) === -1) {
-        cards[seatIndex][1].card = ucard.card;
+        cards[seatIndex][1].card = ucard.card;  // [0] 被用于当前墩
         this._setCardACT3(cards[seatIndex][1]);
         this.board[1].push(cards[seatIndex][1]);
         // 明牌处理
@@ -531,10 +532,12 @@ class TableModel {
           //   this.board[1].push(card);
           // }
 
-          if (card.card.slice(-1) === 'X') {
+          if (card.card.slice(-1) === 'X') { // 用户手里没有的牌用 X 补
+            card.zIndex = 50+index;          // 因为断线重连后数据没有index 因此这里要加上
             card.card = ucard.card;
             this._setCardACT3(card);
             this.board[1].push(card);
+            break;
           }
 
         };
@@ -1050,8 +1053,25 @@ class TableModel {
   hideLastTrick() {
     this._setShowLastTrick(false);
   }
-  @action
-  _setShowLastTrick1(isShow) {
+  // @action
+  // _setShowLastTrick1(isShow) {
+  //   const lt = this.board[1];
+  //   window.___board1 = toJS(this.board);
+  //   let card = null;
+  //   if (lt) lt.forEach((item, index) => {
+  //     item['animation']['left'] = (isShow == true) ?
+  //       this.seat[item.seat][1].x - this.size / 2.9
+  //       : this.size / 2;
+  //     item['animation']['top'] = (isShow == true) ?
+  //       this.seat[item.seat][1].y - this.size / 2.9
+  //       : -this.size * 2;
+  //     item.active = ACT3; // 测试用
+  //   })
+  //   this.state.lastTrick = isShow;
+  //   return this.state.cards;
+  // }
+
+  _setShowLastTrick(isShow) {
     const lt = this.board[1];
     window.___board1 = toJS(this.board);
     let card = null;
@@ -1061,23 +1081,6 @@ class TableModel {
         : this.size / 2;
       item['animation']['top'] = (isShow == true) ?
         this.seat[item.seat][1].y - this.size / 2.9
-        : -this.size * 2;
-      item.active = ACT3; // 测试用
-    })
-    this.state.lastTrick = isShow;
-    return this.state.cards;
-  }
-
-  _setShowLastTrick(isShow) {
-    const lt = this.board[1];
-    window.___board1 = toJS(this.board);
-    let card = null;
-    if (lt) lt.forEach((item, index) => {
-      // item['animation']['left'] = (isShow == true) ?
-      //   this.seat[item.seat][1].x - this.size / 2.9
-      //   : this.size / 2;
-      item['animation']['top'] = (isShow == true) ?
-        this.seat[item.seat][1].y
         : -this.size * 2;
       item.active = ACT3; // 测试用
     })
