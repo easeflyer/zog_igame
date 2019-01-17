@@ -292,7 +292,10 @@ var user=null;
         call = JSON.parse(bd2.auction);
         console.log(deals)
         tableStore.initCards(deals);
-        tableStore.dealCards();
+        setTimeout(()=>{
+          tableStore.dealCards();
+        
+        
         Sound.play('deal');
         this.timing(seats[bd2.player],999,()=>{})
         if('SN'.indexOf(seats[bd2.player])!=-1){
@@ -467,6 +470,7 @@ var user=null;
         call = JSON.parse(bd2.auction); 
         tableStore.state.calldata.call = Two(call);
         }
+      },100)
       }
       dealBid = (info)=>{
         if(info.player){
@@ -510,7 +514,7 @@ var user=null;
               }
             }
             var deals =cardString(tableStore.myseat,info.hands) ;
-            tableStore.initCards(deals);
+            tableStore.initCards(deals,false);
             tableStore.dealCards();
             if(info.player==tableStore.myseat){
               cards = tableStore.selectCards("S", 'SHDC',[ACT1.L]);
