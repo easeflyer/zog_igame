@@ -118,6 +118,7 @@ const modelCreator = (options) => {
         */
 
         look(fields) {
+            console.log(cls._name,cls._fields,cls._records,cls._fields_raw,fields)
             if (this._id) {
                 return cls._get_one(this._id, fields)
             }

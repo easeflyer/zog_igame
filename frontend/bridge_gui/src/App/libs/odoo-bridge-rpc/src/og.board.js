@@ -17,8 +17,9 @@ const creator = (options) => {
             if (instances.length == 0){
                 return null
             }
-
+            
             const ins = instances.sort( (a,b) => a.attr('number') - b.attr('number') )
+            console.log(ins)
             return ins[0]
         }
         get_done_board () {

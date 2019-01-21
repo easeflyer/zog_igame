@@ -124,7 +124,8 @@ var user=null;
       }
       getGameList = async () => {
         const user = await odoo.user(fields)
-    
+        const data= user.look(fields);
+        console.log(data)
         tables = user.attr('doing_table_ids')
     
         // 一个牌手可能有多个比赛，每个比赛的doing_table，牌手选择比赛进入比赛
@@ -138,7 +139,11 @@ var user=null;
           return
         }
         // 当前牌桌
-        table = tables.get_doing_table(gameId);
+        // table = tables.get_doing_table(gameId);
+        const tableCls=odoo.env('og.table');
+        const tableId = parseInt(window.location.hash.substr(7))
+        table=await tableCls.browse(tableId,fields.doing_table_ids)
+        console.log(table)
         const data = table.look({ west_id: null, north_id: null, east_id: null, south_id: null, })
         console.log('WNES：', data)
         for(let item in data ){
@@ -177,9 +182,11 @@ var user=null;
           alert('你还没有登陆！')
           return
         }
-    
+        console.log(table)
         boards = table.attr('board_ids')
-    
+        console.log(boards)
+        const data=boards.look(fields.doing_table_ids.board_ids)
+        console.log(data)
         // 当前正在进行的board
         bd = boards.get_doing_board()
         console.log(bd)
