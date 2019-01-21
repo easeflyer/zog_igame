@@ -110,6 +110,7 @@ var user=null;
           password: localStorage.getItem('pwd'),
         }
         console.log(p)
+        console.log(window.location)
         const newParams = params || p;
         const sid = await odoo.login(newParams);
         alert(sid)
@@ -128,7 +129,7 @@ var user=null;
     
         // 一个牌手可能有多个比赛，每个比赛的doing_table，牌手选择比赛进入比赛
         const tableData = tables.look(fields.doing_table_ids)
-         this.table_id =  tableData[0]['game_id']['id'];
+         this.table_id =  tableData[0]['game_id']['id'];       
          this.getIntoTable(this.table_id)  //进入桌子，开始游戏
       }
       getIntoTable = async (gameId) => {
