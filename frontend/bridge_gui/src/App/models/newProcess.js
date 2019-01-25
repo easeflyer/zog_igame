@@ -272,6 +272,7 @@ var user=null;
         
         const {state,dealer,auction,player,declarer,hands,current_trick,last_trick,tricks,contract,claim_result,vulnerable,sequence} = bd2;
         TRICKS = tricks;
+        console.log( seats[Dummy[declarer]])
         tableStore.dummySeat = seats[Dummy[declarer]];
         tableStore.dealer=seats[dealer];
         tableStore.logicDealer=dealer;
@@ -513,6 +514,7 @@ var user=null;
             tableStore.bidState.showBid = false
             tableStore.bidState.showBlock = false
             tableStore.state.declarer = info.declarer;
+            tableStore.dummySeat =  seats[Dummy[info.declarer]];
             const declarer = info.declarer;
             const contract = info.contract;
             tableStore.state.contract = contract
@@ -706,23 +708,12 @@ var user=null;
           tableStore.state.scene = 5;
           //显示结果
           var result = '';
-          result=info.declarer +' ' + info.contract;
-          if('EW'.indexOf(info.declarer)!=-1){
-              var num = info.claim_result + info.ew_win - info.contract[0] -6;
-              if(info.ew_point){
-                result = result + ' ' + num +' +' + info.ew_point;
-              }else{
-                result = result + ' ' + num +' -'+ info.ew_point
-              }
-          }else{
-            var num = info.claim_result + info.ns_win - info.contract[0] -6;
-            if(info.ns_point){
-              result = result + ' ' + num +' +' + info.ns_point;
-            }else{
-              result = result + ' ' + num +' -'+ info.ns_point
-            }
-          }
          
+          if(info.point > 0){
+            result = info.result2 + " +" + info.point
+          }else{
+            result = info.result2 + " " + info.point
+          }
           tableStore._result = result;
           const result1 = document.querySelector('.result');
           if(!result1)
