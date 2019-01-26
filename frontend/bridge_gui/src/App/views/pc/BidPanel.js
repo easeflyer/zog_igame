@@ -8,68 +8,80 @@ import React, { Component, Fragment } from 'react';
 import Motion from '../../libs/Motion'
 import './BidPanel.css'
 import { inject, observer } from 'mobx-react';
-import { toJS, autorun,reaction } from 'mobx';
+import { toJS, autorun,reaction, _getAdministration } from 'mobx';
 import Position from '../../common/Position';
 import Out from '../pc/Output';
 import {basename} from '../../../config'
 
+
+const suits = ['NT', 'S', 'H', 'D', 'C'];
+const rank = [1, 2, 3, 4, 5, 6, 7];
+const bidcards = ['PASS','X','XX','ALERT']
+
 /**
  * BidPanel 叫牌面板
- * 
- * 输入：只有 props.calldata={table.state.calldata} active='1'
- * 输出：暂时只有 state 的变化。未形成任何输出。
- *      考虑应该 由 handleConfirm 事件，形成“最终叫品”
+ * @param {*} props.calldata={table.state.calldata} active='1'
+ * @param {String} props.tableStore.curCall 当前叫品
+ * @return {String} Out.call(this.state.calling)。发出叫品消息。
  */
 @inject('tableStore')
 @observer
 class BidPanel extends Component {
   state = {
-    bidblocks: [],
-    bidcards: [],
-    active: 1,
+    bidblocks: [],  // 所有叫品
+    bidcards: [],   // x xx alert pass
+    active: 1,      // 是否可以点击 灰色为不可点
     calling: ""
   }
   /**
-   * 
    * this.atDisposer = reaction() 查看 mobx 的手册。
    * 因为使用 autorun 自动观察了当前组件bidpanel 的state 因此出现点击 bidBlock
    * 时执行了 initpanel 的情况。initPanel 应该只在 cruCall 变的时候执行。
    * 因此这里使用了 reaction 更加精确的控制。自动执行。
+   * {fireImmediately:true} // 这里 上面的函数立即执行一次。可查看mobx 手册
    */
   constructor(props) {
     super(props)
-    this.width = window.screen.width;window.__BID = this
-    const suits = ['NT', 'S', 'H', 'D', 'C'];
-    const rank = [1, 2, 3, 4, 5, 6, 7];
-    const bids = rank.map((i) => suits.map((j) => i + j))
-    console.log(bids)
-    //this.state.calling = "";
-    const bidblocks = bids.map((e, i) => e.map((e1, i1) => {
-      //let active = (i<5 && i1<3) ? 1:0;
-      return { name: e1, active: 1 }
-    }))
-    this.state.bidcards = [
-      { name: 'PASS', active: 1 }, { name: 'ALERT', active: 1 },
-      { name: 'X', active: 1 }, { name: 'XX', active: 1 },]
-    // console.log('bbb................')
-    // console.log(bidblocks)
-    this.state.bidblocks = bidblocks;
-    this.ref = React.createRef();
-    //this.atDisposer = autorun(this.initPanel);  // 是否可以通过生命周期函数
+    this.state.bidblocks = this._genBidblocks(rank,suits)
+    this.state.bidcards = this._genBidcards(bidcards)
     this.atDisposer = reaction(
       () => this.props.tableStore.curCall, 
       (data, reaction) => { this.initPanel(data) }, 
-      {fireImmediately:true} // 这里 上面的函数立即执行一次。可查看mobx 手册
+      {fireImmediately:true}
     )
     // 通过 props 修改不会引发重新渲染。
-    this.initPanel()
+    //this.initPanel() // 好像不需要？ 
   }
+
+  /**
+   * 返回所有叫品二维数组
+   * @param {array(int)} ranks [1-7]
+   * @param {array(String)} suits [nt-c]
+   */
+  _genBidblocks(ranks,suits){
+    return ranks.map((i) => suits.map((j) => {
+      return {name:i+j,active:1}
+    }));
+  }
+  /**
+   * 生成 pass,x,xx,alert 叫牌卡
+   * @param {Array(String)} bidcards 
+   */
+  _genBidcards(bidcards){
+    return bidcards.map((item)=>{
+      return {name:item,active:1}
+    })
+  }
+  /**
+   * 组件卸载时
+   * 销毁Reaction
+   */
   componentWillUnmount() {
     this.atDisposer();
   }
   /**
    * 处理 叫牌点击事件。
-   * 如果 item 是 row,col 则调用 _bidblock() 否则调用 _bidcard
+   * @param {Array} 如果 item 是 row,col 则调用 _bidblock() 否则调用 _bidcard
    */
   handleCall = (item) => {
    
@@ -90,6 +102,7 @@ class BidPanel extends Component {
 
   /**
    * 处理 pass,alert,x,xx
+   * @param {Array} item item.name='ALERT'
    * 这4个选项应该只能点击一个。
    */
   _bidcard = (item) => {
@@ -122,7 +135,8 @@ class BidPanel extends Component {
     })
   }
   /**
-   * 叫牌
+   * 点击某个叫品block
+   * @param {*} item 是具体叫品
    * item 点击的叫品 行列坐标。{row, col}
    * 点击某个叫品，其他叫品要联动（active=0/1）
    */
@@ -165,7 +179,7 @@ class BidPanel extends Component {
       calling: ''
     })
   }
-
+  /** 点击取消，重置按钮的状态 */
   handleReset = () => {
     this.setState({
       bidblocks: this.state.bidblocks.map((item) => {
@@ -183,14 +197,10 @@ class BidPanel extends Component {
 
   /**
    * 通过 curCall 初始化 bidPanel 隐藏无效的叫品。
+   * @param {String} curCall 当前叫品
    */
-  initPanel = (data) =>{
-    //const curCall = "4NT";//this.props.tableStore.curCall;
-    const curCall = data;
-    //const showBlock = this.props.tableStore.bidState.showBlock;
-    
+  initPanel = (curCall) =>{
     const bidblocks = this.state.bidblocks;
-    const suits = ['NT', 'S', 'H', 'D', 'C'];
     if (curCall) {
       bidblocks.splice(0, curCall.slice(0, 1) - 1 - (7 - bidblocks.length));
       if (curCall.slice(1) == "NT") bidblocks.splice(0, 1) // 如果是 nt 直接删除本行
@@ -200,6 +210,9 @@ class BidPanel extends Component {
     }
     this.setState({ bidblocks: bidblocks })
   }
+  /**
+   * @return {HTML(Table)} 返回一个叫牌过程的表格
+   */
   getCallRows() {
     //debugger;
     const { first, call, note } = this.props.tableStore.state.calldata;
@@ -252,7 +265,7 @@ class BidPanel extends Component {
   }
   render() {
     //this.initPanel();  //zsx修改：解决根据叫品，隐藏部分叫牌
-    console.log('ffff:' + this.width)
+    //console.log('ffff:' + this.width)
     const bidblocks = this.state.bidblocks.map((e1, i1) => e1.map((e2, i2) => {
 
       //if (e2.active == 0) animation['brightness'] = 0.6;
@@ -264,7 +277,7 @@ class BidPanel extends Component {
 
     // 叫牌记录。
     const rows = this.getCallRows();
-    const showBlock = this.props.tableStore.bidState.showBlock;
+    const showBlock = this.props.tableStore.uiState.bid.showBlock;
     const bidCards = <Fragment>
       <BidCard name='PASS' active={this.state.bidcards[0].active}
         onclick={this.handleCall.bind(this, { name: 'PASS' })}
@@ -289,7 +302,7 @@ class BidPanel extends Component {
     </Fragment>
 
     return (
-      <div id='bidpanel' className='bidpanel' ref={this.ref}>
+      <div id='bidpanel' className='bidpanel'>
         <div>
           {rows}
         </div>
@@ -310,8 +323,7 @@ class BidBlock extends Component {
   render() {
     const suit = this.props.name.slice(-1);
     const bgcolor = {
-      T: '#eeeeee', S: '#eeeeFF', H: '#FFeeee'
-      , D: '#ffffee', C: '#eeffee'
+      T: '#eeeeee', S: '#eeeeFF', H: '#FFeeee', D: '#ffffee', C: '#eeffee'
     };
     //const bgcolor = { T: '#eeeeee', S: '#eeeeee', H: '#eeeeee'
     //  , D: '#eeeeee', C: '#eeeeee' };

@@ -39,8 +39,11 @@ class TableModel {
   myseat = 'S'               // 用户坐在 南
   //deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
   deals = 'AT62.A6.JT6.QT85 XXX.XX.XXXX.XXXX QJ4.Q4.A9743.A43 XXX.XX.XXXX.XXXX';
-  //@observable uiState = {} // 未启用。
-  @observable bidState = {showBid:false,showBlock:false};
+  @observable uiState = {
+    bid:{showBid:true,showBlock:true},
+    //waitModal:null
+  } // 未启用。
+  //@observable bidState = {showBid:false,showBlock:false};
   @observable state = {
     cards: null, // 考虑这里不用 cards 只用必要的数字
     scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
@@ -195,9 +198,9 @@ class TableModel {
   @action.bound
   toggleBid(showBlock=true) {
     this.hideLastTrick();
-    //this.showBid = !this.showBid;
-    this.bidState.showBid = !this.bidState.showBid;
-    this.bidState.showBlock = showBlock;
+    //this.showBid = !this.showBid; uiState.bid
+    this.uiState.bid.showBid = !this.uiState.bid.showBid;
+    this.uiState.bid.showBlock = showBlock;
   }
 /**
    * 发牌

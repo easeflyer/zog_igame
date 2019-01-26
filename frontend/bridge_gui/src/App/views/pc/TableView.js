@@ -77,7 +77,7 @@ class TableView extends React.Component {
     const claimBtnClickable = tableStore.state.declarer==tableStore.myseat;
     return (
       <div>
-        {(tableStore.bidState.showBid) ?
+        {(tableStore.uiState.bid.showBid) ?
           <div className='panel'>
             <BidPanel />
           </div> : null

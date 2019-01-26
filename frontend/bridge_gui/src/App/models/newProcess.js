@@ -90,6 +90,7 @@ var table = null;
 var boards = null;
 var bd = null;
 var user=null;
+
  class Process{
     constructor(){
         this.dealMsg = new Map();

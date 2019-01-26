@@ -59,13 +59,12 @@ class LastTricks extends React.Component {
     //const bSize = this.props.tableStore.center.x*2;
     const board = this.props.tableStore.board;
     const seatPos = this.props.tableStore.seat;
-    const cards = board[1].map((item,index)=>{
+    const cards = board[1] && board[1].map((item,index)=>{
       // width:45.2vh 也就是 bSize*45.2%
       // const x = seatPos[item.seat][1].x - item.size / 2.9 - 170;
       // const y = seatPos[item.seat][1].y - item.size / 2.9
       const x = seatPos[item.seat][1].x - bSize/2 + bSize*0.252/2
       const y = seatPos[item.seat][1].y - bSize/2 + bSize*0.252/4
-
       const rotate = ('EW'.indexOf(item.seat) !== -1) ? -90:0;
       const offset = item.size * 0.7 / 2
       return  {
@@ -87,7 +86,7 @@ class LastTricks extends React.Component {
         zIndex:item.zIndex
       }
     })
-    const Cards = cards.map((item,index)=>{
+    const Cards = cards && cards.map((item,index)=>{
       return <Card
         active={item.active}
         onClick={item.onclick}
@@ -100,7 +99,7 @@ class LastTricks extends React.Component {
         position={item.position}
         zIndex={item.zIndex}
         //zIndex={50+index}
-      />      
+      />
     }).slice(0)
     return(<div style={{border:"0px solid #FF0000",
       position:"absolute",
@@ -112,6 +111,5 @@ class LastTricks extends React.Component {
     </div>);
   }
 }
-
 
 export default InfoDrawer;
