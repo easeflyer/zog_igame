@@ -90,13 +90,18 @@ var table = null;
 var boards = null;
 var bd = null;
 var user=null;
- class Process{
+/**
+ *
+ *
+ * @class Process
+ */
+class Process{
     constructor(){
         this.dealMsg = new Map();
-        this.dealMsg.set('bid',this.dealBid)
-        this.dealMsg.set('play',this.dealPlay)
-        this.dealMsg.set('claim',this.dealClaim)
-        this.dealMsg.set('claim_ack',this.dealClaimAck)
+        this.dealMsg.set('bid',this.dealBid.bind(this))
+        this.dealMsg.set('play',this.dealPlay.bind(this))
+        this.dealMsg.set('claim',this.dealClaim.bind(this))
+        this.dealMsg.set('claim_ack',this.dealClaimAck.bind(this))
     }
     sid=null;
     table_id=null;
@@ -242,7 +247,12 @@ var user=null;
           // console.log(bd_msg)
         } while (msg)
       }
-
+      /**
+       * 向服务器发送叫牌消息 
+       * @param {string} player 发出请求的玩家的真实方位
+       * @param {string} bid  玩家的叫牌内容
+       * @memberof Process
+       */
       bid = async (player, bid) => {
         const res = await bd.bid(player, bid)
         console.log(res)
@@ -261,8 +271,12 @@ var user=null;
       claim_ack = async (player, ack) => {
         const res = await bd.claim_ack(player, ack)
       }
-     
-      recover =()=>{ 
+     /**
+      * 进入游戏页面执行的函数，用来初始化 或 恢复 游戏内容
+      *
+      * @memberof Process
+      */
+     recover() { 
         if(!bd){
           alert('游戏已经结束');
           return;
@@ -321,8 +335,8 @@ var user=null;
           
           console.log(typeof JSON.parse(bd2.auction))
           call = JSON.parse(bd2.auction); 
-          console.log(Two(call))
-          tableStore.state.calldata.call = Two(call);
+          console.log(Two(call,4))
+          tableStore.state.calldata.call = Two(call,4);
           for(let i = 0 ;i<call.length;i++){
             if(call[call.length-1-i]!='Pass' && call[call.length-1-i]!='x' && call[call.length-1-i]!='xx'){
               curCall = call[call.length-i-1];
@@ -352,7 +366,7 @@ var user=null;
               board:[cur,last],
               calldata:{
                 first: dealer,
-                call:Two(call)
+                call:Two(call,4)
               }
             } ;
            tableStore.restore(allData);
@@ -364,7 +378,7 @@ var user=null;
          //1. 确定花色
          var suit= null;
          var current = JSON.parse(current_trick)
-          removeNull(current)
+         current = removeNull(current)
           if(current.length==4 || current.length==0 ){
             suit='SHDC'
           }else{
@@ -426,7 +440,7 @@ var user=null;
               board:[cur,last],
               calldata:{
                 first: dealer,
-                call:Two(call)
+                call:Two(call,4)
               }
             } ;
            tableStore.restore(allData);
@@ -437,7 +451,7 @@ var user=null;
             }
            var suit= null;
          var current = JSON.parse(current_trick)
-          removeNull(current)
+         current =  removeNull(current)
           if(current.length==4 || current.length==0 ){
             suit='SHDC'
           }else{
@@ -477,11 +491,16 @@ var user=null;
         }
         tableStore.state.calldata.first = dealer;
         call = JSON.parse(bd2.auction); 
-        tableStore.state.calldata.call = Two(call);
+        tableStore.state.calldata.call = Two(call,4);
         }
       },100)
       }
-      dealBid = (info)=>{
+      /**
+       * 处理叫牌信息
+       * @param {object} info 牌局的所有信息
+       * @memberof Process
+       */
+      dealBid(info) {
         if(info.player){
           this.timing(seats[info.player],999,()=>{});
           if('SN'.indexOf(seats[info.player])!=-1){
@@ -500,7 +519,7 @@ var user=null;
         boardStore.pbn.auction.call = JSON.parse(info.auction);
         boardStore.gameState = info.state;
         call = JSON.parse(info.auction); 
-          tableStore.state.calldata.call = Two(call);
+          tableStore.state.calldata.call = Two(call,4);
           for(let i = 0 ;i<call.length;i++){
             if(call[call.length-1-i]!='Pass' && call[call.length-1-i]!='x' && call[call.length-1-i]!='xx'){
               curCall = call[call.length-i-1];
@@ -544,7 +563,12 @@ var user=null;
           }
           
       }
-      dealPlay = (info,args) => {
+      /**
+       * 处理打牌信息
+       * @param {object} info 牌局的所有信息
+       * 
+       */
+      dealPlay(info,args) {
         //处理过的消息不再处理d
        
         if(TRICKS.indexOf(args[1])!=-1) return;
@@ -557,8 +581,8 @@ var user=null;
         //判断是不是第一张牌
         var curTrick = JSON.parse(info.current_trick)
         var lastTrick = JSON.parse(info.last_trick);
-        removeNull(curTrick)
-        removeNull(lastTrick)
+        curTrick = removeNull(curTrick)
+        lastTrick = removeNull(lastTrick)
         var hands = JSON.parse(info.hands)
         debugger
         var ind = dir.indexOf(dummy)
@@ -598,23 +622,11 @@ var user=null;
         tableStore.state.scene = 5;
         //显示结果
         var result = '';
-        result=info.declarer +' ' + info.contract;
-        if('EW'.indexOf(info.declarer)!=-1){
-            var num = info.claim_result +  info.ew_win - info.contract[0] -6;
-            if(info.ew_point){
-              result = result + ' ' + num +' +' + info.ew_point;
-            }else{
-              result = result + ' ' + num +' -'+ info.ns_point
-            }
+        if(info.point > 0){
+          result = info.result2 + " +" + info.point
         }else{
-          var num = info.claim_result + info.ns_win - info.contract[0] -6;
-          if(info.ns_point){
-            result = result + ' ' + num +' +' + info.ns_point;
-          }else{
-            result = result + ' ' + num +' -'+ info.ew_point
-          }
+          result = info.result2 + " " + info.point
         }
-       
         tableStore._result = result;
         const result1 = document.querySelector('.result');
         if(!result1)
@@ -622,7 +634,7 @@ var user=null;
       }
         var suit= null;
         var current = JSON.parse(current_trick)
-         removeNull(current)
+        current = removeNull(current)
          if(current.length==4 || current.length==0 ){
            suit='SHDC'
          }else{
@@ -682,8 +694,13 @@ var user=null;
         //自动打最后一张牌
        
       }
-
-      dealClaim = (info,args) =>{
+      /**
+       *处理 庄家摊牌
+       * @param {object} info 牌局的所有信息
+       * @param {object} args 玩家 和 玩家的操作
+       * @memberof Process
+       */
+      dealClaim(info,args) {
         console.log(info,args)
         let claimMsg = `庄家声称还赢 ${args[1]}墩`;
         if(args[0] != tableStore.myseat){
@@ -698,7 +715,13 @@ var user=null;
         }
         
       }
-      dealClaimAck = (info,args) =>{
+      /**
+       * 处理玩家 同意 或 拒绝 摊牌的消息
+       * @param {object} info 牌局的所有信息
+       * @param {object} args 玩家 和 玩家的操作
+       * @memberof Process
+       */
+      dealClaimAck(info,args){
         console.log(111);
         
         if(info.state=='playing'){
@@ -720,7 +743,14 @@ var user=null;
             ReactDOM.render(<ResultPanel />,document.querySelector('#result'));
         }
       }
-      timing = function (seat, time, callback) {
+      /**
+       * 修改闹钟的位置
+       * @param {string} seat 闹钟所在的方位
+       * @param {number} time 闹钟计时的上限
+       * @param {function} callback 闹钟达到计时上限后，执行的函数
+       * @memberof Process
+       */
+      timing(seat, time, callback) {
         const unseat = new Position(seat).lshift(1).sn;
         ReactDOM.unmountComponentAtNode(document.querySelectorAll('.clock')[0]);
         ReactDOM.unmountComponentAtNode(document.querySelectorAll('.clock')[1]);
