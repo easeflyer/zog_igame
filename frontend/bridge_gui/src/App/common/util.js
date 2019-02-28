@@ -205,39 +205,42 @@ export function getUserCardsDeal(user, dummy, cardsArr) {
 
   return res.join(' ');
 }
-//使用filter
-export function removeNull(arr) {
-  if (arr.length > 0) {
-    if (arr[0] == null) {
-      arr.shift();
-      if (arr[0] == null) {
-        removeNull(arr)
-      }
-    }
-  }
 
+//去除数组中的空值，返回一个新的数组
+export function removeNull(array){
+  return array.filter((item)=>item);
+  
 }
-//一维数组转二维数组
 
-export function Two(arr) {
-  var arr4 = [];
-  var result = []
-  if (arr[0] == null) {
-    removeNull(arr);
+//一维数组转二维数组,返回一个新的二维数组
+export function Two(array,col){
+  array = removeNull(array)
+  let row = Math.ceil(array.length / col);
+  var newArr = [];
+  for(let i = 0 ; i < row ;i++){
+    newArr.push(array.slice(i*col , (i+1)*col))
   }
-  console.log(arr);
-  for (let i = 0; i < arr.length; i++) {
-    arr4.push(arr[i]);
-    if (arr4.length == 4) {
-      result.push(arr4);
-      arr4 = new Array()
-    }
-    if (i == arr.length - 1 && arr4.length < 4 && arr4.length > 0) {
-      result.push(arr4);
-    }
-  }
-  return result;
+  return newArr;
 }
+// export function Two(arr) {
+//   var arr4 = [];
+//   var result = []
+//   if (arr[0] == null) {
+//     removeNull(arr);
+//   }
+//   console.log(arr);
+//   for (let i = 0; i < arr.length; i++) {
+//     arr4.push(arr[i]);
+//     if (arr4.length == 4) {
+//       result.push(arr4);
+//       arr4 = new Array()
+//     }
+//     if (i == arr.length - 1 && arr4.length < 4 && arr4.length > 0) {
+//       result.push(arr4);
+//     }
+//   }
+//   return result;
+// }
 
 /**
  * 
