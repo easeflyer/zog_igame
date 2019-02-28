@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`测试 Card 测试 jest 是否启用card 1`] = `
+<div>
+  333
+</div>
+`;

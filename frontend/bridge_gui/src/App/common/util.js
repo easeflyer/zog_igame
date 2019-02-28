@@ -1,4 +1,4 @@
-import Card from '../components/Card';
+import Card from '../components/card';
 /**
  * arr = [1,2,3,4,5];
  * arr.RightMove(3)

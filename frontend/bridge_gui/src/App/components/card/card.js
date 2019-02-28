@@ -1,6 +1,7 @@
 import React from 'react';
-import Motion from '../libs/Motion'
-import {basename} from '../../config'
+import Motion from './Motion';
+//import './style/cards.css';
+import './style/cards.less';
 //import TweenOne from 'rc-tween-one';
 //* active define 0,1,2,3  0 灰色不能点，1 亮色不能点，2 亮色能点, 3 亮色能点突出
 // D dark, L light,LC light click,LCO light click out
@@ -34,7 +35,7 @@ const ACT3 = 6;                             // out of Screen
  *      X 代表扣着，可能暴露扣着牌的花色数量，比如：XHXHXH,XDXD,XSXSXS  
 */
 class Card extends React.Component {
-    handleClick = () => false;
+    handleClick = () => {};
     setActive(act) {
         switch (act) {
             case ACT1.D:
@@ -50,7 +51,7 @@ class Card extends React.Component {
                 break;
             case ACT2:
             case ACT3:
-                this.handleClick = () => false;
+                this.handleClick = () => {};
                 this.props.animation && (this.props.animation['brightness'] = 1)
                 break;
             default:
@@ -85,17 +86,15 @@ class Card extends React.Component {
                 }}
             >
                 <Motion animation={this.props.animation} style={getStyle()}>
-                    <img onClick={this.handleClick(`${this.props.index}`)}
-                        // onDragStart={(e)=>e.preventDefault()}
+                    <div onClick={this.handleClick(`${this.props.index}`)}
                         alt={this.props.key}
-                        src={`${basename}cards/${card}.svg`}
+                        className={`card${card}`}
                         style={{
                             position: 'absolute',
                             width: "100%",
                             height: "100%",
-                            // zIndex: this.props.zIndex,
                         }}
-                    />
+                    ></div>
                 </Motion>
             </div>
         )
@@ -159,3 +158,11 @@ export {ACT0,ACT1,ACT2,ACT3}
         } )
     }
     */
+/*
+改写思路：
+
+Motion 应该是一个函数返回动画对象。
+然后根据需要包装 Motion 形成业务所需要的各种独特  Motion
+也就是说考虑把 Motion 从 Card 提取出去。
+
+*/

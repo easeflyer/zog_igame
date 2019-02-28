@@ -91,6 +91,15 @@ function suitLayoutCards(cards, seatIndex) {
  * 
  *    间距调整，根据牌每隔n张，计算出少于几张时 增加几倍递增宽度。
  */
+function flexLayout1(width, length, separate) {
+  const csize = width * 0.18
+  const sepOffset = Math.floor((13 - length) / separate) * 0.05
+  const offset = csize * (0.22 + sepOffset);
+  const cwidth = offset * (length - 1) + csize * 0.7;
+  const left = (width - cwidth) / 2;
+  return Array(length).fill(0).map((item, index) => item + left + index * offset);
+}
+
 function flexLayout(width, length, separate) {
   const csize = width * 0.18
   const sepOffset = Math.floor((13 - length) / separate) * 0.05
@@ -99,6 +108,7 @@ function flexLayout(width, length, separate) {
   const left = (width - cwidth) / 2;
   return Array(length).fill(0).map((item, index) => item + left + index * offset);
 }
+
 
 function suitLayout(width, ) {
 

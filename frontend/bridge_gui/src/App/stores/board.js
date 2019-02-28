@@ -1,4 +1,4 @@
-import { ACT0, ACT1, ACT2, ACT3 } from '../components/Card'
+import { ACT0, ACT1, ACT2, ACT3 } from '../components/card'
 import Models from '../models/model';
 import Agent from '../models/agent';
 import Card from '../components/Card';

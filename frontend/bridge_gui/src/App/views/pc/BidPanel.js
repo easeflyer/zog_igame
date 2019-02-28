@@ -16,7 +16,7 @@ import {basename} from '../../../config'
 
 const suits = ['NT', 'S', 'H', 'D', 'C'];
 const rank = [1, 2, 3, 4, 5, 6, 7];
-const bidcards = ['PASS','X','XX','ALERT']
+const bidcards = ['PASS','X','XX','ALERT'];
 
 /**
  * BidPanel 叫牌面板

@@ -4,7 +4,7 @@ import 'antd/dist/antd.css';
 import BidPanel from './BidPanel'
 import { inject, observer } from 'mobx-react';
 import "./InfoDrawer.css"
-import Card, { ACT3 } from '../../components/Card';
+import Card, { ACT3 } from '../../components/card';
 
 @inject('tableStore')
 @observer

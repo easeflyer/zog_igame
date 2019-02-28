@@ -1,0 +1,31 @@
+// @color:red;
+
+// .cardS2{
+//   background: @color;
+// }
+
+@suit:S,H,D,C;
+@rank:2,3,4,5,6,7,8,9,T,J,Q,K,A;
+
+.card(@suit,@rank){
+  .card@{suit}@{rank}{
+    background:url("../imgs/@{suit}@{rank}.svg");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+  }
+}
+.loop1(@j,@i) when(@j < length(@rank)+1){
+  .card(extract(@suit,@i),extract(@rank,@j));
+  .loop1(@j+1,@i);
+}
+.loop(@i) when(@i < length(@suit)+1){
+  .loop1(1,@i);
+  .loop(@i+1);
+}
+.loop(1);
+
+.cardback{
+  background:url("../imgs/back.svg");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}

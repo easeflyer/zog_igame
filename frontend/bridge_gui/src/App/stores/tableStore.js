@@ -1,5 +1,6 @@
-import Card from '../components/Card'  // 也应该从模型引入
-import { ACT0, ACT1, ACT2, ACT3 } from '../components/Card'
+//import Card from '../components/Card'  // 也应该从模型引入
+import Card from '../components/card'  // 也应该从模型引入
+import { ACT0, ACT1, ACT2, ACT3 } from '../components/card'
 import Models from '../models/model'
 import { flexLayout } from '../libs/layout.js'
 import { observable, computed, action, toJS } from 'mobx';
@@ -112,7 +113,6 @@ class TableModel {
   get tableId() {
     return this._tableId;
   }
-
   get result() {
     if (this._result) return this._result;
     else return "N3D +2 NS 600";
@@ -128,6 +128,7 @@ class TableModel {
     */
     return this._csize || (() => {
       return this.size * 0.18;
+      //return 18; 这里返回 18 vh   card 组件里面用 尺寸加上 vh
     })()
   }
   /**
@@ -158,6 +159,7 @@ class TableModel {
    * this._swDC() 为了岔开颜色显示。交换 方片和梅花的牌。
    * reset=true 新的一局，重新发牌，reset=false 只是重新整理牌。
    */
+  
   @action
   initCards(sdeals,reset=true) {
     let suits = Card.suits.slice(0);            //['S', 'H', 'D', 'C'];

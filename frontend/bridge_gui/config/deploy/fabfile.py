@@ -19,7 +19,23 @@ def deploy(app='igame'):
   eval("_"+app)()
   run('exit')
 
+# 启动服务
+def start():
+  with cd("/opt/odoo/server"):
+    sudo("service nginx stop")
+    sudo("service nginx start")
+    sudo("-u odoo ./odoo-bin -s")
+    
+def test():
+  with cd("/opt/odoo/server"):
+    sudo("service nginx stop")
+    sudo("service nginx start")
+    #sudo("su - odoo -s /bin/bash")
+    sudo("-u odoo ./odoo-bin -s")
 
+
+
+#################################################################
 def _itable():
   with cd("/home/s1/gameLobby"):
     #run('git reset --hard HEAD')

@@ -13,7 +13,7 @@ import { Imps, Seats, Tricks } from './Headers'
 import Prepare from './Prepare'
 import UserTags from './UserTag'
 import Timer from './Timer'
-import Card from '../../components/Card';
+import Card from '../../components/card';
 import './TableView.css'
 import { inject, observer } from 'mobx-react';
 import InfoDrawer from './InfoDrawer';

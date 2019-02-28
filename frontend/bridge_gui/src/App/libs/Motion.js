@@ -1,8 +1,12 @@
 import React from 'react';
+import ReactDom from 'react-dom';
 import TweenOne from 'rc-tween-one';
 
 /**
  * 对动画组件的封装。考虑以后也许会用其他的动画替代
+ * @param style       非动画样式
+ * @param animation   动画样式
+ * @param className   css 类名
  */
 export default (props) => (
   <TweenOne

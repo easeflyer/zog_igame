@@ -8,7 +8,7 @@ import ReactDOM from 'react-dom';
 import React, { Component } from 'react';
 import Models from '../../models/model'
 import { TableModel } from '../../stores/tableStore';
-import Card,{ACT0,ACT1,ACT2,ACT3} from '../../components/Card';
+import Card,{ACT0,ACT1,ACT2,ACT3} from '../../components/card';
 import Clock from '../../libs/Clock';
 import Position from '../../common/Position';
 //import { tokensToRegExp } from 'path-to-regexp';

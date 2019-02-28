@@ -14,7 +14,7 @@ import TableView from '../views/pc/TableView'; // 包含 TableView.css
 import ResultPanel from '../views/pc/ResultPanel';
 import { inject, observer } from 'mobx-react';
 import { TableModel } from '../stores/tableStore';
-import { ACT0, ACT1, ACT2, ACT3 } from '../components/Card';
+import { ACT0, ACT1, ACT2, ACT3 } from '../components/card';
 import Position from '../common/Position';
 /**
  * Table 一桌游戏
