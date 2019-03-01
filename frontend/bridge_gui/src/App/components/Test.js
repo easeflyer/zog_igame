@@ -1,7 +1,10 @@
-import { withRouter } from 'react-router-dom';
 import React from 'react';
-import { inject, observer } from 'mobx-react';
 
-import Demo1 from '../components/card/demos'
+// import Demo1 from '../components/card/demos'
+// const Test = props => <Demo1/>;
+// export default Test;
+
+
+import Demo1 from '../test/AlertForm' // 约定叫录入框
 const Test = props => <Demo1/>;
-export default Test;
+export default Test; 

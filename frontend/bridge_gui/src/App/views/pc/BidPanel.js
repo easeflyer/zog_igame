@@ -12,6 +12,7 @@ import { toJS, autorun,reaction, _getAdministration } from 'mobx';
 import Position from '../../common/Position';
 import Out from '../pc/Output';
 import {basename} from '../../../config'
+import AlertForm from '../../components/AlertForm';
 
 
 const suits = ['NT', 'S', 'H', 'D', 'C'];
@@ -84,7 +85,7 @@ class BidPanel extends Component {
    * @param {Array} 如果 item 是 row,col 则调用 _bidblock() 否则调用 _bidcard
    */
   handleCall = (item) => {
-   
+    
     //this.atDisposer();
     if ('row' in item) {
       this._bidblock(item);
@@ -302,7 +303,8 @@ class BidPanel extends Component {
     </Fragment>
 
     return (
-      <div id='bidpanel' className='bidpanel'>
+      <div id='bidpanel' className='bidpanel' ref={this.ref}>
+        {this.state.bidcards[1].active ? null:<AlertForm bid={this.state.calling} />}
         <div>
           {rows}
         </div>
