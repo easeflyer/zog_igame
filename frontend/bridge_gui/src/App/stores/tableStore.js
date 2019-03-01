@@ -382,7 +382,7 @@ class TableModel {
     // if (this.board[0].length === 4) setTimeout(this.clearBoard, 1000);
     this._setCardACT2(item,true)
 
-    //this.resetTable(); // 牌恢复为不可点击状态 ACT1.L
+    this.resetTable(); // 牌恢复为不可点击状态 ACT1.L
 
     const seatIndex = Position.SNames.indexOf(item.seat);
     //const seatIndex = Position.SNames.indexOf(item.seat);

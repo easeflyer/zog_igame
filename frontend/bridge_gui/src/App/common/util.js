@@ -1,4 +1,5 @@
 import Card from '../components/Card';
+import {basename} from '../../config'
 /**
  * arr = [1,2,3,4,5];
  * arr.RightMove(3)
@@ -70,12 +71,13 @@ const _getOneHand = (hand) => {
 function cardImgs() {
   const suit = "SHDC".split("");
   const rank = "23456789TJQKA".split("");
-  return suit.map((s) => rank.map((r) => `/cards/${s + r}.svg`));
+  return suit.map((s) => rank.map((r) => `${basename}cards/${s + r}.svg`));
 }
 // 更简单的预加载
 function _setPreLoad(img){
   let images = window.document.createElement("img")
   images.src = img;
+  //alert('preload');
 }
 // h5 的预加载
 function _setPreLoad1(img){
