@@ -4,6 +4,7 @@ import style from './Timer.module.css'
 console.log(style.timername)
 
 /*
+时分秒 计时显示。 本组件暂时 不用。
 修改为 分秒计时。如果计时结束修改为负数。
 */
 
@@ -26,7 +27,7 @@ Date.prototype.Format = function (fmt) { //author: meizz
 export default class Timer extends React.Component {
     seats = '';
     state = {
-        h: null,
+        h: 0,
         m: 0,
         s: 0,
         ew:0,
@@ -51,7 +52,7 @@ export default class Timer extends React.Component {
 
     start = (seats) => {
         this.seats = seats;
-        if(!this.timer)this.timer = setInterval(()=>this.dida(), 1000)
+        if(!this.timer)this.timer = setInterval(this.dida, 1000)
     }
 
     stop = () => {
@@ -70,12 +71,11 @@ export default class Timer extends React.Component {
             this.state.h--;
         }
         if (this.state.h == -1) {
-            this.state.h = '-';
+            this.state.h = 0;
             this.state.m = 0;
             this.state.s = 0;
-            //this.stop();
-            this.dida = this.dadi;
-            //this.props.callback();
+            this.stop();
+            this.props.callback();
         }
         this.setState({
             h: this.state.h,
@@ -83,21 +83,6 @@ export default class Timer extends React.Component {
             s: this.state.s
         });
     }
-    dadi = () =>{
-        this.state.s++;
-        this.state[this.seats]++;
-        if(this.state.s == 60){
-            this.state.s = 0;
-            this.state.m++;
-        }
-        this.setState({
-            m: this.state.m,
-            s: this.state.s
-        });
-
-    }
-
-
     getTime(sec){
         const date = new Date(sec * 1000); // 格式化成 居中美观。
         //return date.getMinutes() + ':' + date.getSeconds();
@@ -109,7 +94,7 @@ export default class Timer extends React.Component {
             <div>
                 <div className='timername'>{this.props.name}</div>
                 <div className='timer'>
-                    <div>{this.state.h}</div>
+                    <div>{fmt(this.state.h)}</div>
                     <div>{fmt(this.state.m)}</div>
                     <div>{fmt(this.state.s)}</div>
                 </div>

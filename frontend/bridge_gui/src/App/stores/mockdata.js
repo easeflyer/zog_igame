@@ -126,7 +126,7 @@ export const restoreData = {
 export const callData1 = {
     first: 'S',
     call: [
-        ['1C =1=', 'PASS', 'PASS', '2H'],
+        ['-', '-', 'PASS', '2H'],
         ['PASS', 'PASS', '3C =2=', 'PASS'],
         ['PASS', '3H', 'PASS', 'PASS'],
         ['3S =3=', 'PASS', 'PASS', ''],

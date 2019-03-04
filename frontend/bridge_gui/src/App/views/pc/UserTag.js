@@ -5,7 +5,7 @@ import Position from '../../common/Position';
 /**
  *  根据用户数据 user 和 我的 位置数据 对位置安排进行旋转。
  */
-const UserTags = ({ user, myseat }) => {
+const UserTags = ({ user, myseat, hcp=null }) => {
     const myPos = new Position('S');
     const lsto = myPos.lsto(myseat);
     const userN = user[new Position('N').lshift(lsto).sn];
@@ -13,12 +13,15 @@ const UserTags = ({ user, myseat }) => {
     const userS = user[new Position('S').lshift(lsto).sn];
     const userW = user[new Position('W').lshift(lsto).sn];
 
+    const showhcp = hcp ? <div>高花点：{hcp}</div>: null;
+
     return (
         <React.Fragment>
             <div className='userTag'><div className='seat'>
                 <UserTag position='E' user={userE} />
             </div></div>
             <div className='userTag'><div className='seat'>
+                <div className='hcp'>{showhcp}</div>
                 <UserTag position='S' user={userS} />
             </div></div>
             <div className='userTag'><div className='seat'>
@@ -51,7 +54,7 @@ class UserTag extends React.Component {
         return (
             <div className='UserTag'>
                 <div className='face'>
-                    <div className={position + 'clock'+' clock'}></div>
+                    <div className={position + 'clock' + ' clock'}></div>
                     <img src={user.face} />
                 </div>
                 {user.name ? login : noLogin}

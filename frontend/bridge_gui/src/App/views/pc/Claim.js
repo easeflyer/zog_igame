@@ -16,9 +16,9 @@ class Claim extends Component {
     state = {
         number: 0,
         value: -1,
-        submit: 0
+        submit: 0,
     }
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state.value = -1;
     }
@@ -34,7 +34,7 @@ class Claim extends Component {
     // }
     handleSubmit = (value) => {
         if (value === 2) {
-            if(this.state.value == -1) return;
+            if (this.state.value == -1) return;
             this.setState({
                 submit: 1
             })
@@ -42,10 +42,11 @@ class Claim extends Component {
             const seat = this.props.tableStore.myseat;
             const num = this.state.value;
             Out.claim(seat, num);
-        } else if(value === 3){
+        } else if (value === 3) {
             this.props.tableStore.state.scene = 2;
         } else {
             Out.claimConfirm(value);
+            this.setState({submit:1})
         }
     }
     handleSubmit1 = () => {
@@ -54,7 +55,7 @@ class Claim extends Component {
 
     myClaim() {
         const number = this.props.tableStore.getUnPlayCardNumber();
-        const cblocks = Array(number+1).fill('').map((_, index) =>
+        const cblocks = Array(number + 1).fill('').map((_, index) =>
             <Cblock key={index} number={index}
                 active={this.state.value == index ? 0 : 1}
                 onClick={this.state.submit ? null : this.handleClick.bind(this, index)} />
@@ -63,7 +64,7 @@ class Claim extends Component {
             <div id='myclaim' className='claim'>
                 <b>剩下还可赢：</b><br />
                 {cblocks}
-                <div style={{clear:"both"}}></div>
+                <div style={{ clear: "both" }}></div>
                 {this.state.submit ?
                     <button disabled='true'>等待确认..</button> :
                     <div>
@@ -78,16 +79,17 @@ class Claim extends Component {
     oClaim() {
         const claimMsg = this.props.tableStore.state.claim.msg;
         const dummySeat = this.props.tableStore.dummySeat;
+        const buttons = this.state.submit ? <div><i><br />等待搭档确认..</i></div> : 
+        <div>
+            <button onClick={this.handleSubmit.bind(this, 1)}>同意1</button>
+            <button onClick={this.handleSubmit.bind(this, 0)}>拒绝1</button>
+        </div>
+
         return (
             <div id='otherclaim' className='claim'>
                 <br />
                 {claimMsg}
-                {dummySeat == 'S' ? <div><i><br />等待确认..</i></div>:
-                    <div>
-                        <button onClick={this.handleSubmit.bind(this, 1)}>同意</button>
-                        <button onClick={this.handleSubmit.bind(this, 0)}>拒绝</button>
-                    </div>
-                }
+                {dummySeat == 'S' ? <div><i><br />等待确认..</i></div> : buttons}
             </div>
         );
     }

@@ -172,6 +172,7 @@ class Table extends Component {
     deal = () => {
         this.props.tableStore.initCards(this.props.tableStore.deals)
         setTimeout(this.props.tableStore.dealCards,10);
+        this.props.tableStore.scene = 1;
         Sound.play('deal')
     }
 
@@ -212,6 +213,7 @@ class Table extends Component {
      */
     bid = () => {
         this.props.tableStore.toggleBid();
+        //this.props.tableStore.toggleBid(this.props.tableStore.bidState.showBlock);
     }
 
     /**

@@ -56,7 +56,7 @@ class BidPanel extends Component {
     // console.log(bidblocks)
     this.state.bidblocks = bidblocks;
     this.ref = React.createRef();
-    debugger;
+    //debugger;
     //this.atDisposer = autorun(this.initPanel);  // 是否可以通过生命周期函数
     this.atDisposer = reaction(
       () => this.props.tableStore.curCall, 
@@ -204,16 +204,23 @@ class BidPanel extends Component {
     }
     this.setState({ bidblocks: bidblocks })
   }
+  /**
+   *
+   *
+   * @returns
+   * @memberof BidPanel
+   */
   getCallRows() {
     //debugger;
     const { first, call, note } = this.props.tableStore.state.calldata;
+    const myseat = this.props.tableStore.myseat;
     if (!first) return [];
-    const lsto = new Position('N').lsto(first);
+    const lsto = new Position('S').lsto(myseat);
     const pos = [
+      new Position('W').lshift(lsto).cn,
       new Position('N').lshift(lsto).cn,
       new Position('E').lshift(lsto).cn,
       new Position('S').lshift(lsto).cn,
-      new Position('W').lshift(lsto).cn,
     ];
     const header = <tr>
       <td>&nbsp;</td><td>{pos[0]}</td><td>{pos[1]}</td><td>{pos[2]}</td><td>{pos[3]}</td>
@@ -237,7 +244,8 @@ class BidPanel extends Component {
           }
           return (
             <td key={index + index1 + 1}>
-              <img className='suit' src={`${basename}cards/bids/${call[0].toUpperCase()}.svg`} />
+              {call[0] == "-" ? '': // 如果是 "-" 则显示为空白
+              <img className='suit' src={`${basename}cards/bids/${call[0].toUpperCase()}.svg`} />}
             </td>
           );
         })}

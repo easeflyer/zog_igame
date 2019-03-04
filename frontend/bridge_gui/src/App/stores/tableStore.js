@@ -36,7 +36,7 @@ class TableModel {
   board = [[]]; // 出牌区域的四张牌
   seat = {}
   zindex = 10;
-  myseat = 'S'               // 用户坐在 南
+  myseat = 'S'               // 用户坐在南 逻辑方位
   //deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
   deals = 'AT62.A6.JT6.QT85 XXX.XX.XXXX.XXXX QJ4.Q4.A9743.A43 XXX.XX.XXXX.XXXX';
   //@observable uiState = {} // 未启用。
@@ -61,6 +61,7 @@ class TableModel {
   dealer ='E';  //固定方位
   logicDealer='';//逻辑方位
   sequence = ''; //表示当前是第几副牌
+  hcp = 20;   // 高花点数
   @observable curCall = '';  // 当前叫品，用于bidpanel 显示。
   // boardState = {
   //   boardId: null,

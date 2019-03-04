@@ -74,6 +74,7 @@ class TableView extends React.Component {
       declarer:tableStore.state.declarer
     }
     const claimBtnClickable = tableStore.state.declarer==tableStore.myseat;
+    const hcp = tableStore.scene == 1 ? tableStore.hcp : null;
     return (
       <div>
         {(tableStore.bidState.showBid) ?
@@ -90,13 +91,15 @@ class TableView extends React.Component {
               <Timer
                 name='剩余时间'
                 handle={table.timer}
-                time='1:2:5'
+                time=':90:5'
                 callback={() => console.log('计时结束')} />
             </div>
-            <button onClick={claimBtnClickable ? table.claim :()=>{}} className={claimBtnClickable?"claimbtn":"claimbtn disable"} >摊牌</button>
+            <button onClick={claimBtnClickable ? table.claim :table.claim} className={claimBtnClickable?"claimbtn":"claimbtn disable"} >摊牌</button>
             <button onClick={() => table.timer.stop()} onDoubleClick={() => table.timer.start()} className="calljudge">呼叫裁判</button>
             <button onClick={table.lastTrick.bind(table)} className="lasttrick">上一墩牌</button>
-            <button onClick={table.bid.bind(table)} className="showbid">显示叫牌</button>
+            {tableStore.scene > 1 ? // 叫牌结束则大于1 显示按钮
+              <button onClick={table.bid.bind(table)} className="showbid">叫牌记录</button>
+            : null }
             <button onClick={table.reConnect.bind(table)} className="showbid">刷新</button>
 
             {/* <div className='re' id='lastTrick'>上墩牌</div>*/}
@@ -117,7 +120,7 @@ class TableView extends React.Component {
             <div id='south' className='south' ref={table.ref.S}></div>
             <div id='west' className='west' ref={table.ref.W}></div>
             <div id='board' className='board' ref={table.ref.board}>
-              <UserTags user={tableStore.state.user} myseat={tableStore.myseat} />
+              <UserTags user={tableStore.state.user} myseat={tableStore.myseat} hcp={hcp}/>
               {tableStore.state.scene == 0 ? <Prepare stat={stat} ready={table.handleReady} /> : null}
             </div>
             {cards}

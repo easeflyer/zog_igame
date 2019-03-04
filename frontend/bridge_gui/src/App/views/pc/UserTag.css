@@ -38,3 +38,10 @@
     height:100%;
     float:left;
 }
+.hcp{
+    display: inline-block;
+    margin:auto;
+    right:0px;
+    color:#FFF;
+    font-size:2vh;
+}
