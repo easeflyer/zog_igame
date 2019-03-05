@@ -1,6 +1,6 @@
 import React from 'react'
 import { Modal, Button, Input } from 'antd';
-import { useState } from 'react'
+import { useState,useCallback } from 'react'
 import 'antd/dist/antd.css'
 
 // function AlertForm(){
@@ -10,8 +10,13 @@ import 'antd/dist/antd.css'
 //   );
 // }
 
-function AlertForm({bid}) {
+function AlertForm({bid,callback}) {
   const [isShow, setIsShow] = useState(true)
+  const msgRef = React.useRef(null);
+  const cb = useCallback((value)=>{
+    setIsShow(false);
+    callback(msgRef.current.state.value);
+  });
 
   return (
     <div>
@@ -20,15 +25,15 @@ function AlertForm({bid}) {
         visible={isShow}
         mask={false}
         closable={false}
-        onOk={()=>setIsShow(false)}
-        onCancel={()=>setIsShow(false)}
+        onOk={cb}
+        onCancel={cb}
         footer={[
-          <Button type="primary" onClick={()=>setIsShow(false)}>确认</Button>,
-          <Button onClick={()=>setIsShow(false)}>取消</Button>
+          <Button type="primary" onClick={()=>cb(1)}>确认</Button>,
+          <Button onClick={()=>cb(0)}>取消</Button>
         ]}
         style={{top:'20vh',left:'-30vh'}}
       >
-      <Input placeholder="请在此处详细输入约定叫描述！" />
+      <Input ref={msgRef} placeholder="请在此处详细输入约定叫描述！" />
       </Modal>
     </div>
   );

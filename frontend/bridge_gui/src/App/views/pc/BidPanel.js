@@ -13,6 +13,7 @@ import Position from '../../common/Position';
 import Out from '../pc/Output';
 import {basename} from '../../../config'
 import AlertForm from '../../components/AlertForm';
+import { joinSafe } from 'upath';
 
 /**
  * BidPanel 叫牌面板
@@ -28,7 +29,8 @@ class BidPanel extends Component {
     bidblocks: [],
     bidcards: [],
     active: 1,
-    calling: ""
+    calling: "",
+    bidMsg:null   // 记得清空！！！
   }
   /**
    * 
@@ -76,6 +78,7 @@ class BidPanel extends Component {
   handleCall = (item) => {
     
     //this.atDisposer();
+    this.state.bidMsg=null; // 清除约定叫提示信息。
     if ('row' in item) {
       this._bidblock(item);
     } else {
@@ -162,8 +165,8 @@ class BidPanel extends Component {
    */
   handleConfirm = () => {
     // 调用 聊天打牌 发送数据
-   
-    Out.call(this.state.calling);
+    const msg = this.state.bidMsg;
+    Out.call(this.state.calling,msg);
     // this.state.calling = "";
     this.setState({
       calling:""
@@ -299,10 +302,23 @@ class BidPanel extends Component {
       <button onClick={this.handleReset}>重置</button>
       <div className='calling'>{this.state.calling}</div>
     </Fragment>
+    const callback = (value)=>{
+      if(value) {
+        this.state.bidMsg = value;
+        this.state.bidcards[1].active = 0;
+      }else{
+        this.state.bidcards[1].active = 1;
+      }
+      this.setState({
+        bidcards: this.state.bidcards,
+      })
+    }
 
     return (
       <div id='bidpanel' className='bidpanel' ref={this.ref}>
-        {this.state.bidcards[1].active ? null:<AlertForm bid={this.state.calling} />}
+        {this.state.bidcards[1].active ? null:
+          <AlertForm bid={this.state.calling} callback={callback} />
+        }
         <div>
           {rows}
         </div>

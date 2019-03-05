@@ -10,9 +10,9 @@ const _Output = {
   ckLogin:()=>{
     console.log("用户已经登录。")
   },
-  // 叫牌
-  call:(calling) => {
-    console.log('output:',calling);
+  // 叫牌 msg 约定叫提示信息
+  call:(calling,msg) => {
+    console.log('output:',calling,msg);
     if(calling==='PASS'){
       calling = 'Pass'
     }
