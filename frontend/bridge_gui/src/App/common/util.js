@@ -243,7 +243,19 @@ export function Two(array,col){
 //   }
 //   return result;
 // }
-
+export function fillCall(firstCall,myseat){
+    let dirArr = ['E','S','W','N'];
+    let ind = dirArr.indexOf(myseat)
+    for(let i = 0;i<(3-ind);i++){
+      dirArr.unshift(dirArr.pop())
+    }
+    if(firstCall){
+      return dirArr.indexOf(firstCall)
+    }else{
+      return 0
+    }
+    
+}
 /**
  * 
  * @param {*} seats 每一个玩家对应的座位

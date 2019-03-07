@@ -39,8 +39,8 @@ const creator = (options) => {
             const data = await cls.call('get_random_call', [ this._id])
             return data
         }
-        async bid(pos,call){
-            const data = await cls.call('bid', [ this._id, pos, call])
+        async bid(pos,call,isAlert,msg){
+            const data = await cls.call('bid', [ this._id, pos, call,isAlert,msg])
             return data
         }
 

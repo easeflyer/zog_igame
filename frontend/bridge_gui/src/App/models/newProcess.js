@@ -4,7 +4,7 @@ import Position from '../common/Position';
 import ODOO from '../libs/odoo-bridge-rpc/src';
 import boardStore from '../stores/newBoard'
 import tableStore from '../stores/tableStore'
-import {cardString,Two,getUserCards,getCurOrLast,getUserCardsDeal,removeNull,changeSuitsOrder} from '../common/util'
+import {cardString,Two,getUserCards,getCurOrLast,getUserCardsDeal,removeNull,changeSuitsOrder,fillCall} from '../common/util'
 import Clock from '../libs/Clock';
 import Sound from '../components/Sound';
 import ResultPanel from '../views/pc/ResultPanel';
@@ -61,6 +61,13 @@ const SUITS = {
   'C' : ['C','H','S','D'],
   'D' : ['D','S','H','C'],
 }
+const NTH = {
+  'E': 0,
+  'S': 1,
+  'W': 2,
+  'N': 3 
+};
+  
 const odoo = new ODOO({ host, db, models })
 
 const fields = {
@@ -253,8 +260,9 @@ class Process{
        * @param {string} bid  玩家的叫牌内容
        * @memberof Process
        */
-      bid = async (player, bid) => {
-        const res = await bd.bid(player, bid)
+      bid = async (player, bid,isAlert,msg) => {
+        debugger
+        const res = await bd.bid(player, bid,isAlert,msg)
         console.log(res)
       }
       // 打牌
@@ -286,6 +294,7 @@ class Process{
         
         const {state,dealer,auction,player,declarer,hands,current_trick,last_trick,tricks,contract,claim_result,vulnerable,sequence} = bd2;
         TRICKS = tricks;
+        debugger
         console.log( seats[Dummy[declarer]])
         tableStore.dummySeat = seats[Dummy[declarer]];
         tableStore.dealer=seats[dealer];
@@ -310,9 +319,9 @@ class Process{
           tableStore.state.vulnerable = vulnerable;
         }
         var deals =cardString(tableStore.myseat,bd2.hands) ;
-        var call=null;
-        var callArr = [];
-        call = JSON.parse(bd2.auction);
+        let {call,note,curCall} = this.transformAuctionData(bd2.auction,tableStore.myseat)
+        debugger
+        call = eval(bd2.auction);
         console.log(deals)
         tableStore.initCards(deals);
         setTimeout(()=>{
@@ -320,7 +329,7 @@ class Process{
         
         
         Sound.play('deal');
-        this.timing(seats[bd2.player],999,()=>{})
+        this.timing(bd2.player,999,()=>{})
         if('SN'.indexOf(seats[bd2.player])!=-1){
           window.__Timer.start('sn');
         }else{
@@ -329,21 +338,11 @@ class Process{
         
         tableStore.state.calldata.first = dealer;
         if(state=='bidding'){
-         
-          var curCall = ''
-
-          
-          console.log(typeof JSON.parse(bd2.auction))
-          call = JSON.parse(bd2.auction); 
-          console.log(Two(call,4))
-          tableStore.state.calldata.call = Two(call,4);
-          for(let i = 0 ;i<call.length;i++){
-            if(call[call.length-1-i]!='Pass' && call[call.length-1-i]!='x' && call[call.length-1-i]!='xx'){
-              curCall = call[call.length-i-1];
-              break;
-            }
-          }
-          tableStore.curCall = curCall;
+          debugger
+          let {call,note,curCall} = this.transformAuctionData(bd2.auction,tableStore.myseat) 
+          tableStore.state.calldata.call = call;
+          tableStore.state.calldata.note =note;
+          tableStore.curCall =curCall;
           tableStore.toggleBid();
           if(bd2.player==tableStore.myseat){
             tableStore.bidState.showBlock = true
@@ -366,7 +365,8 @@ class Process{
               board:[cur,last],
               calldata:{
                 first: dealer,
-                call:Two(call,4)
+                call:call,
+                note:note
               }
             } ;
            tableStore.restore(allData);
@@ -440,7 +440,8 @@ class Process{
               board:[cur,last],
               calldata:{
                 first: dealer,
-                call:Two(call,4)
+                call:call,
+                note:note
               }
             } ;
            tableStore.restore(allData);
@@ -490,8 +491,8 @@ class Process{
           }
         }
         tableStore.state.calldata.first = dealer;
-        call = JSON.parse(bd2.auction); 
-        tableStore.state.calldata.call = Two(call,4);
+        tableStore.state.calldata.call = call;
+        tableStore.state.calldata.note =note;
         }
       },100)
       }
@@ -500,68 +501,68 @@ class Process{
        * @param {object} info 牌局的所有信息
        * @memberof Process
        */
-      dealBid(info) {
-        if(info.player){
-          this.timing(seats[info.player],999,()=>{});
-          if('SN'.indexOf(seats[info.player])!=-1){
-            window.__Timer.start('sn');
-          }else{
-            window.__Timer.start('ew');
-          }
-          if(info.player==tableStore.myseat){
-            tableStore.bidState.showBlock = true
-          }else{
-            tableStore.bidState.showBlock = false
-          }
-        }
-        var call = null;
-        var curCall = null;
-        boardStore.pbn.auction.call = JSON.parse(info.auction);
-        boardStore.gameState = info.state;
-        call = JSON.parse(info.auction); 
-          tableStore.state.calldata.call = Two(call,4);
-          for(let i = 0 ;i<call.length;i++){
-            if(call[call.length-1-i]!='Pass' && call[call.length-1-i]!='x' && call[call.length-1-i]!='xx'){
-              curCall = call[call.length-i-1];
-              break;
+      dealBid(info,msg) {
+        debugger
+        if(info.player === tableStore.myseat || info.state ==='openlead' || msg[0] === tableStore.myseat){
+          if(info.player){
+            this.timing(info.player,999,()=>{});
+            if('SN'.indexOf(seats[info.player])!=-1){
+              window.__Timer.start('sn');
+            }else{
+              window.__Timer.start('ew');
             }
-          }
-          tableStore.curCall = curCall;
-          if(info.state=='openlead'){
-            let cards =null;
-            tableStore.state.scene = 2;
-            tableStore.bidState.showBid = false
-            tableStore.bidState.showBlock = false
-            tableStore.state.declarer = info.declarer;
-            tableStore.dummySeat =  seats[Dummy[info.declarer]];
-            const declarer = info.declarer;
-            const contract = info.contract;
-            tableStore.state.contract = contract
-            if(contract){
-              if('SHCD'.indexOf(contract[1]) != -1){
-                Card.suits = SUITS[contract[1]]
-              }
-            }
-            var deals =cardString(tableStore.myseat,info.hands) ;
-            tableStore.initCards(deals,false);
-            tableStore.dealCards();
             if(info.player==tableStore.myseat){
-              cards = tableStore.selectCards("S", 'SHDC',[ACT1.L]);
-              tableStore.setCardsState(cards, { active: ACT1.LC, onclick: tableStore.play });
+              tableStore.bidState.showBlock = true
+            }else{
+              tableStore.bidState.showBlock = false
+            }
+          }
+  
+          boardStore.pbn.auction.call = eval(info.auction);
+          boardStore.gameState = info.state;
+            let {call,note,curCall} = this.transformAuctionData(info.auction,tableStore.myseat) 
+            tableStore.state.calldata.call = call;
+            tableStore.state.calldata.note =note;
+            tableStore.curCall =curCall;
+            if(info.state=='openlead'){
+              let cards =null;
+              setTimeout(()=>{
+                tableStore.state.scene = 2;
+                tableStore.bidState.showBid = false
+                tableStore.bidState.showBlock = false
+              },2000)
+              tableStore.state.declarer = info.declarer;
+              tableStore.dummySeat =  seats[Dummy[info.declarer]];
+              const declarer = info.declarer;
+              const contract = info.contract;
+              tableStore.state.contract = contract
+              if(contract){
+                if('SHCD'.indexOf(contract[1]) != -1){
+                  Card.suits = SUITS[contract[1]]
+                }
+              }
+              var deals =cardString(tableStore.myseat,info.hands) ;
+              tableStore.initCards(deals,false);
+              tableStore.dealCards();
+              if(info.player==tableStore.myseat){
+                cards = tableStore.selectCards("S", 'SHDC',[ACT1.L]);
+                tableStore.setCardsState(cards, { active: ACT1.LC, onclick: tableStore.play });
+              }
+              
+             
+            }
+            if(info.state=='done'){
+              tableStore.bidState.showBid = false
+              //显示结果
+              var result = 'Allpass';
+              tableStore._result = result;
+              const result1 = document.querySelector('.result');
+              if(!result1)
+                ReactDOM.render(<ResultPanel />,document.querySelector('#result'))
             }
             
-           
-          }
-          if(info.state=='done'){
-            tableStore.bidState.showBid = false
-            //显示结果
-            var result = 'Allpass';
-            tableStore._result = result;
-            const result1 = document.querySelector('.result');
-            if(!result1)
-              ReactDOM.render(<ResultPanel />,document.querySelector('#result'))
-          }
-          
+        }
+        
       }
       /**
        * 处理打牌信息
@@ -609,7 +610,7 @@ class Process{
 
         
        if(info.player){
-        this.timing(seats[info.player],999,()=>{})
+        this.timing(info.player,999,()=>{})
           if('SN'.indexOf(seats[info.player])!=-1){
             window.__Timer.start('sn');
           }else{
@@ -750,16 +751,56 @@ class Process{
        * @param {function} callback 闹钟达到计时上限后，执行的函数
        * @memberof Process
        */
-      timing(seat, time, callback) {
+      transformAuctionData(auction,myseat){
+        let callArrs = eval(auction); 
+        
+            let note = [];
+            let nth = 1;
+            let call = [];
+            let curCall = '';
+            if(callArrs.length ==0) return {call,note,curCall};
+            const PARTNER = {E:"W",W:"E",S:"N",N:"S"}
+            callArrs.forEach(item => {
+              if(item[2] === "False" || PARTNER[item[0]] === myseat ){
+                call.push(item[1])
+              } else{
+                call.push(item[1] +` =${nth}=`);
+                note.push(`约定叫${nth++}: ${item[3]}`) 
+              }
+            });
+           let fillNum = fillCall(callArrs[0][0],myseat)
+           call = new Array(fillNum).fill("-").concat(call);
+
+           for(let i = 0 ;i<call.length;i++){
+            if(call[call.length-1-i]!='Pass' && call[call.length-1-i]!='x' && call[call.length-1-i]!='xx'){
+              curCall = call[call.length-i-1];
+              break;
+            }
+          }
+          call = Two(call,4);
+          curCall = curCall.slice(0,2)
+          return {call,note,curCall}
+      }
+      timing(player, time, callback) {
+        let seat = seats[player]
         const unseat = new Position(seat).lshift(1).sn;
         ReactDOM.unmountComponentAtNode(document.querySelectorAll('.clock')[0]);
         ReactDOM.unmountComponentAtNode(document.querySelectorAll('.clock')[1]);
         ReactDOM.unmountComponentAtNode(document.querySelectorAll('.clock')[2]);
         ReactDOM.unmountComponentAtNode(document.querySelectorAll('.clock')[3]);
-        ReactDOM.render(
+        const {myseat} = tableStore
+        if(player === myseat){
+          ReactDOM.render(
             <Clock time={time} callback={callback} />,
             document.querySelector('.'+seat+'clock')
-        )
+         )
+        }
+        if( myseat === tableStore.state.declarer && player === Dummy[myseat]){
+          ReactDOM.render(
+            <Clock time={time} callback={callback} />,
+            document.querySelector('.'+seat+'clock')
+         )
+        }
     }
 }
 export default new Process();

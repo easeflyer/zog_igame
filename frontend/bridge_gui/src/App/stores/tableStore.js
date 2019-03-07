@@ -1016,6 +1016,7 @@ class TableModel {
     let index = 0;
     //const dCards = Models.openDummy().cards.split('.');
     // let cards = this.state.cards[Position.SNames.indexOf(dummySeat)];
+    
     let cards = this.selectCards(dummySeat, 'SHDC',[ACT1.L]);
     // console.log('seatnumber:', dCards);
     // dCards.forEach((item1, index1) => {
@@ -1026,7 +1027,7 @@ class TableModel {
     //     index++;
     //   })
     // })
-
+    debugger
     dcards.forEach((card, index) => {
       cards[index].card = card;
     });

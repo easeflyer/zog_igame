@@ -22,7 +22,17 @@ const _Output = {
     if(calling==='XX'){
       calling = 'xx'
     }
-    Process.bid(tableStore.myseat,calling)
+    if(calling.includes("ALERT")){
+      debugger
+      console.log(calling)
+      calling = calling.slice(0,2)
+      console.log(calling);
+      console.log()
+      Process.bid(tableStore.myseat,calling,'True',msg)
+    }else{
+      Process.bid(tableStore.myseat,calling,'False',msg)
+    }
+    
   },
   play:(data) => {
     console.log('oplay。。。。：',data.card);

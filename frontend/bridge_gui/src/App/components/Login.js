@@ -51,7 +51,7 @@ class NormalLoginForm extends React.Component {
             Log in
           </Button>
         </FormItem>
-        <Link to="/game/1">game</Link>
+        <Link to="/game/2">game</Link>
       </Form>
     );
   }
