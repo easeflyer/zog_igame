@@ -58,12 +58,34 @@
 //     ],
 
 // }
+const deal  = "QJ6.K652.J85.T98 873.J97.AT764.Q4 K5.T83.KQ9.A7652 AT942.AQ4.32.KJ3"
+const deal1 = "QJ6.K652.J85.T98 XXX.XXX.XXXXX.XX K5.T83.KQ9.A7652 XXXXX.XXX.XX.XXX"
+const deal2 = "J6.K652.J85.T9 XX.XXX.XXXXX.X 5.T83.KQ9.A765 XXXXX.XXX.XX.XX"
+// C8,C4,C2,C3  上一墩
+// SQ,S8,SK     当前墩
+
+function genUserCards(deal){
+    const suits="SHDC";
+    const hands = deal.split(" ");
+    return hands.map((hand)=>{
+        let h = [];
+        hand.split(".").forEach((suit,i)=>{
+            suit.split("").forEach((card)=>h.push(suits[i]+card))
+        })
+        return h;
+    });
+}
+
+
+
+
 
 export const restoreData = {
     scene: 2,
+    // SHCD
     //deals: 'K34.J3.Q742.K832 XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX',
     //deals: 'XXX.J3.Q742.K832 XXX.XX.XXXX.XXXX XXX8.A5.J853.QT4 XXX.XX.XXXX.XXXX',
-    deals: "...XXXXXXXXXXXXX 43.5..XXXXXXXXXX 7...AXXXXXXXXXXX ...XXXXXXXXXXXXX",
+    deals: "...XXXXXXXXXXXXX 43.5..XXXXXXXXXX 7..A.XXXXXXXXXXX ...XXXXXXXXXXXXX",
     //deals: 'XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX',
     //deals: 'K34.X.X.X XXX.X.X.X X.X.X.XXT4 X.XX.X.X',
     claim: { seat: 'E', msg: '3NT X +3' },
