@@ -13,6 +13,7 @@ import Game from './Game';
 import LogicPlay from './logicPlay';
 import NewApi from './index3';
 import NewApiLogic from './newApiLogic';
+import Record from './Record';
 @inject('testStore', 'commonStore')
 @withRouter
 @observer
@@ -37,6 +38,7 @@ export default class App extends React.Component {
           <Route path="/logicPlay" component={LogicPlay} />
           <Route path="/newapi" component={NewApi} />
           <Route path="/newapilogic" component={NewApiLogic} />
+          <Route path="/record" component={Record} />
           {/* 注意主页放在最下面，避免重复匹配 */}
           {/* <Route path="/" component={Home} /> */}
         </Switch>

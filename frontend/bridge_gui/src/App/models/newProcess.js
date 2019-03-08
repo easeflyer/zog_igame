@@ -29,7 +29,7 @@ const Dummy={
   N:'S'
 }
 
-const host = 'http://192.168.1.88:8069'
+const host = 'http://192.168.1.7:8069'
 const db = 'TT'
 const models = {
   'res.users': ['name', 'doing_table_ids'],
@@ -42,12 +42,13 @@ const models = {
     "openlead", "result", "ns_point", "ew_point",
     "host_imp", "guest_imp", "auction", "tricks",
     "last_trick", "current_trick", "ns_win", "ew_win",
-    "claimer", "claim_result", "player", "state",
+    "claimer", "claim_result", "player", "state",'cards'
   ],
   'bus.bus': ['name'],
   'mail.channel': ['name', 'channel_type'],
   'og.channel': ['name', 'table_id', 'type', 'mail_channel_id'],
   'mail.message': ['subject', 'body', 'subtype_id', 'message_type', 'author_id', 'date'],
+  'og.deal':['number','sequence','card_str']
 }
 var tables = null;
 var table = null;
@@ -80,7 +81,7 @@ const fields = {
     east_id: null,
     south_id: null,
     board_ids: {
-      name: null, deal_id: null, table_id: null, round_id: null,
+      name: null, table_id: null, round_id: null,
       phase_id: null, game_id: null, match_id: null, host_id: null,
       guest_id: null, number: null, vulnerable: null, dealer: null,
       hands: null, sequence: null, declarer: null, contract: null,
@@ -88,6 +89,7 @@ const fields = {
       host_imp: null, guest_imp: null, auction: null, tricks: null,
       last_trick: null, current_trick: null, ns_win: null, ew_win: null,
       claimer: null, claim_result: null, player: null, state: null,
+      deal_id: {number:null,sequence:null,card_str:null}, cards:null
     }
   },
 }
@@ -202,8 +204,12 @@ class Process{
         // 当前正在进行的board
         bd = boards.get_doing_board()
         console.log(bd)
-    
+       const Records = boards.look(fields.doing_table_ids.board_ids).filter(item=>{
+          return item.state === "done";
+       })
+       
         // 读取到的牌桌数据
+        console.log(Records)
         tableStore.initState()
        this.recover()
        
@@ -369,6 +375,7 @@ class Process{
                 note:note
               }
             } ;
+            debugger
            tableStore.restore(allData);
           }else{
             tableStore.dummySeat=seats[Dummy[declarer]];
