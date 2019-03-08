@@ -480,6 +480,7 @@ class TableModel {
     let cardNum = 0;
     // 1） 飞走不在手里的牌。
     userCards.forEach((uCards, uindex) => {
+      // 明牌
       if (openSeat.indexOf(Position.SNames[uindex]) !== -1) {
         cards[uindex].forEach((card) => {
           // 不在手里的牌 全部 飞走
@@ -487,6 +488,7 @@ class TableModel {
           // window.___uindex = uindex;
           if (uCards.indexOf(card.card) === -1) this._setCardACT3(card)
         });
+      // 暗牌
       } else {
         cardNum = 13 - uCards.length;
         for (let i = 0; i < cardNum; i++) {
@@ -518,14 +520,15 @@ class TableModel {
         };
       }
     }, this);
-
+    // 2）上一墩
     board1[1].forEach((ucard,index) => {
       const seatIndex = Position.SNames.indexOf(ucard.seat);
+      const pre = cards[seatIndex][1].active == ACT3 ? 1 : 0;
       // 暗牌处理
       if (openSeat.indexOf(ucard.seat) === -1) {
-        cards[seatIndex][1].card = ucard.card;
-        this._setCardACT3(cards[seatIndex][1]);
-        this.board[1].push(cards[seatIndex][1]);
+        cards[seatIndex][pre].card = ucard.card;
+        //this._setCardACT3(cards[seatIndex][1]);
+        this.board[1].push(cards[seatIndex][pre]);
         // 明牌处理
       } else {
         for (let card of cards[seatIndex]) {
