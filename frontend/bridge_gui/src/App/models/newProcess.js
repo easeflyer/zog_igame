@@ -267,7 +267,6 @@ class Process{
        * @memberof Process
        */
       bid = async (player, bid,isAlert,msg) => {
-        debugger
         const res = await bd.bid(player, bid,isAlert,msg)
         console.log(res)
       }
@@ -300,14 +299,12 @@ class Process{
         
         const {state,dealer,auction,player,declarer,hands,current_trick,last_trick,tricks,contract,claim_result,vulnerable,sequence} = bd2;
         TRICKS = tricks;
-        debugger
-        console.log( seats[Dummy[declarer]])
         tableStore.dummySeat = seats[Dummy[declarer]];
         tableStore.dealer=seats[dealer];
         tableStore.logicDealer=dealer;
         tableStore.sequence = sequence;
         tableStore.state.declarer=declarer;
-        tableStore.state.status=state;
+        tableStore.state.claimAble = false;
         if(contract){  
           if('SHCD'.indexOf(contract[1]) != -1){
             Card.suits = SUITS[contract[1]]  
@@ -327,7 +324,7 @@ class Process{
         }
         var deals =cardString(tableStore.myseat,bd2.hands) ;
         let {call,note,curCall} = this.transformAuctionData(bd2.auction,tableStore.myseat)
-        debugger
+       
         call = eval(bd2.auction);
         console.log(deals)
         tableStore.initCards(deals);
@@ -345,7 +342,7 @@ class Process{
         
         tableStore.state.calldata.first = dealer;
         if(state=='bidding'){
-          debugger
+         
           let {call,note,curCall} = this.transformAuctionData(bd2.auction,tableStore.myseat) 
           tableStore.state.calldata.call = call;
           tableStore.state.calldata.note =note;
@@ -361,6 +358,7 @@ class Process{
         if(state=='playing' || state=='openlead'){
          
           if(state=='playing'){
+            tableStore.state.claimAble = true;
             var cur = getCurOrLast(seats,JSON.parse(current_trick));
             var last = getCurOrLast(seats,JSON.parse(last_trick));
             let allData ={
@@ -376,7 +374,7 @@ class Process{
                 note:note
               }
             } ;
-            debugger
+            
            tableStore.restore(allData);
           }else{
             tableStore.dummySeat=seats[Dummy[declarer]];
@@ -432,6 +430,7 @@ class Process{
         
         }
         if(state=='claiming' || state=='claiming.RHO' || state=='claiming.LHO'){
+          tableStore.state.claimAble = true;
           var cur = getCurOrLast(seats,JSON.parse(current_trick));
             var last = getCurOrLast(seats,JSON.parse(last_trick));
             let allData ={
@@ -510,7 +509,7 @@ class Process{
        * @memberof Process
        */
       dealBid(info,msg) {
-        debugger
+       
         if(info.player === tableStore.myseat || info.state ==='openlead' || msg[0] === tableStore.myseat){
           if(info.player){
             this.timing(info.player,999,()=>{});
@@ -593,11 +592,12 @@ class Process{
         curTrick = removeNull(curTrick)
         lastTrick = removeNull(lastTrick)
         var hands = JSON.parse(info.hands)
-        debugger
         var ind = dir.indexOf(dummy)
+        debugger
         if(myseat != dummy){
           if(lastTrick.length==0 && curTrick.length==1){
-            tableStore.state.status=="playing";
+            debugger
+            tableStore.state.claimAble = true;
             var hand = changeSuitsOrder(hands[ind],Card.suits);
             tableStore.openDummy(seats[dummy],hand);
           }
@@ -787,7 +787,12 @@ class Process{
             }
           }
           call = Two(call,4);
-          curCall = curCall.slice(0,2)
+          if(curCall.includes("NT")){
+            curCall = curCall.slice(0,3)
+          }else{
+            curCall = curCall.slice(0,2)
+          }
+          
           return {call,note,curCall}
       }
       timing(player, time, callback) {

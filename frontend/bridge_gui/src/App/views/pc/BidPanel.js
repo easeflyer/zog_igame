@@ -283,7 +283,7 @@ class BidPanel extends Component {
     // 叫牌记录。
     const rows = this.getCallRows();
     const showBlock = this.props.tableStore.bidState.showBlock;
-    const BidCards = ()=> <Fragment>
+    const BidCards =  <Fragment>
       <BidCard name='PASS' active={this.state.bidcards[0].active}
         onclick={this.handleCall.bind(this, { name: 'PASS' })}
       />
@@ -300,7 +300,7 @@ class BidPanel extends Component {
 
     const opPad = <Fragment>
       {bidblocks}
-      {BidCards()}
+      {BidCards}
       <button onClick={this.handleConfirm}>确认</button>
       <button onClick={this.handleReset}>重置</button>
       <div className='calling'>{this.state.calling}</div>

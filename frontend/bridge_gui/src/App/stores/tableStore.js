@@ -46,7 +46,7 @@ class TableModel {
     scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
     calldata: { first: 'W', call: [], note: null }, // todo 补充 calldata 4列（东西南北）若干行的数组参考 call 方法
     user: {},
-    status:'',//当前的游戏进度
+    claimAble:false,//当前是否可以摊牌
     lastTrick: false,  // 最后一墩牌是否显示
     //playseat:null, // 倒计时解决
     debug: false,
@@ -63,6 +63,7 @@ class TableModel {
   logicDealer='';//逻辑方位
   sequence = ''; //表示当前是第几副牌
   hcp = 20;   // 高花点数
+
   @observable curCall = '';  // 当前叫品，用于bidpanel 显示。
   // boardState = {
   //   boardId: null,
