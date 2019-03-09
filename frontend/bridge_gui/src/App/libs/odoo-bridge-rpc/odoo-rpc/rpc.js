@@ -136,7 +136,7 @@ class RPC {
             this.db = db
         }
 
-        const data = await this.json(url, { login, password, db:this.db , type: 'account' })
+        const data = await this.json(url, { login, password, db:this.db ,role:"player", type: 'account' })
 
         const {code} = data
         if (!code){
