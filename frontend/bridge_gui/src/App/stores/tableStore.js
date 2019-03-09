@@ -46,6 +46,7 @@ class TableModel {
     scene: 0,     // 0 准备阶段 1 叫牌阶段 2 出牌阶段 3 claim 等待，4 claim 确认
     calldata: { first: 'W', call: [], note: null }, // todo 补充 calldata 4列（东西南北）若干行的数组参考 call 方法
     user: {},
+    status:'',//当前的游戏进度
     lastTrick: false,  // 最后一墩牌是否显示
     //playseat:null, // 倒计时解决
     debug: false,
@@ -90,7 +91,7 @@ class TableModel {
     //   N: { ready: 0, name: '赵六', face: '/imgs/face2.png', rank: '钻石', seat: 'N' }
     // };
     this.state.user = {
-      E: { ready: 0, name: '张三', face: '/imgs/face1.png', rank: '大师', seat: 'E' },
+      E: { ready: 0, name: '', face: '', rank: '', seat: '' },
       S: { ready: 0, name: '', face: '', rank: '', seat: '' },
       W: { ready: 0, name: '', face: '', rank: '', seat: '' },
       N: { ready: 0, name: '', face: '', rank: '', seat: '' }
@@ -965,7 +966,7 @@ class TableModel {
     this._setShowLastTrick(true);
   }
   @action.bound
-  hideLastTrick() {
+  hideLastTrick() {console.log("***********************************")
     this._setShowLastTrick(false);
   }
   /**
@@ -980,7 +981,13 @@ class TableModel {
     const lt = this.board[1];
     window.___board1 = toJS(this.board);
     let card = null;
-    if (lt && isShow) this._showLastTrick(lt);
+    if (lt && isShow){
+      this._showLastTrick(lt);
+      let time1 = setTimeout(()=>{
+        this._setShowLastTrick(false);
+        clearTimeout(time1)
+      },3000)
+    }
     if (lt && !isShow) for(let i=1;i<this.board.length;i++) 
       this._hideLastTrick(this.board[i]);
     this.state.lastTrick = isShow;
@@ -989,9 +996,10 @@ class TableModel {
   }
   @action
   _showLastTrick(cards){
-    cards.forEach((item, index) => {
+    cards.forEach((item, index) => { console.log(item)
       item['animation']['left'] = this.seat[item.seat][1].x - this.size / 2.9
       item['animation']['top'] = this.seat[item.seat][1].y - this.size / 2.9
+      item['animation']['zIndex'] = 1000
       item.active = ACT3; // 测试用
     })    
   }

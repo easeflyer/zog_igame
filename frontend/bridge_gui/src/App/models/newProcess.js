@@ -307,6 +307,7 @@ class Process{
         tableStore.logicDealer=dealer;
         tableStore.sequence = sequence;
         tableStore.state.declarer=declarer;
+        tableStore.state.status=state;
         if(contract){  
           if('SHCD'.indexOf(contract[1]) != -1){
             Card.suits = SUITS[contract[1]]  
@@ -533,11 +534,11 @@ class Process{
             tableStore.curCall =curCall;
             if(info.state=='openlead'){
               let cards =null;
+              tableStore.bidState.showBlock = false
               setTimeout(()=>{
                 tableStore.state.scene = 2;
                 tableStore.bidState.showBid = false
-                tableStore.bidState.showBlock = false
-              },2000)
+              },1500)
               tableStore.state.declarer = info.declarer;
               tableStore.dummySeat =  seats[Dummy[info.declarer]];
               const declarer = info.declarer;
@@ -596,7 +597,8 @@ class Process{
         var ind = dir.indexOf(dummy)
         if(myseat != dummy){
           if(lastTrick.length==0 && curTrick.length==1){
-            var hand = changeSuitsOrder(hands[ind],Card.suits)
+            tableStore.state.status=="playing";
+            var hand = changeSuitsOrder(hands[ind],Card.suits);
             tableStore.openDummy(seats[dummy],hand);
           }
         }
