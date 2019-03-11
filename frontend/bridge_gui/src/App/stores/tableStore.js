@@ -961,11 +961,13 @@ class TableModel {
   @action.bound
   toggleLastTrick() {
     this.showBid = false;
-    this._setShowLastTrick(!this.state.lastTrick);
+    if(this.state.lastTrick) this.hideLastTrick();
+    else this.showLastTrick();
   }
   @action.bound
   showLastTrick() {
     this._setShowLastTrick(true);
+    setTimeout(()=>this._setShowLastTrick(false),3000);
   }
   @action.bound
   hideLastTrick() {console.log("***********************************")
@@ -983,13 +985,7 @@ class TableModel {
     const lt = this.board[1];
     window.___board1 = toJS(this.board);
     let card = null;
-    if (lt && isShow){
-      this._showLastTrick(lt);
-      let time1 = setTimeout(()=>{
-        this._setShowLastTrick(false);
-        clearTimeout(time1)
-      },3000)
-    }
+    if (lt && isShow)this._showLastTrick(lt);
     if (lt && !isShow) for(let i=1;i<this.board.length;i++) 
       this._hideLastTrick(this.board[i]);
     this.state.lastTrick = isShow;
