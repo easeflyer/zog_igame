@@ -38,7 +38,8 @@ class TableModel {
   zindex = 10;
   myseat = 'S'               // 用户坐在南 逻辑方位
   //deals = 'XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX';
-  deals = 'AT62.A6.JT6.QT85 XXX.XX.XXXX.XXXX QJ4.Q4.A9743.A43 XXX.XX.XXXX.XXXX';
+  //deals = 'AT62.A6.JT6.QT85 XXX.XX.XXXX.XXXX QJ4.Q4.A9743.A43 XXX.XX.XXXX.XXXX';
+  deals = "QJ6.K652.J85.T98 XXX.XXX.XXXXX.XX K5.T83.KQ9.A7652 XXXXX.XXX.XX.XXX";
   //@observable uiState = {} // 未启用。
   @observable bidState = {showBid:false,showBlock:false};
   @observable state = {
@@ -57,7 +58,7 @@ class TableModel {
     vulnerable:'EW',//局况
     declarer:'S',//逻辑方位 庄家
   }
-  dummySeat = "W"; // 固定界面方位，非逻辑方位
+  dummySeat = "E"; // 固定界面方位，非逻辑方位
   dealer ='E';  //固定方位
   logicDealer='';//逻辑方位
   sequence = ''; //表示当前是第几副牌

@@ -1,71 +1,16 @@
 /**
  * Mock Data 主要是测试的时候用于模拟数据
  */
-
-/**
- * tableStore 
- * restore(data) 的参数数据。
- */
-// export const restoreData = {
-//     scene: 2,
-//     //deals: 'K34.J3.Q742.K832 XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX',
-//     deals: 'XXX.J3.Q742.K832 XXX.XX.XXXX.XXXX XXX8.A5.J853.QT4 XXX.XX.XXXX.XXXX',
-//     //deals: 'XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX',
-//     //deals: 'K34.X.X.X XXX.X.X.X X.X.X.XXT4 X.XX.X.X',
-//     claim: { seat: 'E', msg: '3NT X +3' },
-//     winEW: 2,
-//     winSN: 3,
-//     dummySeat: 'N',
-//     curCall: '3H',
-//     contract: '3NT X',
-//     user: {
-//         E: { ready: 1, name: '张三', face: '/imgs/face1.png', rank: '大师', seat: 'E' },
-//         S: { ready: 0, name: '', face: '', rank: '', seat: '' },
-//         W: { ready: 0, name: '', face: '', rank: '', seat: '' },
-//         N: { ready: 0, name: '', face: '', rank: '', seat: '' }
-//     },
-//     calldata: {
-//         first: 'S',
-//         call: [
-//             ['1C =1=', 'PASS', 'PASS', '2H'],
-//             ['PASS', 'PASS', '3C =2=', 'PASS'],
-//             ['PASS', '3H', 'PASS', 'PASS'],
-//             ['3S =3=', 'PASS', 'PASS', '3NT =4='],
-//         ],
-//         note: [
-//             "约定叫1：说明内容预先输入...",
-//             "约定叫2：说明内容预先输入...",
-//             "约定叫3：说明内容预先输入...",
-//             "约定叫4：说明内容预先输入...",
-//         ]
-//     },
-//     // userCards: [
-//     //     ['SK', 'S3', 'S4', 'HJ', 'H3', 'DQ', 'D4', 'D2', 'CK', 'C8', 'C3'],
-//     //     ['SX', 'SX', 'SX', 'HX', 'HX', 'HX', 'DX', 'DX', 'DX', 'CX', 'CX', 'CX'],
-//     //     ['SQ', 'SJ', 'S9', 'S8', 'HA', 'H5', 'DJ', 'D8', 'D3', 'CT', 'C4'],
-//     //     ['SX', 'SX', 'SX', 'SX', 'SX', 'HX', 'HX', 'HX', 'HX', 'DX', 'CX'],
-//     // ],
-//     userCards: [
-//         [ 'HJ', 'H3', 'DQ', 'D4', 'D2', 'CK', 'C8', 'C3'],
-//         [ 'HX', 'HX', 'HX', 'DX', 'DX', 'DX', 'CX', 'CX', 'CX'],
-//         [ 'S8', 'HA', 'H5', 'DJ', 'D8', 'D3', 'CT', 'C4'],
-//         [ 'SX', 'SX', 'HX', 'HX', 'HX', 'HX', 'DX', 'CX'],
-//     ],
-
-//     board: [ // 这里seat 为固定的图形方位，非业务逻辑方位
-//         [{ seat: 'S', card: 'D5' }, { seat: 'W', card: 'D6' }, { seat: 'N', card: 'D7' }],
-//         [{ seat: 'W', card: 'C6' }, { seat: 'N', card: 'C2' }, { seat: 'E', card: 'C7' }, { seat: 'S', card: 'CQ' }],
-//     ],
-
-// }
-const deal  = "QJ6.K652.J85.T98 873.J97.AT764.Q4 K5.T83.KQ9.A7652 AT942.AQ4.32.KJ3"
-const deal1 = "QJ6.K652.J85.T98 XXX.XXX.XXXXX.XX K5.T83.KQ9.A7652 XXXXX.XXX.XX.XXX"
-const deal2 = "J6.K652.J85.T9 XX.XXX.XXXXX.X 5.T83.KQ9.A765 XXXXX.XXX.XX.XX"
+// S.H.C.D 顺序 发牌时打出去的牌，必须用 X替换掉，注意 dummySeat 必须和 tableStore 一致
+const deal  = "QJ6.K652.T98.J85 873.J97.Q4.AT764 K5.T83.A7652.KQ9 AT942.AQ4.KJ3.32"
+//const deal1 = "QJ6.K652.T98.J85 XXX.XXX.XX.XXXXX K5.T83.A7652.KQ9 XXXXX.XXX.XXX.XX"
+const deal1 = "J6X.K652.T9X.J85 XXX.XXX.XX.XXXXX 5X.T83.A765X.KQ9 XXXXX.XXX.XXX.XX"
+const deal2 = "J6.K652.T9.J85 XX.XXX.X.XXXXX 5.T83.A765.KQ9 XXXXX.XXX.XX.XX"
 // C8,C4,C2,C3  上一墩
 // SQ,S8,SK     当前墩
 
 function genUserCards(deal){
-    const suits="SHDC";
+    const suits="SHCD";
     const hands = deal.split(" ");
     return hands.map((hand)=>{
         let h = [];
@@ -79,19 +24,17 @@ function genUserCards(deal){
 
 
 
-
+/*
+注意 dummySeat, userCards 和 board 数据 以及 deals 应该符合实际出牌情况。包括方位张数等。
+*/
 export const restoreData = {
     scene: 2,
-    // SHCD
-    //deals: 'K34.J3.Q742.K832 XXX.XX.XXXX.XXXX QJ98.A5.J853.QT4 XXX.XX.XXXX.XXXX',
-    //deals: 'XXX.J3.Q742.K832 XXX.XX.XXXX.XXXX XXX8.A5.J853.QT4 XXX.XX.XXXX.XXXX',
-    deals: "...XXXXXXXXXXXXX 43.5..XXXXXXXXXX 7..A.XXXXXXXXXXX ...XXXXXXXXXXXXX",
-    //deals: 'XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX XXX.XX.XXXX.XXXX',
-    //deals: 'K34.X.X.X XXX.X.X.X X.X.X.XXT4 X.XX.X.X',
+    //deals: "...XXXXXXXXXXXXX 43.5..XXXXXXXXXX 7..A.XXXXXXXXXXX ...XXXXXXXXXXXXX",
+    deals:deal1,
     claim: { seat: 'E', msg: '3NT X +3' },
     winEW: 2,
     winSN: 3,
-    dummySeat: 'E',
+    dummySeat: 'N',
     curCall: '3NT',
     contract: '3NT X',
     user: {
@@ -115,33 +58,21 @@ export const restoreData = {
             "约定叫4：说明内容预先输入...",
         ]
     },
-    // userCards: [
-    //     ['SK', 'S3', 'S4', 'HJ', 'H3', 'DQ', 'D4', 'D2', 'CK', 'C8', 'C3'],
-    //     ['SX', 'SX', 'SX', 'HX', 'HX', 'HX', 'DX', 'DX', 'DX', 'CX', 'CX', 'CX'],
-    //     ['SQ', 'SJ', 'S9', 'S8', 'HA', 'H5', 'DJ', 'D8', 'D3', 'CT', 'C4'],
-    //     ['SX', 'SX', 'SX', 'SX', 'SX', 'HX', 'HX', 'HX', 'HX', 'DX', 'CX'],
-    // ],
-    // userCards: [
-    //     [ 'HJ', 'H3', 'DQ', 'D4', 'D2', 'CK', 'C8', 'C3'],
-    //     [ 'HX', 'HX', 'HX', 'DX', 'DX', 'DX', 'CX', 'CX', 'CX'],
-    //     [ 'S8', 'HA', 'H5', 'DJ', 'D8', 'D3', 'CT', 'C4'],
-    //     [ 'SX', 'SX', 'HX', 'HX', 'HX', 'HX', 'DX', 'CX'],
-    // ],
-    userCards:[
-        ["CX", "CX"],
-        ["S4", "S3", "H5"],
-        ["S7", "CA"],
-        ["CX", "CX"]
-    ],
+    userCards:genUserCards(deal2),
     board:[
-        [{seat: "S", card: "HA"},{seat: "W", card: "HJ"},{seat: "N", card: "H7"}],
-        [{seat: "S", card: "HK"},{seat: "W", card: "HT"},{seat: "N", card: "H6"},{seat: "E", card: "H4"}],
+        [{seat: "N", card: "SQ"},{seat: "E", card: "S8"},{seat: "S", card: "SK"}],
+        [{seat: "N", card: "C8"},{seat: "E", card: "C4"},{seat: "S", card: "C2"},{seat: "W", card: "C3"}],
     ]
-
-    // board: [ // 这里seat 为固定的图形方位，非业务逻辑方位
-    //     [{ seat: 'S', card: 'D5' }, { seat: 'W', card: 'D6' }, { seat: 'N', card: 'D7' }],
-    //     [{ seat: 'W', card: 'C6' }, { seat: 'N', card: 'C2' }, { seat: 'E', card: 'C7' }, { seat: 'S', card: 'CQ' }],
+    // userCards:[
+    //     ["CX", "CX"],
+    //     ["S4", "S3", "H5"],
+    //     ["S7", "CA"],
+    //     ["CX", "CX"]
     // ],
+    // board:[
+    //     [{seat: "S", card: "HA"},{seat: "W", card: "HJ"},{seat: "N", card: "H7"}],
+    //     [{seat: "S", card: "HK"},{seat: "W", card: "HT"},{seat: "N", card: "H6"},{seat: "E", card: "H4"}],
+    // ]
 
 }
 

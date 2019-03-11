@@ -23,8 +23,9 @@ def deploy(app='igame'):
 def _itable():
   with cd("/home/s1/gameLobby"):
     #run('git reset --hard HEAD')
-    sudo('git checkout master')
-    sudo('git pull origin master')
+    #sudo('git fetch origin Qcloud')
+    sudo('git checkout Qcloud')
+    sudo('git pull origin Qcloud')
     #sudo('rm -rf build/')
     sudo('yarn build')
     # sudo('rm -rf /var/www/bridge_bui1/itable')
@@ -41,6 +42,20 @@ def _igame():
     sudo('yarn build')
     # sudo('rm -rf /var/www/bridge_bui1/igame')
     # sudo('mv build/ /var/www/bridge_bui1/igame')
+
+def _imatch():
+  with cd("/opt/odoo/zog_igame/fronend/imatch"):
+    #run('git reset --hard HEAD')
+    sudo('git checkout develop')
+    sudo('git pull origin develop')
+    # sudo('rm -rf build/')
+    sudo('yarn install')
+    sudo('yarn build')
+    # sudo('rm -rf /var/www/bridge_bui1/igame')
+    # sudo('mv build/ /var/www/bridge_bui1/igame')
+
+
+
 
 
 # 正常工作的版本。删除重新拷贝
