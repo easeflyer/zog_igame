@@ -36,8 +36,8 @@ def _itable():
 def _igame():
   with cd("/home/s1/zog_igame/frontend/bridge_gui"):
     #run('git reset --hard HEAD')
-    sudo('git checkout bui-mobx-test1')
-    sudo('git pull origin bui-mobx-test1')
+    sudo('git checkout test1')
+    sudo('git pull origin test1')
     # sudo('rm -rf build/')
     sudo('yarn build')
     # sudo('rm -rf /var/www/bridge_bui1/igame')
