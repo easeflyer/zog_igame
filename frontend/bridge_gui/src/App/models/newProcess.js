@@ -181,7 +181,7 @@ class Process{
          }
         }
         console.log(table)
-        this.getBoard()// 拿到相关数据：玩家 牌 
+        this.getBoard(data)// 拿到相关数据：玩家 牌 
         // // 启用长连接
         const Bus = odoo.env('bus.bus')
         Bus.start_poll(this.before_poll, this.after_poll)
@@ -190,7 +190,7 @@ class Process{
           return "1";
         }
       }
-      getBoard = async () => {
+      getBoard = async (player) => {
 
         if (!this.sid) {
           alert('你还没有登陆！')
@@ -210,6 +210,25 @@ class Process{
        
         // 读取到的牌桌数据
         console.log(Records)
+        const recordList = [];
+        Records.forEach((item)=>{
+          let record = {}
+          record.auction = this.call2Record(item.auction);
+          record.cards =this.card2Record(item.deal_id.card_str,player) ;
+          record.tricks = this.trick2Record(item.tricks);
+          let result = {}
+          result.sequence = item.sequence;
+          result.result = `${item.declarer} ${item.contract}`;
+          // ew_point: 0,ns_point: 50,nsimp:'',ewimp:1
+          result.ew_point = item.ew_point;
+          result.ns_point = item.ns_point;
+         
+          recordList.push(record)
+          tableStore.record_result.push(result)
+        })
+        console.log(recordList)
+        tableStore.record = recordList
+        
         tableStore.initState()
        this.recover()
        
@@ -422,12 +441,7 @@ class Process{
             }
           }
         }
-        if("EW".indexOf(tableStore.myseat)!=-1){
-          tableStore.setTricks(bd2.ew_win,bd2.ns_win,bd2.contract )
-        }else{
-          tableStore.setTricks(bd2.ns_win,bd2.ew_win,bd2.contract )
-        }
-        
+        tableStore.setTricks(bd2.ew_win,bd2.ns_win,bd2.contract )
         }
         if(state=='claiming' || state=='claiming.RHO' || state=='claiming.LHO'){
           tableStore.state.claimAble = true;
@@ -452,11 +466,9 @@ class Process{
               }
             } ;
            tableStore.restore(allData);
-            if("EW".indexOf(tableStore.myseat)!=-1){
-              tableStore.setTricks(bd2.ew_win,bd2.ns_win,bd2.contract )
-            }else{
-              tableStore.setTricks(bd2.ns_win,bd2.ew_win,bd2.contract )
-            }
+         
+          tableStore.setTricks(bd2.ew_win,bd2.ns_win,bd2.contract )
+           
            var suit= null;
          var current = JSON.parse(current_trick)
          current =  removeNull(current)
@@ -611,13 +623,8 @@ class Process{
             tableStore.dplay(player,args[1]);
           }
         }
-        if('EW'.indexOf(tableStore.myseat) !=-1){
-          tableStore.setTricks(info.ew_win,info.ns_win,info.contract )
-        }else{
-          tableStore.setTricks(info.ns_win,info.ew_win,info.contract )
-        }
-
         
+       tableStore.setTricks(info.ew_win,info.ns_win,info.contract )
        if(info.player){
         this.timing(info.player,999,()=>{})
           if('SN'.indexOf(seats[info.player])!=-1){
@@ -815,6 +822,56 @@ class Process{
             document.querySelector('.'+seat+'clock')
          )
         }
-    }
+      }
+      card2Record(cards_str,player){
+        const cardInfo = [];
+        const cardArr = cards_str.split(" ");
+        cardInfo.push({
+          name : player.north_id.name,
+          card: cardArr[0].split(".")
+        })
+        cardInfo.push({
+          name : player.east_id.name,
+          card: cardArr[1].split(".")
+        })
+        cardInfo.push({
+          name : player.south_id.name,
+          card: cardArr[2].split(".")
+        })
+        cardInfo.push({
+          name : player.west_id.name,
+          card: cardArr[3].split(".")
+        })
+        return cardInfo
+      }
+      call2Record(auction){
+        let auctionRecord = [];
+        auction = eval(auction);
+        auction.forEach((item)=>{
+          auctionRecord.push(item[1])
+        })
+        let dealer = auction[0][0];
+        if(dealer === "E") auctionRecord.unshift("-")
+        if(dealer === "S"){
+          auctionRecord.unshift("-")
+          auctionRecord.unshift("-")
+        } 
+        if(dealer === "W"){
+          auctionRecord.unshift("-")
+          auctionRecord.unshift("-")
+          auctionRecord.unshift("-")
+        } 
+        auctionRecord = Two(auctionRecord,4);
+        return auctionRecord;
+      }
+      trick2Record(tricks){
+        tricks = eval(tricks);
+        console.log(tricks)
+        tricks = tricks.map((item)=>{
+         return JSON.parse(item)
+        })
+        // tricks = JSON.parse(tricks)
+        return tricks
+      }
 }
 export default new Process();

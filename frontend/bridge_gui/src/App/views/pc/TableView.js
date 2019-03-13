@@ -14,6 +14,7 @@ import Prepare from './Prepare'
 import UserTags from './UserTag'
 import Timer from './Timer'
 import Card from '../../components/Card';
+import Record from '../../components/Record';
 import './TableView.css'
 import { inject, observer } from 'mobx-react';
 /**
@@ -102,7 +103,7 @@ class TableView extends React.Component {
               <button onClick={table.bid.bind(table)} className="showbid">叫牌记录</button>
             : null }
             <button onClick={table.reConnect.bind(table)} className="showbid">刷新</button>
-
+            <button onClick={table.history.bind(table)} className="showbid">历史记录</button>
             {/* <div className='re' id='lastTrick'>上墩牌</div>*/}
             {/* 注意比赛结果会挂载到下面的div */}
             <div id='result'></div>
@@ -127,7 +128,7 @@ class TableView extends React.Component {
             {cards}
           </div>
           {tableStore.state.debug ? <Debug o={table} /> : null}
-
+          <Record/>
           <div id='footer' className='footer'>
             <div id='video'></div>
             <div id='userlist'>
