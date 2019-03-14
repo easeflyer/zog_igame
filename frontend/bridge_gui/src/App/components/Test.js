@@ -1,10 +1,19 @@
 import React from 'react';
+import { Switch, Route, withRouter } from 'react-router-dom';
 
-// import Demo1 from '../components/card/demos'
-// const Test = props => <Demo1/>;
-// export default Test;
+import Demo1 from '../components/cards/demos' // 约定叫录入框
+// import Demo2 from './demo2'
 
 
-import Demo1 from '../test/AlertForm' // 约定叫录入框
-const Test = props => <Demo1/>;
-export default Test; 
+const App = (props)=>{
+  const url = props.match.url;
+  return <div>
+    <Switch>
+      <Route path={`${url}/cards`} component={Demo1} />
+    </Switch>
+  </div>
+}
+
+
+
+export default App; 

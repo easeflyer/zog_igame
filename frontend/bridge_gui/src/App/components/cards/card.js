@@ -9,20 +9,33 @@ const BLIGHT = 1;                           // brightness LIGHT 1;
 
 
 
-// class CCard extends Object{
-//   active = 1;
-//   size = null;
-//   name = null;
-//   position = {x:null,y:null};
-//   animation = {};
-//   zIndex = 0;
-//   onClick=()=>{};
+class CCard{
+  active = 1;
+  size = null;
+  name = null;
+  position = {x:null,y:null};
+  animation = {};
+  zIndex = 0;
+  onClick=()=>{};
 
-//   constructor(name){
-//     this.name = name;
-//   }
-// }
+  constructor(name){
+    this.name = name;
+  }
 
+}
+/**
+ * 把字符串转换为一维数组
+ * @param deal  QJ98.A5.J853.QT4
+ * @param order "SHDC"
+ * @example 
+ * console.log(toArr("QJ98.A5.J853.QT4","SHCD"));
+ * console.log(toArr("QJ98","S"))
+ */
+function toArr(deal,order){
+  let arr = [];
+  deal.split('.').forEach((suit,s)=>suit.split('').forEach((c)=>arr.push(order[s]+c)));
+  return arr;
+}
 
 
 
@@ -83,4 +96,4 @@ function Card({ name, size }) {
 
 
 
-export { MCard, Card };
+export { MCard, Card, CCard, toArr };

@@ -68,9 +68,6 @@ const Demo1 = props => {
   const comCards = arrCards.map((suit, s) => suit.map((c, r) => {
     return <MCard
       active={2}
-      // key={c}
-      // index={c}
-      // seat={'S'}
       onClick={()=>alert(c)}
       animation={gen3(s, r)}
       name={c}

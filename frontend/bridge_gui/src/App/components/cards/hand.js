@@ -4,38 +4,59 @@
 设置一手牌的花色顺序。
 读取一个花色的牌
 
-输入对象应该是 一个数组。因为 hand 不应该从字符串生成。
-而应该去引用 52张牌中的 13张。 便于操作。
+Hand 抽象 思路：
 
+Hand 就和人的手一样，只是把牌码好而已。便于找到合理的牌。进行操作。
+换句话说 Hand 就是对 原始52张牌中的 13 张进行引用持有和操作。
 
-思路应该是：
-1 从字符串 开始初始化。初始化的过程。分别建立多个对象（数组）
-2 cards 记录 52个对象 然后 4个hand 分别记录四个人的 数组引用。
-3 hand 对象可以有相应的方法。操作数组。
+下面写 demo 试试看 Hand 的各种用法。
+
 */
 
 
 
-import {CCard} from "./card";
+import { CCard } from "./card";
 
-class hand extends Object{
+class CHand{
   order = "SHDC";
-  _hand = [];
-
   /**
    *Creates an instance of hand.
    * hand 对象目的是为了操作 一手牌方便。本身不产生牌。
    * @param {*} hand 是个数组引用。
    * @memberof hand
    */
-  constructor(hand){
-    this._hand = hand;
-    // 如果 hand 不为空 则 初始化 this.s h d c 否则不用初始化。
-  }
-  
+  constructor(hand=null) {
+    this._hand = new Set([]);
+    this._s = new Set([]);
+    this._h = new Set([]);
+    this._d = new Set([]);
+    this._c = new Set([]);
 
-  setOrder(order){
+    if (hand) hand.forEach((card)=>this.add(card));
+  }
+  /**
+   * 添加一个 card 对象
+   * @param {*} card 是一个 card 简单对象
+   * @memberof hand
+   */
+  add(card) {
+    const suit = card.name.toLowerCase().slice(0, 1);
+    this._hand.add(card);
+    this[`_${suit}`].add(card);
+  }
+  del(card) {
+    const suit = card.name.toLowerCase().slice(0, 1);
+    this._hand.delete(card);
+    this[`_${suit}`].delete(card);
+  }
+  get s() { return this._s; }
+  get h() { return this._h; }
+  get d() { return this._d; }
+  get c() { return this._c; }
+  get hand(){ return this._hand }
+  setOrder(order) {
     this.order = order;
-    // 调整牌的顺序
   }
 }
+
+export {CHand}
