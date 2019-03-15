@@ -7,7 +7,7 @@ import { HashRouter,BrowserRouter } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 
 import App from './App/components/App';
-
+import "./index.css"
 import testStore from './App/stores/testStore';
 import commonStore from './App/stores/commonStore';
 import tableStore from './App/stores/tableStore';

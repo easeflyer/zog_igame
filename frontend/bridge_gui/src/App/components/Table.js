@@ -57,6 +57,7 @@ class Table extends Component {
      */
     componentDidMount() {
         this._initSeat(); //
+        window.__INITSEAT = this._initSeat.bind(this)
     }
 
 
@@ -226,6 +227,9 @@ class Table extends Component {
         this.props.tableStore.reConnect()
     }
 
+    history = () => {
+        this.props.tableStore.showHistory()
+    }
     render() {
         return (
             <TableView table={this} />

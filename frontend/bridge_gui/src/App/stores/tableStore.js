@@ -84,7 +84,14 @@ class TableModel {
   // _contract = null;
   // _claim = {seat:null,value:null};
   @observable _result = "";
-
+  @observable history = false;//是否显示历史记录
+  @observable record = [{
+    auction:[],
+    cards:[],
+    tricks:[],
+   
+  }]; //打过牌的记录
+  @observable record_result = []; 
   constructor() {
     // this.state.user = {
     //   E: { ready: 0, name: '张三', face: '/imgs/face1.png', rank: '大师', seat: 'E' },
@@ -1153,6 +1160,14 @@ class TableModel {
   }
   nextGame = () => {
     Out.nextGame()
+  }
+  @action.bound
+  showHistory = () => {
+    this.history = true;
+  }
+  @action.bound
+  hideHistory = () => {
+    this.history = false;
   }
 }
 // Position.SNamesen = ['E', 'S', 'W', 'N'];
