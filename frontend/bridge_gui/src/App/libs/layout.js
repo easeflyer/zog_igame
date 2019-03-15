@@ -1,4 +1,14 @@
+import { sep } from "upath";
+
 /**
+ * 2019.3.14 新思路
+ * 
+ * 布局函数库重新设计。
+ * 物料：card, hand, table 
+ * 而layout 就是从以上对象中取出对应的值，然后重置他们的布局属性。
+ * 
+ * 
+ * 
  * 布局 函数库。
  * 
  * todo:
@@ -73,7 +83,7 @@ function suitLayoutCards(cards, seatIndex) {
  * 
  * 输出：
  *    扑克整体左上角定位
- *    所有扑克定位（xy）数组 更新 animation
+ *    所有扑克定位（x 或 y）数组 更新 animation 一维数组
  * 
  * 参考：
  *    csize =  width * 0.18
@@ -99,7 +109,7 @@ function flexLayout1(width, length, separate) {
   const left = (width - cwidth) / 2;
   return Array(length).fill(0).map((item, index) => item + left + index * offset);
 }
-
+// width 牌桌宽度，length 多少张牌, 每少几张牌扩大间隔
 function flexLayout(width, length, separate) {
   const csize = width * 0.18
   const sepOffset = Math.floor((13 - length) / separate) * 0.05
@@ -109,16 +119,70 @@ function flexLayout(width, length, separate) {
   return Array(length).fill(0).map((item, index) => item + left + index * offset);
 }
 
+/*** 分割线
+ *  
+ * 以下为重构添加的布局函数
+ ×××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××*/
 
-function suitLayout(width, ) {
-
+/**
+ *
+ *
+ * @param {*} cards     传递的是 cards 数组的引用
+ * @param {*} pos       定位的基础 x,y
+ * @param {*} range     布局空间的宽度或高度
+ * @param {*} separate  间隔几张牌 调整宽度
+ * @param {*} dir       方向 x,y 横向或者纵向
+ * @returns
+ */
+function flex_layout(cards, range, separate, dir) {
+  if (!(cards && range && separate)) return false;
+  const base = cards[0].size;
+  const length = cards.length;
+  const layout = flex(base, range, length, separate);
+  const animPos = ['left','top'];
+  const pos = dir.toLowerCase()=='x' ? 0 : 1;  
+  let ps=0;
+  return cards.map((card) => {
+    ps = layout.shift();
+    card['animation'][animPos[pos]] = ps;
+    card['animation']['duration'] = 600;
+    //if (resetDelay) card['animation']['delay'] = 0;
+  })
 }
+/**
+ * 设置一手牌的 动画延迟。
+ *
+ * @param {*} cards             牌的数组引用
+ * @param {number} [base=0]     基础延迟毫秒
+ * @param {number} [offset=100] 间隔毫秒
+ */
+function delay(cards,base=0,offset=100){
+  cards.forEach((card,i)=>card['animation']['delay'] = base + offset * i);
+}
+
+/**
+ *
+ * @param {*} base      基础尺寸（牌的宽度）
+ * @param {*} width     容器宽度
+ * @param {*} length    多少个布局对象
+ * @param {*} separate  间隔扩大（每多少张牌扩大间隔）
+ * @returns
+ */
+function flex(base, width, length, separate) {
+  // const csize = width * 0.18
+  const sepOffset = Math.floor((13 - length) / separate) * 0.05
+  const offset = base * (0.22 + sepOffset);
+  const cwidth = offset * (length - 1) + base * 0.7;
+  const left = (width - cwidth) / 2;
+  return Array(length).fill(0).map((item, index) => item + left + index * offset);
+}
+
 
 
 
 /**
  * 单元测试
- */
+ ******************************************************************************/
 function test_flexLayout() {
   const width = 463;
   const length = 13;
@@ -126,11 +190,11 @@ function test_flexLayout() {
   console.log("flexLayout:", flexLayout(width, length, separate))
 }
 //test_flexLayout();
-function testFunc(a,b){
+function testFunc(a, b) {
   return a + b;
 }
-export {testFunc}
-export { flexLayout, resetCards, suitLayoutCards };
+export { testFunc }
+export { flexLayout, resetCards, suitLayoutCards, flex_layout, delay };
 
 
 

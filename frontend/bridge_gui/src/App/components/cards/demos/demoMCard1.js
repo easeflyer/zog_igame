@@ -1,42 +1,12 @@
 import React from 'react';
 import {MCard} from '../card'
 
-function gen11(style, i, j) {
-  const styles = {
-    "1": {
-      top: 200 + i * 100,
-      left: 200 + j * 50,
-      delay: i * 1000 + j * 100
-    },
-    "2": {
-      x: 15,
-      y: 15,
-      delay: i * 1000 + j * 100
-    }
-  }
-  return styles[style];
-}
-
-function gen1(i,j){
-  const style = {
+function gen1(i, j) {
+  return {
     top: 200 + i * 100,
     left: 200 + j * 50,
     delay: i * 1000 + j * 100
   }
-  return style;
-}
-
-/**
- * animation 的 x,y 是移动偏移值， top,left 是定位值。
- * delay 是缓动参数，也就是延迟多久动画开始。
- */
-function gen3(i,j){
-  const style = {
-    x: 15,
-    y: 15,
-    delay: i * 1000 + j * 100
-  }
-  return style;
 }
 
 /**
@@ -69,10 +39,10 @@ const Demo1 = props => {
     return <MCard
       active={2}
       onClick={()=>alert(c)}
-      animation={gen3(s, r)}
+      animation={gen1(s, r)}
       name={c}
       size={20}
-      position={gen2(s, r)}
+      //position={gen2(s, r)}
     //zIndex={100+i+j}
     />
   }))
@@ -82,11 +52,11 @@ const Demo1 = props => {
 
 const Demo = props => <div>
   <div style={{ position: "absolute", left: "10px" }}>
-    <Demo1 anim={2} pos={1} />
+    <Demo1 />
   </div>
-  <div style={{position:"absolute",left:"600px"}}>
+  {/* <div style={{position:"absolute",left:"600px"}}>
     <Demo1 anim={1} pos={0} />
-  </div>  
+  </div>   */}
 </div>
 
 

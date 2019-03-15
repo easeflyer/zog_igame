@@ -1,6 +1,7 @@
 import React from 'react';
 import { MCard, CCard,toArr } from '../card'
 import { CHand as Hand } from '../hand'
+import {flex_layout, delay} from '../../../libs/layout'
 
 function gen3(i, j) {
   const style = {
@@ -40,6 +41,7 @@ function CHand() {
   })
 
   const cards = [hand.s, hand.h, hand.c, hand.d];
+  
   const comCards = cards.map((suit, s) => Array.from(suit).map((c, r) => {
     return <MCard
       active={2}
@@ -60,6 +62,7 @@ function CHand() {
       position={gen2(6, r)}
     />
   })
+
 
   console.log(hand);
   console.log(toArr("QJ98.A5.J853.QT4","SHCD"))

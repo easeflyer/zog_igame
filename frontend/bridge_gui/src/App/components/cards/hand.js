@@ -16,9 +16,12 @@ Hand 就和人的手一样，只是把牌码好而已。便于找到合理的牌
 
 
 import { CCard } from "./card";
+import {flexLayout} from "../../libs/layout";
 
 class CHand{
   order = "SHDC";
+  style = "flex";
+  direction = "h";  // horizontal or vertical
   /**
    *Creates an instance of hand.
    * hand 对象目的是为了操作 一手牌方便。本身不产生牌。

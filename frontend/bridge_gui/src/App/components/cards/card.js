@@ -1,17 +1,18 @@
 import React from 'react';
 import './style/cards.less';
 import Motion from './Motion';
+import Conf from './conf';
 
-const UNIT = "vh";
-const SCALE = 0.7                           // 牌的长宽比
-const BDARK = 0.6;                          // brightness DARK 0.6
-const BLIGHT = 1;                           // brightness LIGHT 1;
+const UNIT = Conf.unit;
+const SCALE = Conf.card.scale;                          // 牌的长宽比
+const BDARK = Conf.card.bdark;                          // brightness DARK 0.6
+const BLIGHT = Conf.card.blight;                        // brightness LIGHT 1;
 
 
 
 class CCard{
   active = 1;
-  size = null;
+  size = Conf.card.size;
   name = null;
   position = {x:null,y:null};
   animation = {};
