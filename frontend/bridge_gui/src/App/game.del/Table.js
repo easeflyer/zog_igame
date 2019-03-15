@@ -277,7 +277,7 @@ class Table extends Component {
         const re = <div className='result'>
             <img src={`${basename}/cards/medal.svg`} width="20%" />
             <div style={{ lineHeight: this.height * 0.12 + 'px', }}>{result}</div>
-            <button onClick={this.hideResult}>下一局</button>
+            <button onClick={this.hideResult}>下一副</button>
         </div>;
         ReactDOM.unmountComponentAtNode(document.querySelector('#result'));
         ReactDOM.render(

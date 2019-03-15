@@ -21,7 +21,7 @@ class ResultPanel extends React.Component {
         <div className='result'>
           <img src={`${basename}cards/medal.svg`} width="20%" />
           <div style={{ lineHeight: height * 0.12 + 'px', }}>{result}</div>
-          <button onClick={this.hideResult}>下一局</button>
+          <button onClick={this.hideResult}>下一副</button>
         </div>
       </div>
     );
