@@ -15,16 +15,21 @@ import {flex_layout, delay} from '../../../libs/layout'
  * 利用 flex_layout 对一手牌进行布局计算。
   * @returns
  */
-function CHand() {
+function CHand({deals}) {
   const suits = "SHDC";
-  const deals = 'AT62.A6.JT6.QT85';
-  const hand = new Hand();
-  deals.split('.').forEach((suit, s) => {
-    suit.split('').forEach((card) => {
-      hand.add(new CCard(suits[s] + card));
+  // const hand = new Hand();
+  const useforceUpdate = () => useState()[1];
+  const forceUpdate = useforceUpdate();
+  const initHand = () =>{
+    const hand = new Hand();
+    deals.split('.').forEach((suit, s) => {
+      suit.split('').forEach((card) => {
+        hand.add(new CCard(suits[s] + card));
+      })
     })
-  })
-
+    return hand;
+  }
+  const [hand,setHand] = useState(initHand());
   const cards = [...hand.s, ...hand.h, ...hand.c, ...hand.d];
   
   flex_layout(cards,70,2,'x');
@@ -39,6 +44,10 @@ function CHand() {
       size={20}
     />
   })
+  const handleClick = useCallback(()=>{
+    toArr("2.6.6.5","SHDC").forEach((card)=>hand.del(card));
+  },[]);
+
 
   console.log(hand);
   console.log(toArr("QJ98.A5.J853.QT4","SHCD"))
@@ -46,6 +55,8 @@ function CHand() {
   return (
     <div>
       {comCards1}
+      <button onClick={handleClick}>删除部分</button>
+      <button onClick={forceUpdate}>强制刷新</button>
     </div>
   );
 }
@@ -60,7 +71,7 @@ const Demo = props => <div style={{
   height:'20.1vh',
   border:'1px solid red'
   }}>
-  <CHand />
+  <CHand deals={'AT62.A6.JT6.QT85'}/>
 </div>
 
 

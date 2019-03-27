@@ -1,5 +1,5 @@
 import { sep } from "upath";
-
+import Conf from "../components/cards/conf";
 /**
  * 2019.3.14 新思路
  * 
@@ -144,7 +144,7 @@ function flex_layout(cards, range, separate, dir) {
   let ps=0;
   return cards.map((card) => {
     ps = layout.shift();
-    card['animation'][animPos[pos]] = ps;
+    card['animation'][animPos[pos]] = ps+Conf.unit;
     card['animation']['duration'] = 600;
     //if (resetDelay) card['animation']['delay'] = 0;
   })
@@ -167,16 +167,19 @@ function delay(cards,base=0,offset=100){
  * @param {*} length    多少个布局对象
  * @param {*} separate  间隔扩大（每多少张牌扩大间隔）
  * @returns
+ * 注意：当card 高度 为20时 width 不小于 67，否则将离开范围。此算法有待优化
  */
 function flex(base, width, length, separate) {
-  // const csize = width * 0.18
-  const sepOffset = Math.floor((13 - length) / separate) * 0.05
+  // sepOffset  额外增加的空间 百分比
+  // offset     实际牌间距
+  // cwidth     所有牌的实际宽度
+  // left       所有牌居中，left 定位值
+  const sepOffset = Math.floor((13 - length) / separate) * 0.05;
   const offset = base * (0.22 + sepOffset);
   const cwidth = offset * (length - 1) + base * 0.7;
   const left = (width - cwidth) / 2;
   return Array(length).fill(0).map((item, index) => item + left + index * offset);
 }
-
 
 
 

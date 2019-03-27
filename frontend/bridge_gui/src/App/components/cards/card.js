@@ -67,7 +67,7 @@ function MCard({
   const style={zIndex,top,left,position:'absolute'}
   return (
     <div style={style} onClick={onClick}>
-      <Motion animation={animation}>
+      <Motion animation={animation} style={{position:'absolute'}}>
         <Card name={name} size={size} />
       </Motion>
     </div>
@@ -98,3 +98,15 @@ function Card({ name, size }) {
 
 
 export { MCard, Card, CCard, toArr };
+
+
+/*
+优化思路：
+把扑克最常用的功能。最通用的功能，都设计出来。
+其他那些 不同玩法，有不同规则的不写。
+
+比如，再增加和完善布局算法。增加特殊布局方式。双击出牌的设置。
+模拟发牌的demo。根据某个数组，选中可以出的牌。
+各种选中牌的方式。考虑数据结构的优化。
+牌的大小 尺寸优化。
+*/

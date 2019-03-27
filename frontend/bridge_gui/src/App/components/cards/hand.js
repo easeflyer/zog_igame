@@ -1,15 +1,11 @@
 /*
-功能列表
-根据数据初始化一手牌。
-设置一手牌的花色顺序。
-读取一个花色的牌
-
 Hand 抽象 思路：
-
 Hand 就和人的手一样，只是把牌码好而已。便于找到合理的牌。进行操作。
 换句话说 Hand 就是对 原始52张牌中的 13 张进行引用持有和操作。
 
-下面写 demo 试试看 Hand 的各种用法。
+功能列表：
+
+1）通过一个 card 对象数组
 
 */
 
@@ -47,11 +43,33 @@ class CHand{
     this._hand.add(card);
     this[`_${suit}`].add(card);
   }
+
+  /**
+   *删除有问题，添加也有问题。
+   * 添加和删除的是对象的话。如何确定要删除的对象是谁？
+   * 点击了某个对象，可以，如果是收到消息。要根据 字符串找到这个对象，就比较苦难了。
+   * @param {*} card
+   * @memberof CHand
+   */
   del(card) {
+    if(typeof(card)=='string') card = this.getCard(card);
+    if(!card) return false;
     const suit = card.name.toLowerCase().slice(0, 1);
     this._hand.delete(card);
     this[`_${suit}`].delete(card);
   }
+  /**
+   * 输入牌字符串返回 card 对象
+   *
+   * @param {*} cardstring 如 C5，S9 等
+   * @returns
+   * @memberof CHand
+   */
+  getCard(cardstring){
+    for(let c of this._hand) if(c.name== cardstring) return c;
+    return false;
+  }
+
   get s() { return this._s; }
   get h() { return this._h; }
   get d() { return this._d; }
