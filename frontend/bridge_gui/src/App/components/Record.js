@@ -158,10 +158,9 @@ export default class Play extends Component{
    render(){
         console.log(this.props.tableStore.record)
        
-        
-       const {auction,cards,tricks} = this.props.tableStore.record[this.state.sequence-1];
-       const result = this.props.tableStore.record_result;
-       debugger
+        const {auction,cards,tricks} = this.props.tableStore.record[this.state.sequence-1] ||{auction:"",cards:"",tricks:""}  //处理第一幅牌的情况
+        const result = this.props.tableStore.record_result;
+
       
        return(
            <div style={{width:'900px',margin:'0 auto'}}>
