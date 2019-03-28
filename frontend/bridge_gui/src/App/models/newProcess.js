@@ -826,6 +826,7 @@ class Process{
       card2Record(cards_str,player){
         const cardInfo = [];
         const cardArr = cards_str.split(" ");
+        if(!player) return [] //解决下一副bug
         cardInfo.push({
           name : player.north_id.name,
           card: cardArr[0].split(".")
