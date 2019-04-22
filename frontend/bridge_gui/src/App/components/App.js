@@ -33,12 +33,12 @@ export default class App extends React.Component {
         <Switch>
 
           <Route path="/" exact={true} component={Login} />
-          <Route path="/game/:tableid" component={Game} />
+          <Route path="/game" component={Game} />
           <Route path="/test" component={Test} />
           <Route path="/logicPlay" component={LogicPlay} />
           <Route path="/newapi" component={NewApi} />
           <Route path="/newapilogic" component={NewApiLogic} />
-          <Route path="/record" component={Record} />
+          {/* <Route path="/record" component={Record} /> */}
           {/* 注意主页放在最下面，避免重复匹配 */}
           {/* <Route path="/" component={Home} /> */}
         </Switch>
