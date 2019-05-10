@@ -319,7 +319,7 @@ export default class Debug extends Component {
         // =====  测试用例结束 =================================================
 
         return (
-            <div className='debug' style={{ position: 'absolute' }}>
+            <div className='debug' style={{ position: 'absolute',bottom:'0px' }}>
                 <button onClick={o.testUsersReady}>登录</button>&nbsp;
                 <button onClick={o.wLogin}>西玩家登录</button>&nbsp;
                 <button onClick={o.initcards}>准备牌</button>&nbsp;
