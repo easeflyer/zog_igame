@@ -40,7 +40,7 @@ const Dummy = {
   N: 'S'
 }
 
-const host = 'http://192.168.1.20:8069'
+const host = 'http://139.198.21.140:8069'
 const db = 'TT'
 const models = {
   'res.users': ['name', 'doing_table_ids'],
