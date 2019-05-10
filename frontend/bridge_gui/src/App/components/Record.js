@@ -212,6 +212,7 @@ class Cards extends Component{
     }
     render(){
         const CARDS = this.props.cards;
+        console.log(CARDS)
         return(
             <React.Fragment>
                 <h2 style={{textAlign:'center'}}>牌型分布</h2>

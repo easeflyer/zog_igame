@@ -309,12 +309,12 @@ class BidPanel extends Component {
       if(value) {
         this.state.bidMsg = value;
         this.state.bidcards[1].active = 0;
+        this.setState({
+          bidcards: this.state.bidcards,
+        })
       }else{
         this.state.bidcards[1].active = 1;
       }
-      this.setState({
-        bidcards: this.state.bidcards,
-      })
     }
 
     return (

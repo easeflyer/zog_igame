@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Table from './Table';
-import GameModel from '../models/Game'
 import Process from '../models/newProcess'
 import { inject, observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';

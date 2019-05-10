@@ -277,6 +277,7 @@ const modelCreator = (options) => {
 
     cls._get_one = ( id, fields) => {
         return Object.keys(fields).reduce((item, fld) => {
+            
             const fld_meta = cls._fields[fld]
             if (!fld_meta) {
                 return item
