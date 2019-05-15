@@ -6,10 +6,10 @@ from fabric.api import *
 
 
 
-env.hosts = ['192.168.1.8']
+env.hosts = ['139.198.21.140']
 env.port = '22'
-env.user = 's1'
-env.password = 's1'
+env.user = 'ubuntu'
+env.password = 'Odooht163icp'
 
 # fab hello:a=11,b=22
 def hello(a,b):
@@ -27,49 +27,27 @@ def deploy(app='igame'):
 
 
 def _itable():
-  with cd("/home/s1/gameLobby"):
-    #run('git reset --hard HEAD')
-    #sudo('git fetch origin Qcloud')
-    sudo('git checkout Qcloud')
-    sudo('git pull origin Qcloud')
-    #sudo('rm -rf build/')
-    sudo('yarn build')
-    # sudo('rm -rf /var/www/bridge_bui1/itable')
-    # sudo('cp -r dist/ /var/www/bridge_bui1/itable')
-
-
-# 计划修改为软连接版本。
-def _igame():
-  with cd("/home/s1/zog_igame/frontend/bridge_gui"):
-    #run('git reset --hard HEAD')
-    sudo('git checkout test1')
-    sudo('git pull origin test1')
-    # sudo('rm -rf build/')
-    sudo('yarn build')
-    # sudo('rm -rf /var/www/bridge_bui1/igame')
-    # sudo('mv build/ /var/www/bridge_bui1/igame')
-
-def _imatch():
-  with cd("/opt/odoo/zog_igame/fronend/imatch"):
-    #run('git reset --hard HEAD')
+  with cd("/opt/odoo/zog_igame/fronend/itable"):
     sudo('git checkout develop')
     sudo('git pull origin develop')
-    # sudo('rm -rf build/')
     sudo('yarn install')
     sudo('yarn build')
-    # sudo('rm -rf /var/www/bridge_bui1/igame')
-    # sudo('mv build/ /var/www/bridge_bui1/igame')
-
-
-
-
-
-# 正常工作的版本。删除重新拷贝
-def _igame1():
-  with cd("/home/s1/zog_igame/frontend/bridge_gui"):
-    #run('git reset --hard HEAD')
-    sudo('git pull origin bui-mobx-test1')
-    sudo('rm -rf build/')
+def _imatch():
+  with cd("/opt/odoo/zog_igame/fronend/imatch"):
+    sudo('git checkout develop')
+    sudo('git pull origin develop')
+    sudo('yarn install')
     sudo('yarn build')
-    sudo('rm -rf /var/www/bridge_bui1/igame')
-    sudo('mv build/ /var/www/bridge_bui1/igame')
+
+def _odoo():
+  with cd("/opt/odoo/zog_igame/"):
+    sudo('git checkout develop')
+    sudo('git pull origin develop')
+
+def _igame():
+  with cd("/home/ubuntu/zog_igame/frontend/bridge_gui"):
+    sudo('git fetch origin test1')
+    sudo('git checkout test1')
+    sudo('git pull origin test1')
+    sudo('yarn install')
+    sudo('yarn build')
