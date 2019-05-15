@@ -1,5 +1,5 @@
 const config = {
-    HOST:'http://192.168.1.5:8069',
+    HOST:'http://139.198.21.140:8069',
 }
 const basename = '/';
 export default config;
