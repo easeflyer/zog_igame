@@ -407,7 +407,7 @@ test3 = async () => {
     call = eval(bd2.auction);
     console.log(deals)
     tableStore.initCards(deals);
-    setTimeout(() => {
+    //setTimeout(() => {
       console.log(ALLREADY)
       if(ALLREADY.length ===4 || call.length>0){
     
@@ -575,7 +575,7 @@ test3 = async () => {
         tableStore.state.calldata.call = call;
         tableStore.state.calldata.note = note;
       }
-    }, 100)
+    //}, 1000)
   }
 
   dealJoin(info,msg){
