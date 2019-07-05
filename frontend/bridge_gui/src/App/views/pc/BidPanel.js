@@ -193,6 +193,8 @@ class BidPanel extends Component {
 
   /**
    * 通过 curCall 初始化 bidPanel 隐藏无效的叫品。
+   * arrayObject.splice(index,howmany,item1,.....,itemX)
+   * splice 从数组中删除元素，index 位置，删除数量，itemn 添加的新项目
    */
   initPanel = (data) =>{
     //const curCall = "4NT";//this.props.tableStore.curCall;
@@ -201,7 +203,7 @@ class BidPanel extends Component {
     
     const bidblocks = this.state.bidblocks;
     const suits = ['NT', 'S', 'H', 'D', 'C'];
-    if (curCall) {
+    if (curCall && curCall!='PASS') {
       bidblocks.splice(0, curCall.slice(0, 1) - 1 - (7 - bidblocks.length));
       if (curCall.slice(1) == "NT") bidblocks.splice(0, 1) // 如果是 nt 直接删除本行
       else bidblocks[0].forEach((item, index) => {
@@ -240,7 +242,7 @@ class BidPanel extends Component {
         {item.map((item1, index1) => {
           call = item1.split(' ');
           if (!call[0]) return ' ';
-          if (call.length == 2) {
+          if (call.length == 2) { // ==2 也就是 1C =1= 这种约定叫的形式
             call[1] = call[1].slice(1, 2);
             return (
               <td title={note[call[1] - 1]} key={index + index1 + 1} className='alertTd'>

@@ -10,6 +10,8 @@ import Sound from '../components/Sound';
 import ResultPanel from '../views/pc/ResultPanel';
 import Card, { ACT0, ACT1, ACT2, ACT3 } from '../components/Card';
 
+
+
 const URL = {};
 window.location.hash.split("?")[1].split("&").forEach(item=>{
   let a= item.split("=")
@@ -228,7 +230,7 @@ class Process {
       }
     }
     console.log(table)
-    this.getBoard(data)// 拿到相关数据：玩家 牌 
+    this.getBoard(data)// 拿到相关数据：玩家 牌
     // // 启用长连接
     const Bus = odoo.env('bus.bus')
     Bus.start_poll(this.before_poll, this.after_poll)
