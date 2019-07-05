@@ -203,7 +203,7 @@ class BidPanel extends Component {
     
     const bidblocks = this.state.bidblocks;
     const suits = ['NT', 'S', 'H', 'D', 'C'];
-    if (curCall && curCall!='PASS') {
+    if (curCall && curCall!='PASS' && curCall!='-') {
       bidblocks.splice(0, curCall.slice(0, 1) - 1 - (7 - bidblocks.length));
       if (curCall.slice(1) == "NT") bidblocks.splice(0, 1) // 如果是 nt 直接删除本行
       else bidblocks[0].forEach((item, index) => {
