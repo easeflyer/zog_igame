@@ -52,9 +52,10 @@ class Claim extends Component {
     handleSubmit1 = () => {
 
     }
-
+    // number = 13 
     myClaim() {
         const number = this.props.tableStore.getUnPlayCardNumber();
+        //const number = 13;
         const cblocks = Array(number + 1).fill('').map((_, index) =>
             <Cblock key={index} number={index}
                 active={this.state.value == index ? 0 : 1}

@@ -195,6 +195,8 @@ class BidPanel extends Component {
    * 通过 curCall 初始化 bidPanel 隐藏无效的叫品。
    * arrayObject.splice(index,howmany,item1,.....,itemX)
    * splice 从数组中删除元素，index 位置，删除数量，itemn 添加的新项目
+   * if (curCall && curCall!='PASS' && curCall!='-') 
+   * 后台发来的 当前叫品 如果是 pass 经过测试显示为 - 因此这里做判断。否则会被隐藏一行。
    */
   initPanel = (data) =>{
     //const curCall = "4NT";//this.props.tableStore.curCall;
