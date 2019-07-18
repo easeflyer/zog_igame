@@ -9,13 +9,15 @@ import 'antd/dist/antd.css'
 //     <h1>333333333</h1>
 //   );
 // }
+// if (value) callback(msgRef.current.state.value);
+
 
 function AlertForm({bid,callback}) {
   const [isShow, setIsShow] = useState(true)
   const msgRef = React.useRef(null);
   const cb = useCallback((value)=>{
     setIsShow(false);
-    callback(msgRef.current.state.value);
+    if (value) callback(msgRef.current.state.value);
   });
 
   return (
