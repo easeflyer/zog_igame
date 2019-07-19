@@ -318,6 +318,7 @@ class BidPanel extends Component {
         })
       }else{
         this.state.bidcards[1].active = 1;
+        this.state.calling = this.state.calling.replace(' ALERT','');
       }
     }
 

@@ -10,6 +10,7 @@ import 'antd/dist/antd.css'
 //   );
 // }
 // if (value) callback(msgRef.current.state.value);
+// else callback(false) // 取消约定叫
 
 
 function AlertForm({bid,callback}) {
@@ -18,6 +19,7 @@ function AlertForm({bid,callback}) {
   const cb = useCallback((value)=>{
     setIsShow(false);
     if (value) callback(msgRef.current.state.value);
+    else callback(false);
   });
 
   return (
