@@ -75,7 +75,7 @@ class TableView extends React.Component {
       declarer:tableStore.state.declarer
     }
     const claimBtnClickable =   tableStore.state.claimAble && tableStore.state.declarer==tableStore.myseat;
-    debugger
+    //debugger
     const hcp = tableStore.scene == 1 ? tableStore.hcp : null;
     return (
       <div>

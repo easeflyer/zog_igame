@@ -1,5 +1,5 @@
 import React from 'react'
-import { Modal, Button, Input } from 'antd';
+import { Modal, Button, Input,Radio } from 'antd';
 import { useState,useCallback } from 'react'
 import 'antd/dist/antd.css'
 
@@ -35,9 +35,22 @@ function AlertForm({bid,callback}) {
           <Button type="primary" onClick={()=>cb(1)}>确认</Button>,
           <Button onClick={()=>cb(0)}>取消</Button>
         ]}
-        style={{top:'20vh',left:'-30vh'}}
+        style={{top:'20vh',left:'-30vh',textAlign:'center'}}
       >
-      <Input ref={msgRef} placeholder="请在此处详细输入约定叫描述！" />
+      {/* <Input ref={msgRef} placeholder="请在此处详细输入约定叫描述！" /> */}
+      {/* 下面的代码用 单选框代替 输入框提交 alert message */}
+      <Radio.Group ref={msgRef} defaultValue="a" buttonStyle="solid" style={{align:'center'}}>
+        <Radio.Button value="1"> 1 </Radio.Button>
+        <Radio.Button value="2"> 2 </Radio.Button>
+        <Radio.Button value="3"> 3 </Radio.Button>
+        <Radio.Button value="4"> 4 </Radio.Button>
+        <Radio.Button value="5"> 5 </Radio.Button>
+        <Radio.Button value="6"> 6 </Radio.Button>
+        <Radio.Button value="7"> 7 </Radio.Button>
+        <Radio.Button value="8"> 8 </Radio.Button>
+        <Radio.Button value="9"> 9 </Radio.Button>
+        <Radio.Button value="10"> 10 </Radio.Button>
+      </Radio.Group>      
       </Modal>
     </div>
   );
