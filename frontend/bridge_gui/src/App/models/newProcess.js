@@ -150,7 +150,7 @@ class Process {
     console.log(window.location)
     const newParams = params || p;
     const sid = await odoo.login(newParams);
-    alert(sid)
+    //alert(sid) // modi by ease disable alert form
     if (sid) {
       this.sid = sid;
       this.getGameList();
@@ -207,7 +207,7 @@ class Process {
       if (player_info[item]['name'] == localStorage.getItem('userName')) {
         var mySeat = player_info[item]["position"];
         tableStore.myseat = mySeat;
-        alert(mySeat)
+        //alert(mySeat)  // modi by ease disable alert form
         seats = seatMap[mySeat]
         console.log(seats)
         player_info.forEach((item)=>{
