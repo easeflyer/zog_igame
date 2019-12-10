@@ -205,6 +205,7 @@ class Table extends Component {
      * {table.state.debug ? <Debug o={table} /> : null}
      */
     openDebug = () => {
+        return false; // modi by ease disable debug info
         const debug = this.props.tableStore.state.debug;
         this.props.tableStore.state.debug = !debug;
     }
