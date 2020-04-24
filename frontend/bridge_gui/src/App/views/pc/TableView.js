@@ -130,7 +130,9 @@ class TableView extends React.Component {
           {tableStore.state.debug ? <Debug o={table} /> : null}
           <Record/>
           <div id='footer' className='footer'>
-            <div id='video'></div>
+            <div id='video'>
+              <video src="/v2/frontend/image/v1.mp4"  muted="muted" autoplay="autoplay" loop="true"></video>              
+            </div>
             <div id='userlist'>
               <table>
                 <tr>
