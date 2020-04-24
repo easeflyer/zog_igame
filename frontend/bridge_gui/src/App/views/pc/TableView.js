@@ -131,7 +131,8 @@ class TableView extends React.Component {
           <Record/>
           <div id='footer' className='footer'>
             <div id='video'>
-              <video src="/v2/frontend/image/v1.mp4"  muted="muted" autoplay="autoplay" loop="true"></video>              
+              <video src="/v2/frontend/image/v1.mp4"  muted="muted" autoplay="autoplay" loop="true"
+              style="width:100%; height:100%; object-fit:fill"></video>              
             </div>
             <div id='userlist'>
               <table>
