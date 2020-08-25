@@ -1,8 +1,15 @@
+# -*- coding: UTF-8 -*-
+
 from fabric.api import *
+
 # 自动化部署脚本
 # _itable 游戏大厅
 # _imatch 比赛成绩查询
 # _igame  游戏比赛
+
+# 命令：
+# fab deploy
+# fab deploy 
 
 
 

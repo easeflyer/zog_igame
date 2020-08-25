@@ -19,7 +19,7 @@ window.location.hash.split("?")[1].split("&").forEach(item=>{
 })
 console.log(URL)
 const {partner_id,player_id,table_id,userName} = URL
-tableStore.tableId = table_id; // modei by ease 2020.08.25
+localStorage.setItem("tableId",table_id); // modei by ease 2020.08.25
 localStorage.setItem("userName",userName)
 localStorage.setItem("pwd",123)
 

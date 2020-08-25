@@ -87,13 +87,13 @@ class TableView extends React.Component {
   componentDidMount(){
     const domain = 'meet.ushow.org';
     const options = {
-      roomName: "odooht_igame_" + this.props.tableStore.tableId,  // 这里需要修改！
+      roomName: `odooht_igame_${window.localStorage.tableId}`,  // 这里需要修改！
       parentNode: document.querySelector('#video'),
       configOverwrite: {},
       interfaceConfigOverwrite: defaultInterfaceConfig,
       userInfo:{
-        email:'',
-        displayName:window.localStorage.userName
+        email:'123@163.com',
+        displayName:`${window.localStorage.userName}`
       }
     };
     const JitsiMeetExternalAPI = window.JitsiMeetExternalAPI;
