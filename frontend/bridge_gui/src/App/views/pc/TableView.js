@@ -40,8 +40,34 @@ const _tableObj = {
   claim: e => null,
   bid: e => null,
 }
+// 视频窗口界面配置
+const defaultInterfaceConfig = {
+  DEFAULT_REMOTE_DISPLAY_NAME: ' ',
+  DEFAULT_LOCAL_DISPLAY_NAME: ' ',
+  SHOW_JITSI_WATERMARK: false,
+  JITSI_WATERMARK_LINK: 'https://uuu.org',
+  SHOW_WATERMARK_FOR_GUESTS: false,
+  SHOW_BRAND_WATERMARK: false,
+  BRAND_WATERMARK_LINK: '',
+  SHOW_POWERED_BY: false,
+  SHOW_DEEP_LINKING_IMAGE: false,
+  GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
+  DISPLAY_WELCOME_PAGE_CONTENT: false,
+  DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
+  APP_NAME: 'odht Meet',
+  NATIVE_APP_NAME: 'odht Meet',
+  PROVIDER_NAME: 'odht',
+  INVITATION_POWERED_BY: false,
 
+  TOOLBAR_BUTTONS:[],
+  DISABLE_FOCUS_INDICATOR: true,
+  DISABLE_DOMINANT_SPEAKER_INDICATOR: true,
+  DISABLE_TRANSCRIPTION_SUBTITLES: true,
 
+  CONNECTION_INDICATOR_DISABLED: true,
+  VIDEO_QUALITY_LABEL_DISABLED: true,
+  DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
+}
 /**
  * TableView 的用途
  * 增加 TableView 的目的是 把 牌桌的排版进行单独设置。增加view1,2,3
@@ -58,6 +84,21 @@ class TableView extends React.Component {
     换句话说，这里对入口数据进行判断。如果入口数据有错误，照样正常显示view
     比如用模拟数据。
   */
+  componentDidMount(){
+    const domain = 'meet.ushow.org';
+    const options = {
+      roomName: "odooht_igame_" + this.props.tableStore.tableId,  // 这里需要修改！
+      parentNode: document.querySelector('#video'),
+      configOverwrite: {},
+      interfaceConfigOverwrite: defaultInterfaceConfig,
+      userInfo:{
+        email:'',
+        displayName:window.localStorage.userName
+      }
+    };
+    const JitsiMeetExternalAPI = window.JitsiMeetExternalAPI;
+    this.api = new JitsiMeetExternalAPI(domain, options);
+  }
   render() {
     console.log('******************')
     
@@ -131,8 +172,6 @@ class TableView extends React.Component {
           <Record/>
           <div id='footer' className='footer'>
             <div id='video'>
-              <video src="/v2/frontend/image/v1.mp4"  muted="muted" autoplay="autoplay" loop="true"
-              style={{width:'100%;',height:'100%',objectFit:'fill'}}></video>              
             </div>
             <div id='userlist'>
               <table>
@@ -152,7 +191,9 @@ class TableView extends React.Component {
 
             </div>
             <div id='message' className='message'>
-              <div id='msg'>聊天窗口</div>
+              <div id='msg'>聊天窗口
+              <button onClick={()=>this.api.executeCommand('toggleFilmStrip')} className="showbid">toggleFilmstrip</button>
+              </div>
               <div>
                 <input id='msginput' type='text' defaultValue='请输入……' />
                 {/* <input id='msgbtn' type='button' value='发送' onClick={table.testChat} /> */}
