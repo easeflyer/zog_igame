@@ -43,7 +43,8 @@ const Dummy = {
   N: 'S'
 }
 
-const host = 'http://139.198.21.140:8069'
+//const host = 'http://139.198.21.140:8069'
+const host = 'https://139.198.21.140'
 const db = 'TT'
 const models = {
   'res.users': ['name', 'doing_table_ids'],
