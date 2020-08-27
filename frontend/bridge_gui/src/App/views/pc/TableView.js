@@ -84,10 +84,12 @@ class TableView extends React.Component {
     换句话说，这里对入口数据进行判断。如果入口数据有错误，照样正常显示view
     比如用模拟数据。
   */
+  
   componentDidMount(){
+    const side = "NEWS".indexOf(this.props.tableStore.myseat) > 1 ? "WS" : "NE";
     const domain = 'meet.ushow.org';
     const options = {
-      roomName: `odooht_igame_${window.localStorage.tableId}`,  // 这里需要修改！
+      roomName: `odooht_igame_${window.localStorage.tableId}${side}`,  // 这里需要修改！
       parentNode: document.querySelector('#video'),
       configOverwrite: {},
       interfaceConfigOverwrite: defaultInterfaceConfig,
