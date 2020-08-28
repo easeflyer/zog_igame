@@ -117,6 +117,28 @@ const fields = {
   },
 }
 
+//----video start--------------------------
+var vapi = "";
+function mountVideo(){
+  const side = "NEWS".indexOf(tableStore.myseat) > 1 ? "WS" : "NE";
+  const domain = 'meet.ushow.org';
+  const options = {
+    roomName: `odooht_igame_${window.localStorage.tableId}${side}`,  // 这里需要修改！
+    parentNode: document.querySelector('#video'),
+    configOverwrite: {},
+    interfaceConfigOverwrite: defaultInterfaceConfig,
+    userInfo:{
+      email:'123@163.com',
+      displayName:`${window.localStorage.userName}`
+    }
+  };
+  const JitsiMeetExternalAPI = window.JitsiMeetExternalAPI;
+  vapi = new JitsiMeetExternalAPI(domain, options);  
+}
+//----video end--------------------------
+
+
+
 var tables = null;
 var table = null;
 var boards = null;
