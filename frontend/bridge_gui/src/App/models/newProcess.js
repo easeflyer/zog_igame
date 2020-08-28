@@ -119,6 +119,33 @@ const fields = {
 
 //----video start--------------------------
 var vapi = "";
+const defaultInterfaceConfig = {
+  DEFAULT_REMOTE_DISPLAY_NAME: ' ',
+  DEFAULT_LOCAL_DISPLAY_NAME: ' ',
+  SHOW_JITSI_WATERMARK: false,
+  JITSI_WATERMARK_LINK: 'https://uuu.org',
+  SHOW_WATERMARK_FOR_GUESTS: false,
+  SHOW_BRAND_WATERMARK: false,
+  BRAND_WATERMARK_LINK: '',
+  SHOW_POWERED_BY: false,
+  SHOW_DEEP_LINKING_IMAGE: false,
+  GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
+  DISPLAY_WELCOME_PAGE_CONTENT: false,
+  DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
+  APP_NAME: 'odht Meet',
+  NATIVE_APP_NAME: 'odht Meet',
+  PROVIDER_NAME: 'odht',
+  INVITATION_POWERED_BY: false,
+
+  TOOLBAR_BUTTONS:[],
+  DISABLE_FOCUS_INDICATOR: true,
+  DISABLE_DOMINANT_SPEAKER_INDICATOR: true,
+  DISABLE_TRANSCRIPTION_SUBTITLES: true,
+
+  CONNECTION_INDICATOR_DISABLED: true,
+  VIDEO_QUALITY_LABEL_DISABLED: true,
+  DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
+}
 function mountVideo(){
   const side = "NEWS".indexOf(tableStore.myseat) > 1 ? "WS" : "NE";
   const domain = 'meet.ushow.org';
