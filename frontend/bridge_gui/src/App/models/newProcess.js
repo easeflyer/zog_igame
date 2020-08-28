@@ -258,6 +258,7 @@ class Process {
       if (player_info[item]['name'] == localStorage.getItem('userName')) {
         var mySeat = player_info[item]["position"];
         tableStore.myseat = mySeat;
+        mountVideo();
         //alert(mySeat)  // modi by ease disable alert form
         seats = seatMap[mySeat]
         console.log(seats)
