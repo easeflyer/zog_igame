@@ -283,6 +283,7 @@ class Process {
       }
     }
     console.log(table)
+    if(vapi != "") vapi.executeCommand('toggleFilmStrip');// hide small video
     this.getBoard(data)// 拿到相关数据：玩家 牌
     // // 启用长连接
     const Bus = odoo.env('bus.bus')
