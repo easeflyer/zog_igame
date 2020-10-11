@@ -15,11 +15,17 @@ import 'antd/dist/antd.css'
 
 function AlertForm({bid,callback}) {
   const [isShow, setIsShow] = useState(true)
+  const imsgRef = React.useRef(null);
   const msgRef = React.useRef(null);
   const cb = useCallback((value)=>{
     setIsShow(false);
-    if (value) callback(msgRef.current.state.value);
-    else callback(false);
+    if (value){
+      const bitmsg = imsgRef.current.state.value; // if input has text then callback it else callback number button
+      if (bitmsg == undefined) callback( msgRef.current.state.value );
+      else callback(bitmsg);
+    } else{
+      callback(false);      
+    } 
   });
 
   return (
@@ -37,7 +43,7 @@ function AlertForm({bid,callback}) {
         ]}
         style={{top:'20vh',left:'-30vh',textAlign:'center'}}
       >
-      {/* <Input ref={msgRef} placeholder="请在此处详细输入约定叫描述！" /> */}
+      <Input ref={msgRef} placeholder="请在此处详细输入约定叫描述！或者点击下面的默认约定叫！" />
       {/* 下面的代码用 单选框代替 输入框提交 alert message */}
       <Radio.Group ref={msgRef} defaultValue="a" buttonStyle="solid" style={{align:'center'}}>
         <Radio.Button value="1"> 1 </Radio.Button>

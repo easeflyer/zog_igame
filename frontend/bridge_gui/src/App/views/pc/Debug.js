@@ -2,6 +2,14 @@
  * todo： 仔细考虑下 TableModel 的设计。静态属性的问题。
  * import { TableModel } from '../models/Table';
  * import TableModels from '../models/Table';
+ * 如何打开 debug 步骤
+
+1 game.js   debug=true
+2 newProcess.js  // debug = true  start  - end
+3 table.js  openDebug = ()   return false;
+ 
+* 
+ * 
  */
 
 import ReactDOM from 'react-dom';

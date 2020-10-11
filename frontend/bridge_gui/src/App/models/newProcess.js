@@ -11,13 +11,14 @@ import ResultPanel from '../views/pc/ResultPanel';
 import Card, { ACT0, ACT1, ACT2, ACT3 } from '../components/Card';
 
 
-
+// debug = true  start
 const URL = {};
 window.location.hash.split("?")[1].split("&").forEach(item=>{
   let a= item.split("=")
   URL[a[0]] = a[1]
 })
 console.log(URL)
+// debug = true end
 const {partner_id,player_id,table_id,userName} = URL
 localStorage.setItem("tableId",table_id); // modei by ease 2020.08.25
 localStorage.setItem("userName",userName)
