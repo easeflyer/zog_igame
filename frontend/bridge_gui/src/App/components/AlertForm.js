@@ -43,7 +43,7 @@ function AlertForm({bid,callback}) {
         ]}
         style={{top:'20vh',left:'-30vh',textAlign:'center'}}
       >
-      <Input ref={msgRef} placeholder="请在此处详细输入约定叫描述！或者点击下面的默认约定叫！" />
+      <Input ref={imsgRef} placeholder="请在此处详细输入约定叫描述！或者点击下面的默认约定叫！" />
       {/* 下面的代码用 单选框代替 输入框提交 alert message */}
       <Radio.Group ref={msgRef} defaultValue="a" buttonStyle="solid" style={{align:'center'}}>
         <Radio.Button value="1"> 1 </Radio.Button>

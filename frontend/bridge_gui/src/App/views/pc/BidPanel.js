@@ -335,6 +335,9 @@ class BidPanel extends Component {
     );
   }
 }
+
+
+
 /**
  * 输入： 
  *    props.name    : 3NT 叫品
