@@ -63,6 +63,7 @@ class TableModel {
   dealer ='E';  //固定方位
   logicDealer='';//逻辑方位
   sequence = ''; //表示当前是第几副牌
+  cbd = '';   // 一共有几副牌
   hcp = 20;   // 高花点数
 
   @observable curCall = '';  // 当前叫品，用于bidpanel 显示。

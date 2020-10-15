@@ -25,7 +25,7 @@ const _Output = {
     if(calling.includes("ALERT")){
       //debugger
       console.log(calling)
-      calling = calling.slice(0,3)
+      calling = calling.slice(0,3).trim();
       console.log(calling);
       console.log()
       Process.bid(tableStore.myseat,calling,'True',msg)

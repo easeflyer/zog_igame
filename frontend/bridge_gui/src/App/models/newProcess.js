@@ -171,6 +171,7 @@ var tables = null;
 var table = null;
 var boards = null;
 var bd = null;
+var cbd = null; // count bd 一共有多少副牌
 var user = null;
 /**
  *
@@ -308,7 +309,7 @@ class Process {
     const data = boards.look(fields.doing_table_ids.board_ids)
     console.log(data)
     // 当前正在进行的board
-    bd = boards.get_doing_board()
+    [bd,cbd] = boards.get_doing_board()
     console.log(bd)
     const Records = boards.look(fields.doing_table_ids.board_ids).filter(item => {
       return item.state === "done";
@@ -438,6 +439,7 @@ test3 = async () => {
     tableStore.dealer = seats[dealer];
     tableStore.logicDealer = dealer;
     tableStore.sequence = sequence;
+    tableStore.cbd = cbd;
     tableStore.state.declarer = declarer;
     tableStore.state.claimAble = false;
     if (contract) {

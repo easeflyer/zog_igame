@@ -174,7 +174,7 @@ class Index3 extends Component {
     boards = table.attr('board_ids')
 
     // 当前正在进行的board
-    bd = boards.get_doing_board()
+    bd = boards.get_doing_board()[0]
     console.log(bd)
 
     // 读取到的牌桌数据

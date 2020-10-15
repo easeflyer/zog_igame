@@ -20,7 +20,7 @@ const creator = (options) => {
             
             const ins = instances.sort( (a,b) => a.attr('number') - b.attr('number') )
             console.log(ins)
-            return ins[0]
+            return [ins[0],ins.length];
         }
         get_done_board () {
             const instances = this.list().filter(

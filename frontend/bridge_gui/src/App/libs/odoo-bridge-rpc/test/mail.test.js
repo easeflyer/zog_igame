@@ -122,7 +122,7 @@ const before_poll0 = async (odoo) => {
 //    console.log( boards.list() )
 
 
-    const bd = boards.get_doing_board()
+    const bd = boards.get_doing_board()[0]
     console.log(bd)
 
     const bd2 = bd.look(fields.doing_table_ids.board_ids)
