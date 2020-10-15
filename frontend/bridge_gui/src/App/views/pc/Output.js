@@ -23,7 +23,7 @@ const _Output = {
       calling = 'xx'
     }
     if(calling.includes("ALERT")){
-      //debugger
+      debugger
       console.log(calling)
       calling = calling.slice(0,3).trim();
       console.log(calling);

@@ -308,8 +308,9 @@ class Process {
     console.log(boards)
     const data = boards.look(fields.doing_table_ids.board_ids)
     console.log(data)
-    // 当前正在进行的board
-    [bd,cbd] = boards.get_doing_board()
+    // 当前正在进行的board  下面解构语法必须分开写，否则报错
+    const bdo = boards.get_doing_board();
+    [bd,cbd] = bdo;
     console.log(bd)
     const Records = boards.look(fields.doing_table_ids.board_ids).filter(item => {
       return item.state === "done";
