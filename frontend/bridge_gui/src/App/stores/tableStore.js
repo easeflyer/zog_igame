@@ -281,7 +281,7 @@ class TableModel {
     return _play.bind(this);
   }
   /**
-   * 扣着的牌 play
+   * 扣着的牌 play (不是自己的牌？)
    * @param {*} seat  "NESW"
    * @param {*} card  "C2"
    */
@@ -663,7 +663,7 @@ class TableModel {
     this.board[0].push(card);
 
     if (isAnim) {
-      if (this.board[0].length === 4) setTimeout(this.clearBoard, 1000);
+      if (this.board[0].length === 4) setTimeout(this.clearBoard, 4000);
     } else {
       card['position']['x'] = this.seat[card.seat][1].x;
       card['position']['y'] = this.seat[card.seat][1].y;

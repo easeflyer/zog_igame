@@ -60,7 +60,7 @@ export default class Timer extends React.Component {
     }
     dida = () => {
         this.state.s--;
-        this.state[this.seats]++;
+        this.state['sn']++;
         if (this.state.s == -1) {
             this.state.s = 59;
             this.state.m--;
@@ -85,7 +85,7 @@ export default class Timer extends React.Component {
     }
     dadi = () =>{
         this.state.s++;
-        this.state[this.seats]++;
+        this.state['sn']++;
         if(this.state.s == 60){
             this.state.s = 0;
             this.state.m++;
@@ -114,8 +114,7 @@ export default class Timer extends React.Component {
                     <div>{fmt(this.state.s)}</div>
                 </div>
                 <div className='timer1'>
-                对手：{this.getTime(this.state.ew)}<br />
-                我方：{this.getTime(this.state.sn)}<br />
+                {this.getTime(this.state.sn)}
                 </div>
             </div>
         );
