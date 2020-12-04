@@ -462,7 +462,7 @@ test3 = async () => {
     }
     var deals = cardString(tableStore.myseat, bd2.hands);
     let { call, note, curCall } = this.transformAuctionData(bd2.auction, tableStore.myseat)
- console.log(bd2.auction,call)
+    console.log(bd2.auction,call)
     call = eval(bd2.auction);
     console.log(deals)
     tableStore.initCards(deals);
@@ -950,19 +950,24 @@ test3 = async () => {
     ReactDOM.unmountComponentAtNode(document.querySelectorAll('.clock')[2]);
     ReactDOM.unmountComponentAtNode(document.querySelectorAll('.clock')[3]);
     const { myseat } = tableStore
+
+
     if (player === myseat) {
-      ReactDOM.render(
-        <Clock time={time} callback={callback} />,
-        document.querySelector('.' + seat + 'clock')
-      )
+      if(tableStore.board[0].length === 4) setTimeout(this._renderClock.bind(this,time,callback,seat),3500)
+      else this._renderClock(time,callback,seat)
     }
     if (myseat === tableStore.state.declarer && player === Dummy[myseat]) {
-      ReactDOM.render(
-        <Clock time={time} callback={callback} />,
-        document.querySelector('.' + seat + 'clock')
-      )
+      if(tableStore.board[0].length === 4) setTimeout(this._renderClock.bind(this,time,callback,seat),3500)
+      else this._renderClock(time,callback,seat)
     }
   }
+  _renderClock(time,callback,seat){
+    ReactDOM.render(
+      <Clock time={time} callback={callback} />,
+      document.querySelector('.' + seat + 'clock')
+    )
+  }  
+
   card2Record(cards_str, player) {
     const cardInfo = [];
     const cardArr = cards_str.split(" ");

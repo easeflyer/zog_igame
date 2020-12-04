@@ -25,7 +25,7 @@ import Board from './board'
  */
 //* active define 0,1,2,3  0 灰色不能点，1 亮色不能点，2 亮色能点, 3 亮色能点突出
 // const ACT0 = 0;                             // initCards
-// const ACT1 = { D: 1, L: 2, LC: 3, LCO: 4 }  // dealCards
+// const ACT1 = { D: 1, L: 2, LC: 3, LCO: 4 }  // dealCards  // D dark, L light,LC light click,LCO light click out
 // const ACT2 = 5;                             // play() in board
 // const ACT3 = 6;                             // out of Screen
 
@@ -268,6 +268,7 @@ class TableModel {
 
   @action.bound
   play(index) {
+    if(this.board[0].length===4) return;
     const _play = function () {
       const card = this.getCardByIndex(index);
       if (card.active == ACT1.LC) {
@@ -382,7 +383,10 @@ class TableModel {
     // if(item.active != 3) return; // 只有突出的牌能打出去。
     // if (this.board[0].length === 4) return false;
         // 已经打出去的牌
-    if (this.board[0].length === 4) {setTimeout(this._play.bind(this,item),1100);return;};
+    if (this.board[0].length === 4) {
+      setTimeout(this._play.bind(this,item),1100);
+      return;
+    };
     // item.active = ACT2;debugger
     // this.board[0].push(item);
     //console.log(this.board)

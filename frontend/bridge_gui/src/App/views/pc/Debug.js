@@ -5,8 +5,8 @@
  * 如何打开 debug 步骤
 
 1 game.js   debug=true
-2 newProcess.js  // debug = true  start  - end
-3 table.js  openDebug = ()   return false;
+2 newProcess.js  //注释掉 debug = true  start  - end
+3 table.js  openDebug = ()   return false;  打开注释
  
 * 
  * 
